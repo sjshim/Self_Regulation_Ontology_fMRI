@@ -185,10 +185,10 @@ var start_test_block = {
 
  var instructions_block = {
   type: 'poldrack-single-stim',
-  stimulus: '<div class = centerbox><p style = "font-size:40px" class = center-block-text>Target Pair (left arrow):</p><p class = center-block-text><img src = "/static/experiments/dot_pattern_expectancy/images/' +
+  stimulus: '<div class = centerbox><p style = "font-size:40px" class = center-block-text>Target Pair (index finger):</p><p class = center-block-text><img src = "/static/experiments/dot_pattern_expectancy/images/' +
     valid_cue +
     '" ></img>&nbsp&nbsp&nbsp...followed by...&nbsp&nbsp&nbsp<img src = "/static/experiments/dot_pattern_expectancy/images/' +
-    valid_probe + '" ></img><br></br></p><p style = "font-size:40px" class = center-block-text>Otherwise press down arrow</div>',
+    valid_probe + '" ></img><br></br></p><p style = "font-size:40px" class = center-block-text>Otherwise press your middle finger</div>',
   is_html: true,
   timing_stim: -1, 
   timing_response: -1,

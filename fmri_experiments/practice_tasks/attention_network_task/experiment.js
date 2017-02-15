@@ -198,7 +198,7 @@ var rest_block = {
 
  var instructions_block = {
 	type: 'poldrack-single-stim',
-	stimulus: '<div class = centerbox><div class = center-text>Indicate which direction the center arrow is pointing using the left (index) and right (middle) arrow keys.</div>',
+	stimulus: '<div class = centerbox><div class = center-text>Indicate which direction the center arrow is pointing using the left (index finger) and right (middle finger) arrow keys.</div>',
 	is_html: true,
 	timing_stim: -1, 
 	timing_response: -1,
