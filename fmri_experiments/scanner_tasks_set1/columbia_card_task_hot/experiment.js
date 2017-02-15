@@ -297,7 +297,7 @@ var start_test_block = {
 	response_ends_trial: true,
 	data: {
 		trial_id: "end",
-		exp_id: 'stroop'
+		exp_id: 'columbia_card_task_hot'
 	},
 	timing_post_trial: 0
 };
