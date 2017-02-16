@@ -85,7 +85,7 @@ var practice_repeats = 0
 // task specific variables
 // Define and load images
 var prefix = '/static/experiments/motor_selective_stop_signal/images/'
-var images = [prefix + 'circle.png', prefix + 'rhombus.png', prefix + 'Lshape.png', prefix +
+var images = [prefix + 'circle.png', prefix + 'Lshape.png', prefix + 'rhombus.png', prefix +
   'triangle.png'
 ]
 var permutations = permute([0,1,2,3])
