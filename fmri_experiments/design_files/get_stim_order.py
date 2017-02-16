@@ -14,7 +14,7 @@ def get_blocks(order):
     blocks = []
     previous_stim = None
     block_len = 0
-    for i in stim_order:
+    for i in order:
         if i != previous_stim and previous_stim != None:
             blocks.append(block_len)
             block_len = 1
