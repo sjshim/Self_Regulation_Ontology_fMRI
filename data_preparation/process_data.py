@@ -17,9 +17,11 @@ for subj_file in glob('../Data/raw/*/*'):
     df.time_elapsed-=start_time
     # add exp_id to every row
     exp_id = df.iloc[-2].exp_id
-    df.loc[:,'experiment_exp_id'] = exp_id
     if exp_id == 'columbia_card_task_hot':
         exp_id = 'columbia_card_task_fmri'
+    df.loc[:,'experiment_exp_id'] = exp_id
+    # change column from subject to worker_id
+    df.rename(columns={'subject':'worker_id'}, inplace=True)
     # post process data, drop rows, etc...
     df = clean_data(df, exp_id=exp_id)
     # drop unnecessary rows 
