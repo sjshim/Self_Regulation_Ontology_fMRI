@@ -140,10 +140,10 @@ var practice_repeats = 0
 // task specific variables
 var response_keys_color = jsPsych.randomization.repeat([{
   key: 37,
-  key_name: 'Left Arrow'
+  key_name: 'Index Finger'
 }, {
   key: 40,
-  key_name: 'Down Arrow'
+  key_name: 'Middle Finger'
 }], 1, true)
 var color_order = 1
 if (response_keys_color.key[1]==37) {
@@ -152,15 +152,19 @@ if (response_keys_color.key[1]==37) {
 
 var response_keys_mag = jsPsych.randomization.repeat([{
   key: 37,
-  key_name: 'Left Arrow'
+  key_name: 'Index Finger'
 }, {
   key: 40,
-  key_name: 'Down Arrow'
+  key_name: 'Middle Finger'
 }], 1, true)
 var mag_order = 1
 if (response_keys_mag.key[1]==37) {
   mag_order = 2
 }
+
+// Use below code if you need to specify order if practice code broke once
+// var response_keys_color = {key: [37,40], key_name:['index finger', 'middle finger']}
+// var response_keys_mag = {key: [40,37], key_name:['middle finger', 'index finger']}
 
 var choices = response_keys_color.key
 var practice_length = 32

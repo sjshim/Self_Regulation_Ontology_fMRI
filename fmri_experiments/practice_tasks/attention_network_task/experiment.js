@@ -76,7 +76,7 @@ var block_length = 20
 
 var current_trial = 0
 var exp_stage = 'practice'
-var choices = [37,39]
+var choices = [37,40]
 var path = '/static/experiments/attention_network_task/images/'
 var images = [path + 'left_arrow.png', path + 'right_arrow.png', path + 'no_arrow.png']
 //preload
@@ -198,7 +198,7 @@ var rest_block = {
 
  var instructions_block = {
 	type: 'poldrack-single-stim',
-	stimulus: '<div class = centerbox><div class = center-text>Indicate which direction the center arrow is pointing using the left (index finger) and right (middle finger) arrow keys.</div>',
+	stimulus: '<div class = centerbox><div class = center-text>Indicate which direction the center arrow is pointing using the left (index finger) and down (middle finger) arrow keys.</div>',
 	is_html: true,
 	timing_stim: -1, 
 	timing_response: -1,

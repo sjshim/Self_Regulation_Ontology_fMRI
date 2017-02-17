@@ -251,7 +251,7 @@ var task_limit = 720000
 /* define static blocks */
 var instructions_block = {
   type: 'poldrack-single-stim',
-  stimulus: '<div class = centerbox><div class = center-text>Try to get as many points as possible<br><br>The loss amount, the gain amount, and the number of loss cards may change each trial<br><br>Left Arrow: Take Another Card<br>Down Arrow: End The Round</div></div>',
+  stimulus: '<div class = centerbox><div class = center-text>Try to get as many points as possible<br><br>The loss amount, the gain amount, and the number of loss cards may change each trial<br><br>Index Finger: Take Another Card<br>Middle Finger: End The Round</div></div>',
   is_html: true,
   timing_stim: -1, 
   timing_response: -1,
