@@ -195,6 +195,7 @@ var task_setup_block = {
 		]
 	], on_finish: function(data) {
 		SSD = parseInt(data.responses.slice(7, 10))
+		SSD = math.max(100,math.min(400,SSD))
 	}
 }
 
