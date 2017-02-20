@@ -107,6 +107,14 @@ var probes = jsPsych.randomization.shuffle(['probe1.png', 'probe2.png', 'probe3.
 ])
 var valid_cue = cues.pop()
 var valid_probe = probes.pop()
+// Use below code if you need to specify order if practice code failed for some rason
+// Make sure to remove the specified valid_cue and valid_probe from list of cues and probes
+// valid_cue = 'cue1.png'
+// valid_probe = 'probe1.png'
+// cues = ['cue2.png', 'cue3.png', 'cue4.png', 'cue5.png', 'cue6.png']
+// probes = ['probe2.png', 'probe3.png', 'probe4.png', 'probe5.png', 'probe6.png']
+
+
 console.log('Valid Cue:' + valid_cue)
 console.log('Valid Probe:' + valid_probe)
 

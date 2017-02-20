@@ -93,6 +93,9 @@ var images = [prefix + 'circle.png', prefix + 'Lshape.png', prefix + 'rhombus.pn
 var permutations = permute([0,1,2,3])
 var permutation_index = randomDraw([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24])
 var permutation = permutations[permutation_index]
+// permutation = 0 // Change value if you have to restart the task
+
+
 images = [images[permutation[0]], images[permutation[1]], 
 		images[permutation[2]], images[permutation[3]]]
 jsPsych.pluginAPI.preloadImages(images);
@@ -104,6 +107,7 @@ var stop_signal =
 
 /* Instruction Prompt */
 var choice_order = randomDraw([0,1])
+// choice_order = 0 // Change value if you have to restart the task
 var possible_responses = [
 	["index finger", 37],
 	["middle finger", 40]
@@ -253,7 +257,11 @@ var start_test_block = {
   data: {
     trial_id: "instructions",
   },
-  timing_post_trial: 0
+  timing_post_trial: 0,
+	on_finish: function() {
+		console.log('Permutation Index: ' + permutation_index)
+		console.log('Choice Order: ' + choice_order)
+	}
 };
 
 // set up practice trials

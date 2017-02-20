@@ -13,7 +13,7 @@ var choices = [71,72,74,75,76]
 
 // task specific variables
 var practice1_items = [
-	'I am so happy to be here!',
+	'I like modern art',
 ]
 
 var practice1_responses = ['<span style="font-weight: normal; font-size: 30px">Not at all</span>', '1', '2', '3', '4', '5', '<span style="font-weight: normal; font-size: 30px">Very much</span>']
@@ -21,10 +21,10 @@ var practice1_responses = ['<span style="font-weight: normal; font-size: 30px">N
 var practice1_codings = ['forward']
 
 var practice2_items = [
-	'I completely understand this task. Can we move on?',
+	'Cats are better than dogs',
 ]
 
-var practice2_responses = ['<span style="font-weight: normal; font-size: 30px">Very much disagree</span>', '1', '2', '3', '4', '<span style="font-weight: normal; font-size: 30px">Very much agree</span>']
+var practice2_responses = ['No', 'Yes']
 
 var practice_codings = ['forward']
 
@@ -33,7 +33,7 @@ var practice_codings = ['forward']
 var survey_items = [practice1_items, practice2_items]
 var responses = [practice1_responses, practice2_responses]
 var surveys = ['practice1', 'practice2']
-var survey_choices = [[71,72,74,75,76],[71,72,74,75]]
+var survey_choices = [[71,72,74,75,76],[71,72]]
 var item_codings = [practice_codings, practice_codings]
 var stims = []
 for (var si=0; si<survey_items.length; si++) {

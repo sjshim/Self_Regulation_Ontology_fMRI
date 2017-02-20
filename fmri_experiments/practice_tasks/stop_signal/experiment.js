@@ -152,6 +152,7 @@ var response_permutations = [[0,0,1,1], [0,1,0,1], [0,1,1,0],
 							[1,1,0,0], [1,0,1,0], [1,0,0,1]]
 var permutation_index = randomDraw([0,1,2,3,4,5])
 var permutation = response_permutations[permutation_index]
+// permutation = 0 // Change value if you have to restart the task
 var correct_responses = []
 for (var i=0; i<4; i++) {
 	correct_responses.push(possible_responses[permutation[i]])
@@ -289,7 +290,11 @@ var start_test_block = {
   data: {
     trial_id: "instructions",
   },
-  timing_post_trial: 0
+  timing_post_trial: 0,
+	on_finish: function() {
+		console.log('Permutation Index: ' + permutation_index)
+	}
+
 };
 
 /* set up feedback blocks */

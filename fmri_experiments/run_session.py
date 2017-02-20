@@ -5,7 +5,7 @@ import time
 
 subid = raw_input('Enter subject id (i.e. s999): ')
 scanner_order = raw_input('Enter order set (1-4): ')
-taskset = raw_input('Enter task day (1 or 2): ')
+taskset = raw_input('Enter task group (1 or 2): ')
 
 if taskset == '1':
 	tasks = ['stop_signal','attention_network_task','twobytwo',
