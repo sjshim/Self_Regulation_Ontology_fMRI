@@ -228,9 +228,9 @@ for (var i=0; i<test_length; i++) {
   }
 }
 
-
+var practiceStims = genStims(practice_length)
 var testStims = genStims(test_length)
-var stims = testStims
+var stims = practiceStims
 var curr_task = randomDraw(getKeys(tasks))
 var cue_i = randomDraw([0, 1]) //index for one of two cues of the current task
 var curr_cue = tasks[curr_task].cues[cue_i] //object that holds the current cue, set by setStims()
@@ -306,6 +306,7 @@ var start_test_block = {
     current_trial = 0
     exp_stage = 'test'
     task_switches = test_task_switches
+    stims = testStims
     curr_task = randomDraw(getKeys(tasks))
     curr_stim = 'na' //object that holds the current stim, set by setStims()
     curr_cue = tasks[curr_task].cues[cue_i] //object that holds the current cue, set by setStims()

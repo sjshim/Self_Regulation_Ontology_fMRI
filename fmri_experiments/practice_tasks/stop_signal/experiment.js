@@ -383,9 +383,6 @@ for (b = 0; b < num_blocks; b++) {
 		}
 	}
 	stop_signal_experiment.push(stop_signal_block)
-	if ((b+1)<num_blocks) {
-		stop_signal_experiment.push(test_feedback_block)
-	}
 }
 
 stop_signal_experiment.push(end_block)
