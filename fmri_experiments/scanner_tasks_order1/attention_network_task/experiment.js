@@ -84,8 +84,8 @@ jsPsych.pluginAPI.preloadImages(images)
 
 /* set up stim: location (2) * cue (3) * direction (2) * condition (2) */
 var base_practice_stim = []
-var base_test_stim = [[],[],[],[],[],[]]
-var test_stim = [[],[],[],[],[],[]] // track each cue/condition separately
+var base_test_stim = [[],[],[],[]]
+var test_stim = [[],[],[],[]] // track each cue/condition separately
 var locations = ['up', 'down']
 var cues = ['double', 'spatial']
 var directions = ['left', 'right']
@@ -126,7 +126,7 @@ for (ci = 0; ci < cues.length; ci++) {
 }
 
 for (var i=0; i<test_stim.length; i++) {
-	test_stim[i] = jsPsych.randomization.repeat(base_test_stim[i], block_length*num_blocks/24)
+	test_stim[i] = jsPsych.randomization.repeat(base_test_stim[i], block_length*num_blocks/16)
 }
 // set up stim order based on optimized trial sequence
 var stim_index = [2,1,2,2,1,0,1,3,1,3,0,3,3,3,1,0,2,1,2,0,0,1,3,0,3,1,3,0,1,1,2,0,3,3,2,2,1,0,0,2,0,1,2,2,2,3,0,0,0,0,0,2,3,1,2,2,2,1,1,1,3,3,1,1,3,1,1,1,0,3,2,2,3,0,3,2,2,2,1,0,3,0,3,0,1,1,2,2,0,0,3,2,1,3,1,2,0,1,2,0,0,3,2,0,2,2,3,3,3,3,1,1,3,3,3,2,0,1,2,2,2,3,0,2,1,3,1,2]
@@ -136,7 +136,7 @@ for (var i=0; i<stim_index.length; i++) {
 	ordered_stim.push(stim)
 	//refill if necessary
 	if (test_stim[stim_index[i]].length == 0) {
-		test_stim[stim_index[i]] = jsPsych.randomization.repeat(base_test_stim[stim_index[i]], block_length*num_blocks/24)
+		test_stim[stim_index[i]] = jsPsych.randomization.repeat(base_test_stim[stim_index[i]], block_length*num_blocks/16)
 	}
 }
 

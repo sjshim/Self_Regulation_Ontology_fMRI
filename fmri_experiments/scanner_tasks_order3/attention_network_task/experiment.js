@@ -1,9 +1,7 @@
 /* ************************************ */
 /* Define helper functions */
 /* ************************************ */
-var ITIs = [0.0,0.136,0.0,0.136,0.272,0.272,0.0,1.2,0.0,0.408,0.68,0.136,
-			0.272,0.0,.408,0.0,0.544,0.68,0.136,.408]
-
+var ITIs = [0.952,0.136,0.272,0.272,0.0,0.0,0.272,0.0,0.0,0.272,0.0,0.136,0.272,0.0,0.0,0.0,0.0,0.0,0.0,0.272,0.136,1.088,0.272,0.136,0.136,0.0,0.0,0.0,0.0,0.136,0.272,0.136,0.136,0.0,0.0,0.408,0.544,0.408,0.0,0.408,0.0,0.408,0.0,0.0,0.408,0.136,0.272,0.544,0.272,0.0,0.408,0.0,0.0,0.544,0.408,0.0,0.136,0.816,0.136,0.0,0.136,0.136,0.136,0.544,0.0,0.272,0.0,0.136,0.408,0.544,0.0,0.136,0.136,0.136,0.136,0.272,0.136,0.408,0.0,0.136,0.0,0.136,0.952,0.272,0.136,0.0,0.136,0.0,0.136,0.272,0.272,0.136,0.0,0.136,0.0,0.272,0.0,0.0,0.136,0.272,0.408,0.0,0.136,0.136,0.0,0.408,0.544,0.136,0.136,0.0,0.0,0.136,0.0,0.136,0.0,0.408,0.0,0.816,0.68,0.0,0.136,0.136,0.136,0.0,0.136,0.952,0.136,0.408]
 var get_ITI = function() {
   return 2100 + ITIs.shift()
  }
@@ -71,13 +69,13 @@ var getPracticeTrials = function() {
 /* ************************************ */
 var practice_repeats = 0
 // task specific variables
-var practice_length = 16
-var num_blocks = 1
-var block_length = 20
+var practice_length = 12
+var num_blocks = 2
+var block_length = 64
 
 var current_trial = 0
 var exp_stage = 'practice'
-var choices = [37,40]
+var choices = [89, 71]
 var path = '/static/experiments/attention_network_task/images/'
 var images = [path + 'left_arrow.png', path + 'right_arrow.png', path + 'no_arrow.png']
 //preload
@@ -131,7 +129,7 @@ for (var i=0; i<test_stim.length; i++) {
 	test_stim[i] = jsPsych.randomization.repeat(base_test_stim[i], block_length*num_blocks/16)
 }
 // set up stim order based on optimized trial sequence
-var stim_index = [0,1,2,3,2,1,3,2,0,0,1,3,2,3,0,1,1,2,3,0]
+var stim_index = [3,1,1,1,0,3,2,2,3,0,3,2,2,2,1,0,3,0,3,0,1,1,2,2,0,0,3,2,1,3,1,2,0,1,2,0,0,3,2,0,2,2,3,3,3,3,1,1,3,3,3,2,0,1,2,2,2,3,0,2,1,3,1,2,2,1,2,2,1,0,1,3,1,3,0,3,3,3,1,0,2,1,2,0,0,1,3,0,3,1,3,0,1,1,2,0,3,3,2,2,1,0,0,2,0,1,2,2,2,3,0,0,0,0,0,2,3,1,2,2,2,1,1,1,3,3,1,1]
 var ordered_stim = []
 for (var i=0; i<stim_index.length; i++) {
 	var stim = test_stim[stim_index[i]].shift()
@@ -156,12 +154,11 @@ for (b = 0; b < num_blocks; b++) {
 /* define static blocks */
  var test_intro_block = {
 	type: 'poldrack-single-stim',
-	stimulus: '<div class = centerbox><div class = center-text>Wait for experimenter</div></div>',
+	stimulus: '<div class = centerbox><div class = center-text>Get ready!</div></div>',
 	is_html: true,
-	choices: [32],
-	timing_stim: -1, 
-	timing_response: -1,
-	response_ends_trial: true,
+	choices: 'none',
+	timing_stim: 1500, 
+	timing_response: 1500,
 	data: {
 		trial_id: "test_start_block"
 	},
@@ -199,12 +196,12 @@ var rest_block = {
 
  var instructions_block = {
 	type: 'poldrack-single-stim',
-	stimulus: '<div class = centerbox><div class = center-text>Indicate which direction the center arrow is pointing using the left (index finger) and down (middle finger) arrow keys.</div>',
+	stimulus: '<div class = centerbox><div class = center-text>Indicate which direction the center arrow is pointing using your index (left) and middle (right) fingers.</div>',
 	is_html: true,
 	timing_stim: -1, 
-	timing_response: -1,
-	response_ends_trial: true,
-	choices: [32],
+    timing_response: -1,
+    response_ends_trial: true,
+    choices: [32],
 	data: {
 		trial_id: "instructions",
 	},
@@ -276,8 +273,10 @@ var practice_loop = {
 
 /* set up ANT experiment */
 var attention_network_task_experiment = [];
+test_keys(attention_network_task_experiment, choices)
 attention_network_task_experiment.push(instructions_block);
 attention_network_task_experiment.push(practice_loop)
+setup_fmri_intro(attention_network_task_experiment)
 
 /* Set up test trials */
 var trial_num = 0
