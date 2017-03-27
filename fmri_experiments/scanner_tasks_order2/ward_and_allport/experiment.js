@@ -429,8 +429,7 @@ var tohand_block = {
   choices: get_hand_choices,
   is_html: true,
   data: {
-    trial_id: "to_hand",
-    exp_stage: exp_stage
+    trial_id: "to_hand"
   },
   timing_stim: -1,
   timing_response: -1,
@@ -445,7 +444,8 @@ var tohand_block = {
       'start_state': problems[problem_i].start_state,
       'goal_state': problems[problem_i].goal_state.problem,
       'condition': problems[problem_i].goal_state.condition,
-      'problem_id': problem_i
+      'problem_id': problem_i,
+      'exp_stage': exp_stage
     })
   }
 }
@@ -456,8 +456,7 @@ var toboard_block = {
   choices: get_board_choices,
   is_html: true,
   data: {
-    trial_id: "to_board",
-    exp_stage: exp_stage
+    trial_id: "to_board"
   },
   timing_stim: -1,
   timing_response: -1,
@@ -472,7 +471,8 @@ var toboard_block = {
       'start_state': problems[problem_i].start_state,
       'goal_state': problems[problem_i].goal_state.problem,
       'condition': problems[problem_i].goal_state.condition,
-      'problem_id': problem_i
+      'problem_id': problem_i,
+      'exp_stage': exp_stage
     })
   }
 }
