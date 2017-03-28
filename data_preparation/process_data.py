@@ -17,7 +17,8 @@ for task in tasks:
         task_dfs[task] = pd.read_csv(task_path)
     else:
         task_dfs[task] = pd.DataFrame()
-
+        
+# clean data
 for subj_file in glob('../Data/raw/*/*'):
     filey = os.path.basename(subj_file)
     cleaned_file_name = '_cleaned.'.join(filey.split('.'))
@@ -48,17 +49,21 @@ for subj_file in glob('../Data/raw/*/*'):
             df = df.query('%s not in  %s' % (row, vals))
         df.to_csv(cleaned_file_path)
         task_dfs[exp_id] = pd.concat([task_dfs[exp_id], df], axis=0)
+        
 # save group behavior
 for task,df in task_dfs.items():
     df.to_csv('../Data/processed/group_data/%s.csv' % task)
 
 # calculate DVs
-for task_data in glob('../Data/processed/group_data/two*'):
+for task_data in glob('../Data/processed/group_data/*'):
     df = pd.read_csv(task_data)
     exp_id = df.experiment_exp_id.unique()[0]
     print(exp_id)
+    # Experiments whose analysis aren't defined in expanalysis
     if exp_id in ['attention_network_task']:
+        # fmri ANT analysis identical to expanalysis except two conditions are dropped
         dvs,description = calc_ANT_DV(df, use_group_fun = False)
         DVs, valence = organize_DVs(dvs)
     else:
         DVs, valence, description = calc_exp_DVs(df, use_group_fun = False)
+
