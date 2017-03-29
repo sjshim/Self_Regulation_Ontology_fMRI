@@ -14,7 +14,7 @@ task_dfs = {}
 for task in tasks:
     task_path = '../Data/processed/group_data/%s.csv' % task
     if os.path.exists(task_path):
-        task_dfs[task] = pd.read_csv(task_path)
+        task_dfs[task] = pd.read_csv(task_path, index_col=0)
     else:
         task_dfs[task] = pd.DataFrame()
         
@@ -25,7 +25,8 @@ for subj_file in glob('../Data/raw/*/*'):
     cleaned_file_path = os.path.join('../Data/processed', cleaned_file_name)
     # if this file has already been cleaned, continue
     if os.path.exists(cleaned_file_path):
-        continue
+        df = pd.read_csv(cleaned_file_path, index_col=0)
+        exp_id = df.experiment_exp_id.unique()[0]
     else:
         # else proceed
         df = pd.read_csv(subj_file)
@@ -48,15 +49,16 @@ for subj_file in glob('../Data/raw/*/*'):
         for row, vals in drop_dict.items():
             df = df.query('%s not in  %s' % (row, vals))
         df.to_csv(cleaned_file_path)
-        task_dfs[exp_id] = pd.concat([task_dfs[exp_id], df], axis=0)
+    task_dfs[exp_id] = pd.concat([task_dfs[exp_id], df], axis=0)
         
 # save group behavior
 for task,df in task_dfs.items():
     df.to_csv('../Data/processed/group_data/%s.csv' % task)
 
+exp_DVs = {}
 # calculate DVs
 for task_data in glob('../Data/processed/group_data/*'):
-    df = pd.read_csv(task_data)
+    df = pd.read_csv(task_data, index_col=0)
     exp_id = df.experiment_exp_id.unique()[0]
     print(exp_id)
     # Experiments whose analysis aren't defined in expanalysis
@@ -66,4 +68,4 @@ for task_data in glob('../Data/processed/group_data/*'):
         DVs, valence = organize_DVs(dvs)
     else:
         DVs, valence, description = calc_exp_DVs(df, use_group_fun = False)
-
+    exp_DVs[exp_id] = DVs

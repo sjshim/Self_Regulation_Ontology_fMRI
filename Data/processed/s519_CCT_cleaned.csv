@@ -116,4 +116,3 @@
 180,draw_card,0.0,test,columbia_card_task_fmri,17.0,89.0,-80.0,16.0,6.0,2.0,"89,71",102.0,6919.0,,679758,,stim,poldrack-single-stim,44.0,s519
 181,draw_card,0.0,test,columbia_card_task_fmri,17.0,89.0,-80.0,16.0,7.0,2.0,"89,71",119.0,2767.0,,682528,,stim,poldrack-single-stim,44.0,s519
 182,end_round,0.0,test,columbia_card_task_fmri,17.0,71.0,-80.0,16.0,7.0,2.0,"89,71",119.0,429.0,,682960,7.0,stim,poldrack-single-stim,44.0,s519
-184,-1.0,,,columbia_card_task_fmri,,-1.0,,,,,none,,-1.0,,695218,,rest_block,poldrack-single-stim,,s519

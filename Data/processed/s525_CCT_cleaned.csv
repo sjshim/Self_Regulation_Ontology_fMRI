@@ -117,7 +117,6 @@
 181,draw_card,0.0,test,columbia_card_task_fmri,17.0,89.0,-80.0,16.0,1.0,2.0,"89,71",17.0,1201.0,,242288,,stim,poldrack-single-stim,44.0,s525
 182,draw_card,0.0,test,columbia_card_task_fmri,17.0,89.0,-80.0,16.0,2.0,2.0,"89,71",34.0,1138.0,,243429,,stim,poldrack-single-stim,44.0,s525
 183,end_round,0.0,test,columbia_card_task_fmri,17.0,71.0,-80.0,16.0,2.0,2.0,"89,71",34.0,1396.0,,244828,2.0,stim,poldrack-single-stim,44.0,s525
-185,-1.0,,,columbia_card_task_fmri,,-1.0,,,,,none,,-1.0,,257086,,rest_block,poldrack-single-stim,,s525
 186,draw_card,1.0,test,columbia_card_task_fmri,13.0,89.0,-70.0,6.0,1.0,1.0,"89,71",-70.0,1521.0,,259612,1.0,stim,poldrack-single-stim,45.0,s525
 188,draw_card,0.0,test,columbia_card_task_fmri,15.0,89.0,-80.0,6.0,1.0,1.0,"89,71",15.0,1947.0,,264021,,stim,poldrack-single-stim,46.0,s525
 189,end_round,0.0,test,columbia_card_task_fmri,15.0,71.0,-80.0,6.0,1.0,1.0,"89,71",15.0,994.0,,265019,1.0,stim,poldrack-single-stim,46.0,s525
