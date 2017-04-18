@@ -2,6 +2,8 @@ from expanalysis.experiments.processing import clean_data, calc_exp_DVs, organiz
 from glob import glob
 import os
 import pandas as pd
+
+from create_event_utils import create_event_file
 # some DVs are defined in utils if they deviate from normal expanalysis
 from utils import calc_ANT_DV
 
@@ -22,7 +24,9 @@ for task in tasks:
 for subj_file in glob('../Data/raw/*/*'):
     filey = os.path.basename(subj_file)
     cleaned_file_name = '_cleaned.'.join(filey.split('.'))
+    event_file_name = '_events.'.join(filey.split('.')).replace('csv','tsv')
     cleaned_file_path = os.path.join('../Data/processed', cleaned_file_name)
+    events_file_path = os.path.join('../Data/event_files', event_file_name)
     # if this file has already been cleaned, continue
     if os.path.exists(cleaned_file_path):
         df = pd.read_csv(cleaned_file_path, index_col=0)
@@ -41,7 +45,10 @@ for subj_file in glob('../Data/raw/*/*'):
         # change column from subject to worker_id
         df.rename(columns={'subject':'worker_id'}, inplace=True)
         # post process data, drop rows, etc.....
-        df = clean_data(df, exp_id=exp_id)
+        drop_columns = ['view_history', 'stimulus', 'trial_index', 
+                        'internal_node_id', 'timing_post_trial', 
+                        'test_start_block','exp_id']
+        df = clean_data(df, exp_id=exp_id, drop_columns=drop_columns)
         # drop unnecessary rows 
         drop_dict = {'trial_type': ['text'], 
                      'trial_id': ['fmri_response_test', 'fmri_scanner_wait', 
@@ -49,6 +56,11 @@ for subj_file in glob('../Data/raw/*/*'):
         for row, vals in drop_dict.items():
             df = df.query('%s not in  %s' % (row, vals))
         df.to_csv(cleaned_file_path)
+        events_df = create_event_file(df, exp_id)
+        if events_df is not None:
+            events_df.to_csv(events_file_path, sep='\t')
+        else:
+            print("Events file wasn't created for %s" % subj_file)
     task_dfs[exp_id] = pd.concat([task_dfs[exp_id], df], axis=0)
         
 # save group behavior
