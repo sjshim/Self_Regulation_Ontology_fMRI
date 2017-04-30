@@ -14,11 +14,7 @@ tasks = ['attention_network_task','columbia_card_task_fmri',
          'twobytwo', 'ward_and_allport']
 task_dfs = {}
 for task in tasks:
-    task_path = '../Data/processed/group_data/%s.csv' % task
-    if os.path.exists(task_path):
-        task_dfs[task] = pd.read_csv(task_path, index_col=0)
-    else:
-        task_dfs[task] = pd.DataFrame()
+    task_dfs[task] = pd.DataFrame()
         
 # clean data
 for subj_file in glob('../Data/raw/*/*'):
