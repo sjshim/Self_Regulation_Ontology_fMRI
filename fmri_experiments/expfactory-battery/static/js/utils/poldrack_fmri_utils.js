@@ -77,8 +77,8 @@ var create_trigger_block = function(trigger) {
 }
 
 var get_finger = function (choice) {
-	var keycode_lookup = {'B': 'thumb', 'Y': 'index', 'G': 'middle', 
-					'R': 'ring', 'M': 'pinky'}
+	var keycode_lookup = {'B': 'thumb', 'Y': 'index finger', 'G': 'middle finger', 
+					'R': 'ring finger', 'M': 'pinky finger'}
 	var finger = keycode_lookup[String.fromCharCode(choice)]
 	return finger
 }
@@ -86,7 +86,7 @@ var get_finger = function (choice) {
 // test response keys
 var create_key_test_block = function(choice) {
 	var button = get_finger(choice)
-	var instruct_text = "Please press your " + button + " finger"
+	var instruct_text = "Please press your " + button
 	if (button == null) {
 		instruct_text = "Wait for instructions from the experimenter."
 	}
