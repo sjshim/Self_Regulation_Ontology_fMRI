@@ -1,3 +1,5 @@
 .DS_Store
 __pycache__
 .pyc
+Data/processed/*
+Data/event_files/*
