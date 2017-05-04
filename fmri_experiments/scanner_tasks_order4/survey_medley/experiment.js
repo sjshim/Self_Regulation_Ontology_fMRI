@@ -99,11 +99,11 @@ for (var si=0; si<survey_items.length; si++) {
 		var item_text = '<div class = centerbox><p class=item-text>' + items[i] + '</p></div><div class=response-text><div class=response-item>' + responses[si].join('</div><div class=response-item>') + '</div></div>'
 		var item_coding = item_codings[si][i]
 		var item_data = {'survey': surveys[si], 
+						'item_responses': survey_choices[si],
 						'item_coding': item_coding,
 						'item_text': items[i],
 						'options': responses[si]}
-		var item_choice = survey_choices[si]
-		stims.push({'stimulus': item_text, 'data': item_data, 'choices': item_choice})
+		stims.push({'stimulus': item_text, 'data': item_data, 'choices': [66,89,71,82,77]})
 	}
 }
 var stim_index = [14,32,30,8,39,7,4,37,20,17,24,9,5,34,0,28,13,35,25,36,18,11,38,22,23,15,33,26,29,19,16,12,1,3,6,10,31,27,2,21]
@@ -172,11 +172,12 @@ var test_block = {
 	timing_response: get_ITI,
 	timing_stim: 8500,
 	timing_post_trial: 0,
+	prompt: 'Left most response: thumb',
 	on_finish: function(data) {
-		var response = data.possible_responses.indexOf(data.key_press)+1
+		var response = data.item_responses.indexOf(data.key_press)+1
 		var coded_response = response
-		if (data.item_coding == 'reverse') {
-			coded_response = (data.possible_responses.length+1) - response
+		if ((data.item_coding == 'reverse') & (response>0)) {
+			coded_response = (data.item_responses.length+1) - response
 		}
 		jsPsych.data.addDataToLastTrial({'response': response, 'coded_response': coded_response})
 	}
