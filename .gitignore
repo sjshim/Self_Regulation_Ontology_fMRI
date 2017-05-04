@@ -3,3 +3,5 @@ __pycache__
 .pyc
 Data/processed/*
 Data/event_files/*
+fmri_experiments/temp_tasklist.json
+
