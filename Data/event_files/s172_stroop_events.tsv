@@ -1,97 +1,97 @@
-	onset	duration	response_time	trial_type	correct	experiment_exp_id	key_press	stim_color	stim_duration	stim_word	trial_num	worker_id
-43	5.782	0.0001	0.563	congruent	1.0	stroop	82	green	1500.0	green	0.0	s172
-44	7.784	0.0001	0.408	incongruent	1.0	stroop	71	blue	1500.0	red	1.0	s172
-45	10.193	0.0001	0.473	congruent	1.0	stroop	71	blue	1500.0	blue	2.0	s172
-46	12.195	0.0001	0.545	congruent	1.0	stroop	82	green	1500.0	green	3.0	s172
-47	14.333	0.0001	0.516	congruent	1.0	stroop	71	blue	1500.0	blue	4.0	s172
-48	16.336	0.0001	0.562	congruent	1.0	stroop	82	green	1500.0	green	5.0	s172
-49	18.337	0.0001	0.466	congruent	1.0	stroop	71	blue	1500.0	blue	6.0	s172
-50	20.34	0.0001	0.57	incongruent	1.0	stroop	82	green	1500.0	blue	7.0	s172
-51	22.615	0.0001	0.384	congruent	1.0	stroop	89	red	1500.0	red	8.0	s172
-52	24.617	0.0001	0.446	incongruent	1.0	stroop	71	blue	1500.0	red	9.0	s172
-53	26.891	0.0001	0.562	incongruent	1.0	stroop	82	green	1500.0	red	10.0	s172
-54	29.166	0.0001	0.645	incongruent	1.0	stroop	82	green	1500.0	blue	11.0	s172
-55	31.168	0.0001	0.657	incongruent	1.0	stroop	71	blue	1500.0	red	12.0	s172
-56	33.85	0.0001	0.514	congruent	1.0	stroop	71	blue	1500.0	blue	13.0	s172
-57	35.853	0.0001	0.631	incongruent	1.0	stroop	82	green	1500.0	red	14.0	s172
-58	38.127	0.0001	0.46	congruent	1.0	stroop	82	green	1500.0	green	15.0	s172
-59	40.129	0.0001	0.425	congruent	1.0	stroop	89	red	1500.0	red	16.0	s172
-60	42.131	0.0001	0.536	congruent	1.0	stroop	71	blue	1500.0	blue	17.0	s172
-61	44.406	0.0001	0.389	incongruent	1.0	stroop	89	red	1500.0	green	18.0	s172
-62	46.544	0.0001	0.402	congruent	1.0	stroop	71	blue	1500.0	blue	19.0	s172
-63	49.089	0.0001	0.417	congruent	1.0	stroop	82	green	1500.0	green	20.0	s172
-64	51.5	0.0001	0.554	incongruent	1.0	stroop	89	red	1500.0	blue	21.0	s172
-65	53.501	0.0001	0.435	incongruent	1.0	stroop	89	red	1500.0	green	22.0	s172
-66	55.503	0.0001	0.689	incongruent	1.0	stroop	89	red	1500.0	green	23.0	s172
-67	57.506	0.0001	0.577	incongruent	1.0	stroop	82	green	1500.0	red	24.0	s172
-68	60.052	0.0001	0.539	congruent	1.0	stroop	89	red	1500.0	red	25.0	s172
-69	62.189	0.0001	0.446	congruent	1.0	stroop	71	blue	1500.0	blue	26.0	s172
-70	64.192	0.0001	0.518	congruent	1.0	stroop	89	red	1500.0	red	27.0	s172
-71	66.194	0.0001	0.551	congruent	1.0	stroop	71	blue	1500.0	blue	28.0	s172
-72	68.469	0.0001	0.584	congruent	1.0	stroop	89	red	1500.0	red	29.0	s172
-73	70.471	0.0001	0.528	incongruent	1.0	stroop	71	blue	1500.0	green	30.0	s172
-74	72.474	0.0001	0.482	congruent	1.0	stroop	89	red	1500.0	red	31.0	s172
-75	74.611	0.0001	0.637	incongruent	1.0	stroop	71	blue	1500.0	green	32.0	s172
-76	76.613	0.0001	0.481	incongruent	1.0	stroop	71	blue	1500.0	green	33.0	s172
-77	78.888	0.0001	0.583	incongruent	1.0	stroop	82	green	1500.0	red	34.0	s172
-78	81.027	0.0001	0.63	congruent	1.0	stroop	82	green	1500.0	green	35.0	s172
-79	83.438	0.0001	0.856	incongruent	0.0	stroop	71	red	1500.0	blue	36.0	s172
-80	85.44	0.0001	0.667	congruent	1.0	stroop	82	green	1500.0	green	37.0	s172
-81	87.442	0.0001	0.412	congruent	1.0	stroop	89	red	1500.0	red	38.0	s172
-82	90.259	0.0001	0.468	incongruent	1.0	stroop	89	red	1500.0	green	39.0	s172
-83	92.261	0.0001	0.442	incongruent	1.0	stroop	71	blue	1500.0	red	40.0	s172
-84	94.264	0.0001	0.715	incongruent	1.0	stroop	82	green	1500.0	red	41.0	s172
-85	96.402	0.0001	0.742	congruent	1.0	stroop	71	blue	1500.0	blue	42.0	s172
-86	98.404	0.0001	0.648	congruent	1.0	stroop	82	green	1500.0	green	43.0	s172
-87	100.406	0.0001	1.046	incongruent	1.0	stroop	82	green	1500.0	blue	44.0	s172
-88	102.408	0.0001	0.729	congruent	1.0	stroop	82	green	1500.0	green	45.0	s172
-89	104.411	0.0001	0.572	incongruent	1.0	stroop	89	red	1500.0	blue	46.0	s172
-90	106.413	0.0001	0.703	congruent	1.0	stroop	82	green	1500.0	green	47.0	s172
-91	108.415	0.0001	0.552	incongruent	1.0	stroop	89	red	1500.0	blue	48.0	s172
-92	110.416	0.0001	0.444	congruent	1.0	stroop	89	red	1500.0	red	49.0	s172
-93	112.691	0.0001	0.952	incongruent	1.0	stroop	89	red	1500.0	blue	50.0	s172
-94	114.692	0.0001	0.832	incongruent	1.0	stroop	82	green	1500.0	blue	51.0	s172
-95	116.831	0.0001	0.675	congruent	1.0	stroop	82	green	1500.0	green	52.0	s172
-96	118.833	0.0001	0.768	congruent	1.0	stroop	71	blue	1500.0	blue	53.0	s172
-97	120.972	0.0001	0.465	congruent	1.0	stroop	89	red	1500.0	red	54.0	s172
-98	122.974	0.0001	0.49	congruent	1.0	stroop	89	red	1500.0	red	55.0	s172
-99	124.976	0.0001	0.558	congruent	1.0	stroop	89	red	1500.0	red	56.0	s172
-100	126.979	0.0001	0.759	incongruent	1.0	stroop	89	red	1500.0	blue	57.0	s172
-101	129.253	0.0001	0.537	incongruent	1.0	stroop	71	blue	1500.0	red	58.0	s172
-102	131.255	0.0001	0.682	incongruent	1.0	stroop	89	red	1500.0	blue	59.0	s172
-103	133.393	0.0001	0.639	incongruent	1.0	stroop	82	green	1500.0	blue	60.0	s172
-104	135.803	0.0001	0.528	congruent	1.0	stroop	82	green	1500.0	green	61.0	s172
-105	138.078	0.0001	0.675	incongruent	1.0	stroop	89	red	1500.0	green	62.0	s172
-106	140.759	0.0001	0.408	congruent	1.0	stroop	89	red	1500.0	red	63.0	s172
-107	142.761	0.0001	0.716	congruent	1.0	stroop	82	green	1500.0	green	64.0	s172
-108	145.171	0.0001	0.69	congruent	1.0	stroop	71	blue	1500.0	blue	65.0	s172
-109	147.309	0.0001	0.526	congruent	1.0	stroop	71	blue	1500.0	blue	66.0	s172
-110	149.992	0.0001	0.767	incongruent	1.0	stroop	71	blue	1500.0	green	67.0	s172
-111	151.995	0.0001	0.597	incongruent	1.0	stroop	82	green	1500.0	blue	68.0	s172
-112	154.133	0.0001	0.781	incongruent	1.0	stroop	89	red	1500.0	green	69.0	s172
-113	157.087	0.0001	0.616	congruent	1.0	stroop	82	green	1500.0	green	70.0	s172
-114	159.09	0.0001	0.659	incongruent	1.0	stroop	71	blue	1500.0	red	71.0	s172
-115	161.363	0.0001	0.774	incongruent	1.0	stroop	71	blue	1500.0	green	72.0	s172
-116	163.366	0.0001	0.798	incongruent	1.0	stroop	89	red	1500.0	green	73.0	s172
-117	165.368	0.0001	0.692	congruent	1.0	stroop	89	red	1500.0	red	74.0	s172
-118	167.369	0.0001	0.462	congruent	1.0	stroop	89	red	1500.0	red	75.0	s172
-119	169.371	0.0001	0.764	incongruent	1.0	stroop	71	blue	1500.0	green	76.0	s172
-120	171.509	0.0001	0.408	congruent	1.0	stroop	71	blue	1500.0	blue	77.0	s172
-121	173.512	0.0001	0.571	congruent	1.0	stroop	89	red	1500.0	red	78.0	s172
-122	175.514	0.0001	0.692	incongruent	1.0	stroop	82	green	1500.0	blue	79.0	s172
-123	177.652	0.0001	0.475	congruent	1.0	stroop	82	green	1500.0	green	80.0	s172
-124	179.654	0.0001	0.588	incongruent	1.0	stroop	71	blue	1500.0	red	81.0	s172
-125	181.656	0.0001	0.618	incongruent	1.0	stroop	71	blue	1500.0	green	82.0	s172
-126	183.795	0.0001	0.617	incongruent	1.0	stroop	82	green	1500.0	red	83.0	s172
-127	185.932	0.0001	0.675	congruent	1.0	stroop	71	blue	1500.0	blue	84.0	s172
-128	188.206	0.0001	0.531	congruent	1.0	stroop	71	blue	1500.0	blue	85.0	s172
-129	190.888	0.0001	0.86	incongruent	1.0	stroop	71	blue	1500.0	green	86.0	s172
-130	192.89	0.0001	0.519	congruent	1.0	stroop	82	green	1500.0	green	87.0	s172
-131	194.892	0.0001	0.835	congruent	1.0	stroop	71	blue	1500.0	blue	88.0	s172
-132	197.167	0.0001	0.669	incongruent	1.0	stroop	71	blue	1500.0	red	89.0	s172
-133	199.169	0.0001	0.42	incongruent	1.0	stroop	89	red	1500.0	green	90.0	s172
-134	201.171	0.0001	0.525	congruent	1.0	stroop	89	red	1500.0	red	91.0	s172
-135	203.173	0.0001	0.624	incongruent	1.0	stroop	82	green	1500.0	red	92.0	s172
-136	205.175	0.0001	0.661	incongruent	1.0	stroop	82	green	1500.0	blue	93.0	s172
-137	207.177	0.0001	0.563	incongruent	1.0	stroop	82	green	1500.0	red	94.0	s172
-138	209.179	0.0001	0.596	incongruent	1.0	stroop	89	red	1500.0	blue	95.0	s172
+onset	duration	response_time	correct	experiment_exp_id	stim_color	stim_word	timing_post_trial	trial_num	worker_id
+3.51	1.5	0.563	1.0	stroop	green	green	0.0	0.0	s172
+5.784	1.5	0.408	1.0	stroop	blue	red	0.0	1.0	s172
+7.785	1.5	0.473	1.0	stroop	blue	blue	0.0	2.0	s172
+10.195	1.5	0.545	1.0	stroop	green	green	0.0	3.0	s172
+12.197	1.5	0.516	1.0	stroop	blue	blue	0.0	4.0	s172
+14.336	1.5	0.562	1.0	stroop	green	green	0.0	5.0	s172
+16.337	1.5	0.466	1.0	stroop	blue	blue	0.0	6.0	s172
+18.34	1.5	0.57	1.0	stroop	green	blue	0.0	7.0	s172
+20.343	1.5	0.384	1.0	stroop	red	red	0.0	8.0	s172
+22.617	1.5	0.446	1.0	stroop	blue	red	0.0	9.0	s172
+24.619	1.5	0.562	1.0	stroop	green	red	0.0	10.0	s172
+26.894	1.5	0.645	1.0	stroop	green	blue	0.0	11.0	s172
+29.168	1.5	0.657	1.0	stroop	blue	red	0.0	12.0	s172
+31.17	1.5	0.514	1.0	stroop	blue	blue	0.0	13.0	s172
+33.853	1.5	0.631	1.0	stroop	green	red	0.0	14.0	s172
+35.855	1.5	0.46	1.0	stroop	green	green	0.0	15.0	s172
+38.129	1.5	0.425	1.0	stroop	red	red	0.0	16.0	s172
+40.131	1.5	0.536	1.0	stroop	blue	blue	0.0	17.0	s172
+42.134	1.5	0.389	1.0	stroop	red	green	0.0	18.0	s172
+44.408	1.5	0.402	1.0	stroop	blue	blue	0.0	19.0	s172
+46.545	1.5	0.417	1.0	stroop	green	green	0.0	20.0	s172
+49.092	1.5	0.554	1.0	stroop	red	blue	0.0	21.0	s172
+51.501	1.5	0.435	1.0	stroop	red	green	0.0	22.0	s172
+53.503	1.5	0.689	1.0	stroop	red	green	0.0	23.0	s172
+55.506	1.5	0.577	1.0	stroop	green	red	0.0	24.0	s172
+57.508	1.5	0.539	1.0	stroop	red	red	0.0	25.0	s172
+60.053	1.5	0.446	1.0	stroop	blue	blue	0.0	26.0	s172
+62.192	1.5	0.518	1.0	stroop	red	red	0.0	27.0	s172
+64.194	1.5	0.551	1.0	stroop	blue	blue	0.0	28.0	s172
+66.197	1.5	0.584	1.0	stroop	red	red	0.0	29.0	s172
+68.471	1.5	0.528	1.0	stroop	blue	green	0.0	30.0	s172
+70.474	1.5	0.482	1.0	stroop	red	red	0.0	31.0	s172
+72.475	1.5	0.637	1.0	stroop	blue	green	0.0	32.0	s172
+74.613	1.5	0.481	1.0	stroop	blue	green	0.0	33.0	s172
+76.616	1.5	0.583	1.0	stroop	green	red	0.0	34.0	s172
+78.891	1.5	0.63	1.0	stroop	green	green	0.0	35.0	s172
+81.03	1.5	0.856	0.0	stroop	red	blue	0.0	36.0	s172
+83.44	1.5	0.667	1.0	stroop	green	green	0.0	37.0	s172
+85.442	1.5	0.412	1.0	stroop	red	red	0.0	38.0	s172
+87.443	1.5	0.468	1.0	stroop	red	green	0.0	39.0	s172
+90.261	1.5	0.442	1.0	stroop	blue	red	0.0	40.0	s172
+92.264	1.5	0.715	1.0	stroop	green	red	0.0	41.0	s172
+94.266	1.5	0.742	1.0	stroop	blue	blue	0.0	42.0	s172
+96.404	1.5	0.648	1.0	stroop	green	green	0.0	43.0	s172
+98.406	1.5	1.046	1.0	stroop	green	blue	0.0	44.0	s172
+100.408	1.5	0.729	1.0	stroop	green	green	0.0	45.0	s172
+102.411	1.5	0.572	1.0	stroop	red	blue	0.0	46.0	s172
+104.413	1.5	0.703	1.0	stroop	green	green	0.0	47.0	s172
+106.415	1.5	0.552	1.0	stroop	red	blue	0.0	48.0	s172
+108.416	1.5	0.444	1.0	stroop	red	red	0.0	49.0	s172
+110.419	1.5	0.952	1.0	stroop	red	blue	0.0	50.0	s172
+112.692	1.5	0.832	1.0	stroop	green	blue	0.0	51.0	s172
+114.695	1.5	0.675	1.0	stroop	green	green	0.0	52.0	s172
+116.833	1.5	0.768	1.0	stroop	blue	blue	0.0	53.0	s172
+118.836	1.5	0.465	1.0	stroop	red	red	0.0	54.0	s172
+120.974	1.5	0.49	1.0	stroop	red	red	0.0	55.0	s172
+122.976	1.5	0.558	1.0	stroop	red	red	0.0	56.0	s172
+124.979	1.5	0.759	1.0	stroop	red	blue	0.0	57.0	s172
+126.981	1.5	0.537	1.0	stroop	blue	red	0.0	58.0	s172
+129.255	1.5	0.682	1.0	stroop	red	blue	0.0	59.0	s172
+131.257	1.5	0.639	1.0	stroop	green	blue	0.0	60.0	s172
+133.395	1.5	0.528	1.0	stroop	green	green	0.0	61.0	s172
+135.806	1.5	0.675	1.0	stroop	red	green	0.0	62.0	s172
+138.079	1.5	0.408	1.0	stroop	red	red	0.0	63.0	s172
+140.761	1.5	0.716	1.0	stroop	green	green	0.0	64.0	s172
+142.763	1.5	0.69	1.0	stroop	blue	blue	0.0	65.0	s172
+145.173	1.5	0.526	1.0	stroop	blue	blue	0.0	66.0	s172
+147.312	1.5	0.767	1.0	stroop	blue	green	0.0	67.0	s172
+149.995	1.5	0.597	1.0	stroop	green	blue	0.0	68.0	s172
+151.997	1.5	0.781	1.0	stroop	red	green	0.0	69.0	s172
+154.135	1.5	0.616	1.0	stroop	green	green	0.0	70.0	s172
+157.09	1.5	0.659	1.0	stroop	blue	red	0.0	71.0	s172
+159.091	1.5	0.774	1.0	stroop	blue	green	0.0	72.0	s172
+161.366	1.5	0.798	1.0	stroop	red	green	0.0	73.0	s172
+163.368	1.5	0.692	1.0	stroop	red	red	0.0	74.0	s172
+165.369	1.5	0.462	1.0	stroop	red	red	0.0	75.0	s172
+167.371	1.5	0.764	1.0	stroop	blue	green	0.0	76.0	s172
+169.373	1.5	0.408	1.0	stroop	blue	blue	0.0	77.0	s172
+171.512	1.5	0.571	1.0	stroop	red	red	0.0	78.0	s172
+173.514	1.5	0.692	1.0	stroop	green	blue	0.0	79.0	s172
+175.516	1.5	0.475	1.0	stroop	green	green	0.0	80.0	s172
+177.654	1.5	0.588	1.0	stroop	blue	red	0.0	81.0	s172
+179.656	1.5	0.618	1.0	stroop	blue	green	0.0	82.0	s172
+181.659	1.5	0.617	1.0	stroop	green	red	0.0	83.0	s172
+183.796	1.5	0.675	1.0	stroop	blue	blue	0.0	84.0	s172
+185.934	1.5	0.531	1.0	stroop	blue	blue	0.0	85.0	s172
+188.208	1.5	0.86	1.0	stroop	blue	green	0.0	86.0	s172
+190.89	1.5	0.519	1.0	stroop	green	green	0.0	87.0	s172
+192.892	1.5	0.835	1.0	stroop	blue	blue	0.0	88.0	s172
+194.895	1.5	0.669	1.0	stroop	blue	red	0.0	89.0	s172
+197.169	1.5	0.42	1.0	stroop	red	green	0.0	90.0	s172
+199.171	1.5	0.525	1.0	stroop	red	red	0.0	91.0	s172
+201.173	1.5	0.624	1.0	stroop	green	red	0.0	92.0	s172
+203.175	1.5	0.661	1.0	stroop	green	blue	0.0	93.0	s172
+205.177	1.5	0.563	1.0	stroop	green	red	0.0	94.0	s172
+207.179	1.5	0.596	1.0	stroop	red	blue	0.0	95.0	s172

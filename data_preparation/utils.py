@@ -1,6 +1,31 @@
 from expanalysis.experiments.jspsych_processing import ANT_HDDM, EZ_diffusion, \
     get_post_error_slow, group_decorate
+import pandas as pd
 
+# function to correct processing of a few problematic files
+# need to change time_elapsed to reflect the fact that fmri triggers were
+# sent outto quickly (at 8 times the rate), thus starting the scan 14 TRs
+# early. Those 14 TRs of data therefore need to be thrown out, which is
+# accomplished by setting the "0" of the scan 14 TRs later
+def get_timing_correction(filey, TR=680, n_TRs=14):
+    problematic_files = ['s568_MotorStop.csv', 's568_Stroop.csv', 
+                         's568_SurveyMedley.csv', 's568_DPX.csv',
+                         's568_Discount.csv',
+                         's556_MotorStop.csv', 's556_Stroop.csv', 
+                         's556_SurveyMedley.csv', 's556_DPX.csv',
+                         's556_Discount.csv',
+                         's561_WATT.csv', 's561_ANT.csv', 
+                         's561_TwoByTwo.csv', 's561_CCT.csv',
+                         's561_StopSignal.csv',]
+    tr_correction = TR * n_TRs
+    if filey in problematic_files:
+        return tr_correction
+    else:
+        return 0
+    
+
+
+# DV functions for fmri tasks if not already created in expfactory-analysis
 @group_decorate(group_fun = ANT_HDDM)
 def calc_ANT_DV(df, dvs = {}):
     """ Calculate dv for attention network task: Accuracy and average reaction time

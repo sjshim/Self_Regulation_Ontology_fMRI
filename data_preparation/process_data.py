@@ -3,9 +3,9 @@ from glob import glob
 import os
 import pandas as pd
 
-from create_event_utils import create_event_file
+from create_event_utils import create_events, create_motor_events
 # some DVs are defined in utils if they deviate from normal expanalysis
-from utils import calc_ANT_DV
+from utils import calc_ANT_DV, get_timing_correction
 
 # set up dictionary of dataframes for each task
 tasks = ['attention_network_task','columbia_card_task_fmri',
@@ -14,11 +14,7 @@ tasks = ['attention_network_task','columbia_card_task_fmri',
          'twobytwo', 'ward_and_allport']
 task_dfs = {}
 for task in tasks:
-    task_path = '../Data/processed/group_data/%s.csv' % task
-    if os.path.exists(task_path):
-        task_dfs[task] = pd.read_csv(task_path, index_col=0)
-    else:
-        task_dfs[task] = pd.DataFrame()
+    task_dfs[task] = pd.DataFrame()
         
 # clean data
 for subj_file in glob('../Data/raw/*/*'):
@@ -29,7 +25,7 @@ for subj_file in glob('../Data/raw/*/*'):
     events_file_path = os.path.join('../Data/event_files', event_file_name)
     # if this file has already been cleaned, continue
     if os.path.exists(cleaned_file_path):
-        df = pd.read_csv(cleaned_file_path, index_col=0)
+        df = pd.read_csv(cleaned_file_path)
         exp_id = df.experiment_exp_id.unique()[0]
     else:
         # else proceed
@@ -37,6 +33,8 @@ for subj_file in glob('../Data/raw/*/*'):
         # set time_elapsed in reference to the last trigger of internal calibration
         start_time = df.query('trial_id == "fmri_trigger_wait"').iloc[-1]['time_elapsed']
         df.time_elapsed-=start_time
+        # correct start time for problematic scans
+        df.time_elapsed-=get_timing_correction(filey)
         # add exp_id to every row
         exp_id = df.iloc[-2].exp_id
         if exp_id == 'columbia_card_task_hot':
@@ -46,8 +44,7 @@ for subj_file in glob('../Data/raw/*/*'):
         df.rename(columns={'subject':'worker_id'}, inplace=True)
         # post process data, drop rows, etc.....
         drop_columns = ['view_history', 'stimulus', 'trial_index', 
-                        'internal_node_id', 'timing_post_trial', 
-                        'test_start_block','exp_id']
+                        'internal_node_id', 'test_start_block','exp_id']
         df = clean_data(df, exp_id=exp_id, drop_columns=drop_columns)
         # drop unnecessary rows 
         drop_dict = {'trial_type': ['text'], 
@@ -55,22 +52,27 @@ for subj_file in glob('../Data/raw/*/*'):
                                   'fmri_trigger_wait', 'fmri_buffer']}
         for row, vals in drop_dict.items():
             df = df.query('%s not in  %s' % (row, vals))
-        df.to_csv(cleaned_file_path)
-        events_df = create_event_file(df, exp_id)
+        df.to_csv(cleaned_file_path, index=False)
+        # create event file for task contrasts
+        events_df = create_events(df, exp_id)
         if events_df is not None:
-            events_df.to_csv(events_file_path, sep='\t')
+            events_df.to_csv(events_file_path, sep='\t', index=False)
         else:
             print("Events file wasn't created for %s" % subj_file)
+        # create event file for motor contrast
+        motor_events_df = create_motor_events(df)
+        motor_events_file_path = events_file_path.replace('events', 'motor_events')
+        motor_events_df.to_csv(motor_events_file_path, sep='\t', index=False)
     task_dfs[exp_id] = pd.concat([task_dfs[exp_id], df], axis=0)
         
 # save group behavior
 for task,df in task_dfs.items():
-    df.to_csv('../Data/processed/group_data/%s.csv' % task)
+    df.to_csv('../Data/processed/group_data/%s.csv' % task, index=False)
 
 exp_DVs = {}
 # calculate DVs
 for task_data in glob('../Data/processed/group_data/*'):
-    df = pd.read_csv(task_data, index_col=0)
+    df = pd.read_csv(task_data)
     exp_id = df.experiment_exp_id.unique()[0]
     print(exp_id)
     # Experiments whose analysis aren't defined in expanalysis
