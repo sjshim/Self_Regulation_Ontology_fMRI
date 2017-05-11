@@ -1,7 +1,9 @@
 .DS_Store
 __pycache__
 .pyc
+.ipynb_checkpoints
 Data/processed/*
 Data/event_files/*
 fmri_experiments/temp_tasklist.json
+fmri_analysis/Data/*
 

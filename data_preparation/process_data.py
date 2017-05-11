@@ -3,7 +3,7 @@ from glob import glob
 import os
 import pandas as pd
 
-from create_event_utils import create_events, create_motor_events
+from create_event_utils import create_events
 # some DVs are defined in utils if they deviate from normal expanalysis
 from utils import calc_ANT_DV, get_timing_correction
 
@@ -53,16 +53,13 @@ for subj_file in glob('../Data/raw/*/*'):
         for row, vals in drop_dict.items():
             df = df.query('%s not in  %s' % (row, vals))
         df.to_csv(cleaned_file_path, index=False)
+    if not os.path.exists(events_file_path):
         # create event file for task contrasts
         events_df = create_events(df, exp_id)
         if events_df is not None:
             events_df.to_csv(events_file_path, sep='\t', index=False)
         else:
             print("Events file wasn't created for %s" % subj_file)
-        # create event file for motor contrast
-        motor_events_df = create_motor_events(df)
-        motor_events_file_path = events_file_path.replace('events', 'motor_events')
-        motor_events_df.to_csv(motor_events_file_path, sep='\t', index=False)
     task_dfs[exp_id] = pd.concat([task_dfs[exp_id], df], axis=0)
         
 # save group behavior
