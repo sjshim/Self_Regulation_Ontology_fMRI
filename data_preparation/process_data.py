@@ -68,7 +68,7 @@ for task,df in task_dfs.items():
 
 exp_DVs = {}
 # calculate DVs
-for task_data in glob('../Data/processed/group_data/*'):
+for task_data in glob('../Data/processed/group_data/*csv'):
     df = pd.read_csv(task_data)
     exp_id = df.experiment_exp_id.unique()[0]
     print(exp_id)

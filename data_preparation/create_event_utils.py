@@ -16,8 +16,8 @@ def create_events(df, exp_id):
     
 def create_stroop_event(df):
     columns_to_drop = ['correct_response', 'exp_stage', 
-                       'feedback_duration', 'key_press', 
-                       'possible_responses', 'text', 'trial_id']
+                       'feedback_duration', 'possible_responses', 
+                       'text', 'trial_id']
     events_df = df[df['time_elapsed']>0]
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.condition
