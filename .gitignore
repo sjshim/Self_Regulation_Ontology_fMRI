@@ -6,6 +6,7 @@ Data/processed/*
 Data/event_files/*
 fmri_experiments/temp_tasklist.json
 fmri_analysis/Data/*
+fmri_analysis/datasink
 fmri_analysis/crash*
 fmri_analysis/workingdir
 

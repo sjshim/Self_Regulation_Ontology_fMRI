@@ -87,9 +87,6 @@ def parse_EVs(events_df, task):
     if task == "stroop":
         get_ev_vars(events_df, 'trial_type', [('congruent','congruent'), 
                                               ('incongruent','incongruent')], duration='response_time')
-        get_ev_vars(events_df, 'key_press', [(89,'index_finger'), 
-                                              (71,'middle_finger'),
-                                              (82, 'ring_finger')], duration='response_time')
         get_ev_vars(events_df, 'correct', [(0, 'error')], duration='block_duration')
     return conditions, onsets, durations, amplitudes
                                                 
