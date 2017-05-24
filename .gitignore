@@ -1,6 +1,6 @@
 .DS_Store
 __pycache__
-.pyc
+*.pyc
 .ipynb_checkpoints
 Data/processed/*
 Data/event_files/*
