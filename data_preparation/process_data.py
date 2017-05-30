@@ -53,19 +53,35 @@ for subj_file in glob('../Data/raw/*/*'):
         for row, vals in drop_dict.items():
             df = df.query('%s not in  %s' % (row, vals))
         df.to_csv(cleaned_file_path, index=False)
-    if not os.path.exists(events_file_path):
-        # create event file for task contrasts
-        events_df = create_events(df, exp_id)
-        if events_df is not None:
-            events_df.to_csv(events_file_path, sep='\t', index=False)
-        else:
-            print("Events file wasn't created for %s" % subj_file)
     task_dfs[exp_id] = pd.concat([task_dfs[exp_id], df], axis=0)
         
 # save group behavior
 for task,df in task_dfs.items():
     df.to_csv('../Data/processed/group_data/%s.csv' % task, index=False)
+    
+# get 90th percentile reaction time for events files:
+task_90th_rts = {task: df.rt.quantile(.9) for task,df in task_dfs.items()}
 
+for subj_file in glob('../Data/raw/*/*'):   
+    filey = os.path.basename(subj_file)
+    cleaned_file_name = '_cleaned.'.join(filey.split('.'))
+    event_file_name = '_events.'.join(filey.split('.')).replace('csv','tsv')
+    cleaned_file_path = os.path.join('../Data/processed', cleaned_file_name)
+    events_file_path = os.path.join('../Data/event_files', event_file_name)
+    
+    # get cleaned file
+    df = pd.read_csv(cleaned_file_path)
+    exp_id = df.experiment_exp_id.unique()[0]
+    task_rt = task_90th_rts[exp_id]
+    if not os.path.exists(events_file_path):
+        # create event file for task contrasts
+        events_df = create_events(df, exp_id, duration=task_rt)
+        if events_df is not None:
+            events_df.to_csv(events_file_path, sep='\t', index=False)
+        else:
+            print("Events file wasn't created for %s" % subj_file)
+
+"""
 exp_DVs = {}
 # calculate DVs
 for task_data in glob('../Data/processed/group_data/*csv'):
@@ -80,3 +96,4 @@ for task_data in glob('../Data/processed/group_data/*csv'):
     else:
         DVs, valence, description = calc_exp_DVs(df, use_group_fun = False)
     exp_DVs[exp_id] = DVs
+"""

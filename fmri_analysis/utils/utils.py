@@ -42,7 +42,7 @@ def move_EV(subj, task):
     return new_events_file
     
 def move_EVs(overwrite=True):
-    tasks = ['ANT', 'stroop']
+    tasks = ['ANT','DPX', 'stroop', 'twoByTwo']
     fmri_data = get_info('fmri_data_directory')
     created_files = []
     for subj_file in glob.glob(join(fmri_data,'sub*')):
@@ -57,6 +57,41 @@ def move_EVs(overwrite=True):
                     print('Move_EV failed for the %s: %s' % (subj, task))
     return created_files
 
+
+def get_contrasts(task):
+    contrast_list = []
+    if task == 'ANT':
+        c1 = ['incongruent','T', ['incongruent'], [1]]
+        c2 = ['congruent','T', ['congruent'], [1]]
+        c3 = ['conflict_network','T', ['incongruent','congruent'], [1,-1]]
+        c4 = ['spatial_cue','T', ['spatial_cue'], [1]]
+        c5 = ['double_cue','T', ['double_cue'], [1]]
+        c6 = ['orienting_network','T', ['spatial_cue','double_cue'], [1,-1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6]
+    elif task == 'DPX':
+        c1 = ['AX','T', ['AX'], [1]]
+        c2 = ['AY','T', ['AY'], [1]]
+        c3 = ['BX','T', ['BX'], [1]]
+        c4 = ['BY','T', ['BY'], [1]]
+        c5 = ['BX-BY','T', ['BX','BY'], [1,-1]]
+        c6 = ['AY-BY','T', ['AY','BY'], [1,-1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6]
+    elif task == 'stroop':
+        c1 = ['incongruent','T', ['incongruent'], [1]]
+        c2 = ['congruent','T', ['congruent'], [1]]
+        c3 = ['incongruent-congruent','T', ['incongruent','congruent'], [1,-1]]
+        contrast_list = [c1,c2,c3]
+    elif task == 'twoByTwo':
+        c1 = ['cue_switch','T', ['cue_switch'], [1]]
+        c2 = ['cue_stay','T', ['cue_stay'], [1]]
+        c3 = ['task_switch','T', ['task_switch'], [1]]
+        c4 = ['task_stay','T', ['task_stay'], [1]]
+        c5 = ['cue_switch_cost','T', ['cue_switch','cue_stay'], [1,-1]]
+        c6 = ['task_switch_cost','T', ['task_switch','task_stay'], [1,-1]]
+        contrast_list = [c1,c2,c3]
+    return contrast_list
+        
+        
 # How to model RT
 # For each condition model responses with constant duration (average RT across subjects
 # or block duration)
@@ -64,7 +99,10 @@ def move_EVs(overwrite=True):
 # regressor (function of RT)
 def parse_EVs(events_df, task):
     def get_ev_vars(events_df, condition_list, col=None, 
-                    amplitude = 1, duration = 0):
+                    amplitude = 1, duration = 0, subset=None):
+        # if subset is specified as a string, use to query
+        if subset is not None:
+            events_df = events_df.query(subset)
         # if a column is specified, group by the values in that column
         if col is not None:
             group_df = events_df.groupby(col)
@@ -107,10 +145,45 @@ def parse_EVs(events_df, task):
     onsets = []
     durations = []
     amplitudes = []
-    if task == "stroop":
+    if task == "ANT":
+        get_ev_vars(events_df, [('spatial','spatial_cue'),
+                                ('double', 'double_cue')],
+                    col='cue', duration='duration')
+        get_ev_vars(events_df, [('congruent','congruent'),
+                                ('incongruent', 'incongruent')],
+                    col='flanker_type', duration='duration')
+        get_ev_vars(events_df, ['response_time'], duration='duration', 
+                    amplitude='response_time')
+        get_ev_vars(events_df, [(0, 'error')], col='correct', 
+                    duration='duration')
+    elif task == "DPX":
+        get_ev_vars(events_df, [('AX','AX'), ('AY','AY'), 
+                                ('BX', 'BX'), ('AY','AY')],
+                    col='condition', duration='duration')
+        get_ev_vars(events_df, ['response_time'], duration='duration', 
+                    amplitude='response_time')
+        get_ev_vars(events_df, [(0, 'error')], col='correct', 
+                    duration='duration')
+    elif task == "stroop":
         get_ev_vars(events_df, [('congruent','congruent'), 
                                 ('incongruent','incongruent')],
                     col='trial_type', duration='duration')
+        get_ev_vars(events_df, ['response_time'], duration='duration', 
+                    amplitude='response_time')
+        get_ev_vars(events_df, [(0, 'error')], col='correct', 
+                    duration='duration')
+    elif task == "twoByTwo":
+        # cue switch contrasts
+        get_ev_vars(events_df, [('switch','cue_switch'), 
+                                ('stay','cue_stay')],
+                    col='cue_switch', duration='duration')
+        # task switch contrasts
+        get_ev_vars(events_df, [('switch','task_switch'), 
+                                ('stay','task_stay')],
+                    col='task_switch', duration='duration')
+        get_ev_vars(events_df, [(100,'CTI_100'), 
+                                (900,'CTI_900')],
+                    col='CTI', duration='duration')
         get_ev_vars(events_df, ['response_time'], duration='duration', 
                     amplitude='response_time')
         get_ev_vars(events_df, [(0, 'error')], col='correct', 
