@@ -61,6 +61,15 @@ for task,df in task_dfs.items():
     
 # get 90th percentile reaction time for events files:
 task_90th_rts = {task: df.rt.quantile(.9) for task,df in task_dfs.items()}
+# ward and allport requires more complicated durations
+test_df = task_dfs['ward_and_allport'].query('exp_stage == "test"')
+plan_times = test_df.query('trial_id == "to_hand" and num_moves_made==1').rt
+move_times = test_df.query('trial_id in ["to_hand", "to_board"]') \
+                    .groupby(['worker_id','problem_id']).rt.sum()
+move_times.index = plan_times.index
+move_times-=plan_times
+task_90th_rts['ward_and_allport'] = {'planning_time': plan_times.quantile(.9),
+                                     'move_time': move_times.quantile(.9)}
 
 for subj_file in glob('../Data/raw/*/*'):   
     filey = os.path.basename(subj_file)
