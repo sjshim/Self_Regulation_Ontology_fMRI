@@ -42,7 +42,7 @@ def move_EV(subj, task):
     return new_events_file
     
 def move_EVs(overwrite=True):
-    tasks = ['ANT','DPX', 'stroop', 'twoByTwo']
+    tasks = ['ANT','CCTHot','DPX','stroop','twoByTwo','WATT3']
     fmri_data = get_info('fmri_data_directory')
     created_files = []
     for subj_file in glob.glob(join(fmri_data,'sub*')):
@@ -88,6 +88,11 @@ def get_contrasts(task):
         c4 = ['task_stay','T', ['task_stay'], [1]]
         c5 = ['cue_switch_cost','T', ['cue_switch','cue_stay'], [1,-1]]
         c6 = ['task_switch_cost','T', ['task_switch','task_stay'], [1,-1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6]
+    elif task == 'WATT3':
+        c1 = ['plan_PA_with','T', ['plan_PA_with'], [1]]
+        c2 = ['plan_PA_without','T', ['plan_PA_without'], [1]]
+        c3 = ['search_depth','T', ['plan_PA_with','plan_PA_without'], [1,-1]]
         contrast_list = [c1,c2,c3]
     return contrast_list
         
@@ -99,7 +104,8 @@ def get_contrasts(task):
 # regressor (function of RT)
 def parse_EVs(events_df, task):
     def get_ev_vars(events_df, condition_list, col=None, 
-                    amplitude = 1, duration = 0, subset=None):
+                    amplitude = 1, duration = 0, subset=None,
+                    onset_column='onset'):
         # if subset is specified as a string, use to query
         if subset is not None:
             events_df = events_df.query(subset)
@@ -115,7 +121,7 @@ def parse_EVs(events_df, task):
                 if len(c_dfs)!=0:
                     c_df = pd.concat(c_dfs)
                     conditions.append(condition_name)
-                    onsets.append(c_df.onset.tolist())
+                    onsets.append(c_df.loc[:,onset_column].tolist())
                     if type(amplitude) in (int,float):
                         amplitudes.append([amplitude])
                     elif type(amplitude) == str:
@@ -130,7 +136,7 @@ def parse_EVs(events_df, task):
                  array of length 1 specifying the regressor name'
             group_df = events_df
             conditions.append(condition_list[0])
-            onsets.append(group_df.onset.tolist())
+            onsets.append(group_df.loc[:,onset_column].tolist())
             if type(amplitude) in (int,float):
                 amplitudes.append([amplitude])
             elif type(amplitude) == str:
@@ -156,9 +162,20 @@ def parse_EVs(events_df, task):
                     amplitude='response_time')
         get_ev_vars(events_df, [(0, 'error')], col='correct', 
                     duration='duration')
+    elif task == "CCTHot":
+        get_ev_vars(events_df, ['EV'], duration='duration', 
+                    amplitude='EV')
+        get_ev_vars(events_df, ['risk'], duration='duration', 
+                    amplitude='risk')
+        get_ev_vars(events_df, ['num_click_in_round'], duration='duration', 
+                    amplitude='num_click_in_round')
+        get_ev_vars(events_df, [(1,'reward'), (0,'punishment')], col='feedback',
+                    duration=0, amplitude=1)
+        get_ev_vars(events_df, ['response_time'], duration='duration', 
+                    amplitude='response_time')
     elif task == "DPX":
         get_ev_vars(events_df, [('AX','AX'), ('AY','AY'), 
-                                ('BX', 'BX'), ('AY','AY')],
+                                ('BX', 'BX'), ('BY','BY')],
                     col='condition', duration='duration')
         get_ev_vars(events_df, ['response_time'], duration='duration', 
                     amplitude='response_time')
@@ -188,6 +205,21 @@ def parse_EVs(events_df, task):
                     amplitude='response_time')
         get_ev_vars(events_df, [(0, 'error')], col='correct', 
                     duration='duration')
+    elif task == "WATT3":
+        # planning conditions
+        get_ev_vars(events_df, [('UA_with_intermediate','plan_UA_with'), 
+                                ('UA_without_intermediate','plan_UA_without'),
+                                ('PA_with_intermediate','plan_PA_with'),
+                                ('PA_without_intermediate','plan_PA_without')],
+                    col='condition', duration='duration', 
+                    subset="planning==1")
+        # move conditions
+        get_ev_vars(events_df, [('UA_with_intermediate','move_UA_with'), 
+                                ('UA_without_intermediate','move_UA_without'),
+                                ('PA_with_intermediate','move_PA_with'),
+                                ('PA_without_intermediate','move_PA_without')],
+                    col='condition', duration='duration', 
+                    subset="planning==0")
     return conditions, onsets, durations, amplitudes
     
 def process_confounds(confounds_file):
