@@ -9,4 +9,5 @@ fmri_analysis/Data/*
 fmri_analysis/datasink
 fmri_analysis/crash*
 fmri_analysis/workingdir
+fmri_analysis/l1analysis
 
