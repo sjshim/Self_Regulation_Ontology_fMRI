@@ -67,7 +67,13 @@ def get_contrasts(task):
         c4 = ['spatial_cue','T', ['spatial_cue'], [1]]
         c5 = ['double_cue','T', ['double_cue'], [1]]
         c6 = ['orienting_network','T', ['spatial_cue','double_cue'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6]
+        c7 = ['response_time', 'T', ['response_time'], [1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6,c7]
+    elif task == 'CCTHot':
+        c1 = ['EV','T', ['EV'], [1]]
+        c2 = ['risk','T', ['risk'], [1]]
+        c3 = ['response_time', 'T', ['response_time'], [1]]
+        contrast_list = [c1,c2,c3]
     elif task == 'DPX':
         c1 = ['AX','T', ['AX'], [1]]
         c2 = ['AY','T', ['AY'], [1]]
@@ -75,12 +81,14 @@ def get_contrasts(task):
         c4 = ['BY','T', ['BY'], [1]]
         c5 = ['BX-BY','T', ['BX','BY'], [1,-1]]
         c6 = ['AY-BY','T', ['AY','BY'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6]
+        c7 = ['response_time', 'T', ['response_time'], [1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6,c7]
     elif task == 'stroop':
         c1 = ['incongruent','T', ['incongruent'], [1]]
         c2 = ['congruent','T', ['congruent'], [1]]
         c3 = ['incongruent-congruent','T', ['incongruent','congruent'], [1,-1]]
-        contrast_list = [c1,c2,c3]
+        c4 = ['response_time', 'T', ['response_time'], [1]]
+        contrast_list = [c1,c2,c3,c4]
     elif task == 'twoByTwo':
         c1 = ['cue_switch','T', ['cue_switch'], [1]]
         c2 = ['cue_stay','T', ['cue_stay'], [1]]
@@ -88,7 +96,8 @@ def get_contrasts(task):
         c4 = ['task_stay','T', ['task_stay'], [1]]
         c5 = ['cue_switch_cost','T', ['cue_switch','cue_stay'], [1,-1]]
         c6 = ['task_switch_cost','T', ['task_switch','task_stay'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6]
+        c7 = ['response_time', 'T', ['response_time'], [1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6,c7]
     elif task == 'WATT3':
         c1 = ['plan_PA_with','T', ['plan_PA_with'], [1]]
         c2 = ['plan_PA_without','T', ['plan_PA_without'], [1]]
