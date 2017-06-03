@@ -1,0 +1,1 @@
+singularity run -B fmri_analysis/Data:/Data singularity/nipype_image-2017-06-02-b76dcc04a318.img
