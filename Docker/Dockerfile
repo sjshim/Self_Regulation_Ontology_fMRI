@@ -119,6 +119,6 @@ COPY analysis.py /home/scripts/analysis.py
 COPY task_analysis.py /home/scripts/task_analysis.py
 COPY utils /home/scripts/utils
 
-ENTRYPOINT ["python /home/scripts/analysis.py"]
+ENTRYPOINT ["python", "/home/scripts/analysis.py"]
 
 
