@@ -129,10 +129,10 @@ infosource = Node(IdentityInterface(fields=['subject_id',
 infosource.iterables = [('subject_id', subject_list),
                         ('task', task_list)]
 # SelectFiles - to grab the data (alternativ to DataGrabber)
-templates = {'func': join('{subject_id}','*','func',
-                         '*{task}*preproc.nii.gz'),
-            'mask': join('{subject_id}','*','func',
-                         '*{task}*brainmask.nii.gz')}
+templates = {'func': join('*{subject_id}','*','func',
+                         '*{task}*MNI*preproc.nii.gz'),
+            'mask': join('*{subject_id}','*','func',
+                         '*{task}*MNI*brainmask.nii.gz')}
 selectfiles = Node(SelectFiles(templates,
                                base_directory = '/Data',
                                sort_filelist=True),
