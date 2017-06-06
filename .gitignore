@@ -5,7 +5,7 @@ __pycache__
 Data/processed/*
 Data/event_files/*
 fmri_experiments/temp_tasklist.json
-fmri_analysis/Data/*
+fmri_analysis/
 fmri_analysis/workingdir
 fmri_analysis/output
 singularity_images/*img
