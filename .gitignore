@@ -8,4 +8,4 @@ fmri_experiments/temp_tasklist.json
 fmri_analysis/Data/*
 fmri_analysis/workingdir
 fmri_analysis/output
-singularity_images
+singularity_images/*img
