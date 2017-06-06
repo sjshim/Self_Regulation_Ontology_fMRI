@@ -34,7 +34,7 @@ def move_EV(subj, task):
     ev_file = glob.glob(join(ev_data,'*%s*%s*' % (subj, task)))[0]
     task_fmri_files = glob.glob(join(fmri_data,
                                      '*%s*' % subj,'*',
-                                     'func','*%s*' % task))
+                                     'func','*%s*bold*' % task))
     task_fmri_dir = dirname(task_fmri_files[0])
     base_name = basename(task_fmri_files[0]).split('_bold')[0]
     new_events_file = join(task_fmri_dir, base_name+'_events.tsv')

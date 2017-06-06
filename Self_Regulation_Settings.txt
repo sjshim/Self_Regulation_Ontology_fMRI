@@ -1,3 +1,0 @@
-base_directory:/home/ian/Experiments/expfactory/Self_Regulation_Ontology_fMRI/
-behav_data_directory:/home/ian/Experiments/expfactory/Self_Regulation_Ontology_fMRI/Data
-fmri_data_directory:/home/ian/Experiments/expfactory/Self_Regulation_Ontology_fMRI/fmri_analysis/Data

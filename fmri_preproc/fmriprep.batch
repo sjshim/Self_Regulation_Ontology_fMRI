@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH --job-name={sid}-prep
+#SBATCH --output=.out/{sid}-prep.job.outi
+#SBATCH --error=.err/{sid}-prep.job.err
+#SBATCH --time=32:00:00
+#SBATCH --mem=120000
+#SBATCH --qos=russpold
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=ieisenbe@stanford.edu
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+module load singularity
+export PYTHONPATH=""
+singularity run /share/PI/russpold/singularity_images/poldracklab_fmriprep_0.4.4-2017-05-21-1ea77c7e2e3c.img /oak/stanford/groups/russpold/data/uh2 /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep participant --participant_label {sid} -w $SCRATCH --output-space template T1w
