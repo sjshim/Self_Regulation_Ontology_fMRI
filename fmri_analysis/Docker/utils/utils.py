@@ -30,8 +30,10 @@ def get_contrasts(task):
         c4 = ['BY','T', ['BY'], [1]]
         c5 = ['BX-BY','T', ['BX','BY'], [1,-1]]
         c6 = ['AY-BY','T', ['AY','BY'], [1,-1]]
-        c7 = ['response_time', 'T', ['response_time'], [1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6,c7]
+        c7 = ['AY-BX','T', ['AY','BX'], [1,-1]]
+        c8 = ['BX-AY','T', ['AY','BX'], [1,-1]]
+        c9 = ['response_time', 'T', ['response_time'], [1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8,c9]
     elif task == 'stroop':
         c1 = ['incongruent','T', ['incongruent'], [1]]
         c2 = ['congruent','T', ['congruent'], [1]]
@@ -206,8 +208,8 @@ def process_confounds(confounds_file):
     movement_deriv_regressors = np.gradient(movement_regressors,axis=0)
     # add additional relevant regressors
     add_regressor_names = ['FramewiseDisplacement', 'stdDVARS', 
-                           'aCompCor0','aCompCor1','aCompCor2',
-                           'aCompCor3','aCompCor4','aCompCor5'] 
+                           'aCompCor00','aCompCor01','aCompCor02',
+                           'aCompCor03','aCompCor04','aCompCor05'] 
     additional_regressors = confounds_df.loc[:,add_regressor_names].values
     regressors = np.hstack((movement_regressors,
                             movement_deriv_regressors,
