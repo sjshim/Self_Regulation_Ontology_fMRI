@@ -1,0 +1,2 @@
+WARNING: Not mounting requested bind point (already mounted in container): /scratch
+python: can't open file '/home/scripts/analysis.py': [Errno 2] No such file or directory
