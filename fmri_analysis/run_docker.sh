@@ -1,4 +1,4 @@
-docker run -ti --rm -p 8888:8888 -v `pwd`/output:/scratch -v `pwd`/Data:/Data:ro  nipype_image --participant_label $1 
+docker run -ti --rm -p 8888:8888 -v `pwd`/output:/output -v `pwd`/Data:/Data:ro  nipype_image --participant_label $1 
 
 
 # command to ignore entrypoint and access docker container

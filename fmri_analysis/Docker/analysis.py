@@ -21,7 +21,7 @@ args = parser.parse_args()
 
 # subset of subjects
 subjects_to_analyze = args.participant_label
-cmd = "python /home/scripts/task_analysis.py --participant_label " + ' '.join(subjects_to_analyze)
+cmd = "python /scripts/task_analysis.py --participant_label " + ' '.join(subjects_to_analyze)
 
 if args.tasks:
     task_list = args.tasks

@@ -113,12 +113,12 @@ RUN pip install -r requirements.txt && \
 
 # Set up data and script directories
 RUN mkdir /Data
-RUN mkdir /scratch
-RUN mkdir /home/scripts
-COPY analysis.py /home/scripts/analysis.py
-COPY task_analysis.py /home/scripts/task_analysis.py
-COPY utils /home/scripts/utils
+RUN mkdir /output
+RUN mkdir /scripts
+COPY analysis.py /scripts/analysis.py
+COPY task_analysis.py /scripts/task_analysis.py
+COPY utils /scripts/utils
 
-ENTRYPOINT ["python", "/home/scripts/analysis.py"]
+ENTRYPOINT ["python", "/scripts/analysis.py"]
 
 

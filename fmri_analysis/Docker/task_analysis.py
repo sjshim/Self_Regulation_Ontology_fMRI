@@ -37,7 +37,7 @@ else:
   task_list = ['ANT', 'CCTHot', 'DPX', 'stroop', 'twoByTwo']
 
 # ### Experiment Variables
-experiment_dir = '/scratch'
+experiment_dir = '/output'
 output_dir = 'datasink'
 working_dir = 'workingdir'
 # TR of functional images
