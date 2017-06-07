@@ -18,6 +18,13 @@ import shutil
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
+parser.add_argument('output_dir', help='The directory where the output files '
+                    'should be stored. If you are running group level analysis '
+                    'this folder should be prepopulated with the results of the'
+                    'participant level analysis.')
+parser.add_argument('--data_dir',help='The label(s) of the participant(s)'
+                   'that should be analyzed. Multiple '
+                   'participants can be specified with a space separated list.')
 parser.add_argument('--participant_label',help='The label(s) of the participant(s)'
                    'that should be analyzed. Multiple '
                    'participants can be specified with a space separated list.',
@@ -26,6 +33,7 @@ parser.add_argument('--tasks',help='The label(s) of the task(s)'
                    'that should be analyzed. If this parameter is not '
                    'provided all tasks should be analyzed.',
                    nargs="+")
+
 
 args = parser.parse_args()
 # list of subject identifiers
@@ -37,9 +45,13 @@ else:
   task_list = ['ANT', 'CCTHot', 'DPX', 'stroop', 'twoByTwo']
 
 # ### Experiment Variables
-experiment_dir = '/output'
+experiment_dir = args.output_dir
 output_dir = 'datasink'
 working_dir = 'workingdir'
+data_dir = "/Data"
+if args.data_dir:
+  data_dir = args.data_dir
+
 # TR of functional images
 TR = .68
 
@@ -48,7 +60,7 @@ TR = .68
 # *********************************************
 
 # helper function to create bunch
-def subjectinfo(subject_id, task, inspect_inputs=False):
+def subjectinfo(data_dir, subject_id, task, inspect_inputs=False):
     
     from glob import glob
     import numpy as np
@@ -63,7 +75,7 @@ def subjectinfo(subject_id, task, inspect_inputs=False):
     ## Get the Events File
     
     # Read the TSV file and convert to pandas dataframe
-    event_file = glob(join('/Data',
+    event_file = glob(join(data_dir,
                            'sub-%s' % subject_id,
                            '*', 'func',
                            '*%s*events.tsv' % task))[0]
@@ -71,7 +83,7 @@ def subjectinfo(subject_id, task, inspect_inputs=False):
 
     ## Get the Confounds File (output of fmriprep)
     # Read the TSV file and convert to pandas dataframe
-    confounds_file = glob(join('/Data',
+    confounds_file = glob(join(data_dir,
                                'sub-%s' % subject_id,
                                '*', 'func',
                                '*%s*confounds.tsv' % task))[0]
@@ -117,10 +129,11 @@ def save_subjectinfo(base_directory, subject_id, task, subject_info, contrasts):
 # *********************************************
 
 # Get Subject Info - get subject specific condition information
-getsubjectinfo = Node(Function(input_names=['subject_id', 'task'],
+getsubjectinfo = Node(Function(input_names=['data_dir', 'subject_id', 'task'],
                                output_names=['subject_info', 'contrasts'],
                                function=subjectinfo),
                       name='getsubjectinfo')
+getsubjectinfo.inputs.data_dir = data_dir
 # Infosource - a function free node to iterate over the list of subject names
 infosource = Node(IdentityInterface(fields=['subject_id',
                                             'task',
@@ -134,7 +147,7 @@ templates = {'func': join('*{subject_id}','*','func',
             'mask': join('*{subject_id}','*','func',
                          '*{task}*MNI*brainmask.nii.gz')}
 selectfiles = Node(SelectFiles(templates,
-                               base_directory = '/Data',
+                               base_directory = data_dir,
                                sort_filelist=True),
                    name="selectfiles")
 # Datasink - creates output folder for important outputs
