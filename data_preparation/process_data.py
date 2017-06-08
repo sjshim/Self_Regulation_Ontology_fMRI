@@ -60,7 +60,7 @@ for task,df in task_dfs.items():
     df.to_csv('../Data/processed/group_data/%s.csv' % task, index=False)
     
 # get 90th percentile reaction time for events files:
-task_90th_rts = {task: df.rt.quantile(.9) for task,df in task_dfs.items()}
+task_50th_rts = {task: df.rt.quantile(.5) for task,df in task_dfs.items()}
 # ward and allport requires more complicated durations
 test_df = task_dfs['ward_and_allport'].query('exp_stage == "test"')
 plan_times = test_df.query('trial_id == "to_hand" and num_moves_made==1').rt
@@ -68,8 +68,8 @@ move_times = test_df.query('trial_id in ["to_hand", "to_board"]') \
                     .groupby(['worker_id','problem_id']).rt.sum()
 move_times.index = plan_times.index
 move_times-=plan_times
-task_90th_rts['ward_and_allport'] = {'planning_time': plan_times.quantile(.9),
-                                     'move_time': move_times.quantile(.9)}
+task_50th_rts['ward_and_allport'] = {'planning_time': plan_times.quantile(.5),
+                                     'move_time': move_times.quantile(.5)}
 
 for subj_file in glob('../Data/raw/*/*'):   
     filey = os.path.basename(subj_file)
@@ -81,7 +81,7 @@ for subj_file in glob('../Data/raw/*/*'):
     # get cleaned file
     df = pd.read_csv(cleaned_file_path)
     exp_id = df.experiment_exp_id.unique()[0]
-    task_rt = task_90th_rts[exp_id]
+    task_rt = task_50th_rts[exp_id]
     if not os.path.exists(events_file_path):
         # create event file for task contrasts
         events_df = create_events(df, exp_id, duration=task_rt)
