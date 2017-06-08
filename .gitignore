@@ -2,6 +2,8 @@
 __pycache__
 *.pyc
 .ipynb_checkpoints
+.out/
+.err/
 Data/processed/*
 Data/event_files/*
 fmri_experiments/temp_tasklist.json

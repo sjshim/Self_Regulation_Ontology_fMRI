@@ -9,6 +9,7 @@
 #SBATCH --mail-user=ieisenbe@stanford.edu
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=16
+#SBATCH -p russpold
 module load singularity
 export PYTHONPATH=""
-singularity run -B /home/ieisenbe/Self_Regulation_Ontology_fMRI/fmri_analysis/output:/scratch -B /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/:/Data /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-06-06-d2bbd7987fd2.img --participant_label s358 --tasks stroop
+singularity run -B /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/:/Data /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-06-07-a118a0402cc6.img /scratch/PI/russpold/work/ieisenbe/uh2/1stLevel_output  --participant_label s358
