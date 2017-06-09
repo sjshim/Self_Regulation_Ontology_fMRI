@@ -10,71 +10,115 @@ from shutil import copyfile
 def get_contrasts(task):
     contrast_list = []
     if task == 'ANT':
+        # contrasts vs baseline
         c1 = ['incongruent','T', ['incongruent'], [1]]
         c2 = ['congruent','T', ['congruent'], [1]]
-        c3 = ['conflict_network','T', ['incongruent','congruent'], [1,-1]]
-        c4 = ['spatial_cue','T', ['spatial_cue'], [1]]
-        c5 = ['double_cue','T', ['double_cue'], [1]]
-        c6 = ['orienting_network','T', ['spatial_cue','double_cue'], [1,-1]]
-        c7 = ['response_time', 'T', ['response_time'], [1]]
+        c3 = ['spatial_cue','T', ['spatial_cue'], [1]]
+        c4 = ['double_cue','T', ['double_cue'], [1]]
+        c5 = ['response_time', 'T', ['response_time'], [1]]
+        # contrasts 
+        c6 = ['conflict_network','T', ['incongruent','congruent'], [1,-1]]
+        c7 = ['orienting_network','T', ['spatial_cue','double_cue'], [1,-1]]
         contrast_list = [c1,c2,c3,c4,c5,c6,c7]
     elif task == 'CCTHot':
+        # contrasts vs baseline
         c1 = ['EV','T', ['EV'], [1]]
         c2 = ['risk','T', ['risk'], [1]]
         c3 = ['response_time', 'T', ['response_time'], [1]]
         contrast_list = [c1,c2,c3]
     elif task == 'DPX':
+        # contrasts vs baseline
         c1 = ['AX','T', ['AX'], [1]]
         c2 = ['AY','T', ['AY'], [1]]
         c3 = ['BX','T', ['BX'], [1]]
         c4 = ['BY','T', ['BY'], [1]]
-        c5 = ['BX-BY','T', ['BX','BY'], [1,-1]]
-        c6 = ['AY-BY','T', ['AY','BY'], [1,-1]]
-        c7 = ['AY-BX','T', ['AY','BX'], [1,-1]]
-        c8 = ['BX-AY','T', ['AY','BX'], [1,-1]]
-        c9 = ['response_time', 'T', ['response_time'], [1]]
+        c5 = ['response_time', 'T', ['response_time'], [1]]
+        # contrasts 
+        c6 = ['BX-BY','T', ['BX','BY'], [1,-1]]
+        c7 = ['AY-BY','T', ['AY','BY'], [1,-1]]
+        c8 = ['AY-BX','T', ['AY','BX'], [1,-1]]
+        c9 = ['BX-AY','T', ['AY','BX'], [1,-1]]
         contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8,c9]
+    elif task == 'motorSelectiveStop':
+        # contrasts vs baseline
+        c1 = ['crit_go','T', ['crit_go'], [1]]
+        c2 = ['crit_stop_success','T', ['crit_stop_success'], [1]]
+        c3 = ['crit_stop_failure','T', ['crit_stop_failure'], [1]]
+        c4 = ['noncrit_signal','T', ['noncrit_signal'], [1]]
+        c5 = ['noncrit_nosignal','T', ['noncrit_nosignal'], [1]]
+        # contrasts
+        c6 = ['crit_stop_success-crit_go', 'T', 
+                ['crit_stop_success', 'crit_go'], [1,-1]]
+        c7 = ['crit_stop_failure-crit_go', 'T', 
+                ['crit_stop_failure', 'crit_go'], [1,-1]]
+        c8 = ['crit_go-noncrit_nosignal', 'T', 
+                ['crit_go', 'noncrit_nosignal'], [1,-1]]
+        c9 = ['noncrit_signal-noncrit_nosignal', 'T' ,
+                ['noncrit_signal','noncrit_nosignal'], [1,-1]]
+        c10 = ['crit_stop_success-crit_stop_failure','T',
+                ['crit_stop_success', 'crit_stop_failure'], [1,-1]]
+        c11 = ['crit_stop_failure-crit_stop_success','T', 
+                ['crit_stop_failure', 'crit_stop_success'], [1,-1]]
+        c12 = ['crit_stop_success-noncrit_signal','T',
+                ['crit_stop_success', 'noncrit_signal'], [1,-1]]
+        c13 = ['crit_stop_failure-noncrit_signal','T',
+                ['crit_stop_failure', 'noncrit_signal'], [1,-1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13]
     elif task == 'stopSignal':
+        # contrasts vs baseline
         c1 = ['go','T', ['go'], [1]]
         c2 = ['stop_success','T', ['stop_success'], [1]]
         c3 = ['stop_failure','T', ['stop_failure'], [1]]
+        # contrasts
         c4 = ['stop_success-go','T', ['stop_success', 'go'], [1,-1]]
-        c5 = ['stop_success-stop_failure','T', ['stop_success', 'stop_failure'], [1,-1]]
-        c6 = ['stop_failure-stop_success','T', ['stop_success', 'stop_failure'], [-1,1]]
-        c7 = ['response_time', 'T', ['response_time'], [1]]
+        c5 = ['stop_failure-go','T', ['stop_failure', 'go'], [1,-1]]
+        c6 = ['stop_success-stop_failure','T', 
+                ['stop_success', 'stop_failure'], [1,-1]]
+        c7 = ['stop_failure-stop_success','T', 
+                ['stop_failure', 'stop_success'], [1,-1]]
         contrast_list = [c1,c2,c3,c4,c5,c6,c7]
     elif task == 'stroop':
+        # contrasts vs baseline
         c1 = ['incongruent','T', ['incongruent'], [1]]
         c2 = ['congruent','T', ['congruent'], [1]]
-        c3 = ['incongruent-congruent','T', ['incongruent','congruent'], [1,-1]]
-        c4 = ['response_time', 'T', ['response_time'], [1]]
+        c3 = ['response_time', 'T', ['response_time'], [1]]
+        # contrasts
+        c4 = ['incongruent-congruent','T', ['incongruent','congruent'], [1,-1]]
         contrast_list = [c1,c2,c3,c4]
     elif task == 'twoByTwo':
+        # contrasts vs baseline
         c1 = ['cue_switch_100','T', ['cue_switch_100'], [1]]
         c2 = ['cue_stay_100','T', ['cue_stay_100'], [1]]
         c3 = ['task_switch_100','T', ['task_switch_100'], [1]]
         c4 = ['cue_switch_900','T', ['cue_switch_900'], [1]]
         c5 = ['cue_stay_900','T', ['cue_stay_900'], [1]]
         c6 = ['task_switch_900','T', ['task_switch_900'], [1]]
-        c5 = ['cue_switch_cost_100','T', ['cue_switch_100','cue_stay_100'], [1,-1]]
-        c6 = ['cue_switch_cost_900','T', ['cue_switch_900','cue_stay_900'], [1,-1]]
-        c7 = ['task_switch_cost_100','T', ['task_switch_100','cue_switch_100'], [1,-1]]
-        c8 = ['task_switch_cost_900','T', ['task_switch_900','cue_switch_900'], [1,-1]]
+        # contrasts
+        c5 = ['cue_switch_cost_100','T', 
+                ['cue_switch_100','cue_stay_100'], [1,-1]]
+        c6 = ['cue_switch_cost_900','T', 
+                ['cue_switch_900','cue_stay_900'], [1,-1]]
+        c7 = ['task_switch_cost_100','T', 
+                ['task_switch_100','cue_switch_100'], [1,-1]]
+        c8 = ['task_switch_cost_900','T', 
+                ['task_switch_900','cue_switch_900'], [1,-1]]
         c9 = ['response_time', 'T', ['response_time'], [1]]
         contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8,c9]
     elif task == 'WATT3':
+        # contrasts vs baseline
         c1 = ['plan_PA_with','T', ['plan_PA_with'], [1]]
         c2 = ['plan_PA_without','T', ['plan_PA_without'], [1]]
+        # contrasts
         c3 = ['search_depth','T', ['plan_PA_with','plan_PA_without'], [1,-1]]
         contrast_list = [c1,c2,c3]
     return contrast_list
         
         
 # How to model RT
-# For each condition model responses with constant duration (average RT across subjects
-# or block duration)
-# RT as a separate regressor for each onset, constant duration, amplitude as parameteric
-# regressor (function of RT)
+# For each condition model responses with constant duration 
+# (average RT across subjects or block duration)
+# RT as a separate regressor for each onset, constant duration, 
+# amplitude as parameteric regressor (function of RT)
 def parse_EVs(events_df, task):
     def get_ev_vars(events_df, condition_list, col=None, 
                     amplitude = 1, duration = 0, subset=None,
@@ -133,7 +177,7 @@ def parse_EVs(events_df, task):
                     col='flanker_type', duration='duration')
         get_ev_vars(events_df, ['response_time'], duration='duration', 
                     amplitude='response_time')
-        get_ev_vars(events_df, [(0, 'error')], col='correct', 
+        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
                     duration='duration')
     elif task == "CCTHot":
         get_ev_vars(events_df, ['EV'], duration='duration', 
@@ -144,21 +188,31 @@ def parse_EVs(events_df, task):
                     amplitude='num_click_in_round')
         get_ev_vars(events_df, [(1,'reward'), (0,'punishment')], col='feedback',
                     duration=0, amplitude=1)
-        get_ev_vars(events_df, ['response_time'], duration='duration', 
-                    amplitude='response_time')
+        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
+                    duration='duration')
     elif task == "DPX":
         get_ev_vars(events_df, [('AX','AX'), ('AY','AY'), 
                                 ('BX', 'BX'), ('BY','BY')],
                     col='condition', duration='duration')
         get_ev_vars(events_df, ['response_time'], duration='duration', 
                     amplitude='response_time')
-        get_ev_vars(events_df, [(0, 'error')], col='correct', 
+        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
+                    duration='duration')
+    elif task == "motorSelectiveStop":
+        get_ev_vars(events_df, [('crit_go','crit_go'), 
+                                ('crit_stop_success', 'crit_stop_success'), 
+                                ('crit_stop_failure', 'crit_stop_failure'),
+                                ('noncrit_signal', 'noncrit_signal'),
+                                ('noncrit_nosignal', 'noncrit_nosignal')],
+                    col='trial_type', duration='duration')
+        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
                     duration='duration')
     elif task == "stopSignal":
-        get_ev_vars(events_df, [('go','go'), ('stop_success','stop_success'), 
+        get_ev_vars(events_df, [('go','go'), 
+                                ('stop_success', 'stop_success'), 
                                 ('stop_failure', 'stop_failure')],
                     col='trial_type', duration='duration')
-        get_ev_vars(events_df, [(0, 'error')], col='correct', 
+        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
                     duration='duration')
     elif task == "stroop":
         get_ev_vars(events_df, [('congruent','congruent'), 
@@ -166,7 +220,7 @@ def parse_EVs(events_df, task):
                     col='trial_type', duration='duration')
         get_ev_vars(events_df, ['response_time'], duration='duration', 
                     amplitude='response_time')
-        get_ev_vars(events_df, [(0, 'error')], col='correct', 
+        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
                     duration='duration')
     elif task == "twoByTwo":
         # cue switch contrasts
@@ -187,7 +241,7 @@ def parse_EVs(events_df, task):
                     subset="CTI==100")
         get_ev_vars(events_df, ['response_time'], duration='duration', 
                     amplitude='response_time')
-        get_ev_vars(events_df, [(0, 'error')], col='correct', 
+        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
                     duration='duration')
     elif task == "WATT3":
         # planning conditions
@@ -204,6 +258,8 @@ def parse_EVs(events_df, task):
                                 ('PA_without_intermediate','move_PA_without')],
                     col='condition', duration='duration', 
                     subset="planning==0")
+        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
+                    duration='duration')
     return conditions, onsets, durations, amplitudes
     
 def process_confounds(confounds_file):

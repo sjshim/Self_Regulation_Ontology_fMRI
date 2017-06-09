@@ -42,7 +42,8 @@ subject_list = args.participant_label
 if args.tasks:
     task_list = args.tasks
 else:
-  task_list = ['ANT', 'CCTHot', 'DPX', 'stopSignal', 'stroop', 'twoByTwo']
+  task_list = ['ANT', 'CCTHot', 'DPX', 'motorSelectiveStop',
+               'stopSignal', 'stroop', 'twoByTwo']
 
 # ### Experiment Variables
 experiment_dir = args.output_dir
@@ -226,4 +227,4 @@ l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
                     ])
 
 
-l1analysis.run('MultiProc', plugin_args={'n_procs': 4})
+l1analysis.run('MultiProc')

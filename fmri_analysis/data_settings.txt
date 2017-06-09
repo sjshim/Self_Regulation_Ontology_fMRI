@@ -1,3 +1,0 @@
-base_directory:/home/ieisenbe/Self_Regulation_Ontology_fMRI/
-behav_data_directory:/home/ieisenbe/Self_Regulation_Ontology_fMRI/Data
-fmri_data_directory:/scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/

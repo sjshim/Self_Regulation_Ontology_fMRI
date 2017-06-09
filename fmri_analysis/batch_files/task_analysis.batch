@@ -12,4 +12,5 @@
 #SBATCH -p russpold
 module load singularity
 export PYTHONPATH=""
-singularity run -B /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/:/Data /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-06-07-a118a0402cc6.img /scratch/PI/russpold/work/ieisenbe/uh2/1stLevel_output  --participant_label s358
+singularity run -B /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/:/Data /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-06-09-6b3cd9f6be67.img
+ /scratch/PI/russpold/work/ieisenbe/uh2/output  --participant_label {sid}
