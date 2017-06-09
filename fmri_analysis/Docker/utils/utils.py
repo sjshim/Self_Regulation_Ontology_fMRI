@@ -34,6 +34,15 @@ def get_contrasts(task):
         c8 = ['BX-AY','T', ['AY','BX'], [1,-1]]
         c9 = ['response_time', 'T', ['response_time'], [1]]
         contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8,c9]
+    elif task == 'stopSignal':
+        c1 = ['go','T', ['go'], [1]]
+        c2 = ['stop_success','T', ['stop_success'], [1]]
+        c3 = ['stop_failure','T', ['stop_failure'], [1]]
+        c4 = ['stop_success-go','T', ['stop_success', 'go'], [1,-1]]
+        c5 = ['stop_success-stop_failure','T', ['stop_success', 'stop_failure'], [1,-1]]
+        c6 = ['stop_failure-stop_success','T', ['stop_success', 'stop_failure'], [-1,1]]
+        c7 = ['response_time', 'T', ['response_time'], [1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6,c7]
     elif task == 'stroop':
         c1 = ['incongruent','T', ['incongruent'], [1]]
         c2 = ['congruent','T', ['congruent'], [1]]
@@ -41,14 +50,18 @@ def get_contrasts(task):
         c4 = ['response_time', 'T', ['response_time'], [1]]
         contrast_list = [c1,c2,c3,c4]
     elif task == 'twoByTwo':
-        c1 = ['cue_switch','T', ['cue_switch'], [1]]
-        c2 = ['cue_stay','T', ['cue_stay'], [1]]
-        c3 = ['task_switch','T', ['task_switch'], [1]]
-        c4 = ['task_stay','T', ['task_stay'], [1]]
-        c5 = ['cue_switch_cost','T', ['cue_switch','cue_stay'], [1,-1]]
-        c6 = ['task_switch_cost','T', ['task_switch','task_stay'], [1,-1]]
-        c7 = ['response_time', 'T', ['response_time'], [1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6,c7]
+        c1 = ['cue_switch_100','T', ['cue_switch_100'], [1]]
+        c2 = ['cue_stay_100','T', ['cue_stay_100'], [1]]
+        c3 = ['task_switch_100','T', ['task_switch_100'], [1]]
+        c4 = ['cue_switch_900','T', ['cue_switch_900'], [1]]
+        c5 = ['cue_stay_900','T', ['cue_stay_900'], [1]]
+        c6 = ['task_switch_900','T', ['task_switch_900'], [1]]
+        c5 = ['cue_switch_cost_100','T', ['cue_switch_100','cue_stay_100'], [1,-1]]
+        c6 = ['cue_switch_cost_900','T', ['cue_switch_900','cue_stay_900'], [1,-1]]
+        c7 = ['task_switch_cost_100','T', ['task_switch_100','cue_switch_100'], [1,-1]]
+        c8 = ['task_switch_cost_900','T', ['task_switch_900','cue_switch_900'], [1,-1]]
+        c9 = ['response_time', 'T', ['response_time'], [1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8,c9]
     elif task == 'WATT3':
         c1 = ['plan_PA_with','T', ['plan_PA_with'], [1]]
         c2 = ['plan_PA_without','T', ['plan_PA_without'], [1]]
@@ -141,6 +154,12 @@ def parse_EVs(events_df, task):
                     amplitude='response_time')
         get_ev_vars(events_df, [(0, 'error')], col='correct', 
                     duration='duration')
+    elif task == "stopSignal":
+        get_ev_vars(events_df, [('go','go'), ('stop_success','stop_success'), 
+                                ('stop_failure', 'stop_failure')],
+                    col='trial_type', duration='duration')
+        get_ev_vars(events_df, [(0, 'error')], col='correct', 
+                    duration='duration')
     elif task == "stroop":
         get_ev_vars(events_df, [('congruent','congruent'), 
                                 ('incongruent','incongruent')],
@@ -151,16 +170,21 @@ def parse_EVs(events_df, task):
                     duration='duration')
     elif task == "twoByTwo":
         # cue switch contrasts
-        get_ev_vars(events_df, [('switch','cue_switch'), 
-                                ('stay','cue_stay')],
-                    col='cue_switch', duration='duration')
+        get_ev_vars(events_df, [('switch','cue_switch_900'), 
+                                ('stay','cue_stay_900')],
+                    col='cue_switch', duration='duration',
+                    subset="CTI==900")
+        get_ev_vars(events_df, [('switch','cue_switch_100'), 
+                                ('stay','cue_stay_100')],
+                    col='cue_switch', duration='duration',
+                    subset="CTI==100")
         # task switch contrasts
-        get_ev_vars(events_df, [('switch','task_switch'), 
-                                ('stay','task_stay')],
-                    col='task_switch', duration='duration')
-        get_ev_vars(events_df, [(100,'CTI_100'), 
-                                (900,'CTI_900')],
-                    col='CTI', duration='duration')
+        get_ev_vars(events_df, [('switch','task_switch_900')],
+                    col='task_switch', duration='duration',
+                    subset="CTI==900")
+        get_ev_vars(events_df, [('switch','task_switch_100')],
+                    col='task_switch', duration='duration',
+                    subset="CTI==100")
         get_ev_vars(events_df, ['response_time'], duration='duration', 
                     amplitude='response_time')
         get_ev_vars(events_df, [(0, 'error')], col='correct', 

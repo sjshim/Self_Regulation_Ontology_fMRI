@@ -42,7 +42,7 @@ subject_list = args.participant_label
 if args.tasks:
     task_list = args.tasks
 else:
-  task_list = ['ANT', 'CCTHot', 'DPX', 'stroop', 'twoByTwo']
+  task_list = ['ANT', 'CCTHot', 'DPX', 'stopSignal', 'stroop', 'twoByTwo']
 
 # ### Experiment Variables
 experiment_dir = args.output_dir
