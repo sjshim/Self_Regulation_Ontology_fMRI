@@ -177,7 +177,7 @@ def parse_EVs(events_df, task):
                     col='flanker_type', duration='duration')
         get_ev_vars(events_df, ['response_time'], duration='duration', 
                     amplitude='response_time')
-        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
+        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "CCTHot":
         get_ev_vars(events_df, ['EV'], duration='duration', 
@@ -188,7 +188,7 @@ def parse_EVs(events_df, task):
                     amplitude='num_click_in_round')
         get_ev_vars(events_df, [(1,'reward'), (0,'punishment')], col='feedback',
                     duration=0, amplitude=1)
-        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
+        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "DPX":
         get_ev_vars(events_df, [('AX','AX'), ('AY','AY'), 
@@ -196,7 +196,7 @@ def parse_EVs(events_df, task):
                     col='condition', duration='duration')
         get_ev_vars(events_df, ['response_time'], duration='duration', 
                     amplitude='response_time')
-        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
+        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "motorSelectiveStop":
         get_ev_vars(events_df, [('crit_go','crit_go'), 
@@ -205,14 +205,14 @@ def parse_EVs(events_df, task):
                                 ('noncrit_signal', 'noncrit_signal'),
                                 ('noncrit_nosignal', 'noncrit_nosignal')],
                     col='trial_type', duration='duration')
-        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
+        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "stopSignal":
         get_ev_vars(events_df, [('go','go'), 
                                 ('stop_success', 'stop_success'), 
                                 ('stop_failure', 'stop_failure')],
                     col='trial_type', duration='duration')
-        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
+        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "stroop":
         get_ev_vars(events_df, [('congruent','congruent'), 
@@ -220,7 +220,7 @@ def parse_EVs(events_df, task):
                     col='trial_type', duration='duration')
         get_ev_vars(events_df, ['response_time'], duration='duration', 
                     amplitude='response_time')
-        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
+        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "twoByTwo":
         # cue switch contrasts
@@ -241,7 +241,7 @@ def parse_EVs(events_df, task):
                     subset="CTI==100")
         get_ev_vars(events_df, ['response_time'], duration='duration', 
                     amplitude='response_time')
-        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
+        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "WATT3":
         # planning conditions
@@ -258,7 +258,7 @@ def parse_EVs(events_df, task):
                                 ('PA_without_intermediate','move_PA_without')],
                     col='condition', duration='duration', 
                     subset="planning==0")
-        get_ev_vars(events_df, [(0, 'junk')], col='junk', 
+        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     return conditions, onsets, durations, amplitudes
     
@@ -287,9 +287,8 @@ def process_confounds(confounds_file):
     movement_regressor_names += ['Xtd','Ytd','Ztd','RotXtd','RotYtd','RotZtd']
     movement_deriv_regressors = np.gradient(movement_regressors,axis=0)
     # add additional relevant regressors
-    add_regressor_names = ['FramewiseDisplacement', 'stdDVARS', 
-                           'aCompCor00','aCompCor01','aCompCor02',
-                           'aCompCor03','aCompCor04','aCompCor05'] 
+    add_regressor_names = ['FramewiseDisplacement', 'stdDVARS'] 
+    add_regressor_names += [i for i in confounds_df.columns if 'aCompCor' in i]
     additional_regressors = confounds_df.loc[:,add_regressor_names].values
     regressors = np.hstack((movement_regressors,
                             movement_deriv_regressors,
