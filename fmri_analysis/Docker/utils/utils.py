@@ -188,6 +188,8 @@ def parse_EVs(events_df, task):
                     amplitude='num_click_in_round')
         get_ev_vars(events_df, [(1,'reward'), (0,'punishment')], col='feedback',
                     duration=0, amplitude=1)
+        get_ev_vars(events_df, ['response_time'], duration='duration', 
+                    amplitude='response_time')
         get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "DPX":
@@ -292,7 +294,9 @@ def process_confounds(confounds_file):
                       excessive_movement_regressor_names
     return regressors, regressor_names
         
-        
+def process_physio(cardiac_file, resp_file):
+    cardiac_file = '/mnt/temp/sub-s130/ses-1/func/sub-s130_ses-1_task-stroop_run-1_recording-cardiac_physio.tsv.gz'
+    resp_file = '/mnt/temp/sub-s130/ses-1/func/sub-s130_ses-1_task-stroop_run-1_recording-respiratory_physio.tsv.gz'
     
     
 

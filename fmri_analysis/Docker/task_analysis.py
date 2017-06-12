@@ -215,7 +215,8 @@ l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
                                             ('con_file', 'tcon_file'),
                                             ('fcon_file', 'fcon_file')]),
                     (level1model, datasink, [('design_file', '1stLevel.@design_file')]),
-                    (filmgls, datasink, [('zstats', '1stLevel.@Z'),
+                    (filmgls, datasink, [('copes', '1stLevel.@copes'),
+                                        ('zstats', '1stLevel.@Z'),
                                         ('fstats', '1stLevel.@F'),
                                         ('tstats','1stLevel.@T'),
                                         ('param_estimates','1stLevel.param_estimates')]),
@@ -226,5 +227,7 @@ l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
                     
                     ])
 
-
 l1analysis.run('MultiProc')
+
+l1analysis.write_graph(graph2use='colored', format='png', simple_form=False)
+shutil.move(graph_file, join(experiment_dir, output_dir, '1stLevel', 'graph.dot.png'))
