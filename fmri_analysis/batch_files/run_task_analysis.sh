@@ -3,3 +3,4 @@ do
     sid=${path: -4}
     sed "s/{sid}/$sid/g" task_analysis.batch | sbatch -p russpold
 done
+
