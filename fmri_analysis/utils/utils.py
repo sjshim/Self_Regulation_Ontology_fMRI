@@ -46,7 +46,7 @@ def move_EVs(overwrite=True):
             'stopSignal','stroop','twoByTwo','WATT3']
     fmri_data = get_info('fmri_data_directory')
     created_files = []
-    for subj_file in glob.glob(join(fmri_data,'sub*')):
+    for subj_file in glob.glob(join(fmri_data,'sub-s???')):
         subj = basename(subj_file)
         for task in tasks:
             if overwrite==True or not exists(join(subj_file,'*',
