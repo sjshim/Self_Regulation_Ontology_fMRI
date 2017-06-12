@@ -252,14 +252,7 @@ def parse_EVs(events_df, task):
                     col='condition', duration='duration', 
                     subset="planning==1")
         # move conditions
-        get_ev_vars(events_df, [('UA_with_intermediate','move_UA_with'), 
-                                ('UA_without_intermediate','move_UA_without'),
-                                ('PA_with_intermediate','move_PA_with'),
-                                ('PA_without_intermediate','move_PA_without')],
-                    col='condition', duration='duration', 
-                    subset="planning==0")
-        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
-                    duration='duration')
+        get_ev_vars(events_df, ['movement'], onset_column='movement_onset')
     return conditions, onsets, durations, amplitudes
     
 def process_confounds(confounds_file):
