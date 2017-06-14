@@ -11,3 +11,4 @@ fmri_analysis/data_settings.txt
 fmri_analysis/output
 fmri_analysis/Data/sub*
 fmri_analysis/singularity_images/*img
+nilearn*
