@@ -33,6 +33,9 @@ parser.add_argument('--tasks',help='The label(s) of the task(s)'
                    'that should be analyzed. If this parameter is not '
                    'provided all tasks should be analyzed.',
                    nargs="+")
+parser.add_argument('--ignore_rt', action='store_true', 
+                    help='Bool, defaults to True. If true include respone'
+                    'time as a regressor')
 
 
 args = parser.parse_args()
@@ -44,8 +47,8 @@ if args.tasks:
 else:
   task_list = ['ANT', 'CCTHot', 'DPX', 'motorSelectiveStop',
                'stopSignal', 'stroop', 'twoByTwo']
-
-# ### Experiment Variables
+regress_rt = not args.ignore_rt
+#### Experiment Variables
 experiment_dir = args.output_dir
 output_dir = 'datasink'
 working_dir = 'workingdir'
@@ -61,11 +64,9 @@ TR = .68
 # *********************************************
 
 # helper function to create bunch
-def subjectinfo(data_dir, subject_id, task, inspect_inputs=False):
+def subjectinfo(data_dir, subject_id, task, 
+                regress_rt, inspect_inputs=False):
     
-    from glob import glob
-    import numpy as np
-    import pandas as pd
     from os.path import join
     from nipype.interfaces.base import Bunch
     from utils.utils import get_contrasts, parse_EVs, process_confounds
@@ -91,7 +92,9 @@ def subjectinfo(data_dir, subject_id, task, inspect_inputs=False):
     regressors, regressor_names = process_confounds(confounds_file)
     
     # set up contrasts
-    conditions, onsets, durations, amplitudes = parse_EVs(events_df,task)
+    conditions, onsets, durations, amplitudes = parse_EVs(events_df, 
+                                                          task,
+                                                          regress_rt)
     
     subjectinfo = Bunch(conditions=conditions,
                         onsets=onsets,
@@ -130,11 +133,13 @@ def save_subjectinfo(base_directory, subject_id, task, subject_info, contrasts):
 # *********************************************
 
 # Get Subject Info - get subject specific condition information
-getsubjectinfo = Node(Function(input_names=['data_dir', 'subject_id', 'task'],
+getsubjectinfo = Node(Function(input_names=['data_dir', 'subject_id',
+                                            'regress_rt', 'task'],
                                output_names=['subject_info', 'contrasts'],
                                function=subjectinfo),
                       name='getsubjectinfo')
 getsubjectinfo.inputs.data_dir = data_dir
+getsubjectinfo.inputs.regress_rt = regress_rt
 # Infosource - a function free node to iterate over the list of subject names
 infosource = Node(IdentityInterface(fields=['subject_id',
                                             'task',

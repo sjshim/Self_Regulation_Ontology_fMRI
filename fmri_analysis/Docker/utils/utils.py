@@ -119,7 +119,7 @@ def get_contrasts(task):
 # (average RT across subjects or block duration)
 # RT as a separate regressor for each onset, constant duration, 
 # amplitude as parameteric regressor (function of RT)
-def parse_EVs(events_df, task):
+def parse_EVs(events_df, task, regress_rt=True):
     def get_ev_vars(events_df, condition_list, col=None, 
                     amplitude = 1, duration = 0, subset=None,
                     onset_column='onset'):
@@ -175,8 +175,9 @@ def parse_EVs(events_df, task):
         get_ev_vars(events_df, [('congruent','congruent'),
                                 ('incongruent', 'incongruent')],
                     col='flanker_type', duration='duration')
-        get_ev_vars(events_df, ['response_time'], duration='duration', 
-                    amplitude='response_time')
+        if regress_rt == True:
+            get_ev_vars(events_df, ['response_time'], duration='duration', 
+                        amplitude='response_time')
         get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "CCTHot":
@@ -188,16 +189,18 @@ def parse_EVs(events_df, task):
                     amplitude='num_click_in_round')
         get_ev_vars(events_df, [(1,'reward'), (0,'punishment')], col='feedback',
                     duration=0, amplitude=1)
-        get_ev_vars(events_df, ['response_time'], duration='duration', 
-                    amplitude='response_time')
+        if regress_rt == True:
+            get_ev_vars(events_df, ['response_time'], duration='duration', 
+                        amplitude='response_time')
         get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "DPX":
         get_ev_vars(events_df, [('AX','AX'), ('AY','AY'), 
                                 ('BX', 'BX'), ('BY','BY')],
                     col='condition', duration='duration')
-        get_ev_vars(events_df, ['response_time'], duration='duration', 
-                    amplitude='response_time')
+        if regress_rt == True:
+            get_ev_vars(events_df, ['response_time'], duration='duration', 
+                        amplitude='response_time')
         get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "motorSelectiveStop":
@@ -220,8 +223,9 @@ def parse_EVs(events_df, task):
         get_ev_vars(events_df, [('congruent','congruent'), 
                                 ('incongruent','incongruent')],
                     col='trial_type', duration='duration')
-        get_ev_vars(events_df, ['response_time'], duration='duration', 
-                    amplitude='response_time')
+        if regress_rt == True:
+            get_ev_vars(events_df, ['response_time'], duration='duration', 
+                        amplitude='response_time')
         get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "twoByTwo":
@@ -241,8 +245,9 @@ def parse_EVs(events_df, task):
         get_ev_vars(events_df, [('switch','task_switch_100')],
                     col='task_switch', duration='duration',
                     subset="CTI==100")
-        get_ev_vars(events_df, ['response_time'], duration='duration', 
-                    amplitude='response_time')
+        if regress_rt == True:
+            get_ev_vars(events_df, ['response_time'], duration='duration', 
+                        amplitude='response_time')
         get_ev_vars(events_df, [(True, 'junk')], col='junk', 
                     duration='duration')
     elif task == "WATT3":

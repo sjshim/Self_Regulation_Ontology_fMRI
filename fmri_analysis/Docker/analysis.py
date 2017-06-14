@@ -22,6 +22,9 @@ parser.add_argument('--tasks',help='The label(s) of the task(s)'
                    'that should be analyzed. If this parameter is not '
                    'provided all tasks should be analyzed.',
                    nargs="+")
+parser.add_argument('--ignore_rt', action='store_true', 
+                    help='Bool, defaults to True. If true include response'
+                    'time as a regressor')
 
 
 args = parser.parse_args()
@@ -42,6 +45,9 @@ if args.data_dir:
 if args.tasks:
     task_list = args.tasks
     cmd += ' --task ' + ' '.join(task_list)
+    
+if args.ignore_rt:
+    cmd += ' --ignore_rt'
 # run fmri_analysis
 os.system(cmd)
     
