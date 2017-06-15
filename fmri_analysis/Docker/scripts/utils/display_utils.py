@@ -104,7 +104,9 @@ def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
     contrast_names = [c[0] for c in contrasts]
     # set up subplots for group plots
     group_fig, group_axes = plt.subplots(len(contrast_names), 1,
-                                         figsize=(14, 6*len(contrast_names)))
+                                         figsize=(14, 5*len(contrast_names)))
+    group_fig.suptitle('%s Group Contrasts' % task.title(), fontsize=30, 
+                       fontweight='bold', y=.97)
     for i,contrast_name in enumerate(contrast_names):
         if contrast_index is not None:
             if i+1 not in contrast_index:
@@ -113,7 +115,7 @@ def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
         if plot_individual == True:
             # set up subplots for individual contrasts plots
             contrast_fig, contrast_axes = plt.subplots(len(map_files), 1,
-                                         figsize=(14, 6*len(map_files)))
+                                         figsize=(14, 5*len(map_files)))
         # get each individual contrast and store them in smooth_copes
         smooth_copes = []
         for img_i, img in enumerate(sorted(map_files)):

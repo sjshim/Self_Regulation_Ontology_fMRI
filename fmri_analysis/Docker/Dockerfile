@@ -118,10 +118,6 @@ RUN mkdir /Data
 RUN mkdir /output
 RUN mkdir /scripts
 ADD scripts /scripts
-COPY analysis.py /scripts/analysis.py
-COPY task_analysis.py /scripts/task_analysis.py
-COPY group_analysis.py /scripts/group_analysis.py
-COPY utils /scripts/utils
 
 ENTRYPOINT ["python", "/scripts/analysis.py"]
 

@@ -38,7 +38,7 @@ assert os.path.exists(output_dir), \
 cmd = "python %s " % script + output_dir
 
 if args.participant_label:
-      " --participant_label " + ' '.join(args.participant_label)
+    cmd += " --participant_label " + ' '.join(args.participant_label)
 
 if args.data_dir:
     assert os.path.exists(args.data_dir), \
@@ -51,7 +51,11 @@ if args.tasks:
     
 if args.ignore_rt:
     cmd += ' --ignore_rt'
-    
+
+print('*'*79)
+print('Executing Command: %s' % cmd)
+print('*'*79)
+
 # run fmri_analysis
 os.system(cmd)
     
