@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 import nilearn.plotting
 import nilearn.image
 import numpy as np
+from os import makedirs
 from os.path import join
 import pandas as pd
 import pickle
@@ -72,7 +73,7 @@ def plot_zmaps(task_path, smoothness=8):
 
 def plot_tstats(task_path, smoothness=8):
     fmri_contrast_paths = join(task_path, 'tstat?.nii.gz')
-    fmri_contrast_files = sort(glob(fmri_contrast_paths))
+    fmri_contrast_files = sorted(glob(fmri_contrast_paths))
     contrasts_path = join(task_path, 'contrasts.pkl')
     contrasts = pickle.load(open(contrasts_path,'rb'))
     contrast_names = [c[0] for c in contrasts]
@@ -81,30 +82,61 @@ def plot_tstats(task_path, smoothness=8):
         nilearn.plotting.plot_stat_map(smooth_img, threshold=0,
                                         title=contrast_names[i])
 
-def group_plot(data_dir, task, smoothness=8, plot_individual=False,
-               contrast_index=None):
+def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
+               contrast_index=None, output_dir=None):
+    """Function to plot contrasts
+    
+    Args:
+        data_dir (string): The directory to find the contrasts
+        task (string): the task to pull contrasts for
+        smoothness (int): smoothness parameter passed to 
+                           nilearn.image_smooth_img. Defaults to 8.
+        plot_individual (bool): If true, create plots for individual contrasts
+        contrast_index (list): list of contrasts to subselect. If None, use all
+        output_dir (string): if specified, save plots here
+    """
+    # if output_dir is specified, create it to store plots
+    if output_dir:
+        makedirs(join(output_dir,task), exist_ok=True)
     # get contrast names
     contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))[0]
     contrasts = pickle.load(open(contrast_path,'rb'))
     contrast_names = [c[0] for c in contrasts]
+    # set up subplots for group plots
+    group_fig, group_axes = plt.subplots(len(contrast_names), 1,
+                                         figsize=(14, 6*len(contrast_names)))
     for i,contrast_name in enumerate(contrast_names):
         if contrast_index is not None:
-            if i+1 != contrast_index:
+            if i+1 not in contrast_index:
                 continue
         map_files = glob(join(data_dir,'*%s/cope%s.nii.gz' % (task, i+1)))
+        if plot_individual == True:
+            # set up subplots for individual contrasts plots
+            contrast_fig, contrast_axes = plt.subplots(len(map_files), 1,
+                                         figsize=(14, 6*len(map_files)))
+        # get each individual contrast and store them in smooth_copes
         smooth_copes = []
-        for img in sorted(map_files):
+        for img_i, img in enumerate(sorted(map_files)):
             subj = re.search('s[0-9][0-9][0-9]',img).group(0)
-            smooth_cope = nilearn.image.smooth_img(img, 8)
+            smooth_cope = nilearn.image.smooth_img(img, smoothness)
             smooth_copes.append(smooth_cope)
             if plot_individual == True:
+                # if plotting individuals, add to individual subplot
                 nilearn.plotting.plot_glass_brain(smooth_cope,
                                               display_mode='lyrz', 
                                               colorbar=True, 
                                               plot_abs=False,
-                                              title=subj)
+                                              title=subj,
+                                              axes=contrast_axes[img_i])
+        if plot_individual:
+            contrast_fig.savefig(join(output_dir,task,
+                                   'ind_contrast:%s.png' % contrast_name))
+        N = len(map_files)
         nilearn.plotting.plot_glass_brain(nilearn.image.mean_img(smooth_copes),
                                       display_mode='lyrz', 
                                       colorbar=True, 
                                       plot_abs=False,
-                                      title=contrast_name)
+                                      title=contrast_name+', N: %s' % N,
+                                      axes=group_axes[i])
+    if output_dir:
+        group_fig.savefig(join(output_dir,task,'group_contrasts.png'))

@@ -25,17 +25,20 @@ parser.add_argument('--tasks',help='The label(s) of the task(s)'
 parser.add_argument('--ignore_rt', action='store_true', 
                     help='Bool, defaults to True. If true include response'
                     'time as a regressor')
+parser.add_argument('--script', default='task_analysis.py',
+                    help='Script to run')
 
 
-args = parser.parse_args()
+args, unknown = parser.parse_known_args()
 output_dir = args.output_dir
+script = args.script
 assert os.path.exists(output_dir), \
   "Output directory %s doesn't exist!" % output_dir
-# subset of subjects
-subjects_to_analyze = args.participant_label
-cmd = "python /scripts/task_analysis.py " + \
-      output_dir + \
-      " --participant_label " + ' '.join(subjects_to_analyze)
+  
+cmd = "python %s " % script + output_dir
+
+if args.participant_label:
+      " --participant_label " + ' '.join(args.participant_label)
 
 if args.data_dir:
     assert os.path.exists(args.data_dir), \
@@ -48,6 +51,7 @@ if args.tasks:
     
 if args.ignore_rt:
     cmd += ' --ignore_rt'
+    
 # run fmri_analysis
 os.system(cmd)
     
