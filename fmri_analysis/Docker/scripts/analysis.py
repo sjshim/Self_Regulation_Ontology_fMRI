@@ -26,7 +26,7 @@ parser.add_argument('--ignore_rt', action='store_true',
                     help='Bool, defaults to True. If true include response'
                     'time as a regressor')
 parser.add_argument('--script', default='task_analysis.py',
-                    help='Script to run')
+                    help='Script to run. Options: task_analysis.py (default), group_plots.py, group_analysis.py')
 
 
 args, unknown = parser.parse_known_args()
@@ -35,7 +35,7 @@ script = args.script
 assert os.path.exists(output_dir), \
   "Output directory %s doesn't exist!" % output_dir
   
-cmd = "python %s " % script + output_dir
+cmd = "python /scripts/%s " % script + output_dir
 
 if args.participant_label:
     cmd += " --participant_label " + ' '.join(args.participant_label)
