@@ -11,7 +11,7 @@ import seaborn as sns
 
 # parse arguments
 parser = argparse.ArgumentParser(description='fMRI Analysis Entrypoint Script.')
-parser.add_argument('--output_dir', default = None, 
+parser.add_argument('output_dir', default = None, 
                     help='The directory where the output files '
                     'should be stored. These just consist of plots.')
 parser.add_argument('--data_dir',help='The label(s) of the participant(s)'
@@ -22,7 +22,7 @@ args, unknown = parser.parse_known_args()
 if args.output_dir:
     output_dir = args.output_dir
 
-data_dir = '/mnt/Sherlock_Scratch/datasink/1stLevel/' # /Data
+data_dir = '/Data'
 if args.data_dir:
   data_dir = args.data_dir
 
@@ -93,7 +93,7 @@ def get_avg_corr(projection, subset1, subset2):
 # project contrasts into lower dimensional space    
 tasks = ['ANT', 'DPX', 'motorSelectiveStop', 'stopSignal', 'stroop', 
          'twoByTwo', 'WATT3']
-contrasts = [1,2,3,4]
+contrasts = range(12)
 projections = {}
 for task in tasks:
     for contrast in contrasts:
@@ -104,22 +104,25 @@ for task in tasks:
              TS, masker = project_contrast(func_file,smith_networks)
              projections[subj + '_' + task + '_cont%s' % contrast] = TS
 projections_df = projections_to_df(projections)
+if output_dir:
+    projections_df.to_json(join(output_dir, 'task_projection.json'))
 
 # create matrix of average correlations across contrasts
-contrasts = sorted(np.unique([i[-5:] for i in projections_df.index]))
+contrasts = sorted(np.unique([i[-10:] for i in projections_df.index]))
 avg_corrs = np.zeros((len(contrasts), len(contrasts)))
 for i, cont1 in enumerate(contrasts):
     for j, cont2 in enumerate(contrasts):
         avg_corrs[i,j] = get_avg_corr(projections_df, cont1, cont2)
 avg_corrs = pd.DataFrame(avg_corrs, index=contrasts, columns=contrasts)
-sns.heatmap(avg_corrs)
+print(avg_corrs.columns)
 
 # ********************************************************
 # Plotting
 # ********************************************************
 
 # plot the inverse projection, sanity check
-plotting.plot_stat_map(masker.inverse_transform(projections['s192_stroop_cont4']))     
+#plotting.plot_stat_map(masker.inverse_transform(projections['s192_stroop_cont4'])) 
+    
 # plots
 f, ax = sns.plt.subplots(1,1, figsize=(20,20))
 sns.heatmap(projections_df.T.corr(), ax=ax, square=True)

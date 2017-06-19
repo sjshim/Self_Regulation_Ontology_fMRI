@@ -1,5 +1,9 @@
 from glob import glob
 from itertools import chain
+from math import ceil
+# use backend that doesn't require $DISPLAY environment
+import matplotlib as mpl
+mpl.use('Agg')
 from matplotlib import pyplot as plt
 import nilearn.plotting
 import nilearn.image
@@ -46,7 +50,7 @@ def get_design_df(task_path):
     design_df = pd.DataFrame(desmtx, columns=columns)
     return design_df
 
-def plot_design(design_df):
+def plot_design(design_df, output_dir=None):
     junk_index = list(design_df.columns).index('junk')
     quintile1 = len(design_df)//5
     regs = design_df.iloc[0:quintile1,0:junk_index:2]
@@ -56,6 +60,10 @@ def plot_design(design_df):
     ax2.set_title('Heatmap: Regressors of Interest', fontsize=20)
     sns.heatmap(design_df.corr(), ax=ax3, square=True)
     ax3.set_title('Heatmap: Design Matrix', fontsize=20)
+    if output_dir:
+        makedirs(output_dir, exist_ok=True)
+        f.savefig(join(output_dir,'design_plot.png'))
+
 
 def plot_zmaps(task_path, smoothness=8):
     fmri_contrast_paths = join(task_path, 'zstat?.nii.gz')
@@ -114,8 +122,9 @@ def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
         map_files = glob(join(data_dir,'*%s/cope%s.nii.gz' % (task, i+1)))
         if plot_individual == True:
             # set up subplots for individual contrasts plots
-            contrast_fig, contrast_axes = plt.subplots(len(map_files), 1,
-                                         figsize=(14, 5*len(map_files)))
+            contrast_fig, contrast_axes = plt.subplots(ceil(len(map_files)/2), 2,
+                                         figsize=(24, 5*ceil(len(map_files)/2)),
+                                         squeeze=True)
         # get each individual contrast and store them in smooth_copes
         smooth_copes = []
         for img_i, img in enumerate(sorted(map_files)):
@@ -129,7 +138,7 @@ def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
                                               colorbar=True, 
                                               plot_abs=False,
                                               title=subj,
-                                              axes=contrast_axes[img_i])
+                                              axes=contrast_fig.axes[img_i])
         if plot_individual:
             contrast_fig.savefig(join(output_dir,task,
                                    'ind_contrast:%s.png' % contrast_name))

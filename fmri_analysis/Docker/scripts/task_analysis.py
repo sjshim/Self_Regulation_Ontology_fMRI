@@ -37,7 +37,6 @@ parser.add_argument('--ignore_rt', action='store_true',
                     help='Bool, defaults to True. If true include respone'
                     'time as a regressor')
 
-
 args = parser.parse_args()
 # list of subject identifiers
 subject_list = args.participant_label
@@ -48,9 +47,10 @@ else:
   task_list = ['ANT', 'CCTHot', 'DPX', 'motorSelectiveStop',
                'stopSignal', 'stroop', 'twoByTwo']
 regress_rt = not args.ignore_rt
+print(regress_rt)
 #### Experiment Variables
 experiment_dir = args.output_dir
-output_dir = 'datasink'
+output_dir = '1stLevel'
 working_dir = 'workingdir'
 data_dir = "/Data"
 if args.data_dir:
@@ -220,10 +220,10 @@ l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
                                             ('con_file', 'tcon_file'),
                                             ('fcon_file', 'fcon_file')]),
                     (level1model, datasink, [('design_file', '1stLevel.@design_file')]),
-                    (filmgls, datasink, [('copes', '1stLevel.@copes'),
-                                        ('zstats', '1stLevel.@Z'),
-                                        ('fstats', '1stLevel.@F'),
-                                        ('tstats','1stLevel.@T'),
+                    (filmgls, datasink, [('copes', '@copes'),
+                                        ('zstats', '@Z'),
+                                        ('fstats', '@F'),
+                                        ('tstats','@T'),
                                         ('param_estimates','1stLevel.param_estimates')]),
                     (infosource, save_subjectinfo, [('subject_id','subject_id'),
                                                      ('task', 'task')]),
