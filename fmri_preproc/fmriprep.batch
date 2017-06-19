@@ -2,8 +2,8 @@
 #SBATCH --job-name={sid}-prep
 #SBATCH --output=.out/{sid}-prep.job.outi
 #SBATCH --error=.err/{sid}-prep.job.err
-#SBATCH --time=32:00:00
-#SBATCH --mem=120000
+#SBATCH --time=20:00:00
+# SBATCH --mem=120000
 #SBATCH --qos=russpold
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ieisenbe@stanford.edu

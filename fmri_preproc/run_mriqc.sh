@@ -1,6 +1,6 @@
 set -e
 ignore_list=ignore_list.txt
-for path in data/sub*
+for path in /oak/stanford/groups/russpold/data/uh2/sub*
 do
     echo "*******************************************"
     sid=${path:(-4)}
