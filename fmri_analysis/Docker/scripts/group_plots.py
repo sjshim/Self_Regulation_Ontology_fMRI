@@ -36,5 +36,5 @@ for task in tasks:
     plot_contrasts(data_dir, task, output_dir=output_dir, plot_individual=True)
     task_path = glob(path.join(data_dir,'*%s' % task))[0]
     design = get_design_df(task_path)
-    plot_design(design, output_dir=join(output_dir,task))
+    plot_design(design, output_dir=path.join(output_dir,task))
 
