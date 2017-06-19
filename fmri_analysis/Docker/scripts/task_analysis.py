@@ -4,14 +4,12 @@
 
 import argparse
 from glob import glob
-from nipype.interfaces import afni
-from nipype.interfaces.fsl import Level1Design, FEATModel, FILMGLS, FEAT, maths
+from nipype.interfaces.fsl import Level1Design, FEATModel, FILMGLS, maths
 from nipype.algorithms.modelgen import SpecifyModel
 from nipype.interfaces.utility import Function, IdentityInterface
 from nipype.interfaces.io import SelectFiles, DataSink
 from nipype.pipeline.engine import Workflow, Node
-from os import makedirs
-from os.path import abspath, join
+from os.path import join
 import pandas as pd
 import shutil
 
@@ -67,7 +65,9 @@ TR = .68
 def subjectinfo(data_dir, subject_id, task, 
                 regress_rt, inspect_inputs=False):
     
+    from glob import glob
     from os.path import join
+    import pandas as pd
     from nipype.interfaces.base import Bunch
     from utils.utils import get_contrasts, parse_EVs, process_confounds
     
@@ -112,7 +112,6 @@ def subjectinfo(data_dir, subject_id, task,
         return subjectinfo, contrasts  # this output will later be returned to infosource
 
 def save_subjectinfo(base_directory, subject_id, task, subject_info, contrasts):
-    import errno
     from os import makedirs
     from os.path import join
     import pickle
