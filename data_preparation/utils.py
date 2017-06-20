@@ -1,6 +1,7 @@
 from expanalysis.experiments.jspsych_processing import ANT_HDDM, EZ_diffusion, \
     get_post_error_slow, group_decorate
 import pandas as pd
+import numpy as np
 
 # function to correct processing of a few problematic files
 # need to change time_elapsed to reflect the fact that fmri triggers were
@@ -117,5 +118,142 @@ def calc_ANT_DV(df, dvs = {}):
     is less of a disparity. Thresholds may be higher in conflict conditions. Higher values (incongruent-congruent)
     are also good, as they indicate adapatible changes in the amount of evidence needed based on the 
     difficulty of the trial.
+    """
+    return dvs, description
+    
+@group_decorate()
+def calc_discount_fix_DV(df, dvs = {}):
+    """ Calculate dv for discount_fix task
+    :return dv: dictionary of dependent variables
+    :return description: descriptor of DVs
+    """
+    
+    import random
+    import statsmodels.formula.api as smf
+    import statsmodels.api as sm
+    import sys
+    
+    #initiate warnings array for any errors during estimation
+    warnings = []
+    
+    #filter only the choice data
+    df = df[np.isfinite(df['small_amount'])]
+    if df.shape[0] != 120:
+        warnings.append('Incorrect number of trials for worker_id: '+ df.subject.unique())
+    
+    #add additional columns for dv calculation
+    df.insert(0, 'patient1_impatient0', np.where(df['choice'] == 'larger_later', 1, np.where(df['choice'] == 'smaller_sooner', 0, np.nan)).tolist())
+    
+    df.insert(0, 'sooner_delay', 0)
+    
+    df.insert(0, 'indiff_k', (df['large_amount'].astype(float) - df['small_amount'].astype(float))/(df['small_amount'].astype(float)*df['later_delay'].astype(float) - df['large_amount'].astype(float)*df['sooner_delay'].astype(float)).tolist())    
+        
+    dvs = {}
+    #Simples dv: percent of patient choices
+    dvs['percent_patient'] = {'value': df['patient1_impatient0'].mean(), 'valence': 'NA'}
+    #Second dv: hyperbolic discount rates calculated using glm on implied indifference discount rates by each choice
+    #for people who have maxed out use the min/max implied indiff_k
+                
+    def calculate_hyp_discount_rate_glm(data):
+        hyp_discount_rate_glm = 0
+        if(set(data['patient1_impatient0']) == {0.0}):
+            hyp_discount_rate_glm = max(data['indiff_k'])
+        elif(set(data['patient1_impatient0']) == {1.0}):
+            hyp_discount_rate_glm = min(data['indiff_k'])
+        else:
+            try:
+                rs = smf.glm(formula = 'patient1_impatient0 ~ indiff_k', data = data, family = sm.families.Binomial()).fit()
+                hyp_discount_rate_glm = -rs.params[0]/rs.params[1]
+            except:                                                                         
+                #error behavior if glm fails
+                #first save error message
+                warnings.append(sys.exc_info()[1])
+                #then try estimating on a noisier column
+                try:
+                    def add_noise(column):
+                        noise_rows = random.sample(range(len(column)), 3)
+                        noisy_column = []
+                        for i in range(len(column)):
+                          if i in noise_rows:
+                            noisy_column.append((column[i]*-1)+1)
+                          else:
+                            noisy_column.append(column[i])
+                        return noisy_column
+                        
+                    data['patient1_impatient0_noisy'] = add_noise(data['patient1_impatient0'])
+                    rs = smf.glm(formula = 'patient1_impatient0_noisy ~ indiff_k', data = data, family = sm.families.Binomial()).fit()
+                    hyp_discount_rate_glm = -rs.params[0]/rs.params[1]
+                except:
+                    warnings.append(sys.exc_info()[1])
+                    #if that also fails assign NA
+                    hyp_discount_rate_glm = 'NA'
+        return hyp_discount_rate_glm           
+    
+    dvs['hyp_discount_rate_glm'] = {'value': calculate_hyp_discount_rate_glm(df), 'valence': 'Neg'}
+    
+    #Third dv: hyperbolic discount rates calculated using nelder-mead optimizations
+    def calculate_hyp_discount_rate_nm(x0, data):
+                
+        beta = x0[0]
+        k = x0[1]
+        
+        smaller_amount = list(data['small_amount'])
+        sooner_days = list(data['sooner_delay'])
+        larger_amount = list(data['large_amount'])
+        later_days = list(data['later_delay'])
+        patient1_impatient0 = list(data['patient1_impatient0'])
+
+        u_ss = []
+        for i in range(data.shape[0]):
+          u_ss.append(float(smaller_amount[i])/float(1+k*(float(sooner_days[i]))))
+        u_ll = []
+        for i in range(data.shape[0]):
+          u_ll.append(float(larger_amount[i])/float(1+k*(float(later_days[i]))))
+          
+        u_diff = [a - b for a, b in zip(u_ss, u_ll)]
+    
+        #Calculate choice probs
+        #logt: smaller beta (p[1]) larger error
+        
+        prob = [1/float((1+np.exp(beta*x))) for x in u_diff]
+    
+       #replace 1 and 0 to avoid log(1) and log(0)
+        prob = np.where(prob == 1, 0.9999, np.where(prob == 0, 0.0001, prob)).tolist()                                                            
+    
+        #get log likelihood
+        err = []
+        for i in range(data.shape[0]):
+            err.append((patient1_impatient0[i] * np.log(prob[i])) + ((1 - patient1_impatient0[i])*np.log(1-prob[i])))
+    
+        #sum of negative log likelihood (to be minimized)
+        sumerr = -1*sum(err)
+    
+        return sumerr
+
+    def optim_hyp_discount_rate_nm(data):
+        from scipy import optimize
+        hyp_discount_rate_nm = 0.0
+        try:
+            x0=[0,0]
+            xopt = optimize.fmin(calculate_hyp_discount_rate_nm,x0,args=(data,),xtol=1e-6,ftol=1e-6, disp=False)
+            hyp_discount_rate_nm = xopt[1]
+        except:
+            warnings.append(sys.exc_info()[1])
+            if(set(data['patient1_impatient0']) == {0.0}):
+                hyp_discount_rate_nm = max(data['indiff_k'])
+            elif(set(data['patient1_impatient0']) == {1.0}):
+                hyp_discount_rate_nm = min(data['indiff_k'])
+            else:
+                hyp_discount_rate_nm = 'NA'
+        return hyp_discount_rate_nm
+            
+    dvs['hyp_discount_rate_nm'] = {'value': optim_hyp_discount_rate_nm(df), 'valence': 'Neg'}
+                
+    #Add any warnings
+    dvs['warnings'] = {'value': warnings, 'valence': 'NA'}
+    
+    description = """
+    Calculated percent of patient responses and hyperbolic discount rate. Lower discount rates mean more patient choices. 
+    Used two optimization methods: glm and nelder-mead.
     """
     return dvs, description
