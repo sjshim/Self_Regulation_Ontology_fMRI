@@ -7,7 +7,7 @@ from os.path import join, dirname, basename, exists
 import pandas as pd
 from shutil import copyfile
 
-def get_contrasts(task):
+def get_contrasts(task, regress_rt=True):
     contrast_list = []
     if task == 'ANT':
         # contrasts vs baseline
@@ -15,30 +15,36 @@ def get_contrasts(task):
         c2 = ['congruent','T', ['congruent'], [1]]
         c3 = ['spatial_cue','T', ['spatial_cue'], [1]]
         c4 = ['double_cue','T', ['double_cue'], [1]]
-        c5 = ['response_time', 'T', ['response_time'], [1]]
         # contrasts 
-        c6 = ['conflict_network','T', ['incongruent','congruent'], [1,-1]]
-        c7 = ['orienting_network','T', ['spatial_cue','double_cue'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6,c7]
+        c5 = ['conflict_network','T', ['incongruent','congruent'], [1,-1]]
+        c6 = ['orienting_network','T', ['spatial_cue','double_cue'], [1,-1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6]
+        if regress_rt:
+            c7 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c7)
     elif task == 'CCTHot':
         # contrasts vs baseline
         c1 = ['EV','T', ['EV'], [1]]
         c2 = ['risk','T', ['risk'], [1]]
-        c3 = ['response_time', 'T', ['response_time'], [1]]
-        contrast_list = [c1,c2,c3]
+        contrast_list = [c1,c2]
+        if regress_rt:
+            c3 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c3)
     elif task == 'DPX':
         # contrasts vs baseline
         c1 = ['AX','T', ['AX'], [1]]
         c2 = ['AY','T', ['AY'], [1]]
         c3 = ['BX','T', ['BX'], [1]]
         c4 = ['BY','T', ['BY'], [1]]
-        c5 = ['response_time', 'T', ['response_time'], [1]]
         # contrasts 
-        c6 = ['BX-BY','T', ['BX','BY'], [1,-1]]
-        c7 = ['AY-BY','T', ['AY','BY'], [1,-1]]
-        c8 = ['AY-BX','T', ['AY','BX'], [1,-1]]
-        c9 = ['BX-AY','T', ['AY','BX'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8,c9]
+        c5 = ['BX-BY','T', ['BX','BY'], [1,-1]]
+        c6 = ['AY-BY','T', ['AY','BY'], [1,-1]]
+        c7 = ['AY-BX','T', ['AY','BX'], [1,-1]]
+        c8 = ['BX-AY','T', ['AY','BX'], [1,-1]]
+        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8]
+        if regress_rt:
+            c9 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c9)
     elif task == 'motorSelectiveStop':
         # contrasts vs baseline
         c1 = ['crit_go','T', ['crit_go'], [1]]
@@ -81,10 +87,12 @@ def get_contrasts(task):
         # contrasts vs baseline
         c1 = ['incongruent','T', ['incongruent'], [1]]
         c2 = ['congruent','T', ['congruent'], [1]]
-        c3 = ['response_time', 'T', ['response_time'], [1]]
         # contrasts
-        c4 = ['incongruent-congruent','T', ['incongruent','congruent'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4]
+        c3 = ['incongruent-congruent','T', ['incongruent','congruent'], [1,-1]]
+        contrast_list = [c1,c2,c3]
+        if regress_rt:
+            c4 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c4)
     elif task == 'twoByTwo':
         # contrasts vs baseline
         c1 = ['cue_switch_100','T', ['cue_switch_100'], [1]]
@@ -102,8 +110,10 @@ def get_contrasts(task):
                 ['task_switch_100','cue_switch_100'], [1,-1]]
         c8 = ['task_switch_cost_900','T', 
                 ['task_switch_900','cue_switch_900'], [1,-1]]
-        c9 = ['response_time', 'T', ['response_time'], [1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8,c9]
+        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8]
+        if regress_rt:
+            c9 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c9)
     elif task == 'WATT3':
         # contrasts vs baseline
         c1 = ['plan_PA_with','T', ['plan_PA_with'], [1]]

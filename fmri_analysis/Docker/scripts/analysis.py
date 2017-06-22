@@ -27,6 +27,8 @@ parser.add_argument('--ignore_rt', action='store_true',
                     'time as a regressor')
 parser.add_argument('--script', default='task_analysis.py',
                     help='Script to run. Options: task_analysis.py (default), group_plots.py, group_analysis.py')
+parser.add_argument('--cleanup', action='store_true', 
+                    help='If included, delete working directory')
 
 
 args, unknown = parser.parse_known_args()
@@ -51,6 +53,9 @@ if args.tasks:
     
 if args.ignore_rt:
     cmd += ' --ignore_rt'
+
+if args.cleanup:
+    cmd += ' --cleanup'
 
 print('*'*79)
 print('Executing Command: %s' % cmd)

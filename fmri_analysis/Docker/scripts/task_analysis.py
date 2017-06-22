@@ -32,8 +32,10 @@ parser.add_argument('--tasks',help='The label(s) of the task(s)'
                    'provided all tasks should be analyzed.',
                    nargs="+")
 parser.add_argument('--ignore_rt', action='store_true', 
-                    help='Bool, defaults to True. If true include respone'
+                    help='If included, ignore respone'
                     'time as a regressor')
+parser.add_argument('--cleanup', action='store_true', 
+                    help='If included, delete working directory')
 
 args = parser.parse_args()
 # list of subject identifiers
@@ -108,14 +110,14 @@ def subjectinfo(data_dir, subject_id, task,
         regressors_df = pd.DataFrame(regressors, columns = regressor_names)
         return events_df, regressors_df
     else:
-        contrasts = get_contrasts(task)
+        contrasts = get_contrasts(task, regress_rt)
         return subjectinfo, contrasts  # this output will later be returned to infosource
 
 def save_subjectinfo(base_directory, subject_id, task, subject_info, contrasts):
     from os import makedirs
     from os.path import join
     import pickle
-    task_dir = join(base_directory, '1stLevel', subject_id + '_task_' + task)
+    task_dir = join(base_directory, subject_id + '_task_' + task)
     makedirs(task_dir, exist_ok=True)
     subjectinfo_path = join(task_dir,'subjectinfo.pkl')
     pickle.dump(subject_info, open(subjectinfo_path,'wb'))
@@ -218,12 +220,12 @@ l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
                     (level1model, filmgls, [('design_file', 'design_file'),
                                             ('con_file', 'tcon_file'),
                                             ('fcon_file', 'fcon_file')]),
-                    (level1model, datasink, [('design_file', '1stLevel.@design_file')]),
+                    (level1model, datasink, [('design_file', '@design_file')]),
                     (filmgls, datasink, [('copes', '@copes'),
                                         ('zstats', '@Z'),
                                         ('fstats', '@F'),
                                         ('tstats','@T'),
-                                        ('param_estimates','1stLevel.param_estimates')]),
+                                        ('param_estimates','param_estimates')]),
                     (infosource, save_subjectinfo, [('subject_id','subject_id'),
                                                      ('task', 'task')]),
                     (getsubjectinfo, save_subjectinfo, [('subject_info','subject_info'),
@@ -234,4 +236,7 @@ l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
 l1analysis.run('MultiProc')
 
 l1analysis.write_graph(graph2use='colored', format='png', simple_form=False)
-shutil.move(graph_file, join(experiment_dir, output_dir, '1stLevel', 'graph.dot.png'))
+graph_file=join(l1analysis.base_dir, 'l1analysis', 'graph.dot.png')
+shutil.move(graph_file, join(experiment_dir, output_dir, 'graph.dot.png'))
+if args.cleanup == True:
+  shutil.rmtree(l1analysis.base_dir)
