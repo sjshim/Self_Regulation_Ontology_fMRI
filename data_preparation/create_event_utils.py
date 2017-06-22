@@ -116,6 +116,38 @@ def create_CCT_event(df, duration=None):
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
+
+def create_discountFix_event(df, duration=None):
+    from utils import calc_discount_fix_DV
+    columns_to_drop = get_drop_columns(df)
+    events_df = df[df['time_elapsed']>0]
+    # add junk regressor
+    events_df.loc[:,'junk'] = get_junk_trials(df)
+   
+    # reorganize and rename columns in line with BIDs specifications
+    events_df.loc[:,'trial_type'] = events_df.choice
+    events_df.insert(0,'response_time',events_df.rt)
+
+    if duration is None:
+        events_df.insert(0,'duration',events_df.stim_duration)
+    else:
+        events_df.insert(0,'duration',duration)
+    # time elapsed is at the end of the trial, so have to remove the block 
+    # duration
+    events_df.insert(0,'onset',get_trial_times(df))
+    # convert milliseconds to seconds
+    events_df.loc[:,['response_time','onset','duration']]/=1000
+
+    #additional parametric regressors: 
+    #subjective value
+    worker_id = df.worker_id.unique()[0]
+    discount_rate = calc_discount_fix_DV(df)[0].get(worker_id).get('hyp_discount_rate_glm').get('value')
+    events_df.insert(0, 'subjective_value', events_df.large_amount/(1+discount_rate*events_df.later_delay))    
+    #inverse_delay
+    events_df.insert(0, 'inverse_delay', 1/events_df.later_delay)
+    # drop unnecessary columns
+    events_df = events_df.drop(columns_to_drop, axis=1)
+    return events_df
     
 def create_DPX_event(df, duration=None):
     columns_to_drop = get_drop_columns(df)
@@ -301,42 +333,3 @@ def create_WATT_event(df, duration):
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
 
-def create_discountFix_event(df, duration=None):
-    columns_to_drop = get_drop_columns(df)
-    events_df = df[df['time_elapsed']>0]
-    # add junk regressor
-    events_df.loc[:,'junk'] = get_junk_trials(df)
-   
-    # reorganize and rename columns in line with BIDs specifications
-    events_df.loc[:,'trial_type'] = events_df.choice
-
-    events_df.insert(0,'response_time',events_df.rt)
-
-    if duration is None:
-        events_df.insert(0,'duration',events_df.stim_duration)
-    else:
-        events_df.insert(0,'duration',duration)
-    # time elapsed is at the end of the trial, so have to remove the block 
-    # duration
-    events_df.insert(0,'onset',get_trial_times(df))
-    # convert milliseconds to seconds
-    events_df.loc[:,['response_time','onset','duration']]/=1000
-
-    #additional parametric regressors: 
-    #subjective value
-    from utils import calc_discount_fix_DV
-    
-    worker_id = df.worker_id.unique()[0]
-    
-    discount_rate = calc_discount_fix_DV(df)[0].get(worker_id).get('hyp_discount_rate_glm').get('value')
-    
-    events_df.insert(0, 'subjective_value', events_df.large_amount/(1+discount_rate*events_df.later_delay))
-    
-    #large_amount: already in df
-    
-    #inverse_delay
-    events_df.insert(0, 'inverse_delay', 1/events_df.later_delay)
-    
-    # drop unnecessary columns
-    events_df = events_df.drop(columns_to_drop, axis=1)
-    return events_df
