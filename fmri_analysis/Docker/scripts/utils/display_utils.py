@@ -51,9 +51,12 @@ def get_design_df(task_path):
     return design_df
 
 def plot_design(design_df, output_dir=None):
-    junk_index = list(design_df.columns).index('junk')
+    if 'junk' in design_df.columns:
+        end_index = list(design_df.columns).index('junk')
+    else:
+        end_index = list(design_df.columns).index('X')
     quintile1 = len(design_df)//5
-    regs = design_df.iloc[0:quintile1,0:junk_index:2]
+    regs = design_df.iloc[0:quintile1,0:end_index:2]
     f, [ax1,ax2,ax3] = plt.subplots(3, 1, figsize=[12,24])
     regs.plot(legend=True, ax=ax1, title='TS: Regressors of Interest')
     sns.heatmap(regs.corr(), ax=ax2, square=True, annot=True, cbar=False)
@@ -113,7 +116,8 @@ def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
     # set up subplots for group plots
     group_fig, group_axes = plt.subplots(len(contrast_names), 1,
                                          figsize=(14, 5*len(contrast_names)))
-    group_fig.suptitle('%s Group Contrasts' % task.title(), fontsize=30, 
+    group_fig.suptitle('%s Group Contrasts' % task[:1].upper() + task[1:]
+                       , fontsize=30, 
                        fontweight='bold', y=.97)
     for i,contrast_name in enumerate(contrast_names):
         if contrast_index is not None:

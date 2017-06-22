@@ -37,6 +37,7 @@ smith_networks = datasets.fetch_atlas_smith_2009()['rsn20']
 # this function takes whole brain networks and breaks them into contiguous
 # regions. extractor.index_ labels each region as corresponding to one
 # of the original brain maps
+
 extractor = RegionExtractor(smith_networks, min_region_size=800,
                             threshold=98, thresholding_strategy='percentile')
 extractor.fit()
@@ -97,12 +98,12 @@ contrasts = range(12)
 projections = {}
 for task in tasks:
     for contrast in contrasts:
-    	func_files = sorted(glob(join(data_dir, '*%s/cope%s.nii.gz' \
+    	func_files = sorted(glob(join(data_dir, '*%s/zstat%s.nii.gz' \
                                    % (task, contrast))))
     	for func_file in func_files:
              subj = re.search('s[0-9][0-9][0-9]',func_file).group(0)
              TS, masker = project_contrast(func_file,smith_networks)
-             projections[subj + '_' + task + '_cont%s' % contrast] = TS
+             projections[subj + '_' + task + '_zstat%s' % contrast] = TS
 projections_df = projections_to_df(projections)
 if output_dir:
     projections_df.to_json(join(output_dir, 'task_projection.json'))
