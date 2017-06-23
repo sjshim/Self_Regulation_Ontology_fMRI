@@ -92,7 +92,9 @@ def get_avg_corr(projection, subset1, subset2):
 # ********************************************************
 
 # project contrasts into lower dimensional space    
-tasks = ['ANT', 'DPX', 'motorSelectiveStop', 'stopSignal', 'stroop', 
+tasks = ['ANT', 'discountFix',
+         'DPX', 'motorSelectiveStop',
+         'stopSignal', 'stroop', 
          'twoByTwo', 'WATT3']
 contrasts = range(12)
 projections = {}

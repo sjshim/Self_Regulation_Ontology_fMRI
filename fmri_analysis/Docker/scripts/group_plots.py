@@ -27,7 +27,7 @@ if args.data_dir:
 if args.tasks:
     tasks = args.tasks
 else:
-    tasks = ['ANT', 'CCTHot', 'DPX', 'motorSelectiveStop',
+    tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 'motorSelectiveStop',
                'stopSignal', 'stroop', 'twoByTwo']
 
 # plot individual subject's contrasts and then the group

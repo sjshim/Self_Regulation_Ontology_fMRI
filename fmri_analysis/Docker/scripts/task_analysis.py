@@ -44,7 +44,7 @@ subject_list = args.participant_label
 if args.tasks:
     task_list = args.tasks
 else:
-  task_list = ['ANT', 'CCTHot', 'DPX', 'motorSelectiveStop',
+  task_list = ['ANT', 'CCTHot', 'discountFix', 'DPX', 'motorSelectiveStop',
                'stopSignal', 'stroop', 'twoByTwo']
 regress_rt = not args.ignore_rt
 print(regress_rt)

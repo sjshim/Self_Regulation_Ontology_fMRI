@@ -30,6 +30,17 @@ def get_contrasts(task, regress_rt=True):
         if regress_rt:
             c3 = ['response_time', 'T', ['response_time'], [1]]
             contrast_list.append(c3)
+    elif task == 'discountFix':
+        # contrasts vs baseline
+        c1 = ['subjective_value','T', ['subjective_value'], [1]]
+        c2 = ['larger_later','T', ['larger_later'], [1]]
+        c3 = ['smaller_sooner','T', ['smaller_sooner'], [1]]
+        # contrasts
+        c4 = ['LL vs SS','T', ['larger_later','smaller_sooner'], [1,-1]]
+        contrast_list = [c1,c2,c3,c4]
+        if regress_rt:
+            c5 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c5)
     elif task == 'DPX':
         # contrasts vs baseline
         c1 = ['AX','T', ['AX'], [1]]
@@ -199,6 +210,17 @@ def parse_EVs(events_df, task, regress_rt=True):
                     amplitude='num_click_in_round')
         get_ev_vars(events_df, [(1,'reward'), (0,'punishment')], col='feedback',
                     duration=0, amplitude=1)
+        if regress_rt == True:
+            get_ev_vars(events_df, ['response_time'], duration='duration', 
+                        amplitude='response_time')
+        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
+                    duration='duration')
+    elif task == "discountFix":
+        get_ev_vars(events_df, [('larger_later','larger_later'), 
+                                ('smaller_sooner','smaller_sooner')],
+                    col='choice', duration='duration')
+        get_ev_vars(events_df, ['subjective_value'], duration='duration', 
+                        amplitude='subjective_value')
         if regress_rt == True:
             get_ev_vars(events_df, ['response_time'], duration='duration', 
                         amplitude='response_time')
