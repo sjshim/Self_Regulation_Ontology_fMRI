@@ -155,9 +155,14 @@ def calc_discount_fixed_DV(df, dvs = {}):
                 
     def calculate_hyp_discount_rate_glm(data):
         hyp_discount_rate_glm = 0
-        if(set(data['patient1_impatient0']) == {0.0}):
+        #add edge case with no responses
+        if(sum(np.isnan(data['patient1_impatient0'].unique()))>0):
+            warnings.append('Found trials without response.')
+            data = data[np.isfinite(data['patient1_impatient0'])]
+        #edge cases with one type of response
+        if(sum(data['patient1_impatient0'].unique() == 0)):
             hyp_discount_rate_glm = max(data['indiff_k'])
-        elif(set(data['patient1_impatient0']) == {1.0}):
+        elif(sum(data['patient1_impatient0'].unique() == 1)):
             hyp_discount_rate_glm = min(data['indiff_k'])
         else:
             try:
