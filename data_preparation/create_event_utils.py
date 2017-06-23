@@ -48,7 +48,7 @@ def create_events(df, exp_id, duration=None):
     events_df = None
     lookup = {'attention_network_task': create_ANT_event,
               'columbia_card_task_fmri': create_CCT_event,
-              #'discount_fixed': create_discountFix_event,
+              'discount_fixed': create_discountFix_event,
               'dot_pattern_expectancy': create_DPX_event,
               'motor_selective_stop_signal': create_motorSelectiveStop_event,
               'stop_signal': create_stopSignal_event,
