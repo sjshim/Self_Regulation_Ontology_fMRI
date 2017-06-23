@@ -57,12 +57,14 @@ def plot_design(design_df, output_dir=None):
         end_index = list(design_df.columns).index('X')
     quintile1 = len(design_df)//5
     regs = design_df.iloc[0:quintile1,0:end_index:2]
-    f, [ax1,ax2,ax3] = plt.subplots(3, 1, figsize=[12,24])
+    f, [ax1,ax2,ax3,ax4] = plt.subplots(4, 1, figsize=[12,24])
     regs.plot(legend=True, ax=ax1, title='TS: Regressors of Interest')
     sns.heatmap(regs.corr(), ax=ax2, square=True, annot=True, cbar=False)
     ax2.set_title('Heatmap: Regressors of Interest', fontsize=20)
     sns.heatmap(design_df.corr(), ax=ax3, square=True)
     ax3.set_title('Heatmap: Design Matrix', fontsize=20)
+    sns.heatmap(design_df, ax=ax4)
+    ax4.set_title('Design Matrix')
     if output_dir:
         makedirs(output_dir, exist_ok=True)
         f.savefig(join(output_dir,'design_plot.png'))

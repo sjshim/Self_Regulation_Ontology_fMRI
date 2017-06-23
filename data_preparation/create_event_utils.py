@@ -76,7 +76,7 @@ def create_ANT_event(df, duration=None):
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
-    events_df.insert(0,'response_time',events_df.rt)
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt.mean())
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -100,7 +100,7 @@ def create_CCT_event(df, duration=None):
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
-    events_df.insert(0,'response_time',events_df.rt)
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt.mean())
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -126,7 +126,7 @@ def create_discountFix_event(df, duration=None):
    
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.choice
-    events_df.insert(0,'response_time',events_df.rt)
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt.mean())
 
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
@@ -156,7 +156,7 @@ def create_DPX_event(df, duration=None):
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.condition
-    events_df.insert(0,'response_time',events_df.rt)
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt.mean())
     # Cue-to-Probe time
     CPI=1000
     if duration is None:
@@ -205,7 +205,7 @@ def create_motorSelectiveStop_event(df, duration=None):
                         [noncrit_key,'go',False])] = 'noncrit_nosignal'
 
     events_df.loc[:,'trial_type'] = condition
-    events_df.insert(0,'response_time',events_df.rt)
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt.mean())
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -240,7 +240,7 @@ def create_stopSignal_event(df, duration=None):
     events_df.loc[SS_success_trials,'condition'] = 'stop_success'
     events_df.loc[SS_fail_trials,'condition'] = 'stop_failure'
     events_df.loc[:,'trial_type'] = events_df.condition
-    events_df.insert(0,'response_time',events_df.rt)
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt.mean())
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -261,7 +261,7 @@ def create_stroop_event(df, duration=None):
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.condition
-    events_df.insert(0,'response_time',events_df.rt)
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt.mean())
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -281,7 +281,7 @@ def create_twobytwo_event(df, duration=None):
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
-    events_df.insert(0,'response_time',events_df.rt)
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt.mean())
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration+df.CTI)
     else:
@@ -319,7 +319,7 @@ def create_WATT_event(df, duration):
     # add durations for planning
     events_df.loc[first_moves,'duration'] = duration['planning_time']
     # add response time
-    events_df.insert(0,'response_time',events_df.rt)
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt.mean())
     
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
