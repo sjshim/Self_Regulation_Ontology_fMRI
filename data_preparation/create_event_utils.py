@@ -48,13 +48,13 @@ def create_events(df, exp_id, duration=None):
     events_df = None
     lookup = {'attention_network_task': create_ANT_event,
               'columbia_card_task_fmri': create_CCT_event,
+              #'discount_fixed': create_discountFix_event,
               'dot_pattern_expectancy': create_DPX_event,
               'motor_selective_stop_signal': create_motorSelectiveStop_event,
               'stop_signal': create_stopSignal_event,
               'stroop': create_stroop_event,
               'twobytwo': create_twobytwo_event,
-              'ward_and_allport': create_WATT_event,
-              'discount_fix': create_discountFix_event}
+              'ward_and_allport': create_WATT_event}
     fun = lookup.get(exp_id)
     if fun is not None:
         events_df = fun(df, duration=duration)
@@ -118,7 +118,7 @@ def create_CCT_event(df, duration=None):
     return events_df
 
 def create_discountFix_event(df, duration=None):
-    from utils import calc_discount_fix_DV
+    from utils import calc_discount_fixed_DV
     columns_to_drop = get_drop_columns(df)
     events_df = df[df['time_elapsed']>0]
     # add junk regressor
@@ -141,7 +141,7 @@ def create_discountFix_event(df, duration=None):
     #additional parametric regressors: 
     #subjective value
     worker_id = df.worker_id.unique()[0]
-    discount_rate = calc_discount_fix_DV(df)[0].get(worker_id).get('hyp_discount_rate_glm').get('value')
+    discount_rate = calc_discount_fixed_DV(df)[0].get(worker_id).get('hyp_discount_rate_glm').get('value')
     events_df.insert(0, 'subjective_value', events_df.large_amount/(1+discount_rate*events_df.later_delay))    
     #inverse_delay
     events_df.insert(0, 'inverse_delay', 1/events_df.later_delay)

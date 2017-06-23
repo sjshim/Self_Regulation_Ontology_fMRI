@@ -1,6 +1,5 @@
 from expanalysis.experiments.jspsych_processing import ANT_HDDM, EZ_diffusion, \
     get_post_error_slow, group_decorate
-import pandas as pd
 import numpy as np
 
 # function to correct processing of a few problematic files
@@ -122,7 +121,7 @@ def calc_ANT_DV(df, dvs = {}):
     return dvs, description
     
 @group_decorate()
-def calc_discount_fix_DV(df, dvs = {}):
+def calc_discount_fixed_DV(df, dvs = {}):
     """ Calculate dv for discount_fix task
     :return dv: dictionary of dependent variables
     :return description: descriptor of DVs
