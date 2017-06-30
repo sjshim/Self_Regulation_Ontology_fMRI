@@ -9,12 +9,12 @@ import nilearn.plotting
 import nilearn.image
 import numpy as np
 from os import makedirs
-from os.path import join
+from os.path import basename, join
 import pandas as pd
 import pickle
 from scipy.cluster.hierarchy import dendrogram, linkage
 import seaborn as sns
-from utils import concat_and_smooth, get_contrast_names
+from utils.utils import concat_and_smooth, get_contrast_names
 
 def dendroheatmap_left(df, labels = True, label_fontsize = 'large'):
     """
@@ -96,12 +96,12 @@ def plot_tstats(task_path, smoothness=8):
         nilearn.plotting.plot_stat_map(smooth_img, threshold=0,
                                         title=contrast_names[i])
 
-def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
+def plot_contrasts(data_dir, task, plot_individual=False,
                contrast_index=None, output_dir=None):
-    """Function to plot contrasts
+    """Function to plot contrasts stored in a pickle object
     
     Args:
-        data_dir (string): The directory to find the contrasts
+        data_dir (string): The directory to find the contrast pickle objects
         task (string): the task to pull contrasts for
         smoothness (int): smoothness parameter passed to 
                            nilearn.image_smooth_img. Defaults to 8.
@@ -112,13 +112,15 @@ def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
     # if output_dir is specified, create it to store plots
     if output_dir:
         makedirs(join(output_dir,task), exist_ok=True)
+        
+    contrast_objs = glob(join(data_dir,task+'*copes.pkl'))
     # get contrast names
-    contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))[0]
-    contrast_names = get_contrast_names(contrast_path)
+    contrast_names = [basename(i).split('_')[1] for i in contrast_objs]
                                         
     # set up subplots for group plots
     group_fig, group_axes = plt.subplots(len(contrast_names), 1,
                                          figsize=(14, 5*len(contrast_names)))
+    if len(contrast_names) == 1: group_axes = [group_axes]
     group_fig.suptitle('%s Group Contrasts' % task[:1].upper() + task[1:]
                        , fontsize=30, 
                        fontweight='bold', y=.97)
@@ -126,31 +128,32 @@ def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
         if contrast_index is not None:
             if i+1 not in contrast_index:
                 continue
-        map_files = glob(join(data_dir,'*%s/cope%s.nii.gz' % (task, i+1)))
+        copes = pickle.load(open(contrast_objs[i], 'rb'))
+        
         if plot_individual == True:
             # set up subplots for individual contrasts plots
-            contrast_fig, contrast_axes = plt.subplots(ceil(len(map_files)/2), 2,
-                                         figsize=(24, 5*ceil(len(map_files)/2)),
+            contrast_fig, contrast_axes = plt.subplots(ceil(len(copes)/2), 2,
+                                         figsize=(24, 5*ceil(len(copes)/2)),
                                          squeeze=True)
         # get each individual contrast and store them in smooth_copes
-        smooth_copes = concat_and_smooth(map_files, smoothness)
+        
 
         if plot_individual == True:
-            for img_i, subj in enumerate(smooth_copes):
+            for img_i, subj in enumerate(sorted(copes.keys())):
                 # if plotting individuals, add to individual subplot
-                nilearn.plotting.plot_glass_brain(smooth_copes[subj],
+                nilearn.plotting.plot_glass_brain(copes[subj],
                                               display_mode='lyrz', 
                                               colorbar=True, 
                                               plot_abs=False,
                                               title=subj,
                                               axes=contrast_fig.axes[img_i])
-        if plot_individual:
+        if plot_individual and output_dir != None:
             contrast_fig.savefig(join(output_dir,task,
                                    'ind_contrast:%s.png' % contrast_name))
-        N = len(map_files)
+        N = len(copes)
         nilearn.plotting.plot_glass_brain(
                                       nilearn.image.mean_img(
-                                                        smooth_copes.values()
+                                                        copes.values()
                                                              ),
                                       display_mode='lyrz', 
                                       colorbar=True, 

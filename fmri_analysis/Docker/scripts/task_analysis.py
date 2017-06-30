@@ -47,7 +47,6 @@ else:
   task_list = ['ANT', 'CCTHot', 'discountFix', 'DPX', 'motorSelectiveStop',
                'stopSignal', 'stroop', 'twoByTwo']
 regress_rt = not args.ignore_rt
-print(regress_rt)
 #### Experiment Variables
 experiment_dir = args.output_dir
 output_dir = '1stLevel'

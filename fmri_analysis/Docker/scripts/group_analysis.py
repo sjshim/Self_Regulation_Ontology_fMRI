@@ -1,11 +1,16 @@
 import argparse
 from glob import glob
+from nipype.caching import Memory
+from nipype.interfaces import fsl
 from nilearn import datasets, image, input_data, plotting
 from nilearn.regions import RegionExtractor
 import numpy as np
+from os import makedirs, rename
 from os.path import join
 import pandas as pd
+import pickle
 from utils.utils import concat_and_smooth, get_contrast_names
+from utils.utils import project_contrast
 from utils.display_utils import dendroheatmap_left
 import re
 import seaborn as sns
@@ -21,10 +26,12 @@ parser.add_argument('--data_dir',help='The label(s) of the participant(s)'
 parser.add_argument('--mask_dir',help='The label(s) of the participant(s)'
                    'that should be analyzed. Multiple '
                    'participants can be specified with a space separated list.')
+parser.add_argument('--tasks',help='The tasks'
+                   'that should be analyzed. Defaults to all.')
 args, unknown = parser.parse_known_args()
 
 if args.output_dir:
-    output_dir = args.output_dir
+    output_dir = join(args.output_dir, "custom_modeling")
 
 data_dir = '/Data'
 if args.data_dir:
@@ -34,44 +41,75 @@ mask_dir = None
 if args.mask_dir:
     mask_dir = args.mask_dir
 
+tasks = ['ANT', 'discountFix',
+         'DPX', 'motorSelectiveStop',
+         'stopSignal', 'stroop', 
+         'twoByTwo', 'WATT3']
+if args.tasks:
+    tasks = args.tasks
+    
+output_dir = '/home/ian/Experiments/expfactory/Self_Regulation_Ontology_fMRI/fmri_analysis/output/custom_modeling'
+data_dir = '/mnt/Sherlock_Scratch/output_noRT/1stLevel'
+mask_dir = '/mnt/Sherlock_Scratch/fmriprep/fmriprep/'
+
+makedirs(output_dir, exist_ok=True)
+
 # ********************************************************
-# Set up parcellation
+# Create group maps
 # ********************************************************
+task = 'stroop'
+# create 95% brain mask
+brainmasks = glob(join(mask_dir,'sub-s???',
+                       '*','func',
+                       '*%s*MNI152NLin2009cAsym_brainmask*' % task))
+mean_mask = image.mean_img(brainmasks)
+group_mask = image.math_img("a>=0.95", a=mean_mask)
+#plotting.plot_roi(group_mask)
 
-# get smith parcellation
-smith_networks = datasets.fetch_atlas_smith_2009()['rsn20']
-# create atlas
-# ref: https://nilearn.github.io/auto_examples/04_manipulating_images/plot_extract_rois_smith_atlas.html
-# this function takes whole brain networks and breaks them into contiguous
-# regions. extractor.index_ labels each region as corresponding to one
-# of the original brain maps
+# get all contrasts
+contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))[0]
+contrast_names = get_contrast_names(contrast_path)
 
-extractor = RegionExtractor(smith_networks, min_region_size=800,
-                            threshold=98, thresholding_strategy='percentile')
-extractor.fit()
-regions_img = extractor.regions_img_
+for i,contrast_name in enumerate(contrast_names):
+    name = task + "_" + contrast_name
+    # load, smooth, and concatenate contrasts
+    map_files = glob(join(data_dir,'*%s/cope%s.nii.gz' % (task, i+1)))
+    smooth_copes = concat_and_smooth(map_files, smoothness=8)
+    pickle.dump(smooth_copes, 
+                open(join(output_dir, '%s_smooth_copes.pkl' % name), 'wb'))
+    
+    # create a 
+    copes_concat = image.concat_imgs(smooth_copes.values(), auto_resample=True)
+    copes_loc = join(output_dir, "%s_copes.nii.gz" % name)
+    copes_concat.to_filename(copes_loc)
+    
+    # create group mask over relevant contrasts
+    mask_loc = join(output_dir, "%s_group_mask.nii.gz" % task)
+    group_mask = image.resample_to_img(group_mask, 
+                                       copes_concat, interpolation='nearest')
+    group_mask.to_filename(mask_loc)
 
+    # perform permutation test to assess significance
+    mem = Memory(base_dir='.')
+    randomise = mem.cache(fsl.Randomise)
+    randomise_results = randomise(in_file=copes_loc,
+                                  mask=mask_loc,
+                                  one_sample_group_mean=True,
+                                  tfce=True,
+                                  vox_p_values=True,
+                                  num_perm=500)
+    tfile_loc = join(output_dir, "%s_raw_tfile.nii.gz" % name)
+    tfile_corrected_loc = join(output_dir, "%s_corrected_tfile.nii.gz" % name)
+    raw_tfile = randomise_results.outputs.tstat_files[0]
+    corrected_tfile = randomise_results.outputs.t_corrected_p_files[0]
+    rename(raw_tfile, tfile_loc)
+    rename(corrected_tfile, tfile_corrected_loc)
+    
+    # plotting.plot_stat_map('/home/ian/Experiments/expfactory/Self_Regulation_Ontology_fMRI/fmri_analysis/output/custom_modeling/incongruent-congruent_raw_tfile.nii.gz', threshold=2)
+    
 # ********************************************************
 # Helper functions
 # ********************************************************
-
-# function to get TS within labels
-def project_contrast(contrast_file, parcellation_file):
-	parcellation = image.load_img(parcellation_file)
-	if len(parcellation.shape) == 3:
-         masker = input_data.NiftiLabelsMasker(labels_img=parcellation_file, 
-                                               resampling_target="labels", 
-                                               standardize=False,
-                                               memory='nilearn_cache', 
-                                               memory_level=1)
-	elif len(parcellation.shape) == 4:
-         masker = input_data.NiftiMapsMasker(maps_img=parcellation_file, 
-                                             resampling_target="maps", 
-                                             standardize=False,
-                                             memory='nilearn_cache',
-                                             memory_level=1)
-	time_series = masker.fit_transform(contrast_file)
-	return time_series, masker
 
 # turn projections into dataframe
 def projections_to_df(projections):
@@ -96,43 +134,27 @@ def get_avg_corr(projection, subset1, subset2):
     return subset_corr.mean().mean()
 
 # ********************************************************
-# Create group maps
+# Set up parcellation
 # ********************************************************
-task = 'stroop'
-# create 95% brain mask
-brainmasks = glob(join(mask_dir,'sub-s???',
-                       '*','func',
-                       '*%s*MNI152NLin2009cAsym_brainmask*' % task))
-mean_mask = image.mean_img(brainmasks)
-group_mask = image.math_img("a>=0.95", a=mean_mask)
-plotting.plot_roi(group_mask)
 
-# get all contrasts and smooth them
-contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))[0]
-contrast_names = get_contrast_names(contrast_path)
+# get smith parcellation
+smith_networks = datasets.fetch_atlas_smith_2009()['rsn20']
+# create atlas
+# ref: https://nilearn.github.io/auto_examples/04_manipulating_images/plot_extract_rois_smith_atlas.html
+# this function takes whole brain networks and breaks them into contiguous
+# regions. extractor.index_ labels each region as corresponding to one
+# of the original brain maps
 
-for i,name in enumerate(contrast_names):
-    map_files = glob(join(data_dir,'*%s/cope%s.nii.gz' % (task, i+1)))
-    smooth_copes = concat_and_smooth(map_files, smoothness=8)
-
-    copes_concat = image.concat_imgs(smooth_copes.values(), auto_resample=True)
-    copes_concat.to_filename(join(output_dir, "custom_modeling", 
-                                  "%_copes.nii.gz" % name))
-
-    group_mask = image.resample_to_img(group_mask, 
-                                       copes_concat, interpolation='nearest')
-    group_mask.to_filename(join(output_dir, "custom_modelling",
-                                "group_mask.nii.gz"))
+extractor = RegionExtractor(smith_networks, min_region_size=800,
+                            threshold=98, thresholding_strategy='percentile')
+extractor.fit()
+regions_img = extractor.regions_img_
 
 # ********************************************************
 # Reduce dimensionality of contrasts
 # ********************************************************
 
 # project contrasts into lower dimensional space    
-tasks = ['ANT', 'discountFix',
-         'DPX', 'motorSelectiveStop',
-         'stopSignal', 'stroop', 
-         'twoByTwo', 'WATT3']
 contrasts = range(12)
 projections = {}
 for task in tasks:
@@ -144,8 +166,7 @@ for task in tasks:
              TS, masker = project_contrast(func_file,smith_networks)
              projections[subj + '_' + task + '_zstat%s' % contrast] = TS
 projections_df = projections_to_df(projections)
-if output_dir:
-    projections_df.to_json(join(output_dir, 'task_projection.json'))
+projections_df.to_json(join(output_dir, 'task_projection.json'))
 
 # create matrix of average correlations across contrasts
 contrasts = sorted(np.unique([i[-10:] for i in projections_df.index]))
@@ -154,7 +175,6 @@ for i, cont1 in enumerate(contrasts):
     for j, cont2 in enumerate(contrasts):
         avg_corrs[i,j] = get_avg_corr(projections_df, cont1, cont2)
 avg_corrs = pd.DataFrame(avg_corrs, index=contrasts, columns=contrasts)
-print(avg_corrs.columns)
 
 # ********************************************************
 # Plotting
@@ -163,11 +183,10 @@ print(avg_corrs.columns)
 # plot the inverse projection, sanity check
 #plotting.plot_stat_map(masker.inverse_transform(projections['s192_stroop_cont4'])) 
     
-# plots
-f, ax = sns.plt.subplots(1,1, figsize=(20,20))
-sns.heatmap(projections_df.T.corr(), ax=ax, square=True)
-# dendrogram heatmap
-fig, leaves = dendroheatmap_left(projections_df.T.corr(), 
-                                 label_fontsize='small')
-if output_dir:
-    fig.savefig(join(output_dir, 'task_dendoheatmap.png'))
+## plots
+#f, ax = sns.plt.subplots(1,1, figsize=(20,20))
+#sns.heatmap(projections_df.T.corr(), ax=ax, square=True)
+## dendrogram heatmap
+#fig, leaves = dendroheatmap_left(projections_df.T.corr(), 
+#                                 label_fontsize='small')
+#fig.savefig(join(output_dir, 'task_dendoheatmap.png'))

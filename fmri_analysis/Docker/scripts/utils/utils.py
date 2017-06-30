@@ -363,7 +363,23 @@ def get_contrast_names(contrast_path):
     return contrast_names
 
 
-
+# function to get TS within labels
+def project_contrast(contrast_file, parcellation_file):
+	parcellation = image.load_img(parcellation_file)
+	if len(parcellation.shape) == 3:
+         masker = input_data.NiftiLabelsMasker(labels_img=parcellation_file, 
+                                               resampling_target="labels", 
+                                               standardize=False,
+                                               memory='nilearn_cache', 
+                                               memory_level=1)
+	elif len(parcellation.shape) == 4:
+         masker = input_data.NiftiMapsMasker(maps_img=parcellation_file, 
+                                             resampling_target="maps", 
+                                             standardize=False,
+                                             memory='nilearn_cache',
+                                             memory_level=1)
+	time_series = masker.fit_transform(contrast_file)
+	return time_series, masker
 
 
 
