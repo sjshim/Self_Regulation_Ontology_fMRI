@@ -1,11 +1,15 @@
 """
 some util functions
 """
-import glob
+import nilearn
 import numpy as np
-from os.path import join, dirname, basename, exists
 import pandas as pd
-from shutil import copyfile
+import pickle
+import re
+
+# ********************************************************
+# 1st level analysis utility functions
+# ********************************************************
 
 def get_contrasts(task, regress_rt=True):
     contrast_list = []
@@ -337,13 +341,26 @@ def process_physio(cardiac_file, resp_file):
     
     
 
+# ********************************************************
+# 2nd level analysis utility functions
+# ********************************************************
 
+def concat_and_smooth(map_files, smoothness=None):
+    """
+    Loads and smooths files specified in 
+    map_files and creates a dictionary of them
+    """
+    smooth_copes = {}
+    for img_i, img in enumerate(sorted(map_files)):
+        subj = re.search('s[0-9][0-9][0-9]',img).group(0)
+        smooth_cope = nilearn.image.smooth_img(img, smoothness)
+        smooth_copes[subj] = smooth_cope
+    return smooth_copes
 
-
-
-
-
-
+def get_contrast_names(contrast_path):
+    contrasts = pickle.load(open(contrast_path,'rb'))
+    contrast_names = [c[0] for c in contrasts]
+    return contrast_names
 
 
 

@@ -5,6 +5,7 @@ from nilearn.regions import RegionExtractor
 import numpy as np
 from os.path import join
 import pandas as pd
+from utils.utils import concat_and_smooth, get_contrast_names
 from utils.display_utils import dendroheatmap_left
 import re
 import seaborn as sns
@@ -17,6 +18,9 @@ parser.add_argument('output_dir', default = None,
 parser.add_argument('--data_dir',help='The label(s) of the participant(s)'
                    'that should be analyzed. Multiple '
                    'participants can be specified with a space separated list.')
+parser.add_argument('--mask_dir',help='The label(s) of the participant(s)'
+                   'that should be analyzed. Multiple '
+                   'participants can be specified with a space separated list.')
 args, unknown = parser.parse_known_args()
 
 if args.output_dir:
@@ -25,6 +29,10 @@ if args.output_dir:
 data_dir = '/Data'
 if args.data_dir:
   data_dir = args.data_dir
+  
+mask_dir = None
+if args.mask_dir:
+    mask_dir = args.mask_dir
 
 # ********************************************************
 # Set up parcellation
@@ -88,6 +96,35 @@ def get_avg_corr(projection, subset1, subset2):
     return subset_corr.mean().mean()
 
 # ********************************************************
+# Create group maps
+# ********************************************************
+task = 'stroop'
+# create 95% brain mask
+brainmasks = glob(join(mask_dir,'sub-s???',
+                       '*','func',
+                       '*%s*MNI152NLin2009cAsym_brainmask*' % task))
+mean_mask = image.mean_img(brainmasks)
+group_mask = image.math_img("a>=0.95", a=mean_mask)
+plotting.plot_roi(group_mask)
+
+# get all contrasts and smooth them
+contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))[0]
+contrast_names = get_contrast_names(contrast_path)
+
+for i,name in enumerate(contrast_names):
+    map_files = glob(join(data_dir,'*%s/cope%s.nii.gz' % (task, i+1)))
+    smooth_copes = concat_and_smooth(map_files, smoothness=8)
+
+    copes_concat = image.concat_imgs(smooth_copes.values(), auto_resample=True)
+    copes_concat.to_filename(join(output_dir, "custom_modeling", 
+                                  "%_copes.nii.gz" % name))
+
+    group_mask = image.resample_to_img(group_mask, 
+                                       copes_concat, interpolation='nearest')
+    group_mask.to_filename(join(output_dir, "custom_modelling",
+                                "group_mask.nii.gz"))
+
+# ********************************************************
 # Reduce dimensionality of contrasts
 # ********************************************************
 
@@ -130,6 +167,7 @@ print(avg_corrs.columns)
 f, ax = sns.plt.subplots(1,1, figsize=(20,20))
 sns.heatmap(projections_df.T.corr(), ax=ax, square=True)
 # dendrogram heatmap
-fig, leaves = dendroheatmap_left(projections_df.T.corr())
+fig, leaves = dendroheatmap_left(projections_df.T.corr(), 
+                                 label_fontsize='small')
 if output_dir:
-    fig.save_fig(join(output_dir, 'task_dendoheatmap.png'))
+    fig.savefig(join(output_dir, 'task_dendoheatmap.png'))

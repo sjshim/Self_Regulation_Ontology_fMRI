@@ -12,16 +12,17 @@ from os import makedirs
 from os.path import join
 import pandas as pd
 import pickle
-import re
-from scipy.cluster.hierarchy import dendrogram, fcluster, linkage
+from scipy.cluster.hierarchy import dendrogram, linkage
 import seaborn as sns
+from utils import concat_and_smooth, get_contrast_names
 
 def dendroheatmap_left(df, labels = True, label_fontsize = 'large'):
     """
     :df: plot hierarchical clustering and heatmap, dendrogram on left
     """
     #clustering
-    row_clusters = linkage(df.values, method='ward', metric='euclidean')    
+    corr_vec = 1-df.values[np.triu_indices_from(df,k=1)]
+    row_clusters = linkage(corr_vec, method='ward', metric='euclidean') 
     #dendrogram
     row_dendr = dendrogram(row_clusters, labels=df.columns, no_plot = True)
     df_rowclust = df.ix[row_dendr['leaves'],row_dendr['leaves']]
@@ -113,8 +114,8 @@ def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
         makedirs(join(output_dir,task), exist_ok=True)
     # get contrast names
     contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))[0]
-    contrasts = pickle.load(open(contrast_path,'rb'))
-    contrast_names = [c[0] for c in contrasts]
+    contrast_names = get_contrast_names(contrast_path)
+                                        
     # set up subplots for group plots
     group_fig, group_axes = plt.subplots(len(contrast_names), 1,
                                          figsize=(14, 5*len(contrast_names)))
@@ -132,14 +133,12 @@ def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
                                          figsize=(24, 5*ceil(len(map_files)/2)),
                                          squeeze=True)
         # get each individual contrast and store them in smooth_copes
-        smooth_copes = []
-        for img_i, img in enumerate(sorted(map_files)):
-            subj = re.search('s[0-9][0-9][0-9]',img).group(0)
-            smooth_cope = nilearn.image.smooth_img(img, smoothness)
-            smooth_copes.append(smooth_cope)
-            if plot_individual == True:
+        smooth_copes = concat_and_smooth(map_files, smoothness)
+
+        if plot_individual == True:
+            for img_i, subj in enumerate(smooth_copes):
                 # if plotting individuals, add to individual subplot
-                nilearn.plotting.plot_glass_brain(smooth_cope,
+                nilearn.plotting.plot_glass_brain(smooth_copes[subj],
                                               display_mode='lyrz', 
                                               colorbar=True, 
                                               plot_abs=False,
@@ -149,7 +148,10 @@ def plot_contrasts(data_dir, task, smoothness=8, plot_individual=False,
             contrast_fig.savefig(join(output_dir,task,
                                    'ind_contrast:%s.png' % contrast_name))
         N = len(map_files)
-        nilearn.plotting.plot_glass_brain(nilearn.image.mean_img(smooth_copes),
+        nilearn.plotting.plot_glass_brain(
+                                      nilearn.image.mean_img(
+                                                        smooth_copes.values()
+                                                             ),
                                       display_mode='lyrz', 
                                       colorbar=True, 
                                       plot_abs=False,
