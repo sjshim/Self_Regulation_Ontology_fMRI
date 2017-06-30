@@ -42,7 +42,7 @@ def move_EV(subj, task):
     return new_events_file
     
 def move_EVs(overwrite=True):
-    tasks = ['ANT','CCTHot','DPX','motorSelectiveStop',
+    tasks = ['ANT','CCTHot','discountFix','DPX','motorSelectiveStop',
             'stopSignal','stroop','twoByTwo','WATT3']
     fmri_data = get_info('fmri_data_directory')
     created_files = []

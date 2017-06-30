@@ -11,7 +11,7 @@
 #SBATCH --cpus-per-task=16
 module load singularity
 export PYTHONPATH=""
-singularity run /share/PI/russpold/singularity_images/poldracklab_mriqc_0.9.4-2017-05-18-dc3afec8a493.img /oak/stanford/groups/russpold/data/uh2 /scratch/PI/russpold/work/ieisenbe/uh2/mriqc participant --participant_label {sid} -w $LOCAL_SCRATCH --ants-nthreads 8 --n_procs 16 --mem_gb 110 --verbose-reports
+singularity run /share/PI/russpold/singularity_images/poldracklab_mriqc_0.9.7.clf-2.9-2017-06-21-f32ea06e4a73.img /oak/stanford/groups/russpold/data/uh2 /scratch/PI/russpold/work/ieisenbe/uh2/mriqc participant --participant_label {sid} -w $LOCAL_SCRATCH --ants-nthreads 8 --n_procs 16 --mem_gb 110 --verbose-reports
 
 # command for running ICA
-# singularity run /share/PI/russpold/singularity_images/poldracklab_mriqc_0.9.2-2017-04-12-d02503d409c6.img /scratch/PI/russpold/data/uh2 /scratch/PI/russpold/work/ieisenbe/uh2/mriqc participant --participant_label {sid} -w $LOCAL_SCRATCH --ants-nthreads 8 --n_procs 16 --mem_gb 110 --verbose-reports --ica -s {session} -m bold
+# singularity run /share/PI/russpold/singularity_images/poldracklab_mriqc_0.9.7.clf-2.9-2017-06-21-f32ea06e4a73.img /scratch/PI/russpold/data/uh2 /scratch/PI/russpold/work/ieisenbe/uh2/mriqc participant --participant_label {sid} -w $LOCAL_SCRATCH --ants-nthreads 8 --n_procs 16 --mem_gb 110 --verbose-reports --ica -s {session} -m bold

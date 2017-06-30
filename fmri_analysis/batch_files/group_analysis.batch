@@ -12,7 +12,4 @@
 #SBATCH -p russpold
 module load singularity
 export PYTHONPATH=""
-singularity run -B /scratch/PI/russpold/work/ieisenbe/uh2/output/1stLevel:/Data /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-06-12-efa62265a6a7.img /scratch/PI/russpold/work/ieisenbe/uh2/output/2ndLevel  --script group_analysis.py 
-
-singularity run -B /scratch/PI/russpold/work/ieisenbe/uh2/output/1stLevel:/Data /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-06-12-efa62265a6a7.img /scratch/PI/russpold/work/ieisenbe/uh2/output/2ndLevel/Plots  --script group_plots.py 
-
+singularity run -B /scratch/PI/russpold/work/ieisenbe/uh2/output/1stLevel:/Data /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-06-23-d16dff3c144b.img /scratch/PI/russpold/work/ieisenbe/uh2/output/2ndLevel  --script group_analysis.py 
