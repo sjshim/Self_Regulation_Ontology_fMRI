@@ -1,5 +1,7 @@
 import argparse
 from glob import glob
+from matplotlib import pyplot as plt
+from nilearn import plotting
 from os import path
 from utils.display_utils import get_design_df, plot_contrasts, plot_design
 
@@ -30,6 +32,23 @@ else:
     tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 'motorSelectiveStop',
                'stopSignal', 'stroop', 'twoByTwo']
 
+data_dir = '/home/ian/Experiments/expfactory/Self_Regulation_Ontology_fMRI/fmri_analysis/output/custom_modeling'
+output_dir = '/home/ian/Experiments/expfactory/Self_Regulation_Ontology_fMRI/fmri_analysis/output/Plots'
+
+# plot tstat maps for each task
+for task in tasks:
+    tstat_files = glob(path.join(data_dir, '*%s*raw_tfile*' % task ))
+    group_fig, group_axes = plt.subplots(len(tstat_files), 1,
+                                     figsize=(14, 5*len(tstat_files)))
+    for i, tfile in enumerate(tstat_files):
+        basename = path.basename(tfile)
+        title = basename[:(basename.find('raw')-1)]
+        plotting.plot_stat_map(tfile, threshold=1, 
+                               axes=group_axes[i],
+                               title=title)
+    group_fig.savefig(path.join(output_dir,'%s_raw_tfiles.png' % task))
+
+
 # plot individual subject's contrasts and then the group
 for task in tasks:
     # plot all group contrasts'
@@ -37,4 +56,5 @@ for task in tasks:
     task_path = glob(path.join(data_dir,'*%s' % task))[0]
     design = get_design_df(task_path)
     plot_design(design, output_dir=path.join(output_dir,task))
+
 

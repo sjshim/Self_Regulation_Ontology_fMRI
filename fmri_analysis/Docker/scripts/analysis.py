@@ -11,9 +11,8 @@ parser.add_argument('output_dir', help='The directory where the output files '
                     'should be stored. If you are running group level analysis '
                     'this folder should be prepopulated with the results of the'
                     'participant level analysis.')
-parser.add_argument('--data_dir',help='The label(s) of the participant(s)'
-                   'that should be analyzed. Multiple '
-                   'participants can be specified with a space separated list.')
+parser.add_argument('--data_dir')
+parser.add_argument('--mask_dir')
 parser.add_argument('--participant_label', help='The label(s) of the participant(s) that should be analyzed. The label '
                    'corresponds to sub-<participant_label> from the BIDS spec '
                    '(so it does not include "sub-").',
@@ -39,18 +38,26 @@ assert os.path.exists(output_dir), \
   
 cmd = "python /scripts/%s " % script + output_dir
 
+# participant and task options
 if args.participant_label:
     cmd += " --participant_label " + ' '.join(args.participant_label)
-
-if args.data_dir:
-    assert os.path.exists(args.data_dir), \
-        "Data directory %s doesn't exist!" % args.data_dir
-    cmd += " --data_dir " + args.data_dir
 
 if args.tasks:
     task_list = args.tasks
     cmd += ' --task ' + ' '.join(task_list)
     
+# directories
+if args.data_dir:
+    assert os.path.exists(args.data_dir), \
+        "Data directory %s doesn't exist!" % args.data_dir
+    cmd += " --data_dir " + args.data_dir
+
+if args.mask_dir:
+    assert os.path.exists(args.mask_dir), \
+        "Mask directory %s doesn't exist!" % args.mask_dir
+    cmd += " --mask_dir " + args.mask_dir
+
+# other options
 if args.ignore_rt:
     cmd += ' --ignore_rt'
 

@@ -12,4 +12,5 @@
 #SBATCH -p russpold
 module load singularity
 export PYTHONPATH=""
-singularity run -B /scratch/PI/russpold/work/ieisenbe/uh2/output/1stLevel:/Data /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-06-23-d16dff3c144b.img /scratch/PI/russpold/work/ieisenbe/uh2/output/2ndLevel  --script group_analysis.py 
+# mount data, scratch is automatically mounted
+singularity run -B /oak/stanford/groups/russpold/data/uh2:/Data /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-06-23-d16dff3c144b.img /scratch/PI/russpold/work/ieisenbe/uh2/output/2ndLevel  --script group_analysis.py --data_dir /scratch/PI/russpold/work/ieisenbe/uh2/output/1stLevel --mask_dir /Data
