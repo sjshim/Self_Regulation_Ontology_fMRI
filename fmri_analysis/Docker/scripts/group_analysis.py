@@ -23,7 +23,8 @@ parser.add_argument('output_dir', default = None,
 parser.add_argument('--data_dir')
 parser.add_argument('--mask_dir',)
 parser.add_argument('--tasks',help='The tasks'
-                   'that should be analyzed. Defaults to all.')
+                   'that should be analyzed. Defaults to all.',
+                   nargs="+")
 args, unknown = parser.parse_known_args()
 
 if args.output_dir:
@@ -43,22 +44,28 @@ tasks = ['ANT', 'discountFix',
          'twoByTwo', 'WATT3']
 if args.tasks:
     tasks = args.tasks
-    
+
 makedirs(output_dir, exist_ok=True)
 
 # ********************************************************
 # Create group maps
 # ********************************************************
+print('Creating Group Maps...')
+
+print('Creating Group Mask...')
 # create mask over all tasks
 # create 95% brain mask
+mask_loc = join(output_dir, 'group_mask.nii.gz')
 brainmasks = glob(join(mask_dir,'sub-s???',
                        '*','func',
                        '*MNI152NLin2009cAsym_brainmask*'))
 mean_mask = image.mean_img(brainmasks)
 group_mask = image.math_img("a>=0.95", a=mean_mask)
+group_mask.to_filename(mask_loc)
 #plotting.plot_roi(group_mask)
     
 for task in tasks:  
+    print('Creating %s group map' % task)
     task_dir = join(output_dir,task)
     makedirs(task_dir, exist_ok=True)
     # get all contrasts
@@ -83,7 +90,7 @@ for task in tasks:
             mem = Memory(base_dir='.')
             randomise = mem.cache(fsl.Randomise)
             randomise_results = randomise(in_file=copes_loc,
-                                          mask=group_mask,
+                                          mask=mask_loc,
                                           one_sample_group_mean=True,
                                           tfce=True,
                                           vox_p_values=True,
@@ -101,6 +108,7 @@ for task in tasks:
 # ********************************************************
 # Set up parcellation
 # ********************************************************
+print('Creating ICA based parcellation')
 
 #******************* Estimate parcellation from data ***********************
 from sklearn.decomposition import FastICA
@@ -132,7 +140,7 @@ for n_comps in n_components_list:
 
 # Plot all ICA components together
 # plotting.plot_prob_atlas(components_img, title='All ICA components')    
-    
+
 
 ##************* Get parcellation from established atlas ************
 ## get smith parcellation

@@ -2,6 +2,7 @@ import argparse
 from glob import glob
 from matplotlib import pyplot as plt
 from nilearn import plotting
+from nilearn.image import iter_img
 from os import path
 from utils.display_utils import get_design_df, plot_contrasts, plot_design
 
@@ -32,9 +33,6 @@ else:
     tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 'motorSelectiveStop',
                'stopSignal', 'stroop', 'twoByTwo']
 
-data_dir = '/home/ian/Experiments/expfactory/Self_Regulation_Ontology_fMRI/fmri_analysis/output/custom_modeling'
-output_dir = '/home/ian/Experiments/expfactory/Self_Regulation_Ontology_fMRI/fmri_analysis/output/Plots'
-
 # plot tstat maps for each task
 for task in tasks:
     tstat_files = glob(path.join(data_dir, '*%s*raw_tfile*' % task ))
@@ -57,4 +55,13 @@ for task in tasks:
     design = get_design_df(task_path)
     plot_design(design, output_dir=path.join(output_dir,task))
 
+# plot ica maps
 
+# Plot all ICA components together
+# plotting.plot_prob_atlas(components_img, title='All ICA components')    
+components_img = path.join(data_dir, 'canica20_all_tasks.nii.gz')
+ica_fig, ica_axes = plt.subplots(5, 4, figsize=(14, 25))
+ica_fig.suptitle('CanICA - 20 Components')
+for i, cur_img in enumerate(iter_img(components_img)):
+    plotting.plot_stat_map(cur_img, display_mode="z", title="IC %d" % i,
+                  cut_coords=1, colorbar=False, axes = ica_fig.axes[i])
