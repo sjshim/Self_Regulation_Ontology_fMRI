@@ -1,19 +1,18 @@
 import argparse
 from glob import glob
+import json
 from nipype.caching import Memory
 from nipype.interfaces import fsl
 from nilearn import datasets, image, input_data, plotting
 from nilearn.regions import RegionExtractor
 import numpy as np
-from os import makedirs, rename
+from os import makedirs, remove
 from os.path import join
 import pandas as pd
-import pickle
 from utils.utils import concat_and_smooth, get_contrast_names
 from utils.utils import project_contrast
-from utils.display_utils import dendroheatmap_left
 import re
-import seaborn as sns
+import shutil
 
 # parse arguments
 parser = argparse.ArgumentParser(description='fMRI Analysis Entrypoint Script.')
@@ -23,8 +22,9 @@ parser.add_argument('output_dir', default = None,
 parser.add_argument('--data_dir')
 parser.add_argument('--mask_dir',)
 parser.add_argument('--tasks',help='The tasks'
-                   'that should be analyzed. Defaults to all.')
-args, unknown = parser.parse_known_args()
+                   'that should be analyzed. Defaults to all.',
+                   nargs="+")
+args = parser.parse_args()
 
 if args.output_dir:
     output_dir = join(args.output_dir, "custom_modeling")
@@ -43,73 +43,110 @@ tasks = ['ANT', 'discountFix',
          'twoByTwo', 'WATT3']
 if args.tasks:
     tasks = args.tasks
-    
+
 makedirs(output_dir, exist_ok=True)
 
 # ********************************************************
 # Create group maps
 # ********************************************************
+print('Creating Group Maps...')
+
+print('Creating Group Mask...')
 # create mask over all tasks
 # create 95% brain mask
+mask_loc = join(output_dir, 'group_mask.nii.gz')
 brainmasks = glob(join(mask_dir,'sub-s???',
                        '*','func',
                        '*MNI152NLin2009cAsym_brainmask*'))
 mean_mask = image.mean_img(brainmasks)
 group_mask = image.math_img("a>=0.95", a=mean_mask)
-#plotting.plot_roi(group_mask)
+group_mask.to_filename(mask_loc)
     
 for task in tasks:  
     task_dir = join(output_dir,task)
     makedirs(task_dir, exist_ok=True)
     # get all contrasts
-    contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))[0]
+    contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))
+    if len(contrast_path)>0:
+        contrast_path = contrast_path[0]
+    else:
+        continue # move to next iteration if no contrast files found
     contrast_names = get_contrast_names(contrast_path)
     
+    print('Creating %s group map' % task)
     for i,contrast_name in enumerate(contrast_names):
         name = task + "_" + contrast_name
         # load, smooth, and concatenate contrasts
-        map_files = glob(join(data_dir,'*%s/cope%s.nii.gz' % (task, i+1)))
+        map_files = sorted(glob(join(data_dir,
+                                     '*%s/cope%s.nii.gz' % (task, i+1))))
+        # save subject names in order on 1st iteration
+        if i==0:
+            subj_ids = [re.search('s[0-9][0-9][0-9]', file).group(0) 
+                            for file in map_files]
+            # see if these maps have been run before, and, if so, skip
+            try:
+                previous_ids = json.load(open(join(data_dir,
+                                                   task,
+                                                   'subj_ids.json'), 'r'))
+                if previous_ids == subj_ids:
+                    break
+            except FileNotFoundError:
+                json.dump(subj_ids, open(join(task_dir, 'subj_ids.json'),'w'))
         if len(map_files) > 1:
             smooth_copes = concat_and_smooth(map_files, smoothness=8)
 
-            copes_concat = image.concat_imgs(smooth_copes.values(), auto_resample=True)
+            copes_concat = image.concat_imgs(smooth_copes.values(), 
+                                             auto_resample=True)
             copes_loc = join(task_dir, "%s_copes.nii.gz" % name)
             copes_concat.to_filename(copes_loc)
             
             # create group mask over relevant contrasts
             group_mask = image.resample_to_img(group_mask, 
-                                               copes_concat, interpolation='nearest')        
+                                               copes_concat, 
+                                               interpolation='nearest')        
             # perform permutation test to assess significance
             mem = Memory(base_dir='.')
             randomise = mem.cache(fsl.Randomise)
             randomise_results = randomise(in_file=copes_loc,
-                                          mask=group_mask,
+                                          mask=mask_loc,
                                           one_sample_group_mean=True,
                                           tfce=True,
                                           vox_p_values=True,
                                           num_perm=500)
             tfile_loc = join(task_dir, "%s_raw_tfile.nii.gz" % name)
-            tfile_corrected_loc = join(task_dir, "%s_corrected_tfile.nii.gz" % name)
+            tfile_corrected_loc = join(task_dir, "%s_corrected_tfile.nii.gz" 
+                                       % name)
             raw_tfile = randomise_results.outputs.tstat_files[0]
             corrected_tfile = randomise_results.outputs.t_corrected_p_files[0]
-            rename(raw_tfile, tfile_loc)
-            rename(corrected_tfile, tfile_corrected_loc)
+            shutil.move(raw_tfile, tfile_loc)
+            shutil.move(corrected_tfile, tfile_corrected_loc)
             
-# plotting.plot_stat_map('/home/ian/Experiments/expfactory/Self_Regulation_Ontology_fMRI/fmri_analysis/output/custom_modeling/incongruent-congruent_raw_tfile.nii.gz', threshold=2)
-        
-
 # ********************************************************
 # Set up parcellation
 # ********************************************************
 
 #******************* Estimate parcellation from data ***********************
+print('Creating ICA based parcellation')
 from sklearn.decomposition import FastICA
 from nilearn.decomposition import CanICA
 from nilearn.input_data import NiftiMasker
 
-map_files = glob(join(data_dir,'*/zstat*.nii.gz'))
-n_components_list = [20,40]
+# get map files of interest (explicit contrasts)
+map_files = []
+for task in tasks: 
+    contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))
+    if len(contrast_path)>0:
+        contrast_path = contrast_path[0]
+    else:
+        continue # move to next iteration if no contrast files found
+    contrast_names = get_contrast_names(contrast_path)
+    for i, name in enumerate(contrast_names):
+        # only get explicit contrasts (i.e. not vs. rest)
+        if '-' in name:
+            map_files += glob(join(data_dir,
+                                   '*%s/zstat%s.nii.gz' % (task, i+1)))
 
+n_components_list = [20,40]
 for n_comps in n_components_list:
     ## using sklearn and nilearn
     #nifti_masker = NiftiMasker(mask_img=group_mask, smoothing_fwhm=4,
@@ -128,11 +165,9 @@ for n_comps in n_components_list:
     masker = canica.masker_
     components_img = masker.inverse_transform(canica.components_)
     components_img.to_filename(join(output_dir, 
-                                    'canica%s_all_tasks.nii.gz' % n_comps))
+                                    'canica%s_explicit_contrasts.nii.gz' 
+                                    % n_comps))
 
-# Plot all ICA components together
-# plotting.plot_prob_atlas(components_img, title='All ICA components')    
-    
 
 ##************* Get parcellation from established atlas ************
 ## get smith parcellation
@@ -179,18 +214,18 @@ def get_avg_corr(projection, subset1, subset2):
 # Reduce dimensionality of contrasts
 # ********************************************************
 
-parcellation_file = join(output_dir, 'canica40_all_tasks.nii.gz')
+parcellation_file = join(output_dir, 'canica40_explicit_contrasts.nii.gz')
 # project contrasts into lower dimensional space    
 contrasts = range(12)
 projections = {}
 for task in tasks:
     for contrast in contrasts:
-    	func_files = sorted(glob(join(data_dir, '*%s/zstat%s.nii.gz' \
-                                   % (task, contrast))))
-    	for func_file in func_files:
-             subj = re.search('s[0-9][0-9][0-9]',func_file).group(0)
-             TS, masker = project_contrast(func_file,parcellation_file)
-             projections[subj + '_' + task + '_zstat%s' % contrast] = TS
+        	func_files = sorted(glob(join(data_dir, '*%s/zstat%s.nii.gz' \
+                                       % (task, contrast))))
+        	for func_file in func_files:
+                 subj = re.search('s[0-9][0-9][0-9]',func_file).group(0)
+                 TS, masker = project_contrast(func_file,parcellation_file)
+                 projections[subj + '_' + task + '_zstat%s' % contrast] = TS
 projections_df = projections_to_df(projections)
 projections_df.to_json(join(output_dir, 'task_projection.json'))
 

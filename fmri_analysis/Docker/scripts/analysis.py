@@ -44,7 +44,7 @@ if args.participant_label:
 
 if args.tasks:
     task_list = args.tasks
-    cmd += ' --task ' + ' '.join(task_list)
+    cmd += ' --tasks ' + ' '.join(task_list)
     
 # directories
 if args.data_dir:
