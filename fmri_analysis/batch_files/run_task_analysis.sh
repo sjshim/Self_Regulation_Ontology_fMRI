@@ -1,4 +1,4 @@
-for path in /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-s591
+for path in /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-s???
 do
     sid=${path: -4}
     echo ""
@@ -12,14 +12,14 @@ do
         # ...with RT as a regressor
         if [ -f /scratch/PI/russpold/work/ieisenbe/uh2/output/1stLevel/${sid}_task_${task}/cope1.nii.gz ]; 
         then
-            echo task analysis already run on $sid $task
+            : # echo task analysis already run on $sid $task
         else
             tasks="$tasks$task "
         fi
         # ...without RT as a regressor
         if [ -f /scratch/PI/russpold/work/ieisenbe/uh2/output_noRT/1stLevel/${sid}_task_${task}/cope1.nii.gz ]; 
         then
-            echo task analysis noRT already run on $sid $task
+            : # echo task analysis noRT already run on $sid $task
         else
             tasks_noRT="$tasks_noRT$task "
         fi
