@@ -18,7 +18,7 @@ parser.add_argument('--tasks',help='The label(s) of the task(s)'
                    'provided all tasks should be analyzed.',
                    nargs="+")
 
-args, unknown = parser.parse_known_args()
+args = parser.parse_args()
 output_dir = args.output_dir
 
 data_dir = '/Data' # /Data
@@ -33,11 +33,15 @@ else:
     tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 'motorSelectiveStop',
                'stopSignal', 'stroop', 'twoByTwo']
 
+# plot group map used
+plotting.plot_roi(path.join(data_dir, 'group_mask.nii.gz'), 
+                  path.join(output_dir,'group_mask.png'))
+
 # plot tstat maps for each task
 for task in tasks:
-    tstat_files = glob(path.join(data_dir, '*%s*raw_tfile*' % task ))
+    tstat_files = glob(path.join(data_dir, task, '*%s*raw_tfile*' % task ))
     group_fig, group_axes = plt.subplots(len(tstat_files), 1,
-                                     figsize=(14, 5*len(tstat_files)))
+                                     figsize=(14, 6*len(tstat_files)))
     for i, tfile in enumerate(tstat_files):
         basename = path.basename(tfile)
         title = basename[:(basename.find('raw')-1)]
@@ -50,18 +54,26 @@ for task in tasks:
 # plot individual subject's contrasts and then the group
 for task in tasks:
     # plot all group contrasts'
-    plot_contrasts(data_dir, task, output_dir=output_dir, plot_individual=True)
+    plot_contrasts(data_dir, task, output_dir=output_dir, plot_individual=False)
     task_path = glob(path.join(data_dir,'*%s' % task))[0]
     design = get_design_df(task_path)
     plot_design(design, output_dir=path.join(output_dir,task))
 
 # plot ica maps
 
-# Plot all ICA components together
-# plotting.plot_prob_atlas(components_img, title='All ICA components')    
-components_img = path.join(data_dir, 'canica20_all_tasks.nii.gz')
-ica_fig, ica_axes = plt.subplots(5, 4, figsize=(14, 25))
-ica_fig.suptitle('CanICA - 20 Components')
-for i, cur_img in enumerate(iter_img(components_img)):
-    plotting.plot_stat_map(cur_img, display_mode="z", title="IC %d" % i,
-                  cut_coords=1, colorbar=False, axes = ica_fig.axes[i])
+# Plot ICA components
+for n_comps in [20, 40]:
+    components_img = path.join(data_dir, 
+                               'canica%s_explicit_contrasts.nii.gz' % n_comps)
+    # plot all components in one map
+    plotting.plot_prob_atlas(components_img, title='All ICA components',
+                             outputfile = path.join(output_dir, 
+                                                    'canica%s_allcomps.png' 
+                                                    % n_comps))
+    # plot each component separately
+    ica_fig, ica_axes = plt.subplots(n_comps//4, 4, figsize=(14, n_comps//4*5))
+    ica_fig.suptitle('CanICA - 20 Components')
+    for i, cur_img in enumerate(iter_img(components_img)):
+        plotting.plot_stat_map(cur_img, display_mode="z", title="IC %d" % i,
+                      cut_coords=1, colorbar=False, axes = ica_fig.axes[i])
+    ica_fig.savefig(path.join(output_dir, 'canica%s_sep_comps.png' % n_comps))

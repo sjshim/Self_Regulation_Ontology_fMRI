@@ -40,7 +40,7 @@ def get_contrasts(task, regress_rt=True):
         c2 = ['larger_later','T', ['larger_later'], [1]]
         c3 = ['smaller_sooner','T', ['smaller_sooner'], [1]]
         # contrasts
-        c4 = ['LL vs SS','T', ['larger_later','smaller_sooner'], [1,-1]]
+        c4 = ['LL_vs_SS','T', ['larger_later','smaller_sooner'], [1,-1]]
         contrast_list = [c1,c2,c3,c4]
         if regress_rt:
             c5 = ['response_time', 'T', ['response_time'], [1]]
