@@ -1,5 +1,6 @@
 import argparse
 from glob import glob
+import json
 from matplotlib import pyplot as plt
 from nilearn import plotting
 from nilearn.image import iter_img
@@ -35,13 +36,18 @@ else:
 
 # plot group map used
 plotting.plot_roi(path.join(data_dir, 'group_mask.nii.gz'), 
-                  path.join(output_dir,'group_mask.png'))
+                  output_file = path.join(output_dir,'group_mask.png'))
 
 # plot tstat maps for each task
 for task in tasks:
-    tstat_files = glob(path.join(data_dir, task, '*%s*raw_tfile*' % task ))
+    task_dir = path.join(data_dir, task)
+    subj_ids = json.load(open(path.join(task_dir,'subj_ids.json'),'r'))
+    tstat_files = sorted(glob(path.join(task_dir, '*%s*raw_tfile*' % task )),
+                         key = lambda x: '-' in x)
     group_fig, group_axes = plt.subplots(len(tstat_files), 1,
                                      figsize=(14, 6*len(tstat_files)))
+    group_fig.suptitle('N = %s' % len(subj_ids), fontsize=30)
+    plt.subplots_adjust(top=.95)
     for i, tfile in enumerate(tstat_files):
         basename = path.basename(tfile)
         title = basename[:(basename.find('raw')-1)]
@@ -54,7 +60,7 @@ for task in tasks:
 # plot individual subject's contrasts and then the group
 for task in tasks:
     # plot all group contrasts'
-    plot_contrasts(data_dir, task, output_dir=output_dir, plot_individual=False)
+    plot_contrasts(data_dir, task, output_dir=output_dir, plot_individual=True)
     task_path = glob(path.join(data_dir,'*%s' % task))[0]
     design = get_design_df(task_path)
     plot_design(design, output_dir=path.join(output_dir,task))
@@ -67,9 +73,9 @@ for n_comps in [20, 40]:
                                'canica%s_explicit_contrasts.nii.gz' % n_comps)
     # plot all components in one map
     plotting.plot_prob_atlas(components_img, title='All ICA components',
-                             outputfile = path.join(output_dir, 
-                                                    'canica%s_allcomps.png' 
-                                                    % n_comps))
+                             outputfile = path.join(output_dir,
+                                                   'canica%s_allcomps.png' % \
+                                                     n_comps))
     # plot each component separately
     ica_fig, ica_axes = plt.subplots(n_comps//4, 4, figsize=(14, n_comps//4*5))
     ica_fig.suptitle('CanICA - 20 Components')

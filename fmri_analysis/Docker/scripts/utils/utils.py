@@ -2,6 +2,7 @@
 some util functions
 """
 import nilearn
+from nilearn import image, input_data
 import numpy as np
 import pandas as pd
 import pickle

@@ -3,10 +3,10 @@ from glob import glob
 import json
 from nipype.caching import Memory
 from nipype.interfaces import fsl
-from nilearn import datasets, image, input_data, plotting
+from nilearn import image
 from nilearn.regions import RegionExtractor
 import numpy as np
-from os import makedirs, remove
+from os import makedirs
 from os.path import join
 import pandas as pd
 from utils.utils import concat_and_smooth, get_contrast_names
@@ -89,6 +89,7 @@ for task in tasks:
                                                    task,
                                                    'subj_ids.json'), 'r'))
                 if previous_ids == subj_ids:
+                    print('No new subjects added since last ran, skipping...')
                     break
             except FileNotFoundError:
                 json.dump(subj_ids, open(join(task_dir, 'subj_ids.json'),'w'))

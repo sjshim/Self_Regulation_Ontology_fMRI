@@ -115,7 +115,8 @@ def plot_contrasts(data_dir, task, plot_individual=False,
         makedirs(join(output_dir,task), exist_ok=True)
     
     subj_ids = json.load(open(join(data_dir,task,'subj_ids.json'), 'r'))
-    contrast_objs = glob(join(data_dir,task,'*copes.nii.gz'))
+    contrast_objs = sorted(glob(join(data_dir,task,'*copes.nii.gz')),
+                           key = lambda x: '-' in x)
     # get contrast names
     contrast_names = [basename(i).split('_copes')[0][len(task)+1:]
                         for i in contrast_objs]
@@ -124,39 +125,36 @@ def plot_contrasts(data_dir, task, plot_individual=False,
     group_fig, group_axes = plt.subplots(len(contrast_names), 1,
                                          figsize=(14, 5*len(contrast_names)))
     if len(contrast_names) == 1: group_axes = [group_axes]
-    group_fig.suptitle('%s Group Contrasts' % task[:1].upper() + task[1:]
+    group_fig.suptitle('%s Group Contrasts' % (task[:1].upper() + task[1:])
                        , fontsize=30, 
                        fontweight='bold', y=.97)
+    plt.subplots_adjust(top=.95)
     for i,contrast_name in enumerate(contrast_names):
+        N = len(subj_ids)
         if contrast_index is not None:
             if i+1 not in contrast_index:
                 continue
-        copes = nilearn.image.iter_img(contrast_objs[i])
-        
         if plot_individual == True:
+            copes = nilearn.image.iter_img(contrast_objs[i])
             # set up subplots for individual contrasts plots
             contrast_fig, contrast_axes = plt.subplots(ceil(len(copes)/2), 2,
                                          figsize=(24, 5*ceil(len(copes)/2)),
                                          squeeze=True)
-
-        if plot_individual == True:
-            for i, img in enumerate(copes):
+            plt.subplots_adjust(top=.95)
+            for img_i, img in enumerate(copes):
                 # if plotting individuals, add to individual subplot
                 nilearn.plotting.plot_glass_brain(img,
                                               display_mode='lyrz', 
                                               colorbar=True, 
                                               plot_abs=False,
-                                              title=subj_ids[i],
-                                              axes=contrast_fig.axes[i])
+                                              title=subj_ids[img_i],
+                                              axes=contrast_fig.axes[img_i])
         if plot_individual and output_dir != None:
             contrast_fig.savefig(join(output_dir,task,
                                    'ind_contrast:%s_%s.png' 
                                    % (task, contrast_name)))
-        N = len(copes)
         nilearn.plotting.plot_glass_brain(
-                                      nilearn.image.mean_img(
-                                                        copes.values()
-                                                             ),
+                                      nilearn.image.mean_img(contrast_objs[i]),
                                       display_mode='lyrz', 
                                       colorbar=True, 
                                       plot_abs=False,
