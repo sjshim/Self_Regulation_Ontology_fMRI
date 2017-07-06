@@ -4,7 +4,7 @@ import json
 from matplotlib import pyplot as plt
 from nilearn import plotting
 from nilearn.image import iter_img
-from os import path
+from os import makedirs, path
 from utils.display_utils import get_design_df, plot_contrasts, plot_design
 
 # parse arguments
@@ -26,7 +26,6 @@ data_dir = '/Data' # /Data
 if args.data_dir:
   data_dir = args.data_dir
   
-  
 # list of task identifiers
 if args.tasks:
     tasks = args.tasks
@@ -35,10 +34,12 @@ else:
                'stopSignal', 'stroop', 'twoByTwo']
 
 # plot group map used
+print('Plotting group mask...')
 plotting.plot_roi(path.join(data_dir, 'group_mask.nii.gz'), 
                   output_file = path.join(output_dir,'group_mask.png'))
 
 # plot tstat maps for each task
+print('Plotting task contrasts...')
 for task in tasks:
     task_dir = path.join(data_dir, task)
     subj_ids = json.load(open(path.join(task_dir,'subj_ids.json'),'r'))
@@ -54,26 +55,26 @@ for task in tasks:
         plotting.plot_stat_map(tfile, threshold=1, 
                                axes=group_axes[i],
                                title=title)
-    group_fig.savefig(path.join(output_dir,'%s_raw_tfiles.png' % task))
+    makedirs(path.join(output_dir,task), exist_ok=True)
+    group_fig.savefig(path.join(output_dir,task,'%s_raw_tfiles.png' % task))
 
 
 # plot individual subject's contrasts and then the group
+print('Plotting individual beta maps...')
 for task in tasks:
     # plot all group contrasts'
     plot_contrasts(data_dir, task, output_dir=output_dir, plot_individual=True)
-    task_path = glob(path.join(data_dir,'*%s' % task))[0]
-    design = get_design_df(task_path)
-    plot_design(design, output_dir=path.join(output_dir,task))
 
-# plot ica maps
 
 # Plot ICA components
+print('Plotting ICA...')
 for n_comps in [20, 40]:
+    print('Plotting n components: %s' % n_comps)
     components_img = path.join(data_dir, 
                                'canica%s_explicit_contrasts.nii.gz' % n_comps)
     # plot all components in one map
     plotting.plot_prob_atlas(components_img, title='All ICA components',
-                             outputfile = path.join(output_dir,
+                             output_file = path.join(output_dir,
                                                    'canica%s_allcomps.png' % \
                                                      n_comps))
     # plot each component separately

@@ -37,7 +37,7 @@ mask_dir = None
 if args.mask_dir:
     mask_dir = args.mask_dir
 
-tasks = ['ANT', 'discountFix',
+tasks = ['ANT', 'CCTHot', 'discountFix',
          'DPX', 'motorSelectiveStop',
          'stopSignal', 'stroop', 
          'twoByTwo', 'WATT3']

@@ -137,8 +137,8 @@ def plot_contrasts(data_dir, task, plot_individual=False,
         if plot_individual == True:
             copes = nilearn.image.iter_img(contrast_objs[i])
             # set up subplots for individual contrasts plots
-            contrast_fig, contrast_axes = plt.subplots(ceil(len(copes)/2), 2,
-                                         figsize=(24, 5*ceil(len(copes)/2)),
+            contrast_fig, contrast_axes = plt.subplots(ceil(N/2), 2,
+                                         figsize=(24, 5*ceil(N/2)),
                                          squeeze=True)
             plt.subplots_adjust(top=.95)
             for img_i, img in enumerate(copes):

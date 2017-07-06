@@ -90,7 +90,9 @@ RUN conda install -y mkl=2017.0.1 mkl-service &&  \
                      libxslt=1.1.29\
                      traits=4.6.0 &&  \
     chmod +x /usr/local/miniconda/bin/* && \
-    conda clean --all -y
+    conda clean --all -y && \
+    python -c "from matplotlib import font_manager" && \
+    sed -i 's/\(backend *: \).*$/\1Agg/g' $( python -c "import matplotlib; print(matplotlib.matplotlib_fname())" )
 
 # Precaching fonts
 RUN python -c "from matplotlib import font_manager"
