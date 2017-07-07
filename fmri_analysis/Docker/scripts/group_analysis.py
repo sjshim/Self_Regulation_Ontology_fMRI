@@ -3,7 +3,7 @@ from glob import glob
 import json
 from nipype.caching import Memory
 from nipype.interfaces import fsl
-from nilearn import image
+from nilearn import datasets, image
 from nilearn.regions import RegionExtractor
 import numpy as np
 from os import makedirs
@@ -26,8 +26,8 @@ parser.add_argument('--tasks',help='The tasks'
                    nargs="+")
 args = parser.parse_args()
 
-if args.output_dir:
-    output_dir = join(args.output_dir, "custom_modeling")
+working_dir = join(args.output_dir, "workingdir")
+output_dir = join(args.output_dir, "custom_modeling")
 
 data_dir = '/Data'
 if args.data_dir:
@@ -106,7 +106,7 @@ for task in tasks:
                                                copes_concat, 
                                                interpolation='nearest')        
             # perform permutation test to assess significance
-            mem = Memory(base_dir='.')
+            mem = Memory(base_dir=working_dir)
             randomise = mem.cache(fsl.Randomise)
             randomise_results = randomise(in_file=copes_loc,
                                           mask=mask_loc,
@@ -159,8 +159,9 @@ for n_comps in n_components_list:
     
     # same thing with canICA
     canica = CanICA(mask = group_mask, n_components=n_comps, 
-                    smoothing_fwhm=4., memory="nilearn_cache", memory_level=2,
-                    threshold=3., verbose=10, random_state=0)
+                    smoothing_fwhm=4., memory=join(working_dir, "nilearn_cache"), 
+                    memory_level=2, threshold=3., 
+                    verbose=10, random_state=0)
     
     canica.fit(map_files)
     masker = canica.masker_
@@ -189,22 +190,6 @@ for n_comps in n_components_list:
 # Helper functions
 # ********************************************************
 
-# turn projections into dataframe
-def projections_to_df(projections):
-    all_projections = []
-    index = []
-    for k,v in projections.items():
-    	all_projections.append(v)
-    	index += [k]
-    
-    all_projections = np.vstack([i for i in all_projections])
-    all_projections = pd.DataFrame(all_projections, index=index)
-    sort_index = sorted(all_projections.index, key = lambda x: (x[4:8], 
-                                                                x[-1],
-                                                                x[0:4]))
-    all_projections = all_projections.loc[sort_index]
-    return all_projections
-
 def get_avg_corr(projection, subset1, subset2):
     subset_corr = projections_df.T.corr().filter(regex=subset1) \
                                        .filter(regex=subset2, axis=0)
@@ -214,24 +199,37 @@ def get_avg_corr(projection, subset1, subset2):
 # ********************************************************
 # Reduce dimensionality of contrasts
 # ********************************************************
-
-parcellation_file = join(output_dir, 'canica40_explicit_contrasts.nii.gz')
-# project contrasts into lower dimensional space    
-contrasts = range(12)
-projections = {}
-for task in tasks:
-    for contrast in contrasts:
-        	func_files = sorted(glob(join(data_dir, '*%s/zstat%s.nii.gz' \
-                                       % (task, contrast))))
-        	for func_file in func_files:
-                 subj = re.search('s[0-9][0-9][0-9]',func_file).group(0)
-                 TS, masker = project_contrast(func_file,parcellation_file)
-                 projections[subj + '_' + task + '_zstat%s' % contrast] = TS
-projections_df = projections_to_df(projections)
-projections_df.to_json(join(output_dir, 'task_projection.json'))
+for n_comps in n_components_list:
+    mask_file = join(output_dir, 'group_mask.nii.gz')
+    parcellation_file = join(output_dir, 'canica40_explicit_contrasts.nii.gz')
+    # project contrasts into lower dimensional space    
+    projections = []
+    index = []
+    for task in tasks:
+        # get all contrasts
+        contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))
+        if len(contrast_path)>0:
+            contrast_path = contrast_path[0]
+        else:
+            continue # move to next iteration if no contrast files found
+        contrast_names = get_contrast_names(contrast_path)
+        # for each contrast, project into space defined by parcellation file
+        for i,name in enumerate(contrast_names):
+            func_files = sorted(glob(join(data_dir, '*%s/zstat%s.nii.gz' 
+                                          % (task, i+1))))
+            TS, masker = project_contrast(func_files,
+                                          parcellation_file, 
+                                          mask_file)
+            projections.append(TS)
+            index += [re.search('s[0-9][0-9][0-9]',f).group(0)
+                        + '_%s_%s' % (task, name)
+                        for f in func_files]
+    projections_df = pd.DataFrame(np.vstack(projections), index)
+    projections_df.to_json(join(output_dir, 
+                                'canica%s_projection.json' % n_comps))
 
 # create matrix of average correlations across contrasts
-contrasts = sorted(np.unique([i[-10:] for i in projections_df.index]))
+contrasts = sorted(np.unique([i[5:] for i in projections_df.index]))
 avg_corrs = np.zeros((len(contrasts), len(contrasts)))
 for i, cont1 in enumerate(contrasts):
     for j, cont2 in enumerate(contrasts):

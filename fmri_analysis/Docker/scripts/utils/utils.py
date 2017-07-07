@@ -56,7 +56,7 @@ def get_contrasts(task, regress_rt=True):
         c5 = ['BX-BY','T', ['BX','BY'], [1,-1]]
         c6 = ['AY-BY','T', ['AY','BY'], [1,-1]]
         c7 = ['AY-BX','T', ['AY','BX'], [1,-1]]
-        c8 = ['BX-AY','T', ['AY','BX'], [1,-1]]
+        c8 = ['BX-AY','T', ['BX','AY'], [1,-1]]
         contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8]
         if regress_rt:
             c9 = ['response_time', 'T', ['response_time'], [1]]
@@ -365,22 +365,24 @@ def get_contrast_names(contrast_path):
 
 
 # function to get TS within labels
-def project_contrast(contrast_file, parcellation_file):
-	parcellation = image.load_img(parcellation_file)
-	if len(parcellation.shape) == 3:
-         masker = input_data.NiftiLabelsMasker(labels_img=parcellation_file, 
+def project_contrast(img_files, parcellation_file, mask_file):
+    parcellation = image.load_img(parcellation_file)
+    resampled_images = image.resample_img(img_files, parcellation.affine)
+    if len(parcellation.shape) == 3:
+        masker = input_data.NiftiLabelsMasker(labels_img=parcellation_file, 
                                                resampling_target="labels", 
                                                standardize=False,
                                                memory='nilearn_cache', 
                                                memory_level=1)
-	elif len(parcellation.shape) == 4:
+    elif len(parcellation.shape) == 4:
          masker = input_data.NiftiMapsMasker(maps_img=parcellation_file, 
+                                             mask_img=mask_file,
                                              resampling_target="maps", 
                                              standardize=False,
                                              memory='nilearn_cache',
                                              memory_level=1)
-	time_series = masker.fit_transform(contrast_file)
-	return time_series, masker
+    time_series = masker.fit_transform(resampled_images)
+    return time_series, masker
 
 
 

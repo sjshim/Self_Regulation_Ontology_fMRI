@@ -5,7 +5,10 @@ from matplotlib import pyplot as plt
 from nilearn import plotting
 from nilearn.image import iter_img
 from os import makedirs, path
-from utils.display_utils import get_design_df, plot_contrasts, plot_design
+import pandas as pd
+from utils.display_utils import dendroheatmap_left,get_design_df
+from utils.display_utils import plot_contrasts, plot_design
+import seaborn as sns
 
 # parse arguments
 parser = argparse.ArgumentParser(description='fMRI Analysis Entrypoint Script.')
@@ -58,14 +61,6 @@ for task in tasks:
     makedirs(path.join(output_dir,task), exist_ok=True)
     group_fig.savefig(path.join(output_dir,task,'%s_raw_tfiles.png' % task))
 
-
-# plot individual subject's contrasts and then the group
-print('Plotting individual beta maps...')
-for task in tasks:
-    # plot all group contrasts'
-    plot_contrasts(data_dir, task, output_dir=output_dir, plot_individual=True)
-
-
 # Plot ICA components
 print('Plotting ICA...')
 for n_comps in [20, 40]:
@@ -73,7 +68,7 @@ for n_comps in [20, 40]:
     components_img = path.join(data_dir, 
                                'canica%s_explicit_contrasts.nii.gz' % n_comps)
     # plot all components in one map
-    plotting.plot_prob_atlas(components_img, title='All ICA components',
+    plotting.plot_prob_atlas(components_img, title='All %n ICA components' % n_comps,
                              output_file = path.join(output_dir,
                                                    'canica%s_allcomps.png' % \
                                                      n_comps))
@@ -84,3 +79,16 @@ for n_comps in [20, 40]:
         plotting.plot_stat_map(cur_img, display_mode="z", title="IC %d" % i,
                       cut_coords=1, colorbar=False, axes = ica_fig.axes[i])
     ica_fig.savefig(path.join(output_dir, 'canica%s_sep_comps.png' % n_comps))
+
+    # Plot projection onto ICA components
+    print('Plotting projection...')
+    projection = pd.read_json(path.join(data_dir, 
+                                        'canica%s_projection.json' % n_comps))
+    cluster_map = dendroheatmap_left(projection.T.corr(), label_fontsize=6)
+    cluster_map[0].savefig(path.join(output_dir, 'canica%s_projection_dendroheatmap.png' % n_comps))
+
+# plot individual subject's contrasts and then the group
+print('Plotting individual beta maps...')
+for task in tasks:
+    # plot all group contrasts'
+    plot_contrasts(data_dir, task, output_dir=output_dir, plot_individual=True)
