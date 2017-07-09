@@ -27,12 +27,19 @@ do
                 fi
             fi
         done
-        if [[ $check_fmriprep>0 ]]; then
-            echo "**Running fmriprep on $sid**"
-            sed "s/{sid}/$sid/g" fmriprep.batch | sbatch -p russpold
-            (( subjects_run+=1 ))
+        # if no T1 do not run
+        num_T1=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-*/anat/*T1* | wc -l)
+        if [ $num_T1 -eq 0 ]; then
+            echo no T1 found for ${sid}! Cannot run fmriprep
+            check_fmriprep=0
         else
-            (( subjects_completed+=1 ))
+            if [[ $check_fmriprep>0 ]]; then
+                echo "**Running fmriprep on $sid**"
+                sed "s/{sid}/$sid/g" fmriprep.batch | sbatch -p russpold
+                (( subjects_run+=1 ))
+            else
+                (( subjects_completed+=1 ))
+            fi
         fi
 
     fi
