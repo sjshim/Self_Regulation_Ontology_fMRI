@@ -9,30 +9,26 @@ do
     if grep -Fxq "$sid" $ignore_list; then
         echo $sid is being ignored
     else
-        check=0
-        if [[  -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-1 ]]; then
-            if [[ -d /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-1 ]]; then
-                echo $sid session 1 run
-            else
-                check+=1
+        check_fmriprep=0
+        for session in 1 2 3
+        do
+            # if a session exists in data, check that the directory exists in fmriprep
+            if [[  -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session} ]]; then
+                num_epi=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
+                if [[ -d /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-${session} ]]; then
+                    num_preproc=$(ls /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc.nii.gz | wc -l)
+                    echo fmriprep session ${session} run
+                    if [ $num_epi -ne $num_preproc ]; then
+                        echo Number of task scans \($num_epi\) does not equal number of preprocessed scans \($num_preproc\)
+                        check_fmriprep+=1
+                    fi
+                else
+                    check_fmriprep+=1
+                fi
             fi
-        fi
-        if [[  -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-2 ]]; then
-            if [[ -d /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-2 ]]; then
-                echo $sid session 2 run
-            else
-                check+=1
-            fi
-        fi
-        if [[  -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-3 ]]; then
-            if [[ -d /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-3 ]]; then
-                echo $sid session 3 run
-            else
-                check+=1
-            fi
-        fi
-        if [[ $check>0 ]]; then
-            echo Running fmriprep on $sid
+        done
+        if [[ $check_fmriprep>0 ]]; then
+            echo "**Running fmriprep on $sid**"
             sed "s/{sid}/$sid/g" fmriprep.batch | sbatch -p russpold
             (( subjects_run+=1 ))
         else
@@ -42,3 +38,4 @@ do
     fi
 done
 echo Subjects running: $subjects_run, subjects completed: $subjects_completed
+

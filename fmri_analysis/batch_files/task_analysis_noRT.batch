@@ -3,14 +3,13 @@
 #SBATCH --output=.out/{sid}-task_analysis_noRT.outi
 #SBATCH --error=.err/{sid}-task_analysis_noRT.err
 #SBATCH --time=28:00:00
-#SBATCH --mem=50000
+#SBATCH --cpus-per-task=4
 #SBATCH --qos=russpold
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ieisenbe@stanford.edu
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=16
 #SBATCH -p russpold
 module load singularity
 export PYTHONPATH=""
-singularity run -B /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/:/Data /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-07-05-0350f4d10f1d.img /scratch/PI/russpold/work/ieisenbe/uh2/output_noRT --participant_label {sid} --tasks {tasks}
+singularity run -B /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/:/Data /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-07-07-af9b38db5e21.img /scratch/PI/russpold/work/ieisenbe/uh2/output_noRT --participant_label {sid} --tasks {tasks}
 
