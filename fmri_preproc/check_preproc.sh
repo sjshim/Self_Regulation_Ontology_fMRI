@@ -78,7 +78,7 @@ do
         if [[  -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-1 ]]; then
             num_epi=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-1/func/*task*bold.nii.gz | wc -l)
             if [[ -d /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-1 ]]; then
-                num_preproc=$(ls /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-1/func/*MNI*preproc.nii.gz | wc -l)
+                num_preproc=$(ls /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-1/func/*confounds.tsv | wc -l)
                 echo fmriprep session 1 run
                 if [ $num_epi -ne $num_preproc ]; then
                     echo Number of task scans \($num_epi\) does not equal number of preprocessed scans \($num_preproc\)
@@ -91,7 +91,7 @@ do
         if [[  -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-2 ]]; then
             num_epi=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-2/func/*task*bold.nii.gz | wc -l)
             if [[ -d /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-2 ]]; then
-                num_preproc=$(ls /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-2/func/*MNI*preproc.nii.gz | wc -l)
+                num_preproc=$(ls /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-2/func/*confounds.tsv | wc -l)
                 echo fmriprep session 2 run
                 if [ $num_epi -ne $num_preproc ]; then
                     echo Number of task scans \($num_epi\) does not equal number of preprocessed scans \($num_preproc\)
