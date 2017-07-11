@@ -1,6 +1,7 @@
 import argparse
 from glob import glob
 import json
+from multiprocessing import Pool 
 from nipype.caching import Memory
 from nipype.interfaces import fsl
 from nilearn import datasets, image
@@ -62,7 +63,12 @@ mean_mask = image.mean_img(brainmasks)
 group_mask = image.math_img("a>=0.95", a=mean_mask)
 group_mask.to_filename(mask_loc)
     
-for task in tasks:  
+# define group mask function
+
+def get_tmap(task, data_dir, output_dir, working_dir):
+    # set mask location
+    mask_loc = join(output_dir, 'group_mask.nii.gz')
+    # create task dir
     task_dir = join(output_dir,task)
     makedirs(task_dir, exist_ok=True)
     # get all contrasts
@@ -70,7 +76,7 @@ for task in tasks:
     if len(contrast_path)>0:
         contrast_path = contrast_path[0]
     else:
-        continue # move to next iteration if no contrast files found
+        return # move to next iteration if no contrast files found
     contrast_names = get_contrast_names(contrast_path)
     
     print('Creating %s group map' % task)
@@ -93,6 +99,7 @@ for task in tasks:
                     break
             except FileNotFoundError:
                 json.dump(subj_ids, open(join(task_dir, 'subj_ids.json'),'w'))
+        # if there are map files, create group map
         if len(map_files) > 1:
             smooth_copes = concat_and_smooth(map_files, smoothness=8)
 
@@ -100,11 +107,7 @@ for task in tasks:
                                              auto_resample=True)
             copes_loc = join(task_dir, "%s_copes.nii.gz" % name)
             copes_concat.to_filename(copes_loc)
-            
-            # create group mask over relevant contrasts
-            group_mask = image.resample_to_img(group_mask, 
-                                               copes_concat, 
-                                               interpolation='nearest')        
+                  
             # perform permutation test to assess significance
             mem = Memory(base_dir=working_dir)
             randomise = mem.cache(fsl.Randomise)
@@ -114,6 +117,7 @@ for task in tasks:
                                           tfce=True,
                                           vox_p_values=True,
                                           num_perm=500)
+            # save results
             tfile_loc = join(task_dir, "%s_raw_tfile.nii.gz" % name)
             tfile_corrected_loc = join(task_dir, "%s_corrected_tfile.nii.gz" 
                                        % name)
@@ -122,6 +126,12 @@ for task in tasks:
             shutil.move(raw_tfile, tfile_loc)
             shutil.move(corrected_tfile, tfile_corrected_loc)
             
+# create group maps
+pool = Pool()
+pool.map(get_tmap, tasks)
+pool.close() 
+pool.join()
+    
 # ********************************************************
 # Set up parcellation
 # ********************************************************
@@ -201,7 +211,7 @@ def get_avg_corr(projection, subset1, subset2):
 # ********************************************************
 for n_comps in n_components_list:
     mask_file = join(output_dir, 'group_mask.nii.gz')
-    parcellation_file = join(output_dir, 'canica40_explicit_contrasts.nii.gz')
+    parcellation_file = join(output_dir, 'canica%s_explicit_contrasts.nii.gz' % n_comps)
     # project contrasts into lower dimensional space    
     projections = []
     index = []
@@ -235,18 +245,3 @@ for i, cont1 in enumerate(contrasts):
     for j, cont2 in enumerate(contrasts):
         avg_corrs[i,j] = get_avg_corr(projections_df, cont1, cont2)
 avg_corrs = pd.DataFrame(avg_corrs, index=contrasts, columns=contrasts)
-
-# ********************************************************
-# Plotting
-# ********************************************************
-
-# plot the inverse projection, sanity check
-#plotting.plot_stat_map(masker.inverse_transform(projections['s192_stroop_cont4'])) 
-    
-## plots
-#f, ax = sns.plt.subplots(1,1, figsize=(20,20))
-#sns.heatmap(projections_df.T.corr(), ax=ax, square=True)
-## dendrogram heatmap
-#fig, leaves = dendroheatmap_left(projections_df.T.corr(), 
-#                                 label_fontsize='small')
-#fig.savefig(join(output_dir, 'task_dendoheatmap.png'))
