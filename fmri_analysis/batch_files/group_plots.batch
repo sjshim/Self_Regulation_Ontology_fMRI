@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=group_plots
-#SBATCH --output=.out/group_plots.out
-#SBATCH --error=.err/group_plots.err
+#SBATCH --job-name=group_plots_{output}
+#SBATCH --output=.out/group_plots_{output}.out
+#SBATCH --error=.err/group_plots_{output}.err
 #SBATCH --time=20:00:00
 # SBATCH --mem=120000
 #SBATCH --qos=russpold
@@ -13,7 +13,6 @@
 module load singularity
 export PYTHONPATH=""
 # scratch is automatically mounted
-singularity run /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-07-07-af9b38db5e21.img /scratch/PI/russpold/work/ieisenbe/uh2/output/2ndLevel/Plots --script group_plots.py  --data_dir /scratch/PI/russpold/work/ieisenbe/uh2/output/2ndLevel/custom_modeling --tasks stroop DPX
+singularity run /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-07-12-406a6c1665cf.img /scratch/PI/russpold/work/ieisenbe/uh2/{output}/2ndLevel/Plots --script group_plots.py  --data_dir /scratch/PI/russpold/work/ieisenbe/uh2/{output}/2ndLevel/custom_modeling
 
-# repeat analysis with no RT regressed
-# singularity run /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-07-07-af9b38db5e21.img /scratch/PI/russpold/work/ieisenbe/uh2/output_noRT/2ndLevel/Plots --script group_plots.py  --data_dir /scratch/PI/russpold/work/ieisenbe/uh2/output_noRT/2ndLevel/custom_modeling
+

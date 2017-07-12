@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=group_analysis
-#SBATCH --output=.out/group_analysis.out
-#SBATCH --error=.err/group_analysis.err
+#SBATCH --job-name=group_analysis_{output}
+#SBATCH --output=.out/group_analysis_{output}.out
+#SBATCH --error=.err/group_analysis_{output}.err
 #SBATCH --time=20:00:00
 # SBATCH --mem=120000
 #SBATCH --qos=russpold
@@ -13,8 +13,6 @@
 module load singularity
 export PYTHONPATH=""
 # scratch is automatically mounted
-singularity run /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-07-07-af9b38db5e21.img /scratch/PI/russpold/work/ieisenbe/uh2/output/2ndLevel  --script group_analysis.py --data_dir /scratch/PI/russpold/work/ieisenbe/uh2/output/1stLevel --mask_dir /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/
+singularity run /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-07-12-406a6c1665cf.img /scratch/PI/russpold/work/ieisenbe/uh2/{output}/2ndLevel  --script group_analysis.py --data_dir /scratch/PI/russpold/work/ieisenbe/uh2/{output}/1stLevel --mask_dir /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/
 
-# repeat analysis with no RT regressed
-singularity run /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-07-07-af9b38db5e21.img /scratch/PI/russpold/work/ieisenbe/uh2/output_noRT/2ndLevel  --script group_analysis.py --data_dir /scratch/PI/russpold/work/ieisenbe/uh2/output_noRT/1stLevel --mask_dir /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/
 

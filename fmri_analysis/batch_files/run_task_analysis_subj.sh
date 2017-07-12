@@ -1,4 +1,4 @@
-for path in /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-s???
+for path in /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-$1
 do
     sid=${path: -4}
     echo ""
