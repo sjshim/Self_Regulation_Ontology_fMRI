@@ -65,7 +65,7 @@ group_mask.to_filename(mask_loc)
     
 # define group mask function
 
-def get_tmap(task, data_dir, output_dir, working_dir):
+def get_tmap(task):
     # set mask location
     mask_loc = join(output_dir, 'group_mask.nii.gz')
     # create task dir

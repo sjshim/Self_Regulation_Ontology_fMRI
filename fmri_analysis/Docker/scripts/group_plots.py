@@ -68,7 +68,7 @@ for n_comps in [20, 40]:
     components_img = path.join(data_dir, 
                                'canica%s_explicit_contrasts.nii.gz' % n_comps)
     # plot all components in one map
-    plotting.plot_prob_atlas(components_img, title='All %n ICA components' % n_comps,
+    plotting.plot_prob_atlas(components_img, title='All %s ICA components' % n_comps,
                              output_file = path.join(output_dir,
                                                    'canica%s_allcomps.png' % \
                                                      n_comps))
