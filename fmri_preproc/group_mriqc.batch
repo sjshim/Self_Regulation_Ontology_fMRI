@@ -3,13 +3,13 @@
 #SBATCH --output=.out/group-QC.job.out
 #SBATCH --error=.err/group-QC.job.err
 #SBATCH --time=01:00:00
-#SBATCH --mem=120000
 #SBATCH --qos=russpold
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ieisenbe@stanford.edu
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=4
+#SBATCH -p russpold
 module load singularity
 export PYTHONPATH=""
-singularity run /share/PI/russpold/singularity_images/poldracklab_mriqc_0.9.2-2017-04-12-d02503d409c6.img /oak/stanford/groups/russpold/data/uh2 /scratch/PI/russpold/work/ieisenbe/uh2/mriqc group  -w $LOCAL_SCRATCH  --verbose-reports
+singularity run /share/PI/russpold/singularity_images/poldracklab_mriqc_0.9.7.clf-3.1-2017-06-23-c2b3c98b6d94.img /oak/stanford/groups/russpold/data/uh2 /scratch/PI/russpold/work/ieisenbe/uh2/mriqc group  -w $LOCAL_SCRATCH  --verbose-reports
 

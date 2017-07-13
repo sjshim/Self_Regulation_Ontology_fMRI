@@ -11,7 +11,6 @@ do
     sid=${path:(-4)}
     echo $sid
     echo "*******************************************"
-    sid=${path:(-4)}
     if grep -Fxq "$sid" $ignore_list; then
         echo $sid is being ignored
     else
@@ -22,20 +21,20 @@ do
         for session in 1 2 3
         do
         # if a session exists in data, check that some files exist in the corresponding mriqc directory
-            if [[  -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session} ]]; then
-                # number of epi scans found in session folder
-                num_epi=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
-                # check mriqc
-                mriqc_files=( $(find /scratch/PI/russpold/work/ieisenbe/uh2/mriqc/reports/ -name "*${sid}*ses-${session}*run-*") )
-                if [[ ${#mriqc_files[@]} -ne 0 ]]; then
-                    echo mriqc session ${session} run
-                    if [[ ${#mriqc_files[@]} -ne $num_epi ]]; then
-                        echo Number of task scans \($num_epi\) does not equal number of mriqc reports \(${#files[@]}\)
-                    fi
-                else
-                    check_mriqc+=1
+        if [ -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session} ]; then
+            # number of epi scans found in session folder
+            num_epi=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
+            # check mriqc
+            mriqc_files=( $(find /scratch/PI/russpold/work/ieisenbe/uh2/mriqc/reports/ -name "*${sid}*ses-${session}*run-*") )
+            if [[ ${#mriqc_files[@]} -ne 0 ]]; then
+                echo mriqc session ${session} run
+                if [[ ${#mriqc_files[@]} -ne $num_epi ]]; then
+                    echo Number of task scans \($num_epi\) does not equal number of mriqc reports \(${#files[@]}\)
                 fi
+            else
+                check_mriqc+=1
             fi
+        fi
         done
         if [[ $check_mriqc>0 ]]; then
             echo "** MRIQC needs to be run on $sid **" 
