@@ -200,10 +200,11 @@ for n_comps in n_components_list:
 # Helper functions
 # ********************************************************
 
-def get_avg_corr(projection, subset1, subset2):
-    subset_corr = projections_df.T.corr().filter(regex=subset1) \
+def get_avg_corr(projections_corr, subset1, subset2):
+    subset_corr = projections_corr.filter(regex=subset1) \
                                        .filter(regex=subset2, axis=0)
-    return subset_corr.mean().mean()
+    indices = np.tril_indices_from(subset_corr, -1)
+    return subset_corr.values[indices].mean()
 
 
 # ********************************************************
@@ -238,10 +239,26 @@ for n_comps in n_components_list:
     projections_df.to_json(join(output_dir, 
                                 'canica%s_projection.json' % n_comps))
 
-# create matrix of average correlations across contrasts
-contrasts = sorted(np.unique([i[5:] for i in projections_df.index]))
-avg_corrs = np.zeros((len(contrasts), len(contrasts)))
-for i, cont1 in enumerate(contrasts):
-    for j, cont2 in enumerate(contrasts):
-        avg_corrs[i,j] = get_avg_corr(projections_df, cont1, cont2)
-avg_corrs = pd.DataFrame(avg_corrs, index=contrasts, columns=contrasts)
+    # create matrix of average correlations across contrasts
+    contrasts = sorted(np.unique([i[5:] for i in projections_df.index]))
+    avg_corrs = np.zeros((len(contrasts), len(contrasts)))
+    projections_corr = projections_df.T.corr()
+    for i, cont1 in enumerate(contrasts):
+        for j, cont2 in enumerate(contrasts[i:]):
+            avg_val = get_avg_corr(projections_corr, cont1, cont2)
+            avg_corrs[i,j+i] = avg_corrs[j+i,i] = avg_val
+    avg_corrs = pd.DataFrame(avg_corrs, index=contrasts, columns=contrasts)
+    avg_corrs.to_json(join(output_dir, 
+                                'projection%s_avgcorr_contrast.json' % n_comps))
+    
+    # create matrix of average correlations across subjects
+    subjects = sorted(np.unique([i[:4] for i in projections_df.index]))
+    avg_corrs = np.zeros((len(subjects), len(subjects)))
+    projections_corr = projections_df.T.corr()
+    for i, subj1 in enumerate(subjects):
+        for j, subj2 in enumerate(subjects[i:]):
+            avg_val = get_avg_corr(projections_corr, subj1, subj2)
+            avg_corrs[i,j+i] = avg_corrs[j+i,i] = avg_val
+    avg_corrs = pd.DataFrame(avg_corrs, index=subjects, columns=subjects)
+    avg_corrs.to_json(join(output_dir, 
+                                'projection%s_avgcorr_subj.json' % n_comps))

@@ -6,8 +6,8 @@ from nilearn import plotting
 from nilearn.image import iter_img
 from os import makedirs, path
 import pandas as pd
-from utils.display_utils import dendroheatmap_left,get_design_df
-from utils.display_utils import plot_contrasts, plot_design
+from utils.display_utils import dendroheatmap_left
+from utils.display_utils import plot_contrasts
 import seaborn as sns
 
 # parse arguments
@@ -34,7 +34,7 @@ if args.tasks:
     tasks = args.tasks
 else:
     tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 'motorSelectiveStop',
-               'stopSignal', 'stroop', 'twoByTwo']
+               'stopSignal', 'stroop', 'twoByTwo', 'WATT3']
 
 # plot group map used
 print('Plotting group mask...')
@@ -84,8 +84,19 @@ for n_comps in [20, 40]:
     print('Plotting projection...')
     projection = pd.read_json(path.join(data_dir, 
                                         'canica%s_projection.json' % n_comps))
-    cluster_map = dendroheatmap_left(projection.T.corr(), label_fontsize=6)
+    cluster_map = dendroheatmap_left(projection.T.corr(), labels=False)
+    labels = list(projection.index[cluster_map[1]])
     cluster_map[0].savefig(path.join(output_dir, 'canica%s_projection_dendroheatmap.png' % n_comps))
+    json.dump(labels, open(path.join(output_dir, 'canica%s_projection_dendroheatmap_labels.png' % n_comps),'w'))
+    # plot averages
+    for group in ['subj','contrast']:
+        avg_projection = pd.read_json(path.join(data_dir, 
+                                        'projection%s_avgcorr_%s.json' 
+                                        % (n_comps, group)))
+        fig = plt.figure(figsize=(14,14))
+        sns.heatmap(avg_projection, square=True)
+        plt.tight_layout()
+        fig.savefig(path.join(output_dir, 'projection%s_avgcorr_%s_heatmap.png' % (n_comps, group)))
 
 # plot individual subject's contrasts and then the group
 print('Plotting individual beta maps...')
