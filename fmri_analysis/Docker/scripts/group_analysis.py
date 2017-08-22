@@ -60,7 +60,7 @@ brainmasks = glob(join(mask_dir,'sub-s???',
                        '*','func',
                        '*MNI152NLin2009cAsym_brainmask*'))
 mean_mask = image.mean_img(brainmasks)
-group_mask = image.math_img("a>=0.95", a=mean_mask)
+group_mask = image.math_img("a>=0.8", a=mean_mask)
 group_mask.to_filename(mask_loc)
     
 # define group mask function
@@ -97,14 +97,15 @@ def get_tmap(task):
                 if previous_ids == subj_ids:
                     print('No new subjects added since last ran, skipping...')
                     break
+                else:
+                    json.dump(subj_ids, open(join(task_dir, 'subj_ids.json'),'w'))
             except FileNotFoundError:
                 json.dump(subj_ids, open(join(task_dir, 'subj_ids.json'),'w'))
         # if there are map files, create group map
         if len(map_files) > 1:
-            smooth_copes = concat_and_smooth(map_files, smoothness=8)
+            smooth_copes = concat_and_smooth(map_files, smoothness=4.4)
 
-            copes_concat = image.concat_imgs(smooth_copes.values(), 
-                                             auto_resample=True)
+            copes_concat = image.concat_imgs(smooth_copes.values()) # add back in autoresample
             copes_loc = join(task_dir, "%s_copes.nii.gz" % name)
             copes_concat.to_filename(copes_loc)
                   
@@ -114,9 +115,9 @@ def get_tmap(task):
             randomise_results = randomise(in_file=copes_loc,
                                           mask=mask_loc,
                                           one_sample_group_mean=True,
-                                          tfce=True,
+                                          tfce=True, # look at paper
                                           vox_p_values=True,
-                                          num_perm=500)
+                                          num_perm=5000)
             # save results
             tfile_loc = join(task_dir, "%s_raw_tfile.nii.gz" % name)
             tfile_corrected_loc = join(task_dir, "%s_corrected_tfile.nii.gz" 
@@ -145,7 +146,7 @@ from nilearn.input_data import NiftiMasker
 # get map files of interest (explicit contrasts)
 map_files = []
 for task in tasks: 
-    contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))
+    contrast_path = sorted(glob(join(data_dir,'*%s/contrasts.pkl' % task)))
     if len(contrast_path)>0:
         contrast_path = contrast_path[0]
     else:
@@ -154,30 +155,41 @@ for task in tasks:
     for i, name in enumerate(contrast_names):
         # only get explicit contrasts (i.e. not vs. rest)
         if '-' in name:
-            map_files += glob(join(data_dir,
-                                   '*%s/zstat%s.nii.gz' % (task, i+1)))
+            map_files += sorted(glob(join(data_dir,
+                                   '*%s/zstat%s.nii.gz' % (task, i+1))))
 
-n_components_list = [20,40]
+# combine files by subject
+subjs = np.unique([i.split('/')[-2].split('_')[0] for i in map_files])
+map_files_by_subj = []
+for s in subjs:
+    map_files_by_subj.append([i for i in map_files if s in i])
+    
+n_components_list = [20,50]
 for n_comps in n_components_list:
-    ## using sklearn and nilearn
-    #nifti_masker = NiftiMasker(mask_img=group_mask, smoothing_fwhm=4,
-    #                           standardize=False)
-    #compressor = FastICA(n_components=n_components, whiten=True)
-    #masker_output = nifti_masker.fit_transform(map_files)
-    #reduced = compressor.fit_transform(masker_output)
-    
-    
-    # same thing with canICA
+    ##  get components
     canica = CanICA(mask = group_mask, n_components=n_comps, 
-                    smoothing_fwhm=4., memory=join(working_dir, "nilearn_cache"), 
+                    smoothing_fwhm=4.4, memory=join(working_dir, "nilearn_cache"), 
                     memory_level=2, threshold=3., 
-                    verbose=10, random_state=0)
+                    verbose=10, random_state=0) # multi-level components modeling across subjects
     
     canica.fit(map_files)
     masker = canica.masker_
     components_img = masker.inverse_transform(canica.components_)
     components_img.to_filename(join(output_dir, 
                                     'canica%s_explicit_contrasts.nii.gz' 
+                                    % n_comps))
+    
+    ##  get components grouping by subject
+    canica = CanICA(mask = group_mask, n_components=n_comps, 
+                    smoothing_fwhm=4.4, memory=join(working_dir, "nilearn_cache"), 
+                    memory_level=2, threshold=3., 
+                    verbose=10, random_state=0) # multi-level components modeling across subjects
+    
+    canica.fit(map_files_by_subj)
+    masker = canica.masker_
+    components_img = masker.inverse_transform(canica.components_)
+    components_img.to_filename(join(output_dir, 
+                                    'canica%s_subjwise_explicit_contrasts.nii.gz' 
                                     % n_comps))
 
 

@@ -87,7 +87,7 @@ for n_comps in [20, 40]:
     cluster_map = dendroheatmap_left(projection.T.corr(), labels=False)
     labels = list(projection.index[cluster_map[1]])
     cluster_map[0].savefig(path.join(output_dir, 'canica%s_projection_dendroheatmap.png' % n_comps))
-    json.dump(labels, open(path.join(output_dir, 'canica%s_projection_dendroheatmap_labels.png' % n_comps),'w'))
+    json.dump(labels, open(path.join(output_dir, 'canica%s_projection_dendroheatmap_labels.json' % n_comps),'w'))
     # plot averages
     for group in ['subj','contrast']:
         avg_projection = pd.read_json(path.join(data_dir, 
