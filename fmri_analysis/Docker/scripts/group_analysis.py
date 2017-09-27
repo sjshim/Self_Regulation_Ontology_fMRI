@@ -52,7 +52,6 @@ makedirs(output_dir, exist_ok=True)
 # ********************************************************
 print('Creating Group Maps...')
 
-print('Creating Group Mask...')
 # create mask over all tasks
 # create 95% brain mask
 mask_loc = join(output_dir, 'group_mask.nii.gz')
@@ -63,8 +62,6 @@ mean_mask = image.mean_img(brainmasks)
 group_mask = image.math_img("a>=0.8", a=mean_mask)
 group_mask.to_filename(mask_loc)
     
-# define group mask function
-
 def get_tmap(task):
     # set mask location
     mask_loc = join(output_dir, 'group_mask.nii.gz')
@@ -105,7 +102,8 @@ def get_tmap(task):
         if len(map_files) > 1:
             smooth_copes = concat_and_smooth(map_files, smoothness=4.4)
 
-            copes_concat = image.concat_imgs(smooth_copes.values()) # add back in autoresample
+            copes_concat = image.concat_imgs(smooth_copes.values(),
+                                             auto_resample=True)
             copes_loc = join(task_dir, "%s_copes.nii.gz" % name)
             copes_concat.to_filename(copes_loc)
                   
@@ -139,9 +137,8 @@ pool.join()
 
 #******************* Estimate parcellation from data ***********************
 print('Creating ICA based parcellation')
-from sklearn.decomposition import FastICA
 from nilearn.decomposition import CanICA
-from nilearn.input_data import NiftiMasker
+import os
 
 # get map files of interest (explicit contrasts)
 map_files = []
@@ -154,15 +151,16 @@ for task in tasks:
     contrast_names = get_contrast_names(contrast_path)
     for i, name in enumerate(contrast_names):
         # only get explicit contrasts (i.e. not vs. rest)
-        if '-' in name:
+        if '-' in name or 'network' in name:
             map_files += sorted(glob(join(data_dir,
                                    '*%s/zstat%s.nii.gz' % (task, i+1))))
 
-# combine files by subject
-subjs = np.unique([i.split('/')[-2].split('_')[0] for i in map_files])
-map_files_by_subj = []
-for s in subjs:
-    map_files_by_subj.append([i for i in map_files if s in i])
+# group map files by subject
+subject_ids = np.unique([f.split(os.sep)[-2].split('_')[0] for f in map_files])
+subject_map_files = []
+for s in subject_ids:
+    subject_map_files.append(image.concat_imgs([f for f in map_files if s in f]))
+
     
 n_components_list = [20,50]
 for n_comps in n_components_list:
@@ -185,7 +183,7 @@ for n_comps in n_components_list:
                     memory_level=2, threshold=3., 
                     verbose=10, random_state=0) # multi-level components modeling across subjects
     
-    canica.fit(map_files_by_subj)
+    canica.fit(subject_map_files)
     masker = canica.masker_
     components_img = masker.inverse_transform(canica.components_)
     components_img.to_filename(join(output_dir, 
@@ -222,6 +220,12 @@ def get_avg_corr(projections_corr, subset1, subset2):
 # ********************************************************
 # Reduce dimensionality of contrasts
 # ********************************************************
+def split_index(projections_df):
+    subj = [f.split('_')[0] for f in projections_df.index]
+    contrast = ['_'.join(f.split('_')[1:]) for f in projections_df.index]
+    projections_df.insert(0, 'subj', subj)
+    projections_df.insert(1, 'contrast', contrast)
+    
 for n_comps in n_components_list:
     mask_file = join(output_dir, 'group_mask.nii.gz')
     parcellation_file = join(output_dir, 'canica%s_explicit_contrasts.nii.gz' % n_comps)
@@ -274,3 +278,7 @@ for n_comps in n_components_list:
     avg_corrs = pd.DataFrame(avg_corrs, index=subjects, columns=subjects)
     avg_corrs.to_json(join(output_dir, 
                                 'projection%s_avgcorr_subj.json' % n_comps))
+    
+    # create a subject x neural feature vector where each column is a component
+    # for one contrast
+    neural_feature_mat = projections_df.pivot(index='subj', columns='contrast')

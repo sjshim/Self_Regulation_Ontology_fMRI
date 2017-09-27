@@ -1,6 +1,7 @@
 """
 some util functions
 """
+from collections import OrderedDict as odict
 import nilearn
 from nilearn import image, input_data
 import numpy as np
@@ -351,7 +352,7 @@ def concat_and_smooth(map_files, smoothness=None):
     Loads and smooths files specified in 
     map_files and creates a dictionary of them
     """
-    smooth_copes = {}
+    smooth_copes = odict()
     for img_i, img in enumerate(sorted(map_files)):
         subj = re.search('s[0-9][0-9][0-9]',img).group(0)
         smooth_cope = nilearn.image.smooth_img(img, smoothness)
