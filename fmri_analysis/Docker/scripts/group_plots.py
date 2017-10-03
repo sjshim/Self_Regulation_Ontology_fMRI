@@ -2,6 +2,7 @@ import argparse
 from glob import glob
 import json
 from matplotlib import pyplot as plt
+from nilearn import datasets, image
 from nilearn import plotting
 from nilearn.image import iter_img
 from os import makedirs, path
@@ -55,7 +56,7 @@ for task in tasks:
     for i, tfile in enumerate(tstat_files):
         basename = path.basename(tfile)
         title = basename[:(basename.find('raw')-1)]
-        plotting.plot_stat_map(tfile, threshold=1, 
+        plotting.plot_stat_map(tfile, threshold=2, 
                                axes=group_axes[i],
                                title=title)
     makedirs(path.join(output_dir,task), exist_ok=True)
@@ -63,40 +64,51 @@ for task in tasks:
 
 # Plot ICA components
 print('Plotting ICA...')
-for n_comps in [20, 40]:
-    print('Plotting n components: %s' % n_comps)
-    components_img = path.join(data_dir, 
-                               'canica%s_explicit_contrasts.nii.gz' % n_comps)
+smith_networks = datasets.fetch_atlas_smith_2009()['rsn70']
+parcellation_files = [('smith70', smith_networks),
+                      ('canica20', 
+                       path.join(data_dir, 'canica20_explicit_contrasts.nii.gz')),
+                      ('canica50', 
+                       path.join(data_dir, 'canica50_explicit_contrasts.nii.gz')),
+                      ('canica70', 
+                       path.join(output_dir, 'canica70_explicit_contrasts.nii.gz'))
+                       ]
+        
+        
+for parcellation_name, parcellation_file in parcellation_files:
+    print('Plotting parcellation: %s' % parcellation_name)
     # plot all components in one map
-    plotting.plot_prob_atlas(components_img, title='All %s ICA components' % n_comps,
+    parcellation = image.load_img(parcellation_file)
+    n_comps = parcellation.shape[-1]
+    plotting.plot_prob_atlas(parcellation_file, title='%s ICA components' % parcellation_name,
                              output_file = path.join(output_dir,
-                                                   'canica%s_allcomps.png' % \
-                                                     n_comps))
+                                                   '%s_allcomps.png' % \
+                                                     parcellation_name))
     # plot each component separately
     ica_fig, ica_axes = plt.subplots(n_comps//4, 4, figsize=(14, n_comps//4*5))
-    ica_fig.suptitle('CanICA - 20 Components')
-    for i, cur_img in enumerate(iter_img(components_img)):
+    ica_fig.suptitle('%s - %s Components' % (parcellation_name, n_comps))
+    for i, cur_img in enumerate(iter_img(parcellation_file)):
         plotting.plot_stat_map(cur_img, display_mode="z", title="IC %d" % i,
                       cut_coords=1, colorbar=False, axes = ica_fig.axes[i])
-    ica_fig.savefig(path.join(output_dir, 'canica%s_sep_comps.png' % n_comps))
+    ica_fig.savefig(path.join(output_dir, '%s_sep_comps.png' % parcellation_name))
 
     # Plot projection onto ICA components
     print('Plotting projection...')
     projection = pd.read_json(path.join(data_dir, 
-                                        'canica%s_projection.json' % n_comps))
+                                        '%s_projection.json' % parcellation_name))
     cluster_map = dendroheatmap_left(projection.T.corr(), labels=False)
     labels = list(projection.index[cluster_map[1]])
-    cluster_map[0].savefig(path.join(output_dir, 'canica%s_projection_dendroheatmap.png' % n_comps))
-    json.dump(labels, open(path.join(output_dir, 'canica%s_projection_dendroheatmap_labels.json' % n_comps),'w'))
+    cluster_map[0].savefig(path.join(output_dir, '%s_projection_dendroheatmap.png' % parcellation_name))
+    json.dump(labels, open(path.join(output_dir, '%s_projection_dendroheatmap_labels.json' % parcellation_name),'w'))
     # plot averages
     for group in ['subj','contrast']:
         avg_projection = pd.read_json(path.join(data_dir, 
-                                        'projection%s_avgcorr_%s.json' 
-                                        % (n_comps, group)))
+                                        'projection_%s_avgcorr_%s.json' 
+                                        % (parcellation_name, group)))
         fig = plt.figure(figsize=(14,14))
         sns.heatmap(avg_projection, square=True)
         plt.tight_layout()
-        fig.savefig(path.join(output_dir, 'projection%s_avgcorr_%s_heatmap.png' % (n_comps, group)))
+        fig.savefig(path.join(output_dir, 'projection_%s_avgcorr_%s_heatmap.png' % (parcellation_name, group)))
 
 # plot individual subject's contrasts and then the group
 print('Plotting individual beta maps...')

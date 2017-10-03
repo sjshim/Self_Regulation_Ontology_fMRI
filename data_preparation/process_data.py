@@ -40,6 +40,10 @@ for subj_file in glob('../Data/raw/*/*'):
         if exp_id == 'columbia_card_task_hot':
             exp_id = 'columbia_card_task_fmri'
         df.loc[:,'experiment_exp_id'] = exp_id
+        # make sure there is a subject column
+        if 'subject' not in df.columns:
+            print('Added subject file for file: %s' % filey)
+            df.loc[:,'subject'] = filey.split('_')[0]
         # change column from subject to worker_id
         df.rename(columns={'subject':'worker_id'}, inplace=True)
         # post process data, drop rows, etc.....

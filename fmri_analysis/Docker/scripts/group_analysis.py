@@ -6,7 +6,9 @@ from nipype.caching import Memory
 from nipype.interfaces import fsl
 from nilearn import datasets, image
 from nilearn.regions import RegionExtractor
+from nilearn.decomposition import CanICA
 import numpy as np
+import os
 from os import makedirs
 from os.path import join
 import pandas as pd
@@ -137,8 +139,6 @@ pool.join()
 
 #******************* Estimate parcellation from data ***********************
 print('Creating ICA based parcellation')
-from nilearn.decomposition import CanICA
-import os
 
 # get map files of interest (explicit contrasts)
 map_files = []
@@ -162,7 +162,7 @@ for s in subject_ids:
     subject_map_files.append(image.concat_imgs([f for f in map_files if s in f]))
 
     
-n_components_list = [20,50]
+n_components_list = [20,50,70]
 for n_comps in n_components_list:
     ##  get components
     canica = CanICA(mask = group_mask, n_components=n_comps, 
@@ -177,23 +177,23 @@ for n_comps in n_components_list:
                                     'canica%s_explicit_contrasts.nii.gz' 
                                     % n_comps))
     
-    ##  get components grouping by subject
-    canica = CanICA(mask = group_mask, n_components=n_comps, 
-                    smoothing_fwhm=4.4, memory=join(working_dir, "nilearn_cache"), 
-                    memory_level=2, threshold=3., 
-                    verbose=10, random_state=0) # multi-level components modeling across subjects
-    
-    canica.fit(subject_map_files)
-    masker = canica.masker_
-    components_img = masker.inverse_transform(canica.components_)
-    components_img.to_filename(join(output_dir, 
-                                    'canica%s_subjwise_explicit_contrasts.nii.gz' 
-                                    % n_comps))
+#    ##  get components grouping by subject
+#    canica = CanICA(mask = group_mask, n_components=n_comps, 
+#                    smoothing_fwhm=4.4, memory=join(working_dir, "nilearn_cache"), 
+#                    memory_level=2, threshold=3., 
+#                    verbose=10, random_state=0) # multi-level components modeling across subjects
+#    
+#    canica.fit(subject_map_files)
+#    masker = canica.masker_
+#    components_img = masker.inverse_transform(canica.components_)
+#    components_img.to_filename(join(output_dir, 
+#                                    'canica%s_subjwise_explicit_contrasts.nii.gz' 
+#                                    % n_comps))
 
 
 ##************* Get parcellation from established atlas ************
 ## get smith parcellation
-#smith_networks = datasets.fetch_atlas_smith_2009()['rsn20']
+smith_networks = datasets.fetch_atlas_smith_2009()['rsn70']
 ## create atlas
 ## ref: https://nilearn.github.io/auto_examples/04_manipulating_images/plot_extract_rois_smith_atlas.html
 ## this function takes whole brain networks and breaks them into contiguous
@@ -201,10 +201,7 @@ for n_comps in n_components_list:
 ## of the original brain maps
 #
 #extractor = RegionExtractor(smith_networks, min_region_size=800,
-#                            threshold=98, thresholding_strategy='percentile')
-#extractor.fit()
-#regions_img = extractor.regions_img_
-
+     #                       threshold=98, thresholding_strategy='percentile')
 
 # ********************************************************
 # Helper functions
@@ -226,9 +223,18 @@ def split_index(projections_df):
     projections_df.insert(0, 'subj', subj)
     projections_df.insert(1, 'contrast', contrast)
     
-for n_comps in n_components_list:
+    
+parcellation_files = [('smith70', smith_networks),
+                      ('canica20', 
+                       join(output_dir, 'canica20_explicit_contrasts.nii.gz')),
+                      ('canica50', 
+                       join(output_dir, 'canica50_explicit_contrasts.nii.gz')),
+                       ('canica70', 
+                       join(output_dir, 'canica70_explicit_contrasts.nii.gz'))
+                       ]
+
+for parcellation_name, parcellation_file in parcellation_files:
     mask_file = join(output_dir, 'group_mask.nii.gz')
-    parcellation_file = join(output_dir, 'canica%s_explicit_contrasts.nii.gz' % n_comps)
     # project contrasts into lower dimensional space    
     projections = []
     index = []
@@ -252,8 +258,8 @@ for n_comps in n_components_list:
                         + '_%s_%s' % (task, name)
                         for f in func_files]
     projections_df = pd.DataFrame(np.vstack(projections), index)
-    projections_df.to_json(join(output_dir, 
-                                'canica%s_projection.json' % n_comps))
+    projections_df.to_json(join(output_dir, '%s_projection.json' 
+                                % parcellation_name))
 
     # create matrix of average correlations across contrasts
     contrasts = sorted(np.unique([i[5:] for i in projections_df.index]))
@@ -265,7 +271,8 @@ for n_comps in n_components_list:
             avg_corrs[i,j+i] = avg_corrs[j+i,i] = avg_val
     avg_corrs = pd.DataFrame(avg_corrs, index=contrasts, columns=contrasts)
     avg_corrs.to_json(join(output_dir, 
-                                'projection%s_avgcorr_contrast.json' % n_comps))
+                                '%s_projection_avgcorr_contrast.json' 
+                                % parcellation_name))
     
     # create matrix of average correlations across subjects
     subjects = sorted(np.unique([i[:4] for i in projections_df.index]))
@@ -277,7 +284,8 @@ for n_comps in n_components_list:
             avg_corrs[i,j+i] = avg_corrs[j+i,i] = avg_val
     avg_corrs = pd.DataFrame(avg_corrs, index=subjects, columns=subjects)
     avg_corrs.to_json(join(output_dir, 
-                                'projection%s_avgcorr_subj.json' % n_comps))
+                                '%s_projection_avgcorr_subj.json' 
+                                % parcellation_name))
     
     # create a subject x neural feature vector where each column is a component
     # for one contrast
