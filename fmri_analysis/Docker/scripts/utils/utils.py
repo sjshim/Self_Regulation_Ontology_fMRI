@@ -1,6 +1,7 @@
 """
 some util functions
 """
+from collections import OrderedDict as odict
 import nilearn
 from nilearn import image, input_data
 import numpy as np
@@ -118,18 +119,18 @@ def get_contrasts(task, regress_rt=True):
         c5 = ['cue_stay_900','T', ['cue_stay_900'], [1]]
         c6 = ['task_switch_900','T', ['task_switch_900'], [1]]
         # contrasts
-        c5 = ['cue_switch_cost_100','T', 
+        c7 = ['cue_switch_cost_100','T', 
                 ['cue_switch_100','cue_stay_100'], [1,-1]]
-        c6 = ['cue_switch_cost_900','T', 
+        c8 = ['cue_switch_cost_900','T', 
                 ['cue_switch_900','cue_stay_900'], [1,-1]]
-        c7 = ['task_switch_cost_100','T', 
+        c9 = ['task_switch_cost_100','T', 
                 ['task_switch_100','cue_switch_100'], [1,-1]]
-        c8 = ['task_switch_cost_900','T', 
+        c10 = ['task_switch_cost_900','T', 
                 ['task_switch_900','cue_switch_900'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8]
+        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8,c9,c10]
         if regress_rt:
-            c9 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c9)
+            c11 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c11)
     elif task == 'WATT3':
         # contrasts vs baseline
         c1 = ['plan_PA_with','T', ['plan_PA_with'], [1]]
@@ -351,7 +352,7 @@ def concat_and_smooth(map_files, smoothness=None):
     Loads and smooths files specified in 
     map_files and creates a dictionary of them
     """
-    smooth_copes = {}
+    smooth_copes = odict()
     for img_i, img in enumerate(sorted(map_files)):
         subj = re.search('s[0-9][0-9][0-9]',img).group(0)
         smooth_cope = nilearn.image.smooth_img(img, smoothness)
