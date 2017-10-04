@@ -2,7 +2,7 @@
 #SBATCH --job-name=group_plots_{output}
 #SBATCH --output=.out/group_plots_{output}.out
 #SBATCH --error=.err/group_plots_{output}.err
-#SBATCH --time=20:00:00
+#SBATCH --time=30:00:00
 # SBATCH --mem=120000
 #SBATCH --qos=russpold
 #SBATCH --mail-type=ALL
@@ -12,7 +12,5 @@
 #SBATCH -p russpold
 module load singularity
 export PYTHONPATH=""
-# scratch is automatically mounted
-singularity run /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-07-12-406a6c1665cf.img /scratch/PI/russpold/work/ieisenbe/uh2/{output}/2ndLevel/Plots --script group_plots.py  --data_dir /scratch/PI/russpold/work/ieisenbe/uh2/{output}/2ndLevel/custom_modeling
-
+singularity run /oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/singularity_images/nipype_image-2017-09-28-1fc194082694.img /oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/{output}/2ndLevel/Plots --script group_plots.py  --data_dir /oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/{output}/2ndLevel/custom_modeling --tasks ANT CCTHot discountFix DPX motorSelectiveStop stopSignal stroop twoByTwo WATT3
 
