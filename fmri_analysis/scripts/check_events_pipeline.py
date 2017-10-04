@@ -21,6 +21,9 @@ print('*'*79)
 print('%s: %s' % (subj, task))
 print('*'*79)
 
+raw_dir = '../../Data/raw/%s/%s_%s.csv' % (subj, subj, task)
+raw_file = pd.read_csv(raw_dir)
+
 cleaned_dir = '../../Data/processed/%s_%s_cleaned.csv' % (subj, task)
 cleaned_file = pd.read_csv(cleaned_dir)
 
@@ -46,7 +49,7 @@ for i, col in enumerate(cols):
     sns.plt.title(col)
 
 
-
+sns.plt.plot(design.index*.68, design['congruent'])
 
 
 
