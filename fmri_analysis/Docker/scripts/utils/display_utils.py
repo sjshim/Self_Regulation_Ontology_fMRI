@@ -67,6 +67,7 @@ def plot_design(design_df, output_dir=None):
     ax3.set_title('Heatmap: Design Matrix', fontsize=20)
     sns.heatmap(design_df, ax=ax4)
     ax4.set_title('Design Matrix')
+    plt.tight_layout()
     if output_dir:
         makedirs(output_dir, exist_ok=True)
         f.savefig(join(output_dir,'design_plot.png'))
@@ -74,7 +75,7 @@ def plot_design(design_df, output_dir=None):
 
 def plot_zmaps(task_path, smoothness=8):
     fmri_contrast_paths = join(task_path, 'zstat?.nii.gz')
-    fmri_contrast_files = sort(glob(fmri_contrast_paths))
+    fmri_contrast_files = sorted(glob(fmri_contrast_paths))
     contrasts_path = join(task_path, 'contrasts.pkl')
     contrasts = pickle.load(open(contrasts_path,'rb'))
     contrast_names = [c[0] for c in contrasts]
