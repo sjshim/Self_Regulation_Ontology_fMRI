@@ -140,165 +140,260 @@ def get_contrasts(task, regress_rt=True):
         contrast_list = [c1,c2,c3]
     return contrast_list
         
-        
+# functions to extract fmri events
+      
+def get_ev_vars(output_dict, events_df, condition_list, col=None, 
+                amplitude = 1, duration = 0, subset=None, onset_column='onset'):
+    required_keys =  set(['amplitudes','conditions','durations','onsets'])
+    assert set(output_dict.keys()) == required_keys
+    amplitudes = output_dict['amplitudes']
+    conditions = output_dict['conditions']
+    durations = output_dict['durations']
+    onsets = output_dict['onsets']
+    
+    # if subset is specified as a string, use to query
+    if subset is not None:
+        events_df = events_df.query(subset)
+    # if a column is specified, group by the values in that column
+    if col is not None:
+        group_df = events_df.groupby(col)
+        for condition, condition_name in condition_list:
+            if type(condition) is not list:
+                condition = [condition]
+            # get members of group identified by the condition list
+            c_dfs = [group_df.get_group(c) for c in condition 
+                     if c in group_df.groups.keys()]
+            if len(c_dfs)!=0:
+                c_df = pd.concat(c_dfs)
+                conditions.append(condition_name)
+                onsets.append(c_df.loc[:,onset_column].tolist())
+                if type(amplitude) in (int,float):
+                    amplitudes.append([amplitude])
+                elif type(amplitude) == str:
+                    amplitudes.append(c_df.loc[:,amplitude].tolist())
+                if type(duration) in (int,float):
+                    durations.append([duration])
+                elif type(duration) == str:
+                    durations.append(c_df.loc[:,duration].tolist())
+    else:
+        assert len(condition_list) == 1, \
+            'If "col" is not specified, condition list must be an \
+             array of length 1 specifying the regressor name'
+        group_df = events_df
+        conditions.append(condition_list[0])
+        onsets.append(group_df.loc[:,onset_column].tolist())
+        if type(amplitude) in (int,float):
+            amplitudes.append([amplitude])
+        elif type(amplitude) == str:
+            amplitudes.append(group_df.loc[:,amplitude].tolist())
+        if type(duration) in (int,float):
+            durations.append([duration])
+        elif type(duration) == str:
+            durations.append(group_df.loc[:,duration].tolist())
+
+# specific task functions
+def get_ANT_EVs(events_df, regress_rt=True):
+    output_dict = {
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
+    get_ev_vars(output_dict, events_df, [('spatial','spatial_cue'),
+                                ('double', 'double_cue')],
+                    col='cue', duration='duration')
+    get_ev_vars(output_dict, events_df, [('congruent','congruent'),
+                            ('incongruent', 'incongruent')],
+                col='flanker_type', duration='duration')
+    if regress_rt == True:
+        get_ev_vars(output_dict, events_df, ['response_time'], duration='duration', 
+                    amplitude='response_time')
+    get_ev_vars(output_dict, events_df, [(True, 'junk')], col='junk', 
+                duration='duration')
+    return output_dict
+
+def get_CCTHot_EVs(events_df, regress_rt):
+    output_dict = {
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
+    get_ev_vars(output_dict, events_df, ['EV'], duration='duration', 
+                    amplitude='EV')
+    get_ev_vars(output_dict, events_df, ['risk'], duration='duration', 
+                amplitude='risk')
+    get_ev_vars(output_dict, events_df, ['num_click_in_round'], duration='duration', 
+                amplitude='num_click_in_round')
+    get_ev_vars(output_dict, events_df, [(1,'reward'), (0,'punishment')], col='feedback',
+                duration=0, amplitude=1)
+    if regress_rt == True:
+        get_ev_vars(output_dict, events_df, ['response_time'], duration='duration', 
+                    amplitude='response_time')
+    get_ev_vars(output_dict, events_df, [(True, 'junk')], col='junk', 
+                duration='duration')
+    return output_dict
+
+def get_discountFix_EVs(events_df, regress_rt=True):
+    output_dict = {
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
+    get_ev_vars(output_dict, events_df, [('larger_later','larger_later'), 
+                            ('smaller_sooner','smaller_sooner')],
+                col='choice', duration='duration')
+    get_ev_vars(output_dict, events_df, ['subjective_value'], duration='duration', 
+                    amplitude='subjective_value')
+    if regress_rt == True:
+        get_ev_vars(output_dict, events_df, ['response_time'], duration='duration', 
+                    amplitude='response_time')
+    get_ev_vars(output_dict, events_df, [(True, 'junk')], col='junk', 
+                duration='duration')
+    return output_dict
+
+def get_DPX_EVs(events_df, regress_rt=True):
+    output_dict = {
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
+    get_ev_vars(output_dict, events_df, [('AX','AX'), ('AY','AY'), 
+                            ('BX', 'BX'), ('BY','BY')],
+                col='condition', duration='duration')
+    if regress_rt == True:
+        get_ev_vars(output_dict, events_df, ['response_time'], duration='duration', 
+                    amplitude='response_time')
+    get_ev_vars(output_dict, events_df, [(True, 'junk')], col='junk', 
+                duration='duration')  
+    return output_dict
+
+def get_motorSelectiveStop_EVs(events_df):
+    output_dict = {
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
+    get_ev_vars(output_dict, events_df, [('crit_go','crit_go'), 
+                            ('crit_stop_success', 'crit_stop_success'), 
+                            ('crit_stop_failure', 'crit_stop_failure'),
+                            ('noncrit_signal', 'noncrit_signal'),
+                            ('noncrit_nosignal', 'noncrit_nosignal')],
+                col='trial_type', duration='duration')
+    get_ev_vars(output_dict, events_df, [(True, 'junk')], col='junk', 
+                duration='duration')    
+    return output_dict
+
+def get_stopSignal_EVs(events_df):
+    output_dict = {
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
+    get_ev_vars(output_dict, events_df, [('go','go'), 
+                            ('stop_success', 'stop_success'), 
+                            ('stop_failure', 'stop_failure')],
+                col='trial_type', duration='duration')
+    get_ev_vars(output_dict, events_df, [(True, 'junk')], col='junk', 
+                duration='duration')    
+    return output_dict
+
+def get_stroop_EVs(events_df, regress_rt=True):
+    output_dict = {
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
+    get_ev_vars(output_dict, events_df, [('congruent','congruent'), 
+                            ('incongruent','incongruent')],
+                col='trial_type', duration='duration')
+    if regress_rt == True:
+        get_ev_vars(output_dict, events_df, ['response_time'], duration='duration', 
+                    amplitude='response_time')
+    get_ev_vars(output_dict, events_df, [(True, 'junk')], col='junk', 
+                duration='duration')    
+    return output_dict
+
+def get_twoByTwo_EVs(events_df, regress_rt=True):
+    output_dict = {
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
+    # cue switch contrasts
+    get_ev_vars(output_dict, events_df, [('switch','cue_switch_900'), 
+                            ('stay','cue_stay_900')],
+                col='cue_switch', duration='duration',
+                subset="CTI==900")
+    get_ev_vars(output_dict, events_df, [('switch','cue_switch_100'), 
+                            ('stay','cue_stay_100')],
+                col='cue_switch', duration='duration',
+                subset="CTI==100")
+    # task switch contrasts
+    get_ev_vars(output_dict, events_df, [('switch','task_switch_900')],
+                col='task_switch', duration='duration',
+                subset="CTI==900")
+    get_ev_vars(output_dict, events_df, [('switch','task_switch_100')],
+                col='task_switch', duration='duration',
+                subset="CTI==100")
+    if regress_rt == True:
+        get_ev_vars(output_dict, events_df, ['response_time'], duration='duration', 
+                    amplitude='response_time')
+    get_ev_vars(output_dict, events_df, [(True, 'junk')], col='junk', 
+                duration='duration')   
+    return output_dict
+
+def get_WATT3_EVs(events_df):
+    output_dict = {
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
+    # planning conditions
+    get_ev_vars(output_dict, events_df, [('UA_with_intermediate','plan_UA_with'), 
+                            ('UA_without_intermediate','plan_UA_without'),
+                            ('PA_with_intermediate','plan_PA_with'),
+                            ('PA_without_intermediate','plan_PA_without')],
+                col='condition', duration='duration', 
+                subset="planning==1")
+    # move conditions
+    get_ev_vars(output_dict, events_df, ['movement'], onset_column='movement_onset')
+    return output_dict
+
+
 # How to model RT
 # For each condition model responses with constant duration 
 # (average RT across subjects or block duration)
 # RT as a separate regressor for each onset, constant duration, 
 # amplitude as parameteric regressor (function of RT)
 def parse_EVs(events_df, task, regress_rt=True):
-    def get_ev_vars(events_df, condition_list, col=None, 
-                    amplitude = 1, duration = 0, subset=None,
-                    onset_column='onset'):
-        # if subset is specified as a string, use to query
-        if subset is not None:
-            events_df = events_df.query(subset)
-        # if a column is specified, group by the values in that column
-        if col is not None:
-            group_df = events_df.groupby(col)
-            for condition, condition_name in condition_list:
-                if type(condition) is not list:
-                    condition = [condition]
-                # get members of group identified by the condition list
-                c_dfs = [group_df.get_group(c) for c in condition 
-                         if c in group_df.groups.keys()]
-                if len(c_dfs)!=0:
-                    c_df = pd.concat(c_dfs)
-                    conditions.append(condition_name)
-                    onsets.append(c_df.loc[:,onset_column].tolist())
-                    if type(amplitude) in (int,float):
-                        amplitudes.append([amplitude])
-                    elif type(amplitude) == str:
-                        amplitudes.append(c_df.loc[:,amplitude].tolist())
-                    if type(duration) in (int,float):
-                        durations.append([duration])
-                    elif type(duration) == str:
-                        durations.append(c_df.loc[:,duration].tolist())
-        else:
-            assert len(condition_list) == 1, \
-                'If "col" is not specified, condition list must be an \
-                 array of length 1 specifying the regressor name'
-            group_df = events_df
-            conditions.append(condition_list[0])
-            onsets.append(group_df.loc[:,onset_column].tolist())
-            if type(amplitude) in (int,float):
-                amplitudes.append([amplitude])
-            elif type(amplitude) == str:
-                amplitudes.append(group_df.loc[:,amplitude].tolist())
-            if type(duration) in (int,float):
-                durations.append([duration])
-            elif type(duration) == str:
-                durations.append(group_df.loc[:,duration].tolist())
-
-
-    conditions = []
-    onsets = []
-    durations = []
-    amplitudes = []
     if task == "ANT":
-        get_ev_vars(events_df, [('spatial','spatial_cue'),
-                                ('double', 'double_cue')],
-                    col='cue', duration='duration')
-        get_ev_vars(events_df, [('congruent','congruent'),
-                                ('incongruent', 'incongruent')],
-                    col='flanker_type', duration='duration')
-        if regress_rt == True:
-            get_ev_vars(events_df, ['response_time'], duration='duration', 
-                        amplitude='response_time')
-        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
-                    duration='duration')
-    elif task == "CCTHot":
-        get_ev_vars(events_df, ['EV'], duration='duration', 
-                    amplitude='EV')
-        get_ev_vars(events_df, ['risk'], duration='duration', 
-                    amplitude='risk')
-        get_ev_vars(events_df, ['num_click_in_round'], duration='duration', 
-                    amplitude='num_click_in_round')
-        get_ev_vars(events_df, [(1,'reward'), (0,'punishment')], col='feedback',
-                    duration=0, amplitude=1)
-        if regress_rt == True:
-            get_ev_vars(events_df, ['response_time'], duration='duration', 
-                        amplitude='response_time')
-        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
-                    duration='duration')
-    elif task == "discountFix":
-        get_ev_vars(events_df, [('larger_later','larger_later'), 
-                                ('smaller_sooner','smaller_sooner')],
-                    col='choice', duration='duration')
-        get_ev_vars(events_df, ['subjective_value'], duration='duration', 
-                        amplitude='subjective_value')
-        if regress_rt == True:
-            get_ev_vars(events_df, ['response_time'], duration='duration', 
-                        amplitude='response_time')
-        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
-                    duration='duration')
+        EV_dict = get_ANT_EVs(events_df, regress_rt=True)
+    elif task == "CCTHot": 
+        EV_dict = get_CCTHot_EVs(events_df, regress_rt=True)
+    elif task == "discountFix": 
+        EV_dict = get_discountFix_EVs(events_df, regress_rt=True)
     elif task == "DPX":
-        get_ev_vars(events_df, [('AX','AX'), ('AY','AY'), 
-                                ('BX', 'BX'), ('BY','BY')],
-                    col='condition', duration='duration')
-        if regress_rt == True:
-            get_ev_vars(events_df, ['response_time'], duration='duration', 
-                        amplitude='response_time')
-        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
-                    duration='duration')
-    elif task == "motorSelectiveStop":
-        get_ev_vars(events_df, [('crit_go','crit_go'), 
-                                ('crit_stop_success', 'crit_stop_success'), 
-                                ('crit_stop_failure', 'crit_stop_failure'),
-                                ('noncrit_signal', 'noncrit_signal'),
-                                ('noncrit_nosignal', 'noncrit_nosignal')],
-                    col='trial_type', duration='duration')
-        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
-                    duration='duration')
+        EV_dict = get_DPX_EVs(events_df, regress_rt=True)
+    elif task == "motorSelectiveStop": 
+        EV_dict = get_motorSelectiveStop_EVs(events_df)
     elif task == "stopSignal":
-        get_ev_vars(events_df, [('go','go'), 
-                                ('stop_success', 'stop_success'), 
-                                ('stop_failure', 'stop_failure')],
-                    col='trial_type', duration='duration')
-        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
-                    duration='duration')
+        EV_dict = get_stopSignal_EVs(events_df)
     elif task == "stroop":
-        get_ev_vars(events_df, [('congruent','congruent'), 
-                                ('incongruent','incongruent')],
-                    col='trial_type', duration='duration')
-        if regress_rt == True:
-            get_ev_vars(events_df, ['response_time'], duration='duration', 
-                        amplitude='response_time')
-        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
-                    duration='duration')
+        EV_dict = get_stroop_EVs(events_df, regress_rt=True)
     elif task == "twoByTwo":
-        # cue switch contrasts
-        get_ev_vars(events_df, [('switch','cue_switch_900'), 
-                                ('stay','cue_stay_900')],
-                    col='cue_switch', duration='duration',
-                    subset="CTI==900")
-        get_ev_vars(events_df, [('switch','cue_switch_100'), 
-                                ('stay','cue_stay_100')],
-                    col='cue_switch', duration='duration',
-                    subset="CTI==100")
-        # task switch contrasts
-        get_ev_vars(events_df, [('switch','task_switch_900')],
-                    col='task_switch', duration='duration',
-                    subset="CTI==900")
-        get_ev_vars(events_df, [('switch','task_switch_100')],
-                    col='task_switch', duration='duration',
-                    subset="CTI==100")
-        if regress_rt == True:
-            get_ev_vars(events_df, ['response_time'], duration='duration', 
-                        amplitude='response_time')
-        get_ev_vars(events_df, [(True, 'junk')], col='junk', 
-                    duration='duration')
+        EV_dict = get_twoByTwo_EVs(events_df, regress_rt=True)
     elif task == "WATT3":
-        # planning conditions
-        get_ev_vars(events_df, [('UA_with_intermediate','plan_UA_with'), 
-                                ('UA_without_intermediate','plan_UA_without'),
-                                ('PA_with_intermediate','plan_PA_with'),
-                                ('PA_without_intermediate','plan_PA_without')],
-                    col='condition', duration='duration', 
-                    subset="planning==1")
-        # move conditions
-        get_ev_vars(events_df, ['movement'], onset_column='movement_onset')
-    return conditions, onsets, durations, amplitudes
+        EV_dict = get_WATT3_EVs(events_df)
+    return EV_dict
+
     
 def process_confounds(confounds_file):
     """

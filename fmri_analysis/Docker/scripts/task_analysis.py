@@ -93,14 +93,12 @@ def subjectinfo(data_dir, subject_id, task,
     regressors, regressor_names = process_confounds(confounds_file)
     
     # set up contrasts
-    conditions, onsets, durations, amplitudes = parse_EVs(events_df, 
-                                                          task,
-                                                          regress_rt)
+    EV_dict = parse_EVs(events_df, task, regress_rt)
     
-    subjectinfo = Bunch(conditions=conditions,
-                        onsets=onsets,
-                         durations=durations,
-                         amplitudes=amplitudes,
+    subjectinfo = Bunch(conditions=EV_dict['conditions'],
+                        onsets=EV_dict['onsets'],
+                         durations=EV_dict['durations'],
+                         amplitudes=EV_dict['amplitudes'],
                          tmod=None,
                          pmod=None,
                          regressor_names=regressor_names,

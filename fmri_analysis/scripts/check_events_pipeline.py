@@ -6,7 +6,6 @@ import seaborn as sns
 import sys
 sys.path.append('../Docker/scripts/')
 from utils.display_utils import get_design_df, plot_design
-
 parser = argparse.ArgumentParser()
 parser.add_argument('fmri_dir', help='The directory where both the fmriprep and' + \
                                       '1st level analysis can be found')
@@ -17,6 +16,10 @@ fmri_dir = args.fmri_dir
 task= args.task
 
 subj = 's525'
+
+print('*'*79)
+print('%s: %s' % (subj, task))
+print('*'*79)
 
 cleaned_dir = '../../Data/processed/%s_%s_cleaned.csv' % (subj, task)
 cleaned_file = pd.read_csv(cleaned_dir)
@@ -41,3 +44,23 @@ for i, col in enumerate(cols):
     sns.plt.plot(design.index*.68, design[col], label='design_%s' % col)
     sns.plt.legend()
     sns.plt.title(col)
+
+
+
+
+
+
+
+
+from utils.utils import process_confounds, parse_EVs
+
+data_dir = path.join(fmri_dir, 'fmriprep', 'fmriprep')
+confounds_file = glob(path.join(data_dir,
+                               'sub-%s' % subj,
+                               '*', 'func',
+                               '*%s*confounds.tsv' % task))[0]
+regressors, regressor_names = process_confounds(confounds_file)
+
+conditions, onsets, durations, amplitudes = parse_EVs(events_file, 
+                                                          task,
+                                                          regress_rt=True)
