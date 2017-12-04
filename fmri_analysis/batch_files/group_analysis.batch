@@ -12,7 +12,14 @@
 #SBATCH -p russpold
 module load singularity
 export PYTHONPATH=""
-# scratch is automatically mounted
-singularity run /scratch/PI/russpold/work/ieisenbe/uh2/singularity_images/nipype_image-2017-07-12-406a6c1665cf.img /scratch/PI/russpold/work/ieisenbe/uh2/{output}/2ndLevel  --script group_analysis.py --data_dir /scratch/PI/russpold/work/ieisenbe/uh2/{output}/1stLevel --mask_dir /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/
+# set up paths
+singularity_loc=/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/nipype_image-2017-10-03-da77dd426e45.img
+mask_dir=/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis
+/fmriprep/fmriprep/
+data_dir=/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/{output}/1stLevel
+# run singularity, scratch is automatically mounted
+singularity run $singularity_loc /scratch/PI/russpold/work/ieisenbe/uh2/{output}/2ndLevel \ --script group_analysis.py \
+    --data_dir $data_dir \
+    --mask_dir $mask_dir
 
 
