@@ -21,5 +21,3 @@ data_dir=/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/f
 singularity run $singularity_loc /scratch/PI/russpold/work/ieisenbe/uh2/{output}/2ndLevel \ --script group_analysis.py \
     --data_dir $data_dir \
     --mask_dir $mask_dir
-
-
