@@ -53,6 +53,7 @@ def create_events(df, exp_id, duration=None):
               'motor_selective_stop_signal': create_motorSelectiveStop_event,
               'stop_signal': create_stopSignal_event,
               'stroop': create_stroop_event,
+              'survey_medley': create_survey_event,
               'twobytwo': create_twobytwo_event,
               'ward_and_allport': create_WATT_event}
     fun = lookup.get(exp_id)
@@ -218,7 +219,6 @@ def create_motorSelectiveStop_event(df, duration=None):
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
-
     
 def create_stopSignal_event(df, duration=None):
     columns_to_drop = get_drop_columns(df, columns = ['condition',
@@ -269,6 +269,39 @@ def create_stroop_event(df, duration=None):
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
+    # convert milliseconds to seconds
+    events_df.loc[:,['response_time','onset','duration']]/=1000
+    # drop unnecessary columns
+    events_df = events_df.drop(columns_to_drop, axis=1)
+    return events_df
+
+def create_survey_event(df, duration=None):
+    columns_to_drop = get_drop_columns(df, 
+                                       use_default=False,
+                                       columns = ['block_duration',
+                                                  'key_press',
+                                                  'options',
+                                                  'response',
+                                                  'rt',
+                                                  'stim_duration'
+                                                  'time_elapsed',
+                                                  'timing_post_trial',
+                                                  'trial_id',
+                                                  'trial_type'])
+    events_df = df[df['time_elapsed']>0]
+    # add junk regressor
+    events_df.loc[:,'junk'] = get_junk_trials(df)
+    # add duration and response regressor
+    if duration is None:
+        events_df.insert(0,'duration',events_df.stim_duration)
+    else:
+        events_df.insert(0,'duration',duration)
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt.mean())
+    # time elapsed is at the end of the trial, so have to remove the block 
+    # duration
+    events_df.insert(0,'onset',get_trial_times(df))
+    # add motor onsets
+    events_df.insert(0,'movement_onset',get_movement_times(df))
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset','duration']]/=1000
     # drop unnecessary columns

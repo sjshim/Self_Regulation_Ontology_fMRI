@@ -1,11 +1,11 @@
-from expanalysis.experiments.processing import clean_data, calc_exp_DVs, organize_DVs
+from expanalysis.experiments.processing import clean_data
 from glob import glob
 import os
 import pandas as pd
 
 from create_event_utils import create_events
 # some DVs are defined in utils if they deviate from normal expanalysis
-from utils import calc_ANT_DV, get_timing_correction
+from utils import get_timing_correction
 
 # set up dictionary of dataframes for each task
 tasks = ['attention_network_task','columbia_card_task_fmri',
@@ -42,7 +42,7 @@ for subj_file in glob('../Data/raw/*/*'):
         df.loc[:,'experiment_exp_id'] = exp_id
         # make sure there is a subject column
         if 'subject' not in df.columns:
-            print('Added subject file for file: %s' % filey)
+            print('Added subject column for file: %s' % filey)
             df.loc[:,'subject'] = filey.split('_')[0]
         # change column from subject to worker_id
         df.rename(columns={'subject':'worker_id'}, inplace=True)
@@ -75,6 +75,7 @@ move_times-=plan_times
 task_50th_rts['ward_and_allport'] = {'planning_time': plan_times.quantile(.5),
                                      'move_time': move_times.quantile(.5)}
 
+# calculate event files
 for subj_file in glob('../Data/raw/*/*'):   
     filey = os.path.basename(subj_file)
     cleaned_file_name = '_cleaned.'.join(filey.split('.'))

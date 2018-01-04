@@ -1,6 +1,9 @@
-from expanalysis.experiments.jspsych_processing import ANT_HDDM, EZ_diffusion, \
+from expanalysis.experiments.ddm_utils import get_HDDM_fun
+from expanalysis.experiments.jspsych_processing import EZ_diffusion, \
     get_post_error_slow, group_decorate
+from glob import glob
 import numpy as np
+import pandas as pd
 
 # function to correct processing of a few problematic files
 # need to change time_elapsed to reflect the fact that fmri triggers were
@@ -23,10 +26,19 @@ def get_timing_correction(filey, TR=680, n_TRs=14):
     else:
         return 0
     
-
-
+def get_event_files(subj):
+    event_files = {}
+    for subj_file in glob('../Data/event_files/*%s*' % subj):
+        df = pd.read_csv(subj_file, sep='\t')
+        exp_id = subj_file.split('_')[2]
+        event_files[exp_id] = df
+    return event_files
+        
+# *****************************************************************************
 # DV functions for fmri tasks if not already created in expfactory-analysis
-@group_decorate(group_fun = ANT_HDDM)
+# *****************************************************************************
+
+@group_decorate(group_fun_getter=get_HDDM_fun, group_fun_args={'task': 'attention_network_task'})
 def calc_ANT_DV(df, dvs = {}):
     """ Calculate dv for attention network task: Accuracy and average reaction time
     :return dv: dictionary of dependent variables

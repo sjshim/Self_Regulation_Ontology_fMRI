@@ -2,9 +2,7 @@
 some util functions
 """
 import glob
-import numpy as np
 from os.path import join, dirname, basename, exists
-import pandas as pd
 from shutil import copyfile
 
 def get_info(item,infile=None):
@@ -41,7 +39,7 @@ def move_EV(subj, task):
     copyfile(ev_file, new_events_file)
     return new_events_file
     
-def move_EVs(overwrite=True):
+def move_EVs(overwrite=True, verbose=True):
     tasks = ['ANT','CCTHot','discountFix','DPX','motorSelectiveStop',
             'stopSignal','stroop','twoByTwo','WATT3']
     fmri_data = get_info('fmri_data_directory')
@@ -56,5 +54,7 @@ def move_EVs(overwrite=True):
                     created_files.append(name)
                 except IndexError:
                     print('Move_EV failed for the %s: %s' % (subj, task))
+    if verbose:
+        print('\n'.join(created_files))
     return created_files
 

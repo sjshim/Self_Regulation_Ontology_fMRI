@@ -1,16 +1,13 @@
 
 # coding: utf-8
-
-
 import argparse
 from glob import glob
-from nipype.interfaces.fsl import Level1Design, FEATModel, FILMGLS, maths
+from nipype.interfaces import fsl
 from nipype.algorithms.modelgen import SpecifyModel
 from nipype.interfaces.utility import Function, IdentityInterface
 from nipype.interfaces.io import SelectFiles, DataSink
 from nipype.pipeline.engine import Workflow, Node
-from os.path import join
-import pandas as pd
+from os.path import dirname, basename, exists, join
 import shutil
 
 
@@ -20,13 +17,16 @@ parser.add_argument('output_dir', help='The directory where the output files '
                     'should be stored. If you are running group level analysis '
                     'this folder should be prepopulated with the results of the'
                     'participant level analysis.')
-parser.add_argument('--data_dir',help='The label(s) of the participant(s)'
-                   'that should be analyzed. Multiple '
-                   'participants can be specified with a space separated list.')
+parser.add_argument('data_dir',help='The directory of the preprocessed fmri'
+                    'data (output of fmriprep) along with event files',
+                    default='/Data')
 parser.add_argument('--participant_label',help='The label(s) of the participant(s)'
                    'that should be analyzed. Multiple '
                    'participants can be specified with a space separated list.',
                    nargs="+")
+parser.add_argument('--events_dir', help='The directory of the events file. If'
+                    'provided, events files will be copied to data_dir before'
+                    'continuing', default=None)
 parser.add_argument('--tasks',help='The label(s) of the task(s)'
                    'that should be analyzed. If this parameter is not '
                    'provided all tasks should be analyzed.',
@@ -36,6 +36,9 @@ parser.add_argument('--ignore_rt', action='store_true',
                     'time as a regressor')
 parser.add_argument('--cleanup', action='store_true', 
                     help='If included, delete working directory')
+parser.add_argument('--overwrite_event', action='store_true',
+                    help='If included and events_dir is included, overwrite'
+                    'events files')
 
 args = parser.parse_args()
 # list of subject identifiers
@@ -44,20 +47,58 @@ subject_list = args.participant_label
 if args.tasks:
     task_list = args.tasks
 else:
-  task_list = ['ANT', 'CCTHot', 'discountFix', 'DPX', 'motorSelectiveStop',
-               'stopSignal', 'stroop', 'twoByTwo']
+  task_list = ['ANT', 'CCTHot', 'discountFix',
+               'DPX', 'motorSelectiveStop',
+               'stopSignal', 'stroop', 'surveyMedley',
+               'twoByTwo', 'WATT3']
+
 regress_rt = not args.ignore_rt
 #### Experiment Variables
 experiment_dir = args.output_dir
+events_dir = args.events_dir
+data_dir = args.data_dir
 output_dir = '1stLevel'
 working_dir = 'workingdir'
-data_dir = "/Data"
-if args.data_dir:
-  data_dir = args.data_dir
-
 # TR of functional images
 TR = .68
 
+# ****************************************************************************
+# move events files if necessary
+# ***************************************************************************
+
+# helper functions
+def move_EV(subj, task, events_dir, fmri_dir):
+    subj = subj.replace('sub-','')
+    # get event file
+    ev_file = glob(join(events_dir,'*%s*%s*' % (subj, task)))[0]
+    task_fmri_files = glob(join(fmri_dir, '*%s*' % subj,'*', 
+                                'func','*%s*bold*' % task))
+    task_fmri_dir = dirname(task_fmri_files[0])
+    base_name = basename(task_fmri_files[0]).split('_bold')[0]
+    new_events_file = join(task_fmri_dir, base_name+'_events.tsv')
+    shutil.copyfile(ev_file, new_events_file)
+    return new_events_file
+    
+def move_EVs(events_dir, fmri_dir, overwrite=True, verbose=False):
+    created_files = []
+    for subj_file in sorted(glob(join(data_dir,'sub-s???'))):
+        subj = basename(subj_file)
+        for task in task_list:
+            if overwrite==True or not exists(join(subj_file,'*',
+                                                 'func', '*%s*' % task)):
+                try:
+                    name = move_EV(subj, task, events_dir, fmri_dir)
+                    created_files.append(name)
+                except IndexError:
+                    print('Move_EV failed for the %s: %s' % (subj, task))
+    if verbose:
+        print('\n'.join(created_files))
+
+# move events  
+if events_dir is not None:
+    move_EVs(events_dir, data_dir, args.overwrite_event)
+
+        
 # *********************************************
 # ### Define helper functions
 # *********************************************
@@ -145,7 +186,7 @@ infosource = Node(IdentityInterface(fields=['subject_id',
                   name="infosource")
 infosource.iterables = [('subject_id', subject_list),
                         ('task', task_list)]
-# SelectFiles - to grab the data (alternativ to DataGrabber)
+# SelectFiles - to grab the data (alternative to DataGrabber)
 templates = {'func': join('*{subject_id}','*','func',
                          '*{task}*MNI*preproc.nii.gz'),
             'mask': join('*{subject_id}','*','func',
@@ -175,22 +216,22 @@ datasink.inputs.substitutions = substitutions
 # ### Model Specification
 # *********************************************
 # mask and blur
-masker = Node(maths.ApplyMask(),name='masker')
+masker = Node(fsl.maths.ApplyMask(),name='masker')
 # SpecifyModel - Generates FSL-specific Model
 modelspec = Node(SpecifyModel(input_units='secs',
                               time_repetition=TR,
                               high_pass_filter_cutoff=80),
                  name="modelspec")
 # Level1Design - Generates an FSL design matrix
-level1design = Node(Level1Design(bases={'dgamma':{'derivs': True}},
-                                 interscan_interval=TR,
-                                 model_serial_correlations=True),
-                    name="level1design")
+level1design = Node(fsl.Level1Design(bases={'dgamma':{'derivs': True}},
+                                     interscan_interval=TR,
+                                     model_serial_correlations=True),
+                        name="level1design")
 # FEATmodel
-level1model = Node(FEATModel(), name="FEATModel")
+level1model = Node(fsl.FEATModel(), name="FEATModel")
 # FILMGLs
 # smooth_autocorr, check default, use FSL default
-filmgls = Node(FILMGLS(), name="FILMGLS")
+filmgls = Node(fsl.FILMGLS(), name="FILMGLS")
 
 # *********************************************
 # # Workflow
@@ -222,7 +263,9 @@ l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
                                         ('zstats', '@Z'),
                                         ('fstats', '@F'),
                                         ('tstats','@T'),
-                                        ('param_estimates','param_estimates')]),
+                                        ('param_estimates','@param_estimates'),
+                                        ('residual4d', '@residual4d'),
+                                        ('sigmasquareds', '@sigmasquareds')]),
                     (infosource, save_subjectinfo, [('subject_id','subject_id'),
                                                      ('task', 'task')]),
                     (getsubjectinfo, save_subjectinfo, [('subject_info','subject_info'),
@@ -231,9 +274,10 @@ l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
                     ])
 
 l1analysis.run('MultiProc')
-
+"""
 l1analysis.write_graph(graph2use='colored', format='png', simple_form=False)
 graph_file=join(l1analysis.base_dir, 'l1analysis', 'graph.dot.png')
 shutil.move(graph_file, join(experiment_dir, output_dir, 'graph.dot.png'))
 if args.cleanup == True:
   shutil.rmtree(l1analysis.base_dir)
+"""

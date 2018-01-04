@@ -1,5 +1,5 @@
 # example to run 1st level analysis
-docker run -ti --rm -p 8888:8888 -v `pwd`/output:/output -v /mnt/Data/:/Data:ro  nipype_image  /output --nipype_image  --tasks stroop
+docker run -ti --rm -v ~/Experiments/expfactory/Self_Regulation_Ontology_fMRI/fmri_analysis:/home -v $HOME/temp:/output -v /mnt/OAK/:/Data sro_fmri python scripts/task_analysis.py /output /Data --participant s358 --tasks stroop 
 
 # example to run 2nd level analysis
 docker run -ti --rm -p 8888:8888 -v `pwd`/Docker/scripts:/scripts -v `pwd`/output/:/output -v /mnt/Sherlock_Scratch/output/1stLevel:/scratch:ro  -v /mnt/Data/:/Data:ro nipype_image /output --script group_analysis.py --tasks stroop --mask_dir /Data --data_dir /scratch --tasks stroop
@@ -16,4 +16,4 @@ docker run -ti --rm -p 8888:8888 -v `pwd`/Docker/scripts:/scripts -v `pwd`/outpu
 
 
 # command to build Docker image from the "Docker" folder
-# docker build -t nipype_image .
+# docker build --rm -t sro_fmri .
