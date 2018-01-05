@@ -11,4 +11,4 @@
 #SBATCH --cpus-per-task=16
 module load singularity
 export PYTHONPATH=""
-singularity run /share/PI/russpold/singularity_images/poldracklab_fmriprep_0.4.5-2017-06-12-4b7b9e98dded.img /oak/stanford/groups/russpold/data/uh2 /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep participant --participant_label {sid} -w $SCRATCH --output-space template T1w
+singularity run /share/PI/russpold/singularity_images/poldracklab_fmriprep_1.0.3-2018-01-04-4eea8159c198.img /oak/stanford/groups/russpold/data/uh2 /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep participant --participant_label {sid} -w $SCRATCH --output-space template T1w
