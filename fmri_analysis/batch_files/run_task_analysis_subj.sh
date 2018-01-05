@@ -1,4 +1,6 @@
-for path in /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-$1
+analysis_loc=`sed '6q;d' singularity_config.txt`
+
+for path in ${analysis_loc}/fmriprep/fmriprep/sub-$1
 do
     sid=${path: -4}
     echo ""
@@ -7,23 +9,23 @@ do
     tasks=""
     tasks_noRT=""
     # find tasks that haven't been run...
-    for task in ANT CCTHot discountFix DPX motorSelectiveStop stopSignal stroop twoByTwo WATT3
+    for task in ANT CCTHot discountFix DPX motorSelectiveStop stopSignal stroop surveyMedley twoByTwo WATT3
     do
         # ...with RT as a regressor
-        if [ -f /scratch/PI/russpold/work/ieisenbe/uh2/output/1stLevel/${sid}_task_${task}/cope1.nii.gz ]; 
+        if [ -f ${analysis_loc}/${sid}_task_${task}/cope1.nii.gz ]; 
         then
             : # echo task analysis already run on $sid $task
         else
-            if [ -f /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/*${sid}/*/func/*${task}*events.tsv -a -f /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/*${sid}/*/func/*${task}*confounds.tsv ];  then
+            if [ -f ${analysis_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*events.tsv -a -f ${analysis_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*confounds.tsv ];  then
                 tasks="$tasks$task "
             fi
         fi
         # ...without RT as a regressor
-        if [ -f /scratch/PI/russpold/work/ieisenbe/uh2/output_noRT/1stLevel/${sid}_task_${task}/cope1.nii.gz ]; 
+        if [ -f ${analysis_loc}/output_noRT/1stLevel/${sid}_task_${task}/cope1.nii.gz ]; 
         then
             : # echo task analysis noRT already run on $sid $task
         else
-            if [ -f /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/*${sid}/*/func/*${task}*events.tsv -a -f /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/*${sid}/*/func/*${task}*confounds.tsv ]; then
+            if [ -f ${analysis_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*events.tsv -a -f ${analysis_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*confounds.tsv ]; then
                 tasks_noRT="$tasks_noRT$task "
             fi
         fi

@@ -1,4 +1,6 @@
-for path in /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-s???
+analysis_loc=`sed '6q;d' singularity_config.txt`
+
+for path in ${analysis_loc}/fmriprep/fmriprep/sub-s???
 do
     sid=${path: -4}
     echo ""
@@ -14,22 +16,22 @@ do
     for task in ANT CCTHot discountFix DPX motorSelectiveStop stopSignal stroop surveyMedley twoByTwo WATT3
     do
         # ...with RT as a regressor
-        if [ -f /scratch/PI/russpold/work/ieisenbe/uh2/output/1stLevel/${sid}_task_${task}/cope1.nii.gz ]; 
+        if [ -f ${analysis_loc}/output/1stLevel/${sid}_task_${task}/cope1.nii.gz ]; 
         then
            ((task_count+=1))
             runtasks="$runtasks$task "
         else
-            if [ -f /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/*${sid}/*/func/*${task}*events.tsv -a -f /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/*${sid}/*/func/*${task}*confounds.tsv ];  then
+            if [ -f ${analysis_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*events.tsv -a -f ${analysis_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*confounds.tsv ];  then
                 tasks="$tasks$task "
             fi
         fi
         # ...without RT as a regressor
-        if [ -f /scratch/PI/russpold/work/ieisenbe/uh2/output_noRT/1stLevel/${sid}_task_${task}/cope1.nii.gz ]; 
+        if [ -f ${analysis_loc}/output_noRT/1stLevel/${sid}_task_${task}/cope1.nii.gz ]; 
         then
             ((task_count_noRT+=1))
             runtasks_noRT="$runtasks_noRT$task "
         else
-            if [ -f /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/*${sid}/*/func/*${task}*events.tsv -a -f /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/*${sid}/*/func/*${task}*confounds.tsv ]; then
+            if [ -f ${analysis_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*events.tsv -a -f ${analysis_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*confounds.tsv ]; then
                 tasks_noRT="$tasks_noRT$task "
             fi
         fi
