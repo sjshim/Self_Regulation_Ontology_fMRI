@@ -11,7 +11,7 @@ do
     tasks=""
     tasks_noRT=""
     # find tasks that haven't been run...
-    for task in ANT CCTHot discountFix DPX motorSelectiveStop stopSignal stroop twoByTwo WATT3
+    for task in ANT CCTHot discountFix DPX motorSelectiveStop stopSignal stroop surveyMedley twoByTwo WATT3
     do
         # ...with RT as a regressor
         if [ -f /scratch/PI/russpold/work/ieisenbe/uh2/output/1stLevel/${sid}_task_${task}/cope1.nii.gz ]; 

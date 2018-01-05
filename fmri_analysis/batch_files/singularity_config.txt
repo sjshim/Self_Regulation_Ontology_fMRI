@@ -1,0 +1,4 @@
+# sro_prep singularity image
+sro_fmri-2018-01-04-02bf62ee1afa.img
+# location of singularity images
+/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/singularity_images
