@@ -1,15 +1,13 @@
 
 # coding: utf-8
 import argparse
-from glob import glob
 from nipype.interfaces import fsl
 from nipype.algorithms.modelgen import SpecifyModel
 from nipype.interfaces.utility import Function, IdentityInterface
 from nipype.interfaces.io import SelectFiles, DataSink
 from nipype.pipeline.engine import Workflow, Node
-from os.path import dirname, basename, exists, join
-import shutil
-
+from os.path import join
+from utils.utils import move_EVs
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
@@ -66,38 +64,9 @@ TR = .68
 # move events files if necessary
 # ***************************************************************************
 
-# helper functions
-def move_EV(subj, task, events_dir, fmri_dir):
-    subj = subj.replace('sub-','')
-    # get event file
-    ev_file = glob(join(events_dir,'*%s*%s*' % (subj, task)))[0]
-    task_fmri_files = glob(join(fmri_dir, '*%s*' % subj,'*', 
-                                'func','*%s*bold*' % task))
-    task_fmri_dir = dirname(task_fmri_files[0])
-    base_name = basename(task_fmri_files[0]).split('_bold')[0]
-    new_events_file = join(task_fmri_dir, base_name+'_events.tsv')
-    shutil.copyfile(ev_file, new_events_file)
-    return new_events_file
-    
-def move_EVs(events_dir, fmri_dir, overwrite=True, verbose=False):
-    created_files = []
-    for subj_file in sorted(glob(join(data_dir,'sub-s???'))):
-        subj = basename(subj_file)
-        for task in task_list:
-            if overwrite==True or not exists(join(subj_file,'*',
-                                                 'func', '*%s*' % task)):
-                try:
-                    name = move_EV(subj, task, events_dir, fmri_dir)
-                    created_files.append(name)
-                except IndexError:
-                    print('Move_EV failed for the %s: %s' % (subj, task))
-    if verbose:
-        print('\n'.join(created_files))
-
 # move events  
 if events_dir is not None:
-    move_EVs(events_dir, data_dir, args.overwrite_event)
-
+    move_EVs(events_dir, data_dir, task_list, args.overwrite_event)
         
 # *********************************************
 # ### Define helper functions

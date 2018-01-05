@@ -303,7 +303,8 @@ def create_survey_event(df, duration=None):
     # add motor onsets
     events_df.insert(0,'movement_onset',get_movement_times(df))
     # convert milliseconds to seconds
-    events_df.loc[:,['response_time','onset','duration']]/=1000
+    events_df.loc[:,['response_time','onset','duration',
+                     'movement_onset']]/=1000
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df

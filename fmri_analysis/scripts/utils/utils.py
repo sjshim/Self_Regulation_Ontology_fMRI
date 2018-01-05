@@ -2,13 +2,46 @@
 some util functions
 """
 from collections import OrderedDict as odict
+from glob import glob
 import nilearn
 from nilearn import image, input_data
 import numpy as np
+from os.path import basename, dirname, join, exists
 import pandas as pd
 import pickle
 import re
+import shutil
+# ********************************************************
+# Behavioral Utility Functions
+# ********************************************************
 
+def move_EV(subj, task, events_dir, fmri_dir):
+    subj = subj.replace('sub-','')
+    # get event file
+    ev_file = glob(join(events_dir,'*%s*%s*' % (subj, task)))[0]
+    task_fmri_files = glob(join(fmri_dir, '*%s*' % subj,'*', 
+                                'func','*%s*bold*' % task))
+    task_fmri_dir = dirname(task_fmri_files[0])
+    base_name = basename(task_fmri_files[0]).split('_bold')[0]
+    new_events_file = join(task_fmri_dir, base_name+'_events.tsv')
+    shutil.copyfile(ev_file, new_events_file)
+    return new_events_file
+    
+def move_EVs(events_dir, fmri_dir, tasks, overwrite=True, verbose=False):
+    created_files = []
+    for subj_file in sorted(glob(join(fmri_dir,'sub-s???'))):
+        subj = basename(subj_file)
+        for task in tasks:
+            if overwrite==True or not exists(join(subj_file,'*',
+                                                 'func', '*%s*' % task)):
+                try:
+                    name = move_EV(subj, task, events_dir, fmri_dir)
+                    created_files.append(name)
+                except IndexError:
+                    print('Move_EV failed for the %s: %s' % (subj, task))
+    if verbose:
+        print('\n'.join(created_files))
+        
 # ********************************************************
 # 1st level analysis utility functions
 # ********************************************************
@@ -107,6 +140,14 @@ def get_contrasts(task, regress_rt=True):
         # contrasts
         c3 = ['incongruent-congruent','T', ['incongruent','congruent'], [1,-1]]
         contrast_list = [c1,c2,c3]
+        if regress_rt:
+            c4 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c4)
+    elif task == 'surveyMedley':
+        # contrasts vs baseline
+        c1 = ['stim_duration','T', ['stim_duration'], [1]]
+        c2 = ['movement','T', ['movement'], [1]]
+        contrast_list = [c1,c2]
         if regress_rt:
             c4 = ['response_time', 'T', ['response_time'], [1]]
             contrast_list.append(c4)
@@ -396,10 +437,10 @@ def get_surveyMedley_EVs(events_df, regress_rt=True):
         }
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
-                condition='stim_duration', 
+                condition_spec='stim_duration', 
                 duration='stim_duration')
     get_ev_vars(output_dict, events_df, 
-                condition='movement',  
+                condition_spec='movement',  
                 onset_column='movement_onset')
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
@@ -471,9 +512,9 @@ def get_WATT3_EVs(events_df):
                 duration='duration', 
                 subset="planning==1")
     # nuisance regressors
-    get_ev_vars(output_dict, events_df, 'movement', duration=.01, onset_column='movement_onset')
-    get_ev_vars(output_dict, events_df, [(True, 'junk')], col='junk', 
-                duration='duration')  
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='movement', 
+                onset_column='movement_onset')
     return output_dict
 
 
