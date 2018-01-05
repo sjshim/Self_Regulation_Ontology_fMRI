@@ -7,6 +7,7 @@
 #SBATCH --mail-user=ieisenbe@stanford.edu
 #SBATCH --cpus-per-task=3
 #SBATCH --ntasks-per-node=1
+module load system
 module load singularity
 export PYTHONPATH=""
 # set up paths
