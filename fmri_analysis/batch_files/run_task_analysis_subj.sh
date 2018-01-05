@@ -12,7 +12,7 @@ do
     for task in ANT CCTHot discountFix DPX motorSelectiveStop stopSignal stroop surveyMedley twoByTwo WATT3
     do
         # ...with RT as a regressor
-        if [ -f ${analysis_loc}/${sid}_task_${task}/cope1.nii.gz ]; 
+        if [ -f ${analysis_loc}/output/${sid}_task_${task}/cope1.nii.gz ]; 
         then
             : # echo task analysis already run on $sid $task
         else
