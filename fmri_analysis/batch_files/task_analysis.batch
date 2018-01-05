@@ -20,6 +20,9 @@ events_dir=~/Self_Regulation_Ontology_fMRI/Data/event_files/
 output_dir=/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/output
 
 # run singularity, scratch is automatically mounted
-singularity exec -B ${fmri_prep_loc}:/Data -B ${output_dir}:/output ${singularity_loc} \
-    python scripts/task_analysis.py /output /Data --events_dir ${events_dir} --participant_label {sid} --tasks {tasks}
+singularity exec \
+    -B ${fmri_prep_loc}:/Data \ 
+    -B ${output_dir}:/output \
+    -B ${events_dir}:/events_files ${singularity_loc} \
+        python scripts/task_analysis.py /output /Data --events_dir ${events_dir} --participant_label {sid} --tasks {tasks}
 
