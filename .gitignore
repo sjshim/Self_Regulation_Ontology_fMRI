@@ -5,7 +5,6 @@ __pycache__
 .out/
 .err/
 Data/processed/*
-Data/event_files/*
 fmri_experiments/temp_tasklist.json
 fmri_analysis/data_settings.txt
 fmri_analysis/output

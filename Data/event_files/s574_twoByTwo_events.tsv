@@ -1,0 +1,241 @@
+movement_onset	onset	duration	response_time	CTI	correct	cue	cue_switch	experiment_exp_id	key_press	stim_color	stim_number	switch_type	task	task_switch	trial_type	worker_id	junk
+5.906	3.524	1.595	0.752775	900.0	True	Orange-Blue		twobytwo	71.0	orange	4.0	task_switch	color	switch	poldrack-single-stim	s574	False
+7.817	6.569	0.795	0.41877499999999995	100.0	True	Orange-Blue	stay	twobytwo	71.0	orange	9.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+10.399	9.361	0.795	0.208775	100.0	True	Color	switch	twobytwo	71.0	orange	2.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+14.173	12.012	1.595	0.531775	900.0	True	Orange-Blue	switch	twobytwo	89.0	#1F45FC	8.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+16.541	15.193	1.595	-0.281225	900.0	True	Color	switch	twobytwo	89.0	#1F45FC	3.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+19.858	18.372	1.595	-0.14322500000000002	900.0	True	Magnitude		twobytwo	89.0	orange	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+23.388	21.685	1.595	0.07377499999999998	900.0	True	Magnitude	stay	twobytwo	89.0	orange	6.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+25.963	24.727	0.795	0.406775	100.0	True	Orange-Blue		twobytwo	71.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+28.622	27.106	1.595	-0.11322500000000002	900.0	True	Color	switch	twobytwo	89.0	#1F45FC	3.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+31.408	30.015	0.795	0.563775	100.0	True	Orange-Blue	switch	twobytwo	71.0	orange	6.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+33.632	32.258	1.595	-0.25522500000000004	900.0	True	Orange-Blue	stay	twobytwo	89.0	#1F45FC	1.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+36.957	35.437	0.795	0.690775	100.0	True	High-Low		twobytwo	71.0	#1F45FC	2.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+38.758	37.546	0.795	0.382775	100.0	True	Color		twobytwo	71.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+41.74	40.333	1.595	-0.22222500000000003	900.0	True	Orange-Blue	switch	twobytwo	71.0	orange	6.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+44.449	43.24	0.795	0.379775	100.0	True	High-Low		twobytwo	89.0	orange	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+46.646	45.347	0.795	0.469775	100.0	True	High-Low	stay	twobytwo	71.0	orange	4.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+48.751	47.45	1.595	-0.32822500000000004	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+51.643	50.632	0.795	0.18177499999999996	100.0	True	Magnitude		twobytwo	89.0	#1F45FC	8.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+54.045	52.741	0.795	0.474775	100.0	True	Color		twobytwo	71.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+56.201	54.851	1.595	-0.279225	900.0	True	Magnitude		twobytwo	89.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+59.137	57.761	1.595	-0.25322500000000003	900.0	True	Magnitude	stay	twobytwo	89.0	#1F45FC	8.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+63.247	61.348	1.595	0.269775	900.0	True	Magnitude	stay	twobytwo	71.0	orange	4.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+65.958	64.257	1.595	0.07177499999999998	900.0	True	Color		twobytwo	71.0	orange	2.0	task_switch	color	switch	poldrack-single-stim	s574	False
+69.336	67.299	1.595	0.407775	900.0	True	Orange-Blue	switch	twobytwo	89.0	#1F45FC	7.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+72.256	70.615	1.595	0.011774999999999976	900.0	False	Orange-Blue	stay	twobytwo	89.0	orange	6.0	cue_stay	color	stay	poldrack-single-stim	s574	True
+75.011	73.657	1.595	-0.275225	900.0	True	Orange-Blue	stay	twobytwo	71.0	orange	4.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+77.749	76.564	0.795	0.35577499999999995	100.0	True	Magnitude		twobytwo	71.0	#1F45FC	3.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+80.263	78.671	1.595	-0.03722500000000002	900.0	True	Color		twobytwo	89.0	#1F45FC	6.0	task_switch	color	switch	poldrack-single-stim	s574	False
+82.841	82.119	0.795	-0.10722500000000003	100.0	True	Color	stay	twobytwo	89.0	#1F45FC	9.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+85.054	84.362	0.795	-0.137225	100.0	True	Color	stay	twobytwo	89.0	#1F45FC	2.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+88.418	87.01	1.595	-0.22122500000000003	900.0	True	Magnitude		twobytwo	89.0	#1F45FC	9.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+92.04	90.597	0.795	0.613775	100.0	True	High-Low	switch	twobytwo	89.0	#1F45FC	6.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+93.756	92.702	0.795	0.22477499999999997	100.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	1.0	task_switch	color	switch	poldrack-single-stim	s574	False
+96.405	95.082	1.595	-0.306225	900.0	True	Magnitude		twobytwo	89.0	#1F45FC	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+99.841	99.082	0.795	-0.07022500000000002	100.0	True	Orange-Blue		twobytwo	71.0	orange	1.0	task_switch	color	switch	poldrack-single-stim	s574	False
+102.419	101.192	0.795	0.397775	100.0	True	Orange-Blue	stay	twobytwo	89.0	#1F45FC	8.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+104.936	103.432	1.595	-0.12522500000000003	900.0	True	High-Low		twobytwo	89.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+108.289	106.475	1.595	0.18477499999999997	900.0	True	High-Low	stay	twobytwo	71.0	#1F45FC	1.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+111.24	109.381	1.595	0.22977499999999998	900.0	True	Magnitude	switch	twobytwo	89.0	orange	6.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+113.851	112.56	1.595	-0.338225	900.0	True	Orange-Blue		twobytwo	71.0	orange	1.0	task_switch	color	switch	poldrack-single-stim	s574	False
+117.009	115.464	1.595	-0.08422500000000002	900.0	True	High-Low		twobytwo	89.0	orange	8.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+119.366	118.507	0.795	0.02977499999999998	100.0	True	Color		twobytwo	71.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+122.506	120.752	1.595	0.12477499999999998	900.0	True	Color	stay	twobytwo	89.0	#1F45FC	8.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+125.08	124.203	0.795	0.04777499999999998	100.0	True	High-Low		twobytwo	89.0	#1F45FC	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+127.458	126.31	0.795	0.318775	100.0	False	High-Low	stay	twobytwo	71.0	orange	8.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	True
+129.965	128.553	1.595	-0.21722500000000003	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	3.0	task_switch	color	switch	poldrack-single-stim	s574	False
+132.689	131.598	0.795	0.261775	100.0	True	High-Low		twobytwo	89.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+134.747	133.841	0.795	0.07677499999999998	100.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+137.112	135.95	0.795	0.332775	100.0	True	Magnitude		twobytwo	71.0	orange	3.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+139.817	138.193	1.595	-0.005225000000000023	900.0	True	Magnitude	stay	twobytwo	71.0	orange	3.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+142.537	141.097	1.595	-0.18922500000000003	900.0	True	High-Low	switch	twobytwo	71.0	#1F45FC	1.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+145.534	144.14	1.595	-0.23522500000000002	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	2.0	task_switch	color	switch	poldrack-single-stim	s574	False
+148.853	147.86	0.795	0.16377499999999998	100.0	True	Orange-Blue	stay	twobytwo	71.0	orange	6.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+151.447	150.101	1.595	-0.283225	900.0	True	Orange-Blue	stay	twobytwo	71.0	orange	1.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+154.258	153.01	0.795	0.41877499999999995	100.0	True	Magnitude		twobytwo	71.0	orange	2.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+156.029	155.117	0.795	0.08277499999999997	100.0	True	Magnitude	stay	twobytwo	71.0	#1F45FC	4.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+158.728	157.493	0.795	0.405775	100.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	4.0	task_switch	color	switch	poldrack-single-stim	s574	False
+160.707	159.602	0.795	0.275775	100.0	True	Magnitude		twobytwo	89.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+162.789	161.709	0.795	0.25077499999999997	100.0	True	Color		twobytwo	89.0	#1F45FC	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+165.243	163.818	1.595	-0.20422500000000002	900.0	True	Magnitude		twobytwo	71.0	orange	1.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+167.725	167.133	0.795	-0.23722500000000002	100.0	False	Magnitude	stay	twobytwo	89.0	#1F45FC	2.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	True
+170.826	169.509	1.595	-0.31222500000000003	900.0	True	Orange-Blue		twobytwo	71.0	orange	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+174.197	172.55	1.595	0.01777499999999998	900.0	True	Color	switch	twobytwo	89.0	#1F45FC	2.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+176.94	175.459	1.595	-0.14822500000000002	900.0	True	Magnitude		twobytwo	89.0	orange	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+179.463	178.368	0.795	0.265775	100.0	True	Color		twobytwo	71.0	orange	3.0	task_switch	color	switch	poldrack-single-stim	s574	False
+182.336	180.611	1.595	0.09577499999999997	900.0	True	Magnitude		twobytwo	71.0	orange	4.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+184.823	183.515	1.595	-0.32122500000000004	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+188.277	186.555	1.595	0.09277499999999998	900.0	True	Orange-Blue	stay	twobytwo	71.0	orange	9.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+191.309	189.867	1.595	-0.18722500000000003	900.0	True	Magnitude		twobytwo	89.0	orange	9.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+194.84	192.91	1.595	0.30077499999999996	900.0	True	Orange-Blue		twobytwo	71.0	orange	6.0	task_switch	color	switch	poldrack-single-stim	s574	False
+197.529	195.814	1.595	0.08577499999999998	900.0	True	Magnitude		twobytwo	71.0	#1F45FC	4.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+200.119	198.853	0.795	0.43677499999999997	100.0	True	Magnitude	stay	twobytwo	89.0	orange	9.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+203.067	201.231	1.595	0.206775	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+204.915	204.14	0.795	-0.05422500000000002	100.0	True	High-Low		twobytwo	89.0	orange	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+208.059	206.655	1.595	-0.22522500000000004	900.0	True	Magnitude	switch	twobytwo	89.0	#1F45FC	7.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+211.046	209.564	1.595	-0.14722500000000002	900.0	False	Orange-Blue		twobytwo	71.0	#1F45FC	3.0	task_switch	color	switch	poldrack-single-stim	s574	True
+214.126	212.604	1.595	-0.10722500000000003	900.0	True	High-Low		twobytwo	71.0	orange	1.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+217.402	215.916	1.595	-0.14322500000000002	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	1.0	task_switch	color	switch	poldrack-single-stim	s574	False
+220.465	218.957	1.595	-0.12122500000000003	900.0	True	Magnitude		twobytwo	71.0	orange	1.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+223.755	222.269	1.595	-0.14322500000000002	900.0	False	Color		twobytwo	71.0	#1F45FC	4.0	task_switch	color	switch	poldrack-single-stim	s574	True
+240.627	238.832	1.595	0.16577499999999998	900.0	True	Orange-Blue		twobytwo	71.0	orange	4.0	task_switch	color	switch	poldrack-single-stim	s574	False
+242.716	241.739	0.795	0.147775	100.0	True	Orange-Blue	stay	twobytwo	71.0	orange	9.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+245.232	244.123	0.795	0.279775	100.0	True	Color	switch	twobytwo	71.0	orange	2.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+247.795	246.235	1.595	-0.06922500000000002	900.0	True	Orange-Blue	switch	twobytwo	89.0	#1F45FC	8.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+250.952	249.414	1.595	-0.09122500000000003	900.0	True	Color	switch	twobytwo	89.0	#1F45FC	3.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+254.211	252.59	1.595	-0.008225000000000022	900.0	True	Magnitude		twobytwo	89.0	orange	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+257.914	256.446	1.595	-0.16122500000000003	900.0	True	Magnitude	stay	twobytwo	89.0	orange	6.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+261.254	260.036	0.795	0.388775	100.0	True	Orange-Blue		twobytwo	71.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+263.647	262.278	1.595	-0.26022500000000004	900.0	True	Color	switch	twobytwo	89.0	#1F45FC	3.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+266.304	265.457	0.795	0.01777499999999998	100.0	True	Orange-Blue	switch	twobytwo	71.0	orange	6.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+269.269	267.832	1.595	-0.19222500000000003	900.0	True	Orange-Blue	stay	twobytwo	89.0	#1F45FC	1.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+272.21	270.873	0.795	0.507775	100.0	True	Magnitude		twobytwo	71.0	#1F45FC	2.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+274.305	273.385	0.795	0.09077499999999998	100.0	False	Color		twobytwo	89.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	True
+277.31	275.625	1.595	0.05577499999999998	900.0	True	Orange-Blue	switch	twobytwo	71.0	orange	6.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+279.762	278.668	0.795	0.264775	100.0	True	Magnitude		twobytwo	89.0	orange	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+282.021	280.775	0.795	0.41677499999999995	100.0	True	Magnitude	stay	twobytwo	71.0	orange	4.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+284.245	282.887	1.595	-0.27122500000000005	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+286.711	285.798	0.795	0.08377499999999997	100.0	True	High-Low		twobytwo	89.0	#1F45FC	8.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+288.815	287.906	0.795	0.07977499999999997	100.0	True	Orange-Blue		twobytwo	71.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+291.433	290.013	1.595	-0.20922500000000002	900.0	True	High-Low		twobytwo	89.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+294.535	293.189	1.595	-0.283225	900.0	True	High-Low	stay	twobytwo	89.0	#1F45FC	8.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+297.855	296.504	1.595	-0.278225	900.0	True	High-Low	stay	twobytwo	71.0	orange	4.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+300.8	299.409	1.595	-0.23822500000000002	900.0	True	Color		twobytwo	71.0	orange	2.0	task_switch	color	switch	poldrack-single-stim	s574	False
+303.867	302.454	1.595	-0.21622500000000003	900.0	True	Orange-Blue	switch	twobytwo	89.0	#1F45FC	7.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+306.65	305.36	1.595	-0.339225	900.0	True	Orange-Blue	stay	twobytwo	71.0	orange	6.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+309.794	308.403	1.595	-0.23822500000000002	900.0	True	Orange-Blue	stay	twobytwo	71.0	orange	4.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+312.751	311.851	0.795	0.07077499999999998	100.0	True	Magnitude		twobytwo	71.0	#1F45FC	3.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+316.04	314.638	1.595	-0.227225	900.0	True	Color		twobytwo	89.0	#1F45FC	6.0	task_switch	color	switch	poldrack-single-stim	s574	False
+319.263	318.63	0.795	-0.196225	100.0	True	Color	stay	twobytwo	89.0	#1F45FC	9.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+321.573	320.873	0.795	-0.12922500000000003	100.0	True	Color	stay	twobytwo	89.0	#1F45FC	2.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+324.9	323.521	1.595	-0.25022500000000003	900.0	True	High-Low		twobytwo	89.0	#1F45FC	9.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+327.229	326.428	0.795	-0.028225000000000024	100.0	True	Magnitude	switch	twobytwo	89.0	#1F45FC	6.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+329.29	328.67	0.795	-0.20922500000000002	100.0	False	Color		twobytwo	71.0	#1F45FC	1.0	task_switch	color	switch	poldrack-single-stim	s574	True
+332.074	330.774	1.595	-0.32922500000000005	900.0	True	High-Low		twobytwo	89.0	#1F45FC	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+334.885	334.089	0.795	-0.033225000000000025	100.0	True	Orange-Blue		twobytwo	71.0	orange	1.0	task_switch	color	switch	poldrack-single-stim	s574	False
+336.84	336.196	0.795	-0.18522500000000003	100.0	True	Orange-Blue	stay	twobytwo	89.0	#1F45FC	8.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+339.638	338.303	1.595	-0.294225	900.0	True	Magnitude		twobytwo	89.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+342.69	341.205	1.595	-0.14422500000000002	900.0	True	Magnitude	stay	twobytwo	71.0	#1F45FC	1.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+346.228	344.794	1.595	-0.195225	900.0	True	High-Low	switch	twobytwo	89.0	orange	6.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+349.408	347.969	1.595	-0.19022500000000003	900.0	True	Color		twobytwo	71.0	orange	1.0	task_switch	color	switch	poldrack-single-stim	s574	False
+352.987	351.283	1.595	0.07477499999999998	900.0	False	Magnitude		twobytwo	71.0	orange	8.0	task_switch	magnitude	switch	poldrack-single-stim	s574	True
+356.523	355.415	0.795	0.278775	100.0	True	Orange-Blue		twobytwo	71.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+359.235	357.93	1.595	-0.32422500000000004	900.0	True	Orange-Blue	stay	twobytwo	89.0	#1F45FC	8.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+362.421	361.656	0.795	-0.06422500000000002	100.0	True	Magnitude		twobytwo	89.0	#1F45FC	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+365.81	364.168	0.795	0.812775	100.0	True	Magnitude	stay	twobytwo	89.0	orange	8.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+367.866	366.408	1.595	-0.17122500000000002	900.0	False	Orange-Blue		twobytwo	71.0	#1F45FC	3.0	task_switch	color	switch	poldrack-single-stim	s574	True
+370.275	369.451	0.795	-0.005225000000000023	100.0	True	High-Low		twobytwo	89.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+372.61	371.557	0.795	0.22377499999999997	100.0	True	Color		twobytwo	89.0	#1F45FC	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+374.382	373.661	0.795	-0.10822500000000003	100.0	True	Magnitude		twobytwo	71.0	orange	3.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+377.448	376.04	1.595	-0.22122500000000003	900.0	True	Magnitude	stay	twobytwo	71.0	orange	3.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+381.112	379.355	1.595	0.12777499999999997	900.0	True	High-Low	switch	twobytwo	71.0	#1F45FC	1.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+383.823	382.259	1.595	-0.06522500000000002	900.0	True	Color		twobytwo	89.0	#1F45FC	2.0	task_switch	color	switch	poldrack-single-stim	s574	False
+386.242	385.307	0.795	0.10577499999999998	100.0	True	Color	stay	twobytwo	71.0	orange	6.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+388.94	387.415	1.595	-0.10422500000000003	900.0	True	Color	stay	twobytwo	71.0	orange	1.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+391.628	390.731	0.795	0.06777499999999997	100.0	True	High-Low		twobytwo	71.0	orange	2.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+394.072	393.11	0.795	0.13277499999999998	100.0	True	High-Low	stay	twobytwo	71.0	#1F45FC	4.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+396.308	395.217	0.795	0.261775	100.0	False	Orange-Blue		twobytwo	71.0	#1F45FC	4.0	task_switch	color	switch	poldrack-single-stim	s574	True
+398.578	397.596	0.795	0.15277499999999997	100.0	True	High-Low		twobytwo	89.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+400.664	399.702	0.795	0.13277499999999998	100.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+403.362	401.809	1.595	-0.07622500000000003	900.0	True	High-Low		twobytwo	71.0	orange	1.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+405.768	404.985	0.795	-0.04622500000000002	100.0	True	High-Low	stay	twobytwo	71.0	#1F45FC	2.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+408.531	407.228	1.595	-0.32622500000000004	900.0	True	Color		twobytwo	71.0	orange	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+411.542	410.135	1.595	-0.22222500000000003	900.0	True	Orange-Blue	switch	twobytwo	89.0	#1F45FC	2.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+414.395	413.042	1.595	-0.276225	900.0	True	Magnitude		twobytwo	89.0	orange	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+416.707	415.948	0.795	-0.07022500000000002	100.0	True	Orange-Blue		twobytwo	71.0	orange	3.0	task_switch	color	switch	poldrack-single-stim	s574	False
+419.439	418.059	1.595	-0.24922500000000003	900.0	True	High-Low		twobytwo	71.0	orange	4.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+422.464	420.964	1.595	-0.12922500000000003	900.0	True	Color		twobytwo	89.0	#1F45FC	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+425.673	424.006	1.595	0.037774999999999975	900.0	True	Color	stay	twobytwo	71.0	orange	9.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+428.741	426.913	1.595	0.19877499999999998	900.0	True	High-Low		twobytwo	89.0	orange	9.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+431.733	429.818	1.595	0.285775	900.0	True	Color		twobytwo	71.0	orange	6.0	task_switch	color	switch	poldrack-single-stim	s574	False
+434.465	432.86	1.595	-0.024225000000000024	900.0	False	High-Low		twobytwo	89.0	#1F45FC	4.0	task_switch	magnitude	switch	poldrack-single-stim	s574	True
+436.714	435.771	0.795	0.11377499999999997	100.0	False	High-Low	stay	twobytwo	71.0	orange	9.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	True
+439.994	438.011	1.595	0.35377499999999995	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+442.469	441.597	0.795	0.04277499999999998	100.0	True	Magnitude		twobytwo	89.0	orange	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+445.598	443.974	1.595	-0.005225000000000023	900.0	True	High-Low	switch	twobytwo	89.0	#1F45FC	7.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+448.584	447.022	1.595	-0.06722500000000002	900.0	True	Color		twobytwo	89.0	#1F45FC	3.0	task_switch	color	switch	poldrack-single-stim	s574	False
+451.354	449.926	1.595	-0.20122500000000001	900.0	True	High-Low		twobytwo	71.0	orange	1.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+454.44	452.971	1.595	-0.16022500000000003	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	1.0	task_switch	color	switch	poldrack-single-stim	s574	False
+458.018	456.562	1.595	-0.17322500000000002	900.0	True	High-Low		twobytwo	71.0	orange	1.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+461.464	459.742	1.595	0.09277499999999998	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	4.0	task_switch	color	switch	poldrack-single-stim	s574	False
+477.807	476.17	1.595	0.007774999999999977	900.0	True	Orange-Blue		twobytwo	71.0	orange	4.0	task_switch	color	switch	poldrack-single-stim	s574	False
+479.745	479.074	0.795	-0.15822500000000003	100.0	True	Orange-Blue	stay	twobytwo	71.0	orange	9.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+482.17	481.316	0.795	0.024774999999999978	100.0	True	Color	switch	twobytwo	71.0	orange	2.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+484.713	483.423	1.595	-0.339225	900.0	True	Orange-Blue	switch	twobytwo	89.0	#1F45FC	8.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+487.664	486.33	1.595	-0.295225	900.0	True	Color	switch	twobytwo	89.0	#1F45FC	3.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+490.879	489.237	1.595	0.012774999999999977	900.0	True	Magnitude		twobytwo	89.0	orange	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+493.961	492.413	1.595	-0.08122500000000002	900.0	True	Magnitude	stay	twobytwo	89.0	orange	6.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+496.649	495.728	0.795	0.09177499999999998	100.0	False	Color		twobytwo	89.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	True
+499.8	497.834	1.595	0.336775	900.0	True	Orange-Blue	switch	twobytwo	89.0	#1F45FC	3.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+501.498	500.741	0.795	-0.07222500000000003	100.0	True	Color	switch	twobytwo	71.0	orange	6.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+504.26	502.848	1.595	-0.21722500000000003	900.0	True	Color	stay	twobytwo	89.0	#1F45FC	1.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+507.098	506.029	0.795	0.239775	100.0	True	High-Low		twobytwo	71.0	#1F45FC	2.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+509.09	508.272	0.795	-0.011225000000000023	100.0	True	Orange-Blue		twobytwo	71.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+511.693	510.379	1.595	-0.31522500000000003	900.0	True	Color	switch	twobytwo	71.0	orange	6.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+514.64	513.83	0.795	-0.019225000000000023	100.0	True	High-Low		twobytwo	89.0	orange	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+516.924	516.205	0.795	-0.11022500000000002	100.0	True	High-Low	stay	twobytwo	71.0	orange	4.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+519.991	518.587	1.595	-0.22522500000000004	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+522.499	521.494	0.795	0.175775	100.0	True	High-Low		twobytwo	89.0	#1F45FC	8.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+524.594	523.598	0.795	0.16677499999999998	100.0	True	Color		twobytwo	71.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+527.252	525.841	1.595	-0.21822500000000003	900.0	True	Magnitude		twobytwo	89.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+530.478	528.745	1.595	0.10377499999999998	900.0	True	Magnitude	stay	twobytwo	89.0	#1F45FC	8.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+533.201	531.793	1.595	-0.22122500000000003	900.0	True	Magnitude	stay	twobytwo	71.0	orange	4.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+536.315	534.969	1.595	-0.283225	900.0	True	Color		twobytwo	71.0	orange	2.0	task_switch	color	switch	poldrack-single-stim	s574	False
+539.445	538.012	1.595	-0.196225	900.0	True	Orange-Blue	switch	twobytwo	89.0	#1F45FC	7.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+542.516	541.191	1.595	-0.304225	900.0	True	Orange-Blue	stay	twobytwo	71.0	orange	6.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+545.567	544.098	1.595	-0.16022500000000003	900.0	True	Orange-Blue	stay	twobytwo	71.0	orange	4.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+548.87	547.823	0.795	0.21777499999999997	100.0	True	Magnitude		twobytwo	71.0	#1F45FC	3.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+551.761	550.338	1.595	-0.20622500000000002	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	6.0	task_switch	color	switch	poldrack-single-stim	s574	False
+553.996	553.245	0.795	-0.07822500000000002	100.0	True	Orange-Blue	stay	twobytwo	89.0	#1F45FC	9.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+556.597	555.901	0.795	-0.133225	100.0	True	Orange-Blue	stay	twobytwo	89.0	#1F45FC	2.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+559.62	558.146	1.595	-0.15522500000000003	900.0	True	High-Low		twobytwo	89.0	#1F45FC	9.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+561.932	561.056	0.795	0.046774999999999976	100.0	True	Magnitude	switch	twobytwo	89.0	#1F45FC	6.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+564.421	563.162	0.795	0.42977499999999996	100.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	1.0	task_switch	color	switch	poldrack-single-stim	s574	False
+567.119	565.408	1.595	0.08177499999999997	900.0	True	Magnitude		twobytwo	89.0	#1F45FC	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+569.136	568.455	0.795	-0.14822500000000002	100.0	True	Color		twobytwo	71.0	orange	1.0	task_switch	color	switch	poldrack-single-stim	s574	False
+571.579	570.832	0.795	-0.08222500000000002	100.0	True	Color	stay	twobytwo	89.0	#1F45FC	8.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+575.772	574.163	1.595	-0.020225000000000024	900.0	True	Magnitude		twobytwo	89.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+578.461	577.07	1.595	-0.23822500000000002	900.0	True	Magnitude	stay	twobytwo	71.0	#1F45FC	1.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+581.329	579.982	1.595	-0.282225	900.0	True	High-Low	switch	twobytwo	89.0	orange	6.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+584.55	583.158	1.595	-0.23722500000000002	900.0	True	Color		twobytwo	71.0	orange	1.0	task_switch	color	switch	poldrack-single-stim	s574	False
+587.595	586.206	1.595	-0.24022500000000002	900.0	True	High-Low		twobytwo	89.0	orange	8.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+589.933	589.109	0.795	-0.005225000000000023	100.0	False	Orange-Blue		twobytwo	89.0	orange	9.0	task_switch	color	switch	poldrack-single-stim	s574	True
+592.579	591.22	1.595	-0.27022500000000005	900.0	True	Orange-Blue	stay	twobytwo	89.0	#1F45FC	8.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+594.876	594.124	0.795	-0.07722500000000002	100.0	True	High-Low		twobytwo	89.0	#1F45FC	7.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+597.885	596.909	0.795	0.146775	100.0	True	High-Low	stay	twobytwo	89.0	orange	8.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+600.605	599.017	1.595	-0.041225000000000026	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	3.0	task_switch	color	switch	poldrack-single-stim	s574	False
+603.772	602.196	0.795	0.746775	100.0	False	Magnitude		twobytwo	71.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	True
+605.192	604.303	0.795	0.059774999999999974	100.0	True	Color		twobytwo	89.0	#1F45FC	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+607.438	606.679	0.795	-0.07022500000000002	100.0	True	High-Low		twobytwo	71.0	orange	3.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+611.519	609.743	1.595	0.146775	900.0	True	High-Low	stay	twobytwo	71.0	orange	3.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+614.708	612.65	1.595	0.42877499999999996	900.0	True	Magnitude	switch	twobytwo	71.0	#1F45FC	1.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+616.983	615.557	1.595	-0.20322500000000002	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	2.0	task_switch	color	switch	poldrack-single-stim	s574	False
+619.422	618.463	0.795	0.12977499999999997	100.0	True	Orange-Blue	stay	twobytwo	71.0	orange	6.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+621.969	620.567	1.595	-0.227225	900.0	True	Orange-Blue	stay	twobytwo	71.0	orange	1.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+624.635	623.61	0.795	0.19577499999999998	100.0	True	High-Low		twobytwo	71.0	orange	2.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+626.657	625.717	0.795	0.11077499999999997	100.0	True	High-Low	stay	twobytwo	71.0	#1F45FC	4.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+628.628	627.824	0.795	-0.02522500000000002	100.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	4.0	task_switch	color	switch	poldrack-single-stim	s574	False
+630.699	629.931	0.795	-0.06122500000000002	100.0	True	Magnitude		twobytwo	89.0	#1F45FC	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+633.183	632.307	0.795	0.046774999999999976	100.0	True	Color		twobytwo	89.0	#1F45FC	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+635.95	634.549	1.595	-0.228225	900.0	True	Magnitude		twobytwo	71.0	orange	1.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+638.076	637.459	0.795	-0.21222500000000002	100.0	True	Magnitude	stay	twobytwo	71.0	#1F45FC	2.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+641.274	639.701	1.595	-0.056225000000000025	900.0	True	Color		twobytwo	71.0	orange	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+644.854	643.422	1.595	-0.197225	900.0	True	Orange-Blue	switch	twobytwo	89.0	#1F45FC	2.0	cue_switch	color	stay	poldrack-single-stim	s574	False
+648.302	646.742	1.595	-0.06922500000000002	900.0	True	High-Low		twobytwo	89.0	orange	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+650.643	649.646	0.795	0.16777499999999998	100.0	True	Color		twobytwo	71.0	orange	3.0	task_switch	color	switch	poldrack-single-stim	s574	False
+653.593	651.891	1.595	0.07277499999999998	900.0	True	Magnitude		twobytwo	71.0	orange	4.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+656.286	654.937	1.595	-0.280225	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	8.0	task_switch	color	switch	poldrack-single-stim	s574	False
+659.513	657.98	1.595	-0.09622500000000002	900.0	True	Orange-Blue	stay	twobytwo	71.0	orange	9.0	cue_stay	color	stay	poldrack-single-stim	s574	False
+662.929	661.428	1.595	-0.12822500000000003	900.0	True	High-Low		twobytwo	89.0	orange	9.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+665.968	664.472	1.595	-0.133225	900.0	True	Orange-Blue		twobytwo	71.0	orange	6.0	task_switch	color	switch	poldrack-single-stim	s574	False
+668.869	667.377	1.595	-0.137225	900.0	True	High-Low		twobytwo	71.0	#1F45FC	4.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+671.043	670.284	0.795	-0.07022500000000002	100.0	True	High-Low	stay	twobytwo	89.0	orange	9.0	cue_stay	magnitude	stay	poldrack-single-stim	s574	False
+673.839	672.391	1.595	-0.18122500000000002	900.0	True	Orange-Blue		twobytwo	89.0	#1F45FC	9.0	task_switch	color	switch	poldrack-single-stim	s574	False
+676.36	675.3	0.795	0.23077499999999998	100.0	False	High-Low		twobytwo	71.0	orange	6.0	task_switch	magnitude	switch	poldrack-single-stim	s574	True
+679.485	677.543	1.595	0.31277499999999997	900.0	True	Magnitude	switch	twobytwo	89.0	#1F45FC	7.0	cue_switch	magnitude	stay	poldrack-single-stim	s574	False
+682.025	680.45	1.595	-0.05422500000000002	900.0	False	Color		twobytwo	71.0	#1F45FC	3.0	task_switch	color	switch	poldrack-single-stim	s574	True
+685.028	683.357	1.595	0.04177499999999998	900.0	True	Magnitude		twobytwo	71.0	orange	1.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+687.69	686.266	1.595	-0.20522500000000002	900.0	True	Color		twobytwo	89.0	#1F45FC	1.0	task_switch	color	switch	poldrack-single-stim	s574	False
+690.788	689.306	1.595	-0.14722500000000002	900.0	True	High-Low		twobytwo	71.0	orange	1.0	task_switch	magnitude	switch	poldrack-single-stim	s574	False
+693.984	692.346	1.595	0.008774999999999977	900.0	True	Color		twobytwo	89.0	#1F45FC	4.0	task_switch	color	switch	poldrack-single-stim	s574	False

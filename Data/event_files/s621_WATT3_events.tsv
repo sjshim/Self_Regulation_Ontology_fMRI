@@ -1,0 +1,367 @@
+movement_onset	onset	response_time	planning	condition	experiment_exp_id	key_press	problem_id	trial_type	worker_id	junk	duration
+6.68	3.014	2.734622950819672	1	UA_with_intermeidate	ward_and_allport	71	0.0	poldrack-single-stim	s621	False	2.985
+7.535	6.681	-0.07737704918032784	0	UA_with_intermeidate	ward_and_allport	89	0.0	poldrack-single-stim	s621	False	
+12.303	7.536	3.835622950819672	0	UA_with_intermeidate	ward_and_allport	89	0.0	poldrack-single-stim	s621	False	
+14.501	12.305	1.264622950819672	0	UA_with_intermeidate	ward_and_allport	82	0.0	poldrack-single-stim	s621	False	
+15.486	14.502	0.05262295081967216	0	UA_with_intermeidate	ward_and_allport	71	0.0	poldrack-single-stim	s621	False	
+16.462	15.487	0.04362295081967216	0	UA_with_intermeidate	ward_and_allport	89	0.0	poldrack-single-stim	s621	False	
+17.417	16.464	0.021622950819672155	0	UA_with_intermeidate	ward_and_allport	82	0.0	poldrack-single-stim	s621	False	
+18.197	17.417	-0.15137704918032785	0	UA_with_intermeidate	ward_and_allport	89	0.0	poldrack-single-stim	s621	False	
+18.2	18.201	-0.9323770491803278	0	UA_with_intermeidate	ward_and_allport	-1	0.0	poldrack-single-stim	s621	True	
+24.308	20.703	2.673622950819672	1	UA_with_intermeidate	ward_and_allport	89	1.0	poldrack-single-stim	s621	False	2.985
+25.229	24.309	-0.011377049180327845	0	UA_with_intermeidate	ward_and_allport	82	1.0	poldrack-single-stim	s621	False	
+26.65	25.231	0.48762295081967216	0	UA_with_intermeidate	ward_and_allport	71	1.0	poldrack-single-stim	s621	False	
+27.023	26.651	-0.5593770491803278	0	UA_with_intermeidate	ward_and_allport	89	1.0	poldrack-single-stim	s621	False	
+28.309	27.024	0.35362295081967215	0	UA_with_intermeidate	ward_and_allport	82	1.0	poldrack-single-stim	s621	False	
+28.727	28.31	-0.5143770491803279	0	UA_with_intermeidate	ward_and_allport	89	1.0	poldrack-single-stim	s621	False	
+28.73	28.731	-0.9323770491803278	0	UA_with_intermeidate	ward_and_allport	-1	1.0	poldrack-single-stim	s621	True	
+34.378	30.833	2.613622950819672	1	UA_without_intermeidate	ward_and_allport	82	2.0	poldrack-single-stim	s621	False	2.985
+34.9	34.379	-0.41037704918032786	0	UA_without_intermeidate	ward_and_allport	89	2.0	poldrack-single-stim	s621	False	
+35.665	34.902	-0.16837704918032784	0	UA_without_intermeidate	ward_and_allport	71	2.0	poldrack-single-stim	s621	False	
+36.014	35.666	-0.5833770491803278	0	UA_without_intermeidate	ward_and_allport	89	2.0	poldrack-single-stim	s621	False	
+37.277	36.016	0.32962295081967213	0	UA_without_intermeidate	ward_and_allport	71	2.0	poldrack-single-stim	s621	False	
+37.633	37.279	-0.5773770491803278	0	UA_without_intermeidate	ward_and_allport	89	2.0	poldrack-single-stim	s621	False	
+37.636	37.637	-0.9323770491803278	0	UA_without_intermeidate	ward_and_allport	-1	2.0	poldrack-single-stim	s621	True	
+43.22	39.839	2.449622950819672	1	UA_without_intermeidate	ward_and_allport	71	3.0	poldrack-single-stim	s621	False	2.985
+43.558	43.22	-0.5933770491803279	0	UA_without_intermeidate	ward_and_allport	89	3.0	poldrack-single-stim	s621	False	
+45.44	43.561	0.9476229508196722	0	UA_without_intermeidate	ward_and_allport	82	3.0	poldrack-single-stim	s621	False	
+46.063	45.441	-0.3093770491803278	0	UA_without_intermeidate	ward_and_allport	89	3.0	poldrack-single-stim	s621	False	
+46.493	46.065	-0.5033770491803279	0	UA_without_intermeidate	ward_and_allport	71	3.0	poldrack-single-stim	s621	False	
+47.406	46.494	-0.019377049180327843	0	UA_without_intermeidate	ward_and_allport	89	3.0	poldrack-single-stim	s621	False	
+47.409	47.41	-0.9323770491803278	0	UA_without_intermeidate	ward_and_allport	-1	3.0	poldrack-single-stim	s621	True	
+55.728	51.416	3.380622950819672	1	PA_with_intermediate	ward_and_allport	89	0.0	poldrack-single-stim	s621	False	2.985
+56.174	55.729	-0.48637704918032787	0	PA_with_intermediate	ward_and_allport	71	0.0	poldrack-single-stim	s621	False	
+57.961	56.176	0.8536229508196722	0	PA_with_intermediate	ward_and_allport	89	0.0	poldrack-single-stim	s621	False	
+59.451	57.962	0.5576229508196722	0	PA_with_intermediate	ward_and_allport	82	0.0	poldrack-single-stim	s621	False	
+60.592	59.453	0.20762295081967216	0	PA_with_intermediate	ward_and_allport	71	0.0	poldrack-single-stim	s621	False	
+60.949	60.593	-0.5753770491803278	0	PA_with_intermediate	ward_and_allport	82	0.0	poldrack-single-stim	s621	False	
+60.953	60.954	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	0.0	poldrack-single-stim	s621	True	
+68.837	64.723	3.182622950819672	1	PA_with_intermediate	ward_and_allport	71	1.0	poldrack-single-stim	s621	False	2.985
+69.291	68.839	-0.47937704918032786	0	PA_with_intermediate	ward_and_allport	82	1.0	poldrack-single-stim	s621	False	
+69.945	69.292	-0.27837704918032785	0	PA_with_intermediate	ward_and_allport	71	1.0	poldrack-single-stim	s621	False	
+70.919	69.947	0.040622950819672154	0	PA_with_intermediate	ward_and_allport	89	1.0	poldrack-single-stim	s621	False	
+72.091	70.921	0.23862295081967216	0	PA_with_intermediate	ward_and_allport	82	1.0	poldrack-single-stim	s621	False	
+73.155	72.092	0.13162295081967215	0	PA_with_intermediate	ward_and_allport	89	1.0	poldrack-single-stim	s621	False	
+73.156	73.157	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	1.0	poldrack-single-stim	s621	True	
+79.515	75.839	2.744622950819672	1	PA_without_intermediate	ward_and_allport	71	2.0	poldrack-single-stim	s621	False	2.985
+80.146	79.517	-0.3023770491803278	0	PA_without_intermediate	ward_and_allport	89	2.0	poldrack-single-stim	s621	False	
+81.243	80.147	0.16462295081967215	0	PA_without_intermediate	ward_and_allport	71	2.0	poldrack-single-stim	s621	False	
+81.647	81.245	-0.5293770491803278	0	PA_without_intermediate	ward_and_allport	82	2.0	poldrack-single-stim	s621	False	
+82.046	81.649	-0.5343770491803278	0	PA_without_intermediate	ward_and_allport	71	2.0	poldrack-single-stim	s621	False	
+82.447	82.047	-0.5313770491803278	0	PA_without_intermediate	ward_and_allport	89	2.0	poldrack-single-stim	s621	False	
+82.452	82.453	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	2.0	poldrack-single-stim	s621	True	
+88.585	85.679	1.974622950819672	1	PA_without_intermediate	ward_and_allport	89	3.0	poldrack-single-stim	s621	False	2.985
+89.05	88.585	-0.46637704918032785	0	PA_without_intermediate	ward_and_allport	71	3.0	poldrack-single-stim	s621	False	
+90.183	89.052	0.19962295081967216	0	PA_without_intermediate	ward_and_allport	89	3.0	poldrack-single-stim	s621	False	
+90.631	90.185	-0.48537704918032787	0	PA_without_intermediate	ward_and_allport	71	3.0	poldrack-single-stim	s621	False	
+91.666	90.634	0.10062295081967215	0	PA_without_intermediate	ward_and_allport	89	3.0	poldrack-single-stim	s621	False	
+92.051	91.667	-0.5473770491803278	0	PA_without_intermediate	ward_and_allport	82	3.0	poldrack-single-stim	s621	False	
+92.054	92.055	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	3.0	poldrack-single-stim	s621	True	
+97.694	95.418	1.344622950819672	1	PA_without_intermediate	ward_and_allport	89	4.0	poldrack-single-stim	s621	False	2.985
+98.164	97.695	-0.46237704918032785	0	PA_without_intermediate	ward_and_allport	82	4.0	poldrack-single-stim	s621	False	
+99.629	98.166	0.5316229508196721	0	PA_without_intermediate	ward_and_allport	89	4.0	poldrack-single-stim	s621	False	
+99.995	99.63	-0.5663770491803278	0	PA_without_intermediate	ward_and_allport	71	4.0	poldrack-single-stim	s621	False	
+100.671	99.996	-0.25637704918032783	0	PA_without_intermediate	ward_and_allport	89	4.0	poldrack-single-stim	s621	False	
+101.099	100.673	-0.5053770491803279	0	PA_without_intermediate	ward_and_allport	82	4.0	poldrack-single-stim	s621	False	
+101.102	101.103	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	4.0	poldrack-single-stim	s621	True	
+106.224	103.107	2.185622950819672	1	PA_without_intermediate	ward_and_allport	82	5.0	poldrack-single-stim	s621	False	2.985
+106.659	106.225	-0.4973770491803278	0	PA_without_intermediate	ward_and_allport	89	5.0	poldrack-single-stim	s621	False	
+107.439	106.662	-0.15437704918032785	0	PA_without_intermediate	ward_and_allport	82	5.0	poldrack-single-stim	s621	False	
+108.097	107.44	-0.27437704918032785	0	PA_without_intermediate	ward_and_allport	89	5.0	poldrack-single-stim	s621	False	
+109.261	108.1	0.22962295081967216	0	PA_without_intermediate	ward_and_allport	82	5.0	poldrack-single-stim	s621	False	
+109.816	109.262	-0.37737704918032783	0	PA_without_intermediate	ward_and_allport	71	5.0	poldrack-single-stim	s621	False	
+109.819	109.82	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	5.0	poldrack-single-stim	s621	True	
+116.059	112.231	2.896622950819672	1	PA_with_intermediate	ward_and_allport	71	6.0	poldrack-single-stim	s621	False	2.985
+116.676	116.06	-0.31537704918032783	0	PA_with_intermediate	ward_and_allport	89	6.0	poldrack-single-stim	s621	False	
+117.204	116.679	-0.40637704918032785	0	PA_with_intermediate	ward_and_allport	71	6.0	poldrack-single-stim	s621	False	
+117.71	117.205	-0.42637704918032787	0	PA_with_intermediate	ward_and_allport	82	6.0	poldrack-single-stim	s621	False	
+118.959	117.713	0.3146229508196722	0	PA_with_intermediate	ward_and_allport	89	6.0	poldrack-single-stim	s621	False	
+119.264	118.959	-0.6263770491803279	0	PA_with_intermediate	ward_and_allport	71	6.0	poldrack-single-stim	s621	False	
+119.268	119.269	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	6.0	poldrack-single-stim	s621	True	
+127.71	121.408	5.370622950819672	1	PA_without_intermediate	ward_and_allport	82	7.0	poldrack-single-stim	s621	False	2.985
+128.258	127.711	-0.38437704918032783	0	PA_without_intermediate	ward_and_allport	89	7.0	poldrack-single-stim	s621	False	
+129.817	128.261	0.6246229508196721	0	PA_without_intermediate	ward_and_allport	82	7.0	poldrack-single-stim	s621	False	
+130.304	129.818	-0.44537704918032783	0	PA_without_intermediate	ward_and_allport	71	7.0	poldrack-single-stim	s621	False	
+131.456	130.307	0.21762295081967215	0	PA_without_intermediate	ward_and_allport	82	7.0	poldrack-single-stim	s621	False	
+131.971	131.457	-0.41737704918032786	0	PA_without_intermediate	ward_and_allport	89	7.0	poldrack-single-stim	s621	False	
+131.974	131.975	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	7.0	poldrack-single-stim	s621	True	
+139.315	137.107	1.276622950819672	1	PA_without_intermediate	ward_and_allport	89	8.0	poldrack-single-stim	s621	False	2.985
+139.61	139.316	-0.6373770491803279	0	PA_without_intermediate	ward_and_allport	71	8.0	poldrack-single-stim	s621	False	
+140.201	139.612	-0.34237704918032785	0	PA_without_intermediate	ward_and_allport	89	8.0	poldrack-single-stim	s621	False	
+140.569	140.203	-0.5653770491803278	0	PA_without_intermediate	ward_and_allport	71	8.0	poldrack-single-stim	s621	False	
+141.197	140.572	-0.3063770491803278	0	PA_without_intermediate	ward_and_allport	89	8.0	poldrack-single-stim	s621	False	
+141.515	141.198	-0.6143770491803279	0	PA_without_intermediate	ward_and_allport	82	8.0	poldrack-single-stim	s621	False	
+141.518	141.519	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	8.0	poldrack-single-stim	s621	True	
+146.087	143.658	1.4976229508196721	1	PA_without_intermediate	ward_and_allport	82	9.0	poldrack-single-stim	s621	False	2.985
+146.581	146.088	-0.4383770491803278	0	PA_without_intermediate	ward_and_allport	71	9.0	poldrack-single-stim	s621	False	
+147.733	146.583	0.21862295081967215	0	PA_without_intermediate	ward_and_allport	82	9.0	poldrack-single-stim	s621	False	
+148.429	147.735	-0.23737704918032784	0	PA_without_intermediate	ward_and_allport	71	9.0	poldrack-single-stim	s621	False	
+150.87	148.432	1.506622950819672	0	PA_without_intermediate	ward_and_allport	82	9.0	poldrack-single-stim	s621	False	
+151.261	150.871	-0.5413770491803278	0	PA_without_intermediate	ward_and_allport	89	9.0	poldrack-single-stim	s621	False	
+151.265	151.266	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	9.0	poldrack-single-stim	s621	True	
+158.829	156.534	1.363622950819672	1	PA_with_intermediate	ward_and_allport	82	10.0	poldrack-single-stim	s621	False	2.985
+159.602	158.83	-0.15937704918032786	0	PA_with_intermediate	ward_and_allport	71	10.0	poldrack-single-stim	s621	False	
+161.443	159.606	0.9056229508196721	0	PA_with_intermediate	ward_and_allport	82	10.0	poldrack-single-stim	s621	False	
+161.831	161.444	-0.5443770491803278	0	PA_with_intermediate	ward_and_allport	89	10.0	poldrack-single-stim	s621	False	
+162.239	161.836	-0.5283770491803278	0	PA_with_intermediate	ward_and_allport	71	10.0	poldrack-single-stim	s621	False	
+162.719	162.24	-0.45237704918032784	0	PA_with_intermediate	ward_and_allport	89	10.0	poldrack-single-stim	s621	False	
+162.724	162.725	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	10.0	poldrack-single-stim	s621	True	
+170.935	166.77	3.233622950819672	1	PA_with_intermediate	ward_and_allport	82	11.0	poldrack-single-stim	s621	False	2.985
+171.341	170.936	-0.5263770491803278	0	PA_with_intermediate	ward_and_allport	71	11.0	poldrack-single-stim	s621	False	
+173.838	171.345	1.561622950819672	0	PA_with_intermediate	ward_and_allport	82	11.0	poldrack-single-stim	s621	False	
+174.2	173.839	-0.5703770491803278	0	PA_with_intermediate	ward_and_allport	89	11.0	poldrack-single-stim	s621	False	
+174.966	174.204	-0.16937704918032784	0	PA_with_intermediate	ward_and_allport	71	11.0	poldrack-single-stim	s621	False	
+175.463	174.967	-0.4353770491803278	0	PA_with_intermediate	ward_and_allport	82	11.0	poldrack-single-stim	s621	False	
+175.47	175.471	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	11.0	poldrack-single-stim	s621	True	
+180.949	177.61	2.4076229508196723	1	PA_with_intermediate	ward_and_allport	82	12.0	poldrack-single-stim	s621	False	2.985
+181.392	180.951	-0.4903770491803278	0	PA_with_intermediate	ward_and_allport	89	12.0	poldrack-single-stim	s621	False	
+183.343	181.396	1.0156229508196721	0	PA_with_intermediate	ward_and_allport	82	12.0	poldrack-single-stim	s621	False	
+184.077	183.344	-0.19837704918032784	0	PA_with_intermediate	ward_and_allport	71	12.0	poldrack-single-stim	s621	False	
+184.624	184.081	-0.38837704918032784	0	PA_with_intermediate	ward_and_allport	89	12.0	poldrack-single-stim	s621	False	
+185.04	184.625	-0.5163770491803279	0	PA_with_intermediate	ward_and_allport	71	12.0	poldrack-single-stim	s621	False	
+185.047	185.048	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	12.0	poldrack-single-stim	s621	True	
+189.475	187.461	1.082622950819672	1	PA_without_intermediate	ward_and_allport	89	13.0	poldrack-single-stim	s621	False	2.985
+190.03	189.477	-0.37837704918032783	0	PA_without_intermediate	ward_and_allport	82	13.0	poldrack-single-stim	s621	False	
+190.56	190.035	-0.40637704918032785	0	PA_without_intermediate	ward_and_allport	89	13.0	poldrack-single-stim	s621	False	
+191.098	190.562	-0.39537704918032784	0	PA_without_intermediate	ward_and_allport	82	13.0	poldrack-single-stim	s621	False	
+192.31	191.1	0.27862295081967214	0	PA_without_intermediate	ward_and_allport	89	13.0	poldrack-single-stim	s621	False	
+193.245	192.312	0.0016229508196721554	0	PA_without_intermediate	ward_and_allport	71	13.0	poldrack-single-stim	s621	False	
+193.252	193.253	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	13.0	poldrack-single-stim	s621	True	
+199.316	195.936	2.448622950819672	1	PA_with_intermediate	ward_and_allport	71	14.0	poldrack-single-stim	s621	False	2.985
+199.793	199.318	-0.45637704918032784	0	PA_with_intermediate	ward_and_allport	82	14.0	poldrack-single-stim	s621	False	
+200.571	199.797	-0.15737704918032785	0	PA_with_intermediate	ward_and_allport	71	14.0	poldrack-single-stim	s621	False	
+201.003	200.572	-0.5003770491803279	0	PA_with_intermediate	ward_and_allport	89	14.0	poldrack-single-stim	s621	False	
+201.866	201.009	-0.07437704918032785	0	PA_with_intermediate	ward_and_allport	82	14.0	poldrack-single-stim	s621	False	
+202.279	201.867	-0.5193770491803279	0	PA_with_intermediate	ward_and_allport	71	14.0	poldrack-single-stim	s621	False	
+202.282	202.283	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	14.0	poldrack-single-stim	s621	True	
+216.989	212.012	4.045622950819672	1	PA_without_intermediate	ward_and_allport	71	15.0	poldrack-single-stim	s621	False	2.985
+217.338	216.99	-0.5833770491803278	0	PA_without_intermediate	ward_and_allport	82	15.0	poldrack-single-stim	s621	False	
+218.462	217.343	0.18762295081967215	0	PA_without_intermediate	ward_and_allport	71	15.0	poldrack-single-stim	s621	False	
+218.753	218.463	-0.6413770491803279	0	PA_without_intermediate	ward_and_allport	89	15.0	poldrack-single-stim	s621	False	
+219.283	218.757	-0.40537704918032785	0	PA_without_intermediate	ward_and_allport	71	15.0	poldrack-single-stim	s621	False	
+219.81	219.285	-0.40637704918032785	0	PA_without_intermediate	ward_and_allport	82	15.0	poldrack-single-stim	s621	False	
+219.814	219.815	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	15.0	poldrack-single-stim	s621	True	
+224.967	223.044	0.9916229508196721	1	PA_without_intermediate	ward_and_allport	71	16.0	poldrack-single-stim	s621	False	2.985
+225.581	224.968	-0.31837704918032783	0	PA_without_intermediate	ward_and_allport	89	16.0	poldrack-single-stim	s621	False	
+226.036	225.585	-0.48037704918032786	0	PA_without_intermediate	ward_and_allport	71	16.0	poldrack-single-stim	s621	False	
+226.396	226.037	-0.5723770491803278	0	PA_without_intermediate	ward_and_allport	82	16.0	poldrack-single-stim	s621	False	
+227.251	226.4	-0.08037704918032784	0	PA_without_intermediate	ward_and_allport	71	16.0	poldrack-single-stim	s621	False	
+227.469	227.252	-0.7143770491803278	0	PA_without_intermediate	ward_and_allport	89	16.0	poldrack-single-stim	s621	False	
+227.473	227.474	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	16.0	poldrack-single-stim	s621	True	
+233.005	229.751	2.322622950819672	1	PA_with_intermediate	ward_and_allport	89	17.0	poldrack-single-stim	s621	False	2.985
+233.322	233.006	-0.6153770491803279	0	PA_with_intermediate	ward_and_allport	82	17.0	poldrack-single-stim	s621	False	
+234.23	233.327	-0.028377049180327844	0	PA_with_intermediate	ward_and_allport	89	17.0	poldrack-single-stim	s621	False	
+234.633	234.231	-0.5293770491803278	0	PA_with_intermediate	ward_and_allport	71	17.0	poldrack-single-stim	s621	False	
+235.424	234.637	-0.14437704918032784	0	PA_with_intermediate	ward_and_allport	82	17.0	poldrack-single-stim	s621	False	
+235.88	235.425	-0.47637704918032786	0	PA_with_intermediate	ward_and_allport	71	17.0	poldrack-single-stim	s621	False	
+235.884	235.885	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	17.0	poldrack-single-stim	s621	True	
+242.121	239.522	1.667622950819672	1	PA_without_intermediate	ward_and_allport	82	18.0	poldrack-single-stim	s621	False	2.985
+242.536	242.122	-0.5173770491803279	0	PA_without_intermediate	ward_and_allport	89	18.0	poldrack-single-stim	s621	False	
+244.29	242.54	0.8186229508196722	0	PA_without_intermediate	ward_and_allport	82	18.0	poldrack-single-stim	s621	False	
+244.662	244.291	-0.5603770491803278	0	PA_without_intermediate	ward_and_allport	89	18.0	poldrack-single-stim	s621	False	
+246.279	244.666	0.6816229508196722	0	PA_without_intermediate	ward_and_allport	82	18.0	poldrack-single-stim	s621	False	
+246.696	246.28	-0.5153770491803279	0	PA_without_intermediate	ward_and_allport	71	18.0	poldrack-single-stim	s621	False	
+246.702	246.703	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	18.0	poldrack-single-stim	s621	True	
+251.077	249.116	1.0296229508196721	1	PA_without_intermediate	ward_and_allport	89	19.0	poldrack-single-stim	s621	False	2.985
+251.701	251.077	-0.3073770491803278	0	PA_without_intermediate	ward_and_allport	82	19.0	poldrack-single-stim	s621	False	
+252.187	251.705	-0.44937704918032784	0	PA_without_intermediate	ward_and_allport	89	19.0	poldrack-single-stim	s621	False	
+252.828	252.189	-0.29237704918032786	0	PA_without_intermediate	ward_and_allport	82	19.0	poldrack-single-stim	s621	False	
+253.451	252.832	-0.3123770491803278	0	PA_without_intermediate	ward_and_allport	89	19.0	poldrack-single-stim	s621	False	
+253.969	253.453	-0.41537704918032786	0	PA_without_intermediate	ward_and_allport	71	19.0	poldrack-single-stim	s621	False	
+253.974	253.975	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	19.0	poldrack-single-stim	s621	True	
+258.014	255.98	1.102622950819672	1	PA_with_intermediate	ward_and_allport	89	20.0	poldrack-single-stim	s621	False	2.985
+258.457	258.014	-0.48837704918032787	0	PA_with_intermediate	ward_and_allport	82	20.0	poldrack-single-stim	s621	False	
+259.064	258.463	-0.33037704918032784	0	PA_with_intermediate	ward_and_allport	89	20.0	poldrack-single-stim	s621	False	
+259.51	259.065	-0.48637704918032787	0	PA_with_intermediate	ward_and_allport	71	20.0	poldrack-single-stim	s621	False	
+260.534	259.515	0.08762295081967215	0	PA_with_intermediate	ward_and_allport	82	20.0	poldrack-single-stim	s621	False	
+260.808	260.535	-0.6583770491803278	0	PA_with_intermediate	ward_and_allport	89	20.0	poldrack-single-stim	s621	False	
+260.812	260.813	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	20.0	poldrack-single-stim	s621	True	
+266.872	262.817	3.123622950819672	1	PA_with_intermediate	ward_and_allport	82	21.0	poldrack-single-stim	s621	False	2.985
+267.205	266.874	-0.6003770491803279	0	PA_with_intermediate	ward_and_allport	89	21.0	poldrack-single-stim	s621	False	
+267.881	267.212	-0.26237704918032784	0	PA_with_intermediate	ward_and_allport	82	21.0	poldrack-single-stim	s621	False	
+268.259	267.882	-0.5543770491803278	0	PA_with_intermediate	ward_and_allport	71	21.0	poldrack-single-stim	s621	False	
+268.7	268.263	-0.4943770491803278	0	PA_with_intermediate	ward_and_allport	89	21.0	poldrack-single-stim	s621	False	
+269.191	268.701	-0.44137704918032783	0	PA_with_intermediate	ward_and_allport	82	21.0	poldrack-single-stim	s621	False	
+269.196	269.197	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	21.0	poldrack-single-stim	s621	True	
+275.366	271.201	3.233622950819672	1	PA_with_intermediate	ward_and_allport	71	22.0	poldrack-single-stim	s621	False	2.985
+275.637	275.367	-0.6613770491803278	0	PA_with_intermediate	ward_and_allport	89	22.0	poldrack-single-stim	s621	False	
+276.938	275.641	0.36562295081967217	0	PA_with_intermediate	ward_and_allport	71	22.0	poldrack-single-stim	s621	False	
+277.57	276.939	-0.30037704918032787	0	PA_with_intermediate	ward_and_allport	82	22.0	poldrack-single-stim	s621	False	
+277.956	277.575	-0.5503770491803278	0	PA_with_intermediate	ward_and_allport	89	22.0	poldrack-single-stim	s621	False	
+278.292	277.958	-0.5973770491803279	0	PA_with_intermediate	ward_and_allport	82	22.0	poldrack-single-stim	s621	False	
+278.302	278.303	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	22.0	poldrack-single-stim	s621	True	
+285.309	280.717	3.660622950819672	1	PA_without_intermediate	ward_and_allport	82	23.0	poldrack-single-stim	s621	False	2.985
+286.429	285.31	0.18762295081967215	0	PA_without_intermediate	ward_and_allport	71	23.0	poldrack-single-stim	s621	False	
+287.464	286.435	0.09762295081967215	0	PA_without_intermediate	ward_and_allport	82	23.0	poldrack-single-stim	s621	False	
+287.906	287.465	-0.4903770491803278	0	PA_without_intermediate	ward_and_allport	89	23.0	poldrack-single-stim	s621	False	
+289.311	287.912	0.46762295081967215	0	PA_without_intermediate	ward_and_allport	82	23.0	poldrack-single-stim	s621	False	
+289.659	289.312	-0.5843770491803278	0	PA_without_intermediate	ward_and_allport	71	23.0	poldrack-single-stim	s621	False	
+289.665	289.666	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	23.0	poldrack-single-stim	s621	True	
+295.75	292.488	2.330622950819672	1	PA_with_intermediate	ward_and_allport	71	24.0	poldrack-single-stim	s621	False	2.985
+296.043	295.751	-0.6393770491803279	0	PA_with_intermediate	ward_and_allport	82	24.0	poldrack-single-stim	s621	False	
+296.594	296.049	-0.38637704918032784	0	PA_with_intermediate	ward_and_allport	71	24.0	poldrack-single-stim	s621	False	
+296.879	296.594	-0.6463770491803278	0	PA_with_intermediate	ward_and_allport	89	24.0	poldrack-single-stim	s621	False	
+297.486	296.886	-0.33137704918032784	0	PA_with_intermediate	ward_and_allport	82	24.0	poldrack-single-stim	s621	False	
+297.694	297.487	-0.7243770491803279	0	PA_with_intermediate	ward_and_allport	89	24.0	poldrack-single-stim	s621	False	
+297.702	297.703	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	24.0	poldrack-single-stim	s621	True	
+305.56	301.886	2.7426229508196722	1	PA_with_intermediate	ward_and_allport	71	25.0	poldrack-single-stim	s621	False	2.985
+305.851	305.561	-0.6413770491803279	0	PA_with_intermediate	ward_and_allport	89	25.0	poldrack-single-stim	s621	False	
+306.654	305.857	-0.13437704918032783	0	PA_with_intermediate	ward_and_allport	71	25.0	poldrack-single-stim	s621	False	
+307.233	306.655	-0.35337704918032786	0	PA_with_intermediate	ward_and_allport	82	25.0	poldrack-single-stim	s621	False	
+307.565	307.239	-0.6053770491803279	0	PA_with_intermediate	ward_and_allport	89	25.0	poldrack-single-stim	s621	False	
+307.924	307.566	-0.5733770491803278	0	PA_with_intermediate	ward_and_allport	82	25.0	poldrack-single-stim	s621	False	
+307.932	307.933	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	25.0	poldrack-single-stim	s621	True	
+314.624	311.299	2.393622950819672	1	PA_with_intermediate	ward_and_allport	89	26.0	poldrack-single-stim	s621	False	2.985
+315.086	314.625	-0.47037704918032786	0	PA_with_intermediate	ward_and_allport	71	26.0	poldrack-single-stim	s621	False	
+316.287	315.091	0.26462295081967213	0	PA_with_intermediate	ward_and_allport	89	26.0	poldrack-single-stim	s621	False	
+316.673	316.289	-0.5473770491803278	0	PA_with_intermediate	ward_and_allport	82	26.0	poldrack-single-stim	s621	False	
+317.265	316.679	-0.34537704918032786	0	PA_with_intermediate	ward_and_allport	71	26.0	poldrack-single-stim	s621	False	
+317.482	317.266	-0.7153770491803279	0	PA_with_intermediate	ward_and_allport	89	26.0	poldrack-single-stim	s621	False	
+317.489	317.49	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	26.0	poldrack-single-stim	s621	True	
+325.701	319.496	5.273622950819672	1	PA_without_intermediate	ward_and_allport	82	27.0	poldrack-single-stim	s621	False	2.985
+326.091	325.702	-0.5423770491803278	0	PA_without_intermediate	ward_and_allport	71	27.0	poldrack-single-stim	s621	False	
+327.097	326.097	0.06862295081967215	0	PA_without_intermediate	ward_and_allport	82	27.0	poldrack-single-stim	s621	False	
+327.402	327.098	-0.6273770491803279	0	PA_without_intermediate	ward_and_allport	71	27.0	poldrack-single-stim	s621	False	
+328.922	327.408	0.5826229508196722	0	PA_without_intermediate	ward_and_allport	82	27.0	poldrack-single-stim	s621	False	
+329.34	328.923	-0.5143770491803279	0	PA_without_intermediate	ward_and_allport	89	27.0	poldrack-single-stim	s621	False	
+329.348	329.349	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	27.0	poldrack-single-stim	s621	True	
+334.708	331.763	2.013622950819672	1	PA_with_intermediate	ward_and_allport	89	28.0	poldrack-single-stim	s621	False	2.985
+335.098	334.709	-0.5423770491803278	0	PA_with_intermediate	ward_and_allport	82	28.0	poldrack-single-stim	s621	False	
+335.532	335.105	-0.5043770491803279	0	PA_with_intermediate	ward_and_allport	89	28.0	poldrack-single-stim	s621	False	
+335.871	335.533	-0.5933770491803279	0	PA_with_intermediate	ward_and_allport	71	28.0	poldrack-single-stim	s621	False	
+336.475	335.876	-0.33237704918032784	0	PA_with_intermediate	ward_and_allport	82	28.0	poldrack-single-stim	s621	False	
+336.69	336.477	-0.7183770491803279	0	PA_with_intermediate	ward_and_allport	89	28.0	poldrack-single-stim	s621	False	
+336.699	336.7	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	28.0	poldrack-single-stim	s621	True	
+341.73	339.523	1.2756229508196721	1	PA_without_intermediate	ward_and_allport	89	29.0	poldrack-single-stim	s621	False	2.985
+342.46	341.731	-0.20237704918032784	0	PA_without_intermediate	ward_and_allport	82	29.0	poldrack-single-stim	s621	False	
+343.227	342.47	-0.17437704918032784	0	PA_without_intermediate	ward_and_allport	89	29.0	poldrack-single-stim	s621	False	
+343.513	343.227	-0.6453770491803279	0	PA_without_intermediate	ward_and_allport	71	29.0	poldrack-single-stim	s621	False	
+343.857	343.52	-0.5943770491803279	0	PA_without_intermediate	ward_and_allport	89	29.0	poldrack-single-stim	s621	False	
+344.186	343.858	-0.6033770491803279	0	PA_without_intermediate	ward_and_allport	82	29.0	poldrack-single-stim	s621	False	
+344.193	344.194	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	29.0	poldrack-single-stim	s621	True	
+355.259	352.291	2.0366229508196723	1	PA_without_intermediate	ward_and_allport	71	30.0	poldrack-single-stim	s621	False	2.985
+355.581	355.259	-0.6093770491803279	0	PA_without_intermediate	ward_and_allport	89	30.0	poldrack-single-stim	s621	False	
+355.954	355.588	-0.5653770491803278	0	PA_without_intermediate	ward_and_allport	71	30.0	poldrack-single-stim	s621	False	
+356.31	355.955	-0.5763770491803278	0	PA_without_intermediate	ward_and_allport	89	30.0	poldrack-single-stim	s621	False	
+357.2	356.317	-0.04837704918032784	0	PA_without_intermediate	ward_and_allport	71	30.0	poldrack-single-stim	s621	False	
+357.514	357.201	-0.6183770491803279	0	PA_without_intermediate	ward_and_allport	82	30.0	poldrack-single-stim	s621	False	
+357.524	357.525	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	30.0	poldrack-single-stim	s621	True	
+363.449	359.668	2.849622950819672	1	PA_without_intermediate	ward_and_allport	82	31.0	poldrack-single-stim	s621	False	2.985
+363.817	363.449	-0.5633770491803278	0	PA_without_intermediate	ward_and_allport	71	31.0	poldrack-single-stim	s621	False	
+365.338	363.824	0.5826229508196722	0	PA_without_intermediate	ward_and_allport	82	31.0	poldrack-single-stim	s621	False	
+365.673	365.34	-0.5983770491803279	0	PA_without_intermediate	ward_and_allport	89	31.0	poldrack-single-stim	s621	False	
+366.637	365.682	0.023622950819672157	0	PA_without_intermediate	ward_and_allport	82	31.0	poldrack-single-stim	s621	False	
+366.927	366.639	-0.6433770491803279	0	PA_without_intermediate	ward_and_allport	71	31.0	poldrack-single-stim	s621	False	
+366.934	366.935	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	31.0	poldrack-single-stim	s621	True	
+377.47	374.112	2.426622950819672	1	PA_without_intermediate	ward_and_allport	89	32.0	poldrack-single-stim	s621	False	2.985
+378.002	377.471	-0.40037704918032785	0	PA_without_intermediate	ward_and_allport	71	32.0	poldrack-single-stim	s621	False	
+378.42	378.011	-0.5223770491803278	0	PA_without_intermediate	ward_and_allport	89	32.0	poldrack-single-stim	s621	False	
+378.83	378.42	-0.5213770491803278	0	PA_without_intermediate	ward_and_allport	82	32.0	poldrack-single-stim	s621	False	
+379.215	378.839	-0.5553770491803278	0	PA_without_intermediate	ward_and_allport	89	32.0	poldrack-single-stim	s621	False	
+379.533	379.216	-0.6143770491803279	0	PA_without_intermediate	ward_and_allport	71	32.0	poldrack-single-stim	s621	False	
+379.542	379.543	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	32.0	poldrack-single-stim	s621	True	
+386.487	382.367	3.188622950819672	1	PA_with_intermediate	ward_and_allport	71	33.0	poldrack-single-stim	s621	False	2.985
+386.84	386.488	-0.5793770491803278	0	PA_with_intermediate	ward_and_allport	82	33.0	poldrack-single-stim	s621	False	
+387.309	386.847	-0.46937704918032785	0	PA_with_intermediate	ward_and_allport	71	33.0	poldrack-single-stim	s621	False	
+387.64	387.31	-0.6013770491803279	0	PA_with_intermediate	ward_and_allport	89	33.0	poldrack-single-stim	s621	False	
+388.132	387.648	-0.44737704918032783	0	PA_with_intermediate	ward_and_allport	82	33.0	poldrack-single-stim	s621	False	
+388.401	388.132	-0.6623770491803278	0	PA_with_intermediate	ward_and_allport	71	33.0	poldrack-single-stim	s621	False	
+388.409	388.41	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	33.0	poldrack-single-stim	s621	True	
+394.507	391.368	2.207622950819672	1	PA_with_intermediate	ward_and_allport	82	34.0	poldrack-single-stim	s621	False	2.985
+395.068	394.509	-0.3723770491803278	0	PA_with_intermediate	ward_and_allport	71	34.0	poldrack-single-stim	s621	False	
+395.785	395.076	-0.22237704918032786	0	PA_with_intermediate	ward_and_allport	82	34.0	poldrack-single-stim	s621	False	
+396.055	395.787	-0.6633770491803278	0	PA_with_intermediate	ward_and_allport	89	34.0	poldrack-single-stim	s621	False	
+396.594	396.061	-0.39837704918032785	0	PA_with_intermediate	ward_and_allport	71	34.0	poldrack-single-stim	s621	False	
+396.938	396.595	-0.5883770491803278	0	PA_with_intermediate	ward_and_allport	82	34.0	poldrack-single-stim	s621	False	
+396.948	396.949	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	34.0	poldrack-single-stim	s621	True	
+402.382	399.098	2.352622950819672	1	PA_without_intermediate	ward_and_allport	71	35.0	poldrack-single-stim	s621	False	2.985
+402.758	402.382	-0.5553770491803278	0	PA_without_intermediate	ward_and_allport	82	35.0	poldrack-single-stim	s621	False	
+403.259	402.766	-0.4383770491803278	0	PA_without_intermediate	ward_and_allport	71	35.0	poldrack-single-stim	s621	False	
+403.629	403.261	-0.5633770491803278	0	PA_without_intermediate	ward_and_allport	89	35.0	poldrack-single-stim	s621	False	
+404.042	403.636	-0.5253770491803278	0	PA_without_intermediate	ward_and_allport	71	35.0	poldrack-single-stim	s621	False	
+404.639	404.043	-0.33537704918032785	0	PA_without_intermediate	ward_and_allport	82	35.0	poldrack-single-stim	s621	False	
+404.644	404.645	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	35.0	poldrack-single-stim	s621	True	
+410.816	407.33	2.554622950819672	1	PA_without_intermediate	ward_and_allport	71	36.0	poldrack-single-stim	s621	False	2.985
+411.536	410.818	-0.21337704918032785	0	PA_without_intermediate	ward_and_allport	82	36.0	poldrack-single-stim	s621	False	
+412.413	411.544	-0.06237704918032785	0	PA_without_intermediate	ward_and_allport	71	36.0	poldrack-single-stim	s621	False	
+412.801	412.414	-0.5443770491803278	0	PA_without_intermediate	ward_and_allport	82	36.0	poldrack-single-stim	s621	False	
+413.187	412.81	-0.5543770491803278	0	PA_without_intermediate	ward_and_allport	71	36.0	poldrack-single-stim	s621	False	
+413.428	413.188	-0.6913770491803278	0	PA_without_intermediate	ward_and_allport	89	36.0	poldrack-single-stim	s621	False	
+413.435	413.436	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	36.0	poldrack-single-stim	s621	True	
+419.169	416.53	1.707622950819672	1	PA_with_intermediate	ward_and_allport	89	37.0	poldrack-single-stim	s621	False	2.985
+419.569	419.17	-0.5323770491803278	0	PA_with_intermediate	ward_and_allport	71	37.0	poldrack-single-stim	s621	False	
+419.964	419.575	-0.5423770491803278	0	PA_with_intermediate	ward_and_allport	89	37.0	poldrack-single-stim	s621	False	
+420.341	419.964	-0.5543770491803278	0	PA_with_intermediate	ward_and_allport	82	37.0	poldrack-single-stim	s621	False	
+421.73	420.35	0.44862295081967213	0	PA_with_intermediate	ward_and_allport	71	37.0	poldrack-single-stim	s621	False	
+421.946	421.731	-0.7163770491803279	0	PA_with_intermediate	ward_and_allport	89	37.0	poldrack-single-stim	s621	False	
+421.953	421.954	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	37.0	poldrack-single-stim	s621	True	
+426.846	423.961	1.953622950819672	1	PA_without_intermediate	ward_and_allport	89	38.0	poldrack-single-stim	s621	False	2.985
+427.109	426.848	-0.6703770491803278	0	PA_without_intermediate	ward_and_allport	71	38.0	poldrack-single-stim	s621	False	
+428.202	427.115	0.15562295081967215	0	PA_without_intermediate	ward_and_allport	89	38.0	poldrack-single-stim	s621	False	
+428.549	428.203	-0.5853770491803278	0	PA_without_intermediate	ward_and_allport	82	38.0	poldrack-single-stim	s621	False	
+429.167	428.555	-0.31937704918032783	0	PA_without_intermediate	ward_and_allport	89	38.0	poldrack-single-stim	s621	False	
+429.424	429.168	-0.6753770491803278	0	PA_without_intermediate	ward_and_allport	71	38.0	poldrack-single-stim	s621	False	
+429.43	429.431	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	38.0	poldrack-single-stim	s621	True	
+433.792	431.437	1.423622950819672	1	PA_without_intermediate	ward_and_allport	71	39.0	poldrack-single-stim	s621	False	2.985
+434.229	433.793	-0.4953770491803278	0	PA_without_intermediate	ward_and_allport	82	39.0	poldrack-single-stim	s621	False	
+434.701	434.237	-0.46737704918032785	0	PA_without_intermediate	ward_and_allport	71	39.0	poldrack-single-stim	s621	False	
+435.239	434.702	-0.39437704918032784	0	PA_without_intermediate	ward_and_allport	82	39.0	poldrack-single-stim	s621	False	
+435.794	435.247	-0.38437704918032783	0	PA_without_intermediate	ward_and_allport	71	39.0	poldrack-single-stim	s621	False	
+436.132	435.795	-0.5943770491803279	0	PA_without_intermediate	ward_and_allport	89	39.0	poldrack-single-stim	s621	False	
+436.14	436.141	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	39.0	poldrack-single-stim	s621	True	
+441.616	438.147	2.537622950819672	1	PA_with_intermediate	ward_and_allport	82	40.0	poldrack-single-stim	s621	False	2.985
+441.948	441.617	-0.6003770491803279	0	PA_with_intermediate	ward_and_allport	89	40.0	poldrack-single-stim	s621	False	
+442.836	441.953	-0.04837704918032784	0	PA_with_intermediate	ward_and_allport	82	40.0	poldrack-single-stim	s621	False	
+443.144	442.837	-0.6243770491803279	0	PA_with_intermediate	ward_and_allport	71	40.0	poldrack-single-stim	s621	False	
+443.533	443.153	-0.5513770491803278	0	PA_with_intermediate	ward_and_allport	89	40.0	poldrack-single-stim	s621	False	
+443.773	443.534	-0.6923770491803278	0	PA_with_intermediate	ward_and_allport	71	40.0	poldrack-single-stim	s621	False	
+443.782	443.783	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	40.0	poldrack-single-stim	s621	True	
+448.123	446.335	0.8566229508196721	1	PA_without_intermediate	ward_and_allport	71	41.0	poldrack-single-stim	s621	False	2.985
+448.404	448.125	-0.6523770491803278	0	PA_without_intermediate	ward_and_allport	89	41.0	poldrack-single-stim	s621	False	
+449.401	448.413	0.056622950819672155	0	PA_without_intermediate	ward_and_allport	71	41.0	poldrack-single-stim	s621	False	
+449.679	449.402	-0.6543770491803278	0	PA_without_intermediate	ward_and_allport	89	41.0	poldrack-single-stim	s621	False	
+450.261	449.685	-0.35537704918032786	0	PA_without_intermediate	ward_and_allport	71	41.0	poldrack-single-stim	s621	False	
+450.791	450.262	-0.40237704918032785	0	PA_without_intermediate	ward_and_allport	82	41.0	poldrack-single-stim	s621	False	
+450.801	450.802	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	41.0	poldrack-single-stim	s621	True	
+457.012	453.08	3.0006229508196722	1	PA_with_intermediate	ward_and_allport	89	42.0	poldrack-single-stim	s621	False	2.985
+457.313	457.013	-0.6313770491803279	0	PA_with_intermediate	ward_and_allport	71	42.0	poldrack-single-stim	s621	False	
+457.7	457.318	-0.5493770491803278	0	PA_with_intermediate	ward_and_allport	89	42.0	poldrack-single-stim	s621	False	
+458.078	457.702	-0.5553770491803278	0	PA_with_intermediate	ward_and_allport	82	42.0	poldrack-single-stim	s621	False	
+458.411	458.085	-0.6053770491803279	0	PA_with_intermediate	ward_and_allport	71	42.0	poldrack-single-stim	s621	False	
+458.807	458.413	-0.5373770491803278	0	PA_with_intermediate	ward_and_allport	82	42.0	poldrack-single-stim	s621	False	
+458.82	458.821	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	42.0	poldrack-single-stim	s621	True	
+465.399	462.869	1.598622950819672	1	PA_with_intermediate	ward_and_allport	89	43.0	poldrack-single-stim	s621	False	2.985
+465.727	465.4	-0.6043770491803279	0	PA_with_intermediate	ward_and_allport	82	43.0	poldrack-single-stim	s621	False	
+466.178	465.734	-0.48737704918032787	0	PA_with_intermediate	ward_and_allport	89	43.0	poldrack-single-stim	s621	False	
+466.509	466.18	-0.6023770491803279	0	PA_with_intermediate	ward_and_allport	71	43.0	poldrack-single-stim	s621	False	
+466.871	466.516	-0.5763770491803278	0	PA_with_intermediate	ward_and_allport	82	43.0	poldrack-single-stim	s621	False	
+467.146	466.872	-0.6573770491803278	0	PA_with_intermediate	ward_and_allport	71	43.0	poldrack-single-stim	s621	False	
+467.156	467.157	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	43.0	poldrack-single-stim	s621	True	
+472.931	469.439	2.560622950819672	1	PA_with_intermediate	ward_and_allport	71	44.0	poldrack-single-stim	s621	False	2.985
+473.177	472.932	-0.6863770491803278	0	PA_with_intermediate	ward_and_allport	89	44.0	poldrack-single-stim	s621	False	
+473.509	473.182	-0.6043770491803279	0	PA_with_intermediate	ward_and_allport	71	44.0	poldrack-single-stim	s621	False	
+474.072	473.511	-0.3703770491803278	0	PA_with_intermediate	ward_and_allport	82	44.0	poldrack-single-stim	s621	False	
+474.382	474.08	-0.6293770491803279	0	PA_with_intermediate	ward_and_allport	89	44.0	poldrack-single-stim	s621	False	
+474.676	474.382	-0.6373770491803279	0	PA_with_intermediate	ward_and_allport	71	44.0	poldrack-single-stim	s621	False	
+474.686	474.687	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	44.0	poldrack-single-stim	s621	True	
+485.87	481.838	3.100622950819672	1	PA_with_intermediate	ward_and_allport	82	45.0	poldrack-single-stim	s621	False	2.985
+486.185	485.871	-0.6173770491803279	0	PA_with_intermediate	ward_and_allport	71	45.0	poldrack-single-stim	s621	False	
+487.04	486.195	-0.08637704918032785	0	PA_with_intermediate	ward_and_allport	82	45.0	poldrack-single-stim	s621	False	
+487.433	487.041	-0.5393770491803278	0	PA_with_intermediate	ward_and_allport	89	45.0	poldrack-single-stim	s621	False	
+487.931	487.444	-0.44437704918032783	0	PA_with_intermediate	ward_and_allport	71	45.0	poldrack-single-stim	s621	False	
+488.219	487.932	-0.6443770491803279	0	PA_with_intermediate	ward_and_allport	89	45.0	poldrack-single-stim	s621	False	
+488.231	488.232	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	45.0	poldrack-single-stim	s621	True	
+492.785	490.241	1.612622950819672	1	PA_with_intermediate	ward_and_allport	82	46.0	poldrack-single-stim	s621	False	2.985
+493.096	492.786	-0.6213770491803279	0	PA_with_intermediate	ward_and_allport	89	46.0	poldrack-single-stim	s621	False	
+493.725	493.103	-0.3093770491803278	0	PA_with_intermediate	ward_and_allport	82	46.0	poldrack-single-stim	s621	False	
+493.982	493.726	-0.6753770491803278	0	PA_with_intermediate	ward_and_allport	71	46.0	poldrack-single-stim	s621	False	
+494.337	493.988	-0.5823770491803278	0	PA_with_intermediate	ward_and_allport	89	46.0	poldrack-single-stim	s621	False	
+494.596	494.337	-0.6723770491803278	0	PA_with_intermediate	ward_and_allport	82	46.0	poldrack-single-stim	s621	False	
+494.604	494.605	-0.9323770491803278	0	PA_with_intermediate	ward_and_allport	-1	46.0	poldrack-single-stim	s621	True	
+499.79	496.612	2.2466229508196722	1	PA_without_intermediate	ward_and_allport	82	47.0	poldrack-single-stim	s621	False	2.985
+500.134	499.791	-0.5883770491803278	0	PA_without_intermediate	ward_and_allport	89	47.0	poldrack-single-stim	s621	False	
+504.236	500.142	3.162622950819672	0	PA_without_intermediate	ward_and_allport	82	47.0	poldrack-single-stim	s621	False	
+504.576	504.236	-0.5913770491803279	0	PA_without_intermediate	ward_and_allport	71	47.0	poldrack-single-stim	s621	False	
+505.62	504.585	0.10362295081967215	0	PA_without_intermediate	ward_and_allport	82	47.0	poldrack-single-stim	s621	False	
+506.054	505.621	-0.4983770491803278	0	PA_without_intermediate	ward_and_allport	89	47.0	poldrack-single-stim	s621	False	
+506.068	506.069	-0.9323770491803278	0	PA_without_intermediate	ward_and_allport	-1	47.0	poldrack-single-stim	s621	True	
