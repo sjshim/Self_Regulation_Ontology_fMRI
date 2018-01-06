@@ -128,8 +128,9 @@ RUN mkdir /Data
 RUN mkdir /output
 RUN mkdir /event_files
 ADD Data/event_files /event_files
-ADD fmri_analysis /home
+ADD fmri_analysis /SRO
 
+WORKDIR /SRO
 CMD ["/bin/bash"]
 
 
