@@ -3,10 +3,11 @@
 #SBATCH --output=.out/{sid}-task_analysis_noRT.out
 #SBATCH --error=.err/{sid}-task_analysis_noRT.err
 #SBATCH --time=36:00:00
-#SBATCH --cpus-per-task=3
+#SBATCH --cpus-per-task=16
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ieisenbe@stanford.edu
 #SBATCH --ntasks-per-node=1
+module load system
 module load singularity
 export PYTHONPATH=""
 # set uo paths
@@ -17,5 +18,11 @@ fmri_prep_loc=/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontol
 events_dir=~/Self_Regulation_Ontology_fMRI/Data/event_files/
 output_dir=/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/output_noRT
 # run singularity, scratch is automatically mounted
-singularity run -B $fmri_prep_loc:/Data $singularity_loc $output_dir --participant_label {sid} --tasks {tasks}
+# run singularity, scratch is automatically mounted
+singularity exec -B ${fmri_prep_loc}:/Data  -B ${output_dir}:/output  ${singularity_loc} \
+        python /SRO/scripts/task_analysis.py /output /Data --events_dir ${events_dir} --participant_label {sid} --tasks {tasks} --overwrite_event --ignore_rt
+
+
+
+
 
