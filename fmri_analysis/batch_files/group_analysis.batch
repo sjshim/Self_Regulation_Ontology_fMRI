@@ -10,7 +10,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=16
 #SBATCH -p russpold
-module load system
+#module load system
 module load singularity
 export PYTHONPATH=""
 # set up paths
@@ -22,6 +22,6 @@ analysis_loc=`sed '6q;d' singularity_config.txt`
 output_dir=${analysis_loc}/{output}/2ndLevel
 
 # run singularity, scratch is automatically mounted
-singularity run -B ${analysis_loc}:/Data -B ${output_dir}:/output ${singularity_loc} \
+singularity exec -B ${analysis_loc}:/Data -B ${output_dir}:/output ${singularity_loc} \
         python /SRO/scripts/group_analysis.py /output --data_dir /Data/{output}/1stLevel --mask_dir /Data/fmriprep/fmriprep
 
