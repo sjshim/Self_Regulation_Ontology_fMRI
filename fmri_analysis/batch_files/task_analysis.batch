@@ -15,9 +15,10 @@ export PYTHONPATH=""
 img=`sed '2q;d' singularity_config.txt`
 base_singularity=`sed '4q;d' singularity_config.txt`
 singularity_loc=${base_singularity}/$img
-fmri_prep_loc=/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/fmriprep/fmriprep/
+analysis_loc=`sed '6q;d' singularity_config.txt`
+fmri_prep_loc=${analysis_loc}/fmriprep/fmriprep/
+output_dir=${analysis_loc}/output
 events_dir=~/Self_Regulation_Ontology_fMRI/Data/event_files/
-output_dir=/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/output
 
 # run singularity, scratch is automatically mounted
 singularity exec -B ${fmri_prep_loc}:/Data  -B ${output_dir}:/output  ${singularity_loc} \
