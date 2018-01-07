@@ -43,7 +43,7 @@ if args.mask_dir:
 tasks = ['ANT', 'CCTHot', 'discountFix',
          'DPX', 'motorSelectiveStop',
          'stopSignal', 'stroop', 
-         'twoByTwo', 'WATT3']
+         'surveyMedley', 'twoByTwo', 'WATT3']
 if args.tasks:
     tasks = args.tasks
 
