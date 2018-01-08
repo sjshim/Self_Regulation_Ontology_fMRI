@@ -294,3 +294,6 @@ for parcellation_name, parcellation_file in parcellation_files:
     projections_df.insert(0, 'subj', subj)
     projections_df.insert(0, 'contrast', contrast)
     neural_feature_mat = projections_df.pivot(index='subj', columns='contrast')
+    neural_feature_mat.to_json(join(output_dir, 
+                                    '%s_neural_features.json' 
+                                    % parcellation_name))
