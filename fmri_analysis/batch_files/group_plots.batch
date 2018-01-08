@@ -10,12 +10,17 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=16
 #SBATCH -p russpold
+# module load system
 module load singularity
 export PYTHONPATH=""
 # set up paths
-singularity_loc=/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/nipype_image-2017-10-03-da77dd426e45.img
-data_dir=/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/{output}/2ndLevel/custom_modeling
-# run singularity, scratch is automatically mounted
-singularity run $singularity_loc /scratch/PI/russpold/work/ieisenbe/uh2/{output}/2ndLevel/Plots --script group_plots.py  \
-    --data_dir $data_dir
+# scratch is automatically mounted
+img=`sed '2q;d' singularity_config.txt`
+base_singularity=`sed '4q;d' singularity_config.txt`
+singularity_loc=${base_singularity}/$img
+analysis_loc=`sed '6q;d' singularity_config.txt`
+output_dir=${analysis_loc}/{output}/2ndLevel
 
+# run singularity, scratch is automatically mounted
+singularity exec -B ${analysis_loc}:/Data -B ${output_dir}:/output ${singularity_loc} \
+        python /SRO/scripts/group_plots.py /output/Plots --data_dir /Data/{output}/2ndLevel/Plots

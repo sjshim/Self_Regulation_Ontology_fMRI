@@ -289,4 +289,8 @@ for parcellation_name, parcellation_file in parcellation_files:
     
     # create a subject x neural feature vector where each column is a component
     # for one contrast
+    subj = [i[:4] for i in projections_df.index]
+    contrast = [i[5:] for i in projections_df.index]
+    projections_df.insert(0, 'subj', subj)
+    projections_df.insert(0, 'contrast', contrast)
     neural_feature_mat = projections_df.pivot(index='subj', columns='contrast')
