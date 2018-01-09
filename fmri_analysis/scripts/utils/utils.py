@@ -11,6 +11,10 @@ import pandas as pd
 import pickle
 import re
 import shutil
+from sklearn.linear_model import LogisticRegressionCV
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import cross_val_predict
+
 # ********************************************************
 # Behavioral Utility Functions
 # ********************************************************
@@ -611,7 +615,6 @@ def get_contrast_names(contrast_path):
     contrast_names = [c[0] for c in contrasts]
     return contrast_names
 
-
 # function to get TS within labels
 def project_contrast(img_files, parcellation_file, mask_file):
     parcellation = image.load_img(parcellation_file)
@@ -632,13 +635,97 @@ def project_contrast(img_files, parcellation_file, mask_file):
     time_series = masker.fit_transform(resampled_images)
     return time_series, masker
 
+def create_projection_df(parcellation_file, mask_file, 
+                         data_dir, tasks, filename=None):
+    
+    # project contrasts into lower dimensional space    
+    projections = []
+    index = []
+    for task in tasks:
+        # get all contrasts
+        contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))
+        if len(contrast_path)>0:
+            contrast_path = contrast_path[0]
+        else:
+            continue # move to next iteration if no contrast files found
+        contrast_names = get_contrast_names(contrast_path)
+        # for each contrast, project into space defined by parcellation file
+        for i,name in enumerate(contrast_names):
+            func_files = sorted(glob(join(data_dir, '*%s/zstat%s.nii.gz' 
+                                          % (task, i+1))))
+            TS, masker = project_contrast(func_files,
+                                          parcellation_file, 
+                                          mask_file)
+            projections.append(TS)
+            index += [re.search('s[0-9][0-9][0-9]',f).group(0)
+                        + '_%s_%s' % (task, name)
+                        for f in func_files]
+    projections_df = pd.DataFrame(np.vstack(projections), index)
+    
+    # split index into column names
+    subj = [i[:4] for i in projections_df.index]
+    contrast = [i[5:] for i in projections_df.index]
+    projections_df.insert(0, 'subj', subj)
+    projections_df.insert(0, 'contrast', contrast)
+    
+    # save
+    if filename:
+        projections_df.to_json(filename)
+    return projections_df
+
+# functions on projections df
+def create_neural_feature_mat(projections_df, filename=None):
+    # if projections_df is a string, load the file
+    if type(projections_df) == str:
+        assert exists(projections_df)
+        projections_df = pd.read_json(projections_df)
+        
+    subj = [i[:4] for i in projections_df.index]
+    contrast = [i[5:] for i in projections_df.index]
+    projections_df.insert(0, 'subj', subj)
+    projections_df.insert(0, 'contrast', contrast)
+    neural_feature_mat = projections_df.pivot(index='subj', columns='contrast')
+    if filename:
+        neural_feature_mat.to_json(filename)
+    return neural_feature_mat
+
+def projections_corr(projections_df, remove_global=True, grouping=None):
+    """ Create a correlation matrix of a projections dataframe
+    
+    Args:
+        projections_df: a projection_df, as create by create_projection_df
+        remove_global: if True, subtract the mean contrast
+        grouping: "subj" or "contrast". If provided, average over the group
+        
+    Returns:
+        Correlation Matrix
+    """
+    # if projections_df is a string, load the file
+    if type(projections_df) == str:
+        assert exists(projections_df)
+        projections_df = pd.read_json(projections_df)
+    
+    if remove_global:
+        projections_df.iloc[:,2:] -= projections_df.mean()
+    if grouping:
+        projections_df = projections_df.groupby(grouping).mean()
+    return projections_df.T.corr()
 
 
 
-
-
-
-
-
-
+def get_confusion_matrix(projections_df, normalize=True):
+    # if projections_df is a string, load the file
+    if type(projections_df) == str:
+        assert exists(projections_df)
+        projections_df = pd.read_json(projections_df)
+        
+    X = projections_df.iloc[:, 2:]
+    y = projections_df.contrast
+    clf = LogisticRegressionCV(multi_class='multinomial')
+    predict = cross_val_predict(clf, X, y, cv=10)
+    cm = confusion_matrix(y, predict)
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+    return cm
+    
                                            

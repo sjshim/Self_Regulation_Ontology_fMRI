@@ -13,7 +13,8 @@ from os import makedirs
 from os.path import join
 import pandas as pd
 from utils.utils import concat_and_smooth, get_contrast_names
-from utils.utils import project_contrast
+from utils.utils import (create_neural_feature_mat, create_projections_df, 
+                         get_avg_corrs)
 import re
 import shutil
 
@@ -177,41 +178,15 @@ for n_comps in n_components_list:
                                     'canica%s_explicit_contrasts.nii.gz' 
                                     % n_comps))
     
-#    ##  get components grouping by subject
-#    canica = CanICA(mask = group_mask, n_components=n_comps, 
-#                    smoothing_fwhm=4.4, memory=join(working_dir, "nilearn_cache"), 
-#                    memory_level=2, threshold=3., 
-#                    verbose=10, random_state=0) # multi-level components modeling across subjects
-#    
-#    canica.fit(subject_map_files)
-#    masker = canica.masker_
-#    components_img = masker.inverse_transform(canica.components_)
-#    components_img.to_filename(join(output_dir, 
-#                                    'canica%s_subjwise_explicit_contrasts.nii.gz' 
-#                                    % n_comps))
-
 
 ##************* Get parcellation from established atlas ************
 ## get smith parcellation
 smith_networks = datasets.fetch_atlas_smith_2009()['rsn70']
-## create atlas
-## ref: https://nilearn.github.io/auto_examples/04_manipulating_images/plot_extract_rois_smith_atlas.html
-## this function takes whole brain networks and breaks them into contiguous
-## regions. extractor.index_ labels each region as corresponding to one
-## of the original brain maps
-#
-#extractor = RegionExtractor(smith_networks, min_region_size=800,
-     #                       threshold=98, thresholding_strategy='percentile')
 
 # ********************************************************
 # Helper functions
 # ********************************************************
 
-def get_avg_corr(projections_corr, subset1, subset2):
-    subset_corr = projections_corr.filter(regex=subset1) \
-                                       .filter(regex=subset2, axis=0)
-    indices = np.tril_indices_from(subset_corr, -1)
-    return subset_corr.values[indices].mean()
 
 
 # ********************************************************
@@ -234,66 +209,14 @@ parcellation_files = [('smith70', smith_networks),
                        ]
 
 for parcellation_name, parcellation_file in parcellation_files:
+    projection_filey = join(output_dir, '%s_projection.json' % parcellation_name)
     mask_file = join(output_dir, 'group_mask.nii.gz')
-    # project contrasts into lower dimensional space    
-    projections = []
-    index = []
-    for task in tasks:
-        # get all contrasts
-        contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))
-        if len(contrast_path)>0:
-            contrast_path = contrast_path[0]
-        else:
-            continue # move to next iteration if no contrast files found
-        contrast_names = get_contrast_names(contrast_path)
-        # for each contrast, project into space defined by parcellation file
-        for i,name in enumerate(contrast_names):
-            func_files = sorted(glob(join(data_dir, '*%s/zstat%s.nii.gz' 
-                                          % (task, i+1))))
-            TS, masker = project_contrast(func_files,
-                                          parcellation_file, 
-                                          mask_file)
-            projections.append(TS)
-            index += [re.search('s[0-9][0-9][0-9]',f).group(0)
-                        + '_%s_%s' % (task, name)
-                        for f in func_files]
-    projections_df = pd.DataFrame(np.vstack(projections), index)
-    projections_df.to_json(join(output_dir, '%s_projection.json' 
-                                % parcellation_name))
-
-    # create matrix of average correlations across contrasts
-    contrasts = sorted(np.unique([i[5:] for i in projections_df.index]))
-    avg_corrs = np.zeros((len(contrasts), len(contrasts)))
-    projections_corr = projections_df.T.corr()
-    for i, cont1 in enumerate(contrasts):
-        for j, cont2 in enumerate(contrasts[i:]):
-            avg_val = get_avg_corr(projections_corr, cont1, cont2)
-            avg_corrs[i,j+i] = avg_corrs[j+i,i] = avg_val
-    avg_corrs = pd.DataFrame(avg_corrs, index=contrasts, columns=contrasts)
-    avg_corrs.to_json(join(output_dir, 
-                                '%s_projection_avgcorr_contrast.json' 
-                                % parcellation_name))
-    
-    # create matrix of average correlations across subjects
-    subjects = sorted(np.unique([i[:4] for i in projections_df.index]))
-    avg_corrs = np.zeros((len(subjects), len(subjects)))
-    projections_corr = projections_df.T.corr()
-    for i, subj1 in enumerate(subjects):
-        for j, subj2 in enumerate(subjects[i:]):
-            avg_val = get_avg_corr(projections_corr, subj1, subj2)
-            avg_corrs[i,j+i] = avg_corrs[j+i,i] = avg_val
-    avg_corrs = pd.DataFrame(avg_corrs, index=subjects, columns=subjects)
-    avg_corrs.to_json(join(output_dir, 
-                                '%s_projection_avgcorr_subj.json' 
-                                % parcellation_name))
+    projections_df = create_projections_df(parcellation_file, mask_file, 
+                                           data_dir, tasks, projection_filey)
     
     # create a subject x neural feature vector where each column is a component
     # for one contrast
-    subj = [i[:4] for i in projections_df.index]
-    contrast = [i[5:] for i in projections_df.index]
-    projections_df.insert(0, 'subj', subj)
-    projections_df.insert(0, 'contrast', contrast)
-    neural_feature_mat = projections_df.pivot(index='subj', columns='contrast')
-    neural_feature_mat.to_json(join(output_dir, 
-                                    '%s_neural_features.json' 
-                                    % parcellation_name))
+    neural_feature_mat = create_neural_feature_mat(projections_df,
+                                                   filename=join(output_dir, 
+                                                        '%s_neural_features.json'  
+                                                        % parcellation_name))
