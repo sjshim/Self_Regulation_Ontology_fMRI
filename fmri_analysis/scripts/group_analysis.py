@@ -13,8 +13,7 @@ from os import makedirs
 from os.path import join
 import pandas as pd
 from utils.utils import concat_and_smooth, get_contrast_names
-from utils.utils import (create_neural_feature_mat, create_projections_df, 
-                         get_avg_corrs)
+from utils.utils import (create_neural_feature_mat, create_projections_df)
 import re
 import shutil
 

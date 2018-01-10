@@ -635,7 +635,7 @@ def project_contrast(img_files, parcellation_file, mask_file):
     time_series = masker.fit_transform(resampled_images)
     return time_series, masker
 
-def create_projection_df(parcellation_file, mask_file, 
+def create_projections_df(parcellation_file, mask_file, 
                          data_dir, tasks, filename=None):
     
     # project contrasts into lower dimensional space    

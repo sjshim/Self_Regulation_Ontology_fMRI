@@ -7,8 +7,8 @@ from nilearn import plotting
 from nilearn.image import iter_img
 from os import makedirs, path
 import pandas as pd
-from utils.display_utils import dendroheatmap_left
-from utils.display_utils import plot_contrasts
+from utils.utils import projections_corr
+from utils.display_utils import dendroheatmap_left, plot_contrasts
 import seaborn as sns
 
 # parse arguments
@@ -45,22 +45,23 @@ plotting.plot_roi(path.join(data_dir, 'group_mask.nii.gz'),
 # plot tstat maps for each task
 print('Plotting task contrasts...')
 for task in tasks:
-    task_dir = path.join(data_dir, task)
-    subj_ids = json.load(open(path.join(task_dir,'subj_ids.json'),'r'))
-    tstat_files = sorted(glob(path.join(task_dir, '*%s*raw_tfile*' % task )),
-                         key = lambda x: '-' in x)
-    group_fig, group_axes = plt.subplots(len(tstat_files), 1,
-                                     figsize=(14, 6*len(tstat_files)))
-    group_fig.suptitle('N = %s' % len(subj_ids), fontsize=30)
-    plt.subplots_adjust(top=.95)
-    for i, tfile in enumerate(tstat_files):
-        basename = path.basename(tfile)
-        title = basename[:(basename.find('raw')-1)]
-        plotting.plot_stat_map(tfile, threshold=2, 
-                               axes=group_axes[i],
-                               title=title)
-    makedirs(path.join(output_dir,task), exist_ok=True)
-    group_fig.savefig(path.join(output_dir,task,'%s_raw_tfiles.png' % task))
+    for tfile in ['raw', 'correct']:
+        task_dir = path.join(data_dir, task)
+        subj_ids = json.load(open(path.join(task_dir,'subj_ids.json'),'r'))
+        tstat_files = sorted(glob(path.join(task_dir, '*%s*%s_tfile*' % (task, tfile))),
+                             key = lambda x: '-' in x)
+        group_fig, group_axes = plt.subplots(len(tstat_files), 1,
+                                         figsize=(14, 6*len(tstat_files)))
+        group_fig.suptitle('N = %s' % len(subj_ids), fontsize=30)
+        plt.subplots_adjust(top=.95)
+        for i, tfile in enumerate(tstat_files):
+            basename = path.basename(tfile)
+            title = basename[:(basename.find('raw')-1)]
+            plotting.plot_stat_map(tfile, threshold=2, 
+                                   axes=group_axes[i],
+                                   title=title)
+        makedirs(path.join(output_dir,task), exist_ok=True)
+        group_fig.savefig(path.join(output_dir,task,'%s_%s_tfiles.png' % (task, tfile)))
 
 # Plot ICA components
 print('Plotting ICA...')
@@ -94,19 +95,19 @@ for parcellation_name, parcellation_file in parcellation_files:
 
     # Plot projection onto ICA components
     print('Plotting projection...')
-    projection = pd.read_json(path.join(data_dir, 
+    projections_df = pd.read_json(path.join(data_dir, 
                                         '%s_projection.json' % parcellation_name))
-    cluster_map = dendroheatmap_left(projection.T.corr(), labels=False)
-    labels = list(projection.index[cluster_map[1]])
+    corr = projections_corr(projections_df)
+    cluster_map = dendroheatmap_left(corr, labels=False)
+    labels = list(projections_df.index[cluster_map[1]])
     cluster_map[0].savefig(path.join(output_dir, '%s_projection_dendroheatmap.png' % parcellation_name))
     json.dump(labels, open(path.join(output_dir, '%s_projection_dendroheatmap_labels.json' % parcellation_name),'w'))
+    
     # plot averages
     for group in ['subj','contrast']:
-        avg_projection = pd.read_json(path.join(data_dir, 
-                                        'projection_%s_avgcorr_%s.json' 
-                                        % (parcellation_name, group)))
+        avg_corr = projections_corr(projections_df, grouping=group)
         fig = plt.figure(figsize=(14,14))
-        sns.heatmap(avg_projection, square=True)
+        sns.heatmap(avg_corr, square=True)
         plt.tight_layout()
         fig.savefig(path.join(output_dir, 'projection_%s_avgcorr_%s_heatmap.png' % (parcellation_name, group)))
 
