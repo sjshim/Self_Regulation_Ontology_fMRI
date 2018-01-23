@@ -53,6 +53,12 @@ def move_EVs(events_dir, fmri_dir, tasks, overwrite=True, verbose=False):
 def get_contrasts(task, regress_rt=True):
     contrast_list = []
     if task == 'ANT':
+                # contrasts vs baseline
+        c1 = ['orienting_network','T', ['orienting_network'], [1]]
+        c2 = ['conflict_network','T', ['conflict_network'], [1]]
+        contrast_list = [c1,c2]
+        
+        """
         # contrasts vs baseline
         c1 = ['incongruent','T', ['incongruent'], [1]]
         c2 = ['congruent','T', ['congruent'], [1]]
@@ -62,6 +68,7 @@ def get_contrasts(task, regress_rt=True):
         c5 = ['conflict_network','T', ['incongruent','congruent'], [1,-1]]
         c6 = ['orienting_network','T', ['spatial_cue','double_cue'], [1,-1]]
         contrast_list = [c1,c2,c3,c4,c5,c6]
+        """
         if regress_rt:
             c7 = ['response_time', 'T', ['response_time'], [1]]
             contrast_list.append(c7)
@@ -249,10 +256,14 @@ def get_ev_vars(output_dict, events_df, condition_spec, col=None,
             amplitudes.append([amplitude])
         elif type(amplitude) == str:
             amplitudes.append(group_df.loc[:,amplitude].tolist())
+        elif type(amplitude) == list:
+            amplitudes.append(amplitude)
         if type(duration) in (int,float):
             durations.append([duration])
         elif type(duration) == str:
             durations.append(group_df.loc[:,duration].tolist())
+        elif type(duration) == list:
+            durations.append(duration)
 
 # specific task functions
 def get_ANT_EVs(events_df, regress_rt=True):
@@ -263,6 +274,21 @@ def get_ANT_EVs(events_df, regress_rt=True):
             'amplitudes': []
             }
     # cue type
+    cue_amplitudes = ((events_df.cue=='spatial')*2-1).tolist()
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='orienting_network',
+                col='cue', 
+                amplitude=cue_amplitudes,
+                duration='duration')
+    # conflict type
+    conflict_amplitudes = ((events_df.flanker_type=='incongruent')*2-1).tolist()
+    get_ev_vars(output_dict, events_df,
+                condition_spec='conflict_network',
+                col='flanker_type', 
+                amplitude=conflict_amplitudes,
+                duration='duration')
+    """
+    # cue type
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[('spatial','spatial_cue'), ('double', 'double_cue')],
                 col='cue', 
@@ -272,6 +298,7 @@ def get_ANT_EVs(events_df, regress_rt=True):
                 condition_spec=[('congruent','congruent'), ('incongruent', 'incongruent')],
                 col='flanker_type', 
                 duration='duration')
+    """
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
@@ -283,6 +310,7 @@ def get_ANT_EVs(events_df, regress_rt=True):
                     duration='duration', 
                     amplitude='response_time')
     return output_dict
+
 
 def get_CCTHot_EVs(events_df, regress_rt):
     output_dict = {

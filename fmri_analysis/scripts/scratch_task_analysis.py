@@ -8,7 +8,9 @@ from nipype.interfaces.io import SelectFiles, DataSink
 from nipype.pipeline.engine import Workflow, Node
 from os.path import join
 from utils.utils import move_EVs
+from time import time
 
+start = time()
 # list of subject identifiers
 subject_list = ['s579']
 # list of task identifiers
@@ -62,7 +64,7 @@ def subjectinfo(data_dir, subject_id, task,
     regressors, regressor_names = process_confounds(confounds_file)
     
     # set up contrasts
-    EV_dict = parse_EVs(events_df, 'base', regress_rt)
+    EV_dict = parse_EVs(events_df, task, regress_rt)
     
     subjectinfo = Bunch(conditions=EV_dict['conditions'],
                         onsets=EV_dict['onsets'],
@@ -76,7 +78,7 @@ def subjectinfo(data_dir, subject_id, task,
         regressors_df = pd.DataFrame(regressors, columns = regressor_names)
         return events_df, regressors_df
     else:
-        contrasts = get_contrasts('base', regress_rt)
+        contrasts = get_contrasts(task, regress_rt)
         return subjectinfo, contrasts  # this output will later be returned to infosource
 
 def save_subjectinfo(base_directory, subject_id, task, subject_info, contrasts):
@@ -202,10 +204,4 @@ l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
                     ])
 
 l1analysis.run('MultiProc')
-"""
-l1analysis.write_graph(graph2use='colored', format='png', simple_form=False)
-graph_file=join(l1analysis.base_dir, 'l1analysis', 'graph.dot.png')
-shutil.move(graph_file, join(experiment_dir, output_dir, 'graph.dot.png'))
-if args.cleanup == True:
-  shutil.rmtree(l1analysis.base_dir)
-"""
+end = time()-start
