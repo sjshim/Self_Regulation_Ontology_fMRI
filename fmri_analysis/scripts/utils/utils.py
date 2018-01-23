@@ -183,6 +183,10 @@ def get_contrasts(task, regress_rt=True):
         # contrasts
         c3 = ['search_depth','T', ['plan_PA_with','plan_PA_without'], [1,-1]]
         contrast_list = [c1,c2,c3]
+    # base covers generic contrast that just looks at all trials
+    elif task == 'base':
+        c1 = ['trial', 'T', ['trial'], [1]]
+        contrast_list = [c1]
     return contrast_list
         
 # functions to extract fmri events
@@ -521,6 +525,21 @@ def get_WATT3_EVs(events_df):
                 onset_column='movement_onset')
     return output_dict
 
+def get_base_EVs(events_df):
+    output_dict = {
+        'conditions': [],
+        'onsets': [],
+        'durations': [],
+        'amplitudes': []
+        }
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='trial',
+                duration='duration')
+    get_ev_vars(output_dict, events_df, 
+                condition_spec=[(True, 'junk')], 
+                col='junk', 
+                duration='duration')   
+    return output_dict
 
 # How to model RT
 # For each condition model responses with constant duration 
@@ -548,6 +567,9 @@ def parse_EVs(events_df, task, regress_rt=True):
         EV_dict = get_twoByTwo_EVs(events_df, regress_rt=True)
     elif task == "WATT3":
         EV_dict = get_WATT3_EVs(events_df)
+    # covers generic conversion of events_df into trial design file
+    elif task == 'base':
+        EV_dict = get_base_EVs(events_df)
     return EV_dict
 
     
