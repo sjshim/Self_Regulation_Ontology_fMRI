@@ -1,5 +1,8 @@
 
 # coding: utf-8
+import sys
+sys.path.append('../scripts')
+
 import argparse
 from nipype.interfaces import fsl
 from nipype.algorithms.modelgen import SpecifyModel
@@ -18,7 +21,7 @@ task_list = ['ANT', 'CCTHot', 'discountFix',
                'DPX', 'motorSelectiveStop',
                'stopSignal', 'stroop', 'surveyMedley',
                'twoByTwo', 'WATT3']
-task_list = ['ANT']
+task_list = ['twoByTwo']
 
 regress_rt = False
 #### Experiment Variables

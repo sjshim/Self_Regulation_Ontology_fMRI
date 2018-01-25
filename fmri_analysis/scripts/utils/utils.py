@@ -58,20 +58,9 @@ def get_contrasts(task, regress_rt=True):
         c2 = ['conflict_network','T', ['conflict_network'], [1]]
         contrast_list = [c1,c2]
         
-        """
-        # contrasts vs baseline
-        c1 = ['incongruent','T', ['incongruent'], [1]]
-        c2 = ['congruent','T', ['congruent'], [1]]
-        c3 = ['spatial_cue','T', ['spatial_cue'], [1]]
-        c4 = ['double_cue','T', ['double_cue'], [1]]
-        # contrasts 
-        c5 = ['conflict_network','T', ['incongruent','congruent'], [1,-1]]
-        c6 = ['orienting_network','T', ['spatial_cue','double_cue'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6]
-        """
         if regress_rt:
-            c7 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c7)
+            c3 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c3)
     elif task == 'CCTHot':
         # contrasts vs baseline
         c1 = ['EV','T', ['EV'], [1]]
@@ -81,16 +70,12 @@ def get_contrasts(task, regress_rt=True):
             c3 = ['response_time', 'T', ['response_time'], [1]]
             contrast_list.append(c3)
     elif task == 'discountFix':
-        # contrasts vs baseline
         c1 = ['subjective_value','T', ['subjective_value'], [1]]
-        c2 = ['larger_later','T', ['larger_later'], [1]]
-        c3 = ['smaller_sooner','T', ['smaller_sooner'], [1]]
-        # contrasts
-        c4 = ['LL_vs_SS','T', ['larger_later','smaller_sooner'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4]
+        c2 = ['LL_vs_SS','T', ['LL_vs_SS'], [1]]
+        contrast_list = [c1,c2]
         if regress_rt:
-            c5 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c5)
+            c3 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c3)
     elif task == 'DPX':
         # contrasts vs baseline
         c1 = ['AX','T', ['AX'], [1]]
@@ -145,15 +130,11 @@ def get_contrasts(task, regress_rt=True):
                 ['stop_failure', 'stop_success'], [1,-1]]
         contrast_list = [c1,c2,c3,c4,c5,c6,c7]
     elif task == 'stroop':
-        # contrasts vs baseline
-        c1 = ['incongruent','T', ['incongruent'], [1]]
-        c2 = ['congruent','T', ['congruent'], [1]]
-        # contrasts
-        c3 = ['incongruent-congruent','T', ['incongruent','congruent'], [1,-1]]
-        contrast_list = [c1,c2,c3]
+        c1 = ['incongruent-congruent','T', ['incongruent-congruent'], [1]]
+        contrast_list = [c1]
         if regress_rt:
-            c4 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c4)
+            c2 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c2)
     elif task == 'surveyMedley':
         # contrasts vs baseline
         c1 = ['stim_duration','T', ['stim_duration'], [1]]
@@ -163,26 +144,19 @@ def get_contrasts(task, regress_rt=True):
             c4 = ['response_time', 'T', ['response_time'], [1]]
             contrast_list.append(c4)
     elif task == 'twoByTwo':
-        # contrasts vs baseline
-        c1 = ['cue_switch_100','T', ['cue_switch_100'], [1]]
-        c2 = ['cue_stay_100','T', ['cue_stay_100'], [1]]
-        c3 = ['task_switch_100','T', ['task_switch_100'], [1]]
-        c4 = ['cue_switch_900','T', ['cue_switch_900'], [1]]
-        c5 = ['cue_stay_900','T', ['cue_stay_900'], [1]]
-        c6 = ['task_switch_900','T', ['task_switch_900'], [1]]
         # contrasts
-        c7 = ['cue_switch_cost_100','T', 
-                ['cue_switch_100','cue_stay_100'], [1,-1]]
-        c8 = ['cue_switch_cost_900','T', 
-                ['cue_switch_900','cue_stay_900'], [1,-1]]
-        c9 = ['task_switch_cost_100','T', 
-                ['task_switch_100','cue_switch_100'], [1,-1]]
-        c10 = ['task_switch_cost_900','T', 
-                ['task_switch_900','cue_switch_900'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8,c9,c10]
+        c1 = ['cue_switch_cost_100','T', 
+                ['cue_switch_cost_100'], [1]]
+        c2 = ['cue_switch_cost_900','T', 
+                ['cue_switch_cost_900'], [1]]
+        c3 = ['task_switch_cost_100','T', 
+                ['task_switch_cost_100'], [1]]
+        c4 = ['task_switch_cost_900','T', 
+                ['task_switch_cost_900'], [1]]
+        contrast_list = [c1,c2,c3,c4]
         if regress_rt:
-            c11 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c11)
+            c5 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c5)
     elif task == 'WATT3':
         # contrasts vs baseline
         c1 = ['plan_PA_with','T', ['plan_PA_with'], [1]]
@@ -277,28 +251,14 @@ def get_ANT_EVs(events_df, regress_rt=True):
     cue_amplitudes = ((events_df.cue=='spatial')*2-1).tolist()
     get_ev_vars(output_dict, events_df, 
                 condition_spec='orienting_network',
-                col='cue', 
                 amplitude=cue_amplitudes,
                 duration='duration')
     # conflict type
     conflict_amplitudes = ((events_df.flanker_type=='incongruent')*2-1).tolist()
     get_ev_vars(output_dict, events_df,
                 condition_spec='conflict_network',
-                col='flanker_type', 
                 amplitude=conflict_amplitudes,
                 duration='duration')
-    """
-    # cue type
-    get_ev_vars(output_dict, events_df, 
-                condition_spec=[('spatial','spatial_cue'), ('double', 'double_cue')],
-                col='cue', 
-                duration='duration')
-    # conflict type
-    get_ev_vars(output_dict, events_df,
-                condition_spec=[('congruent','congruent'), ('incongruent', 'incongruent')],
-                col='flanker_type', 
-                duration='duration')
-    """
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
@@ -356,9 +316,10 @@ def get_discountFix_EVs(events_df, regress_rt=True):
             'amplitudes': []
             }
     # regressors of interest
+    trial_type = events_df.trial_type.replace({'larger_later': 1, 'smaller_soon': -1}).tolist()
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('larger_later','larger_later'), ('smaller_sooner','smaller_sooner')],
-                col='choice', 
+                condition_spec='LL_vs_SS',
+                amplitude=trial_type,
                 duration='duration')
     get_ev_vars(output_dict, events_df, 
                 condition_spec='subjective_value', 
@@ -448,10 +409,12 @@ def get_stroop_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
-    get_ev_vars(output_dict, events_df, 
-                condition_spec=[('congruent','congruent'), ('incongruent','incongruent')],
-                col='trial_type', 
+    conflict_amplitudes = ((events_df.condition=='incongruent')*2-1).tolist()
+    get_ev_vars(output_dict, events_df,
+                condition_spec='incongruent-congruent',
+                amplitude=conflict_amplitudes,
                 duration='duration')
+    
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
@@ -498,27 +461,29 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
             'amplitudes': []
             }
     # cue switch contrasts
+    cue_switches = events_df.cue_switch.replace({'switch':1,'stay':-1}).tolist()
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('switch','cue_switch_900'), ('stay','cue_stay_900')],
-                col='cue_switch', 
+                condition_spec='cue_switch_cost_900',
+                amplitude=cue_switches,
                 duration='duration',
-                subset="CTI==900")
+                subset="CTI==900 and task_switch=='stay'")
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('switch','cue_switch_100'), ('stay','cue_stay_100')],
-                col='cue_switch', 
+                condition_spec='cue_switch_cost_100',
+                amplitude=cue_switches,
                 duration='duration',
-                subset="CTI==100")
+                subset="CTI==100 and task_switch=='stay'")
     # task switch contrasts
+    task_switches = events_df.task_switch.replace({'switch':1,'stay':-1}).tolist()
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('switch','task_switch_900')],
-                col='task_switch',
+                condition_spec='task_switch_cost_900',
+                amplitude=task_switches,
                 duration='duration',
-                subset="CTI==900")
+                subset="CTI==900 and cue_switch!='stay'")
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('switch','task_switch_100')],
-                col='task_switch', 
+                condition_spec='task_switch_cost_100',
+                amplitude=task_switches,
                 duration='duration',
-                subset="CTI==100")
+                subset="CTI==100 and cue_switch!='stay'")
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 

@@ -25,7 +25,7 @@ do
             # number of epi scans found in session folder
             num_epi=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
             # check mriqc
-            mriqc_files=( $(find /scratch/PI/russpold/work/ieisenbe/uh2/mriqc/reports/ -name "*${sid}*ses-${session}*run-*") )
+            mriqc_files=( $(find /oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/mriqc/reports/ -name "*${sid}*ses-${session}*run-*") )
             if [[ ${#mriqc_files[@]} -ne 0 ]]; then
                 echo mriqc session ${session} run
                 if [[ ${#mriqc_files[@]} -ne $num_epi ]]; then
@@ -53,7 +53,7 @@ do
             if [[  -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session} ]]; then
                 num_epi=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
                 if [[ -d /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-${session} ]]; then
-                    num_preproc=$(ls /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc.nii.gz | wc -l)
+                    num_preproc=$(ls /oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc.nii.gz | wc -l)
                     echo fmriprep session ${session} run
                     if [ $num_epi -ne $num_preproc ]; then
                         echo Number of task scans \($num_epi\) does not equal number of preprocessed scans \($num_preproc\)
