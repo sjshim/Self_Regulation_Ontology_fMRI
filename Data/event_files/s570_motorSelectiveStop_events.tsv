@@ -1,255 +1,255 @@
 onset	duration	response_time	SS_delay	correct	experiment_exp_id	key_press	passed_check	stop_response	stopped	trial_type	worker_id	junk
-3.018	0.56	0.4129212598425197	400.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-5.674	0.56	-0.6460787401574803	400.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-7.926	0.56	-0.0700787401574803	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-10.579	0.56	-0.0610787401574803	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-12.933	0.56	0.1099212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-15.189	0.56	0.11792125984251971	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-17.445	0.56	0.5249212598425197	450.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-19.697	0.56	0.2119212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-22.052	0.56	0.2689212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-24.604	0.56	0.0629212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-26.958	0.56	0.3059212598425197	450.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-29.411	0.56	0.3679212598425197	400.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-31.865	0.56	-0.6460787401574803	400.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-34.219	0.56	0.3449212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-36.474	0.56	0.07392125984251971	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-39.029	0.56	0.4549212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-41.585	0.56	0.2179212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-43.841	0.56	0.08792125984251971	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-46.095	0.56	-0.6460787401574803	450.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-48.547	0.56	0.1139212598425197	500.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-50.903	0.56	0.4509212598425197	500.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-53.155	0.56	0.5429212598425197	500.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-56.311	0.56	0.3169212598425197	500.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-58.965	0.56	-0.6460787401574803	500.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-61.221	0.56	0.37692125984251973	500.0	0.0	motor_selective_stop_signal	89.0	True	71.0	False	crit_stop_failure	s570	True
-63.674	0.56	-0.0820787401574803	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-66.527	0.56	0.4589212598425197	450.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-68.978	0.56	0.4719212598425197	450.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-71.234	0.56	0.37792125984251973	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-73.489	0.56	0.3489212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-76.045	0.56	-0.6460787401574803	450.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-78.297	0.56	0.7479212598425197	500.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-80.65	0.56	-0.6460787401574803	500.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-83.004	0.56	0.8819212598425197	550.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-85.258	0.56	0.6399212598425197	550.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-87.614	0.56	0.7889212598425197	550.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-89.867	0.56	0.3329212598425197	550.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-92.319	0.56	0.4169212598425197	550.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-94.576	0.56	0.14192125984251971	550.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-96.929	0.56	0.08792125984251971	550.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-99.386	0.56	-0.6460787401574803	550.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-101.641	0.56	0.8799212598425197	600.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-103.895	0.56	-0.6460787401574803	600.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-106.751	0.56	0.0949212598425197	600.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-109.007	0.56	0.4569212598425197	600.0	0.0	motor_selective_stop_signal	89.0	True	71.0	False	crit_go	s570	True
-112.459	0.56	-0.015078740157480296	600.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-114.811	0.56	0.009921259842519703	600.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-117.163	0.56	-0.6460787401574803	600.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-119.519	0.56	-0.6460787401574803	600.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-121.972	0.56	0.0329212598425197	650.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-123.526	0.56	-0.6460787401574803		0.0	motor_selective_stop_signal	-1.0	True		True		s570	True
-135.036	0.56	-0.0740787401574803	650.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-137.387	0.56	0.0979212598425197	650.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-139.643	0.56	0.2769212598425197	600.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-141.897	0.56	0.4499212598425197	600.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-144.951	0.56	0.7919212598425197	600.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-147.405	0.56	1.2729212598425197	600.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-149.758	0.56	-0.6460787401574803	600.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-152.015	0.56	-0.6460787401574803	650.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-155.267	0.56	0.37592125984251973	700.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-158.219	0.56	-0.6460787401574803	700.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-160.771	0.56	0.4899212598425197	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-163.126	0.56	-0.6460787401574803	750.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-165.678	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-168.034	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-170.288	0.56	-0.0450787401574803	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-172.74	0.56	0.2069212598425197	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-175.096	0.56	0.07192125984251971	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-177.752	0.56	0.5879212598425198	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-180.006	0.56	0.4769212598425197	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-182.262	0.56	0.9969212598425197	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-184.718	0.56	0.2989212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-186.973	0.56	-0.6460787401574803	750.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-189.524	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-191.776	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-194.132	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-196.386	0.56	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-198.941	0.56	0.7899212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-201.493	0.56	1.5109212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-203.845	0.56	0.6599212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-206.197	0.56	0.0769212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-208.45	0.56	0.3039212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-210.906	0.56	0.3909212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-213.159	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-215.615	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-218.269	0.56	0.5049212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-220.721	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-223.073	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-225.327	0.56	0.8009212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-227.882	0.56	0.014921259842519703	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-230.139	0.56	0.4329212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-232.391	0.56	0.1449212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-234.747	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-237.001	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-239.656	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-242.009	0.56	0.0179212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-244.461	0.56	-0.011078740157480296	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-246.817	0.56	0.4769212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-249.07	0.56	0.5939212598425198	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-251.324	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-253.58	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-254.834	0.56	-0.6460787401574803		0.0	motor_selective_stop_signal	-1.0	True		True		s570	True
-266.344	0.56	-0.0380787401574803	950.0	0.0	motor_selective_stop_signal	89.0	True	71.0	False	crit_stop_failure	s570	True
-268.696	0.56	-0.049078740157480295	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-272.049	0.56	-0.08407874015748029	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-274.601	0.56	0.3869212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-277.353	0.56	0.5579212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-280.109	0.56	0.25092125984251973	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-282.763	0.56	0.2279212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-285.219	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-287.471	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-289.824	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-292.281	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-295.333	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-297.689	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-299.946	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-302.298	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-304.653	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-307.008	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-309.36	0.56	1.0879212598425196	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-311.716	0.56	-0.018078740157480296	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-313.968	0.56	0.037921259842519706	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-316.322	0.56	-0.028078740157480298	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-318.774	0.56	0.2539212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-321.127	0.56	-0.017078740157480298	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-323.982	0.56	0.1979212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-326.534	0.56	-0.004078740157480297	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-329.291	0.56	0.002921259842519703	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-331.547	0.56	0.07392125984251971	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-333.8	0.56	0.2899212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-336.652	0.56	-0.0650787401574803	700.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-339.007	0.56	0.014921259842519703	700.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-341.259	0.56	-0.6460787401574803	700.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-343.515	0.56	0.7449212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-345.768	0.56	0.4799212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-348.123	0.56	0.3299212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-350.776	0.56	-0.6460787401574803	750.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-353.528	0.56	0.6669212598425197	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-355.784	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-358.54	0.56	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-360.792	0.56	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-363.144	0.56	0.0429212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-365.499	0.56	0.4469212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-368.055	0.56	0.2439212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-370.311	0.56	1.1089212598425198	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-372.567	0.56	0.8229212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-374.82	0.56	0.4859212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-377.176	0.56	0.3699212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-379.828	0.56	0.3559212598425197	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-382.179	0.56	0.7849212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-384.435	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-386.788	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-388.143	0.56	-0.6460787401574803		0.0	motor_selective_stop_signal	-1.0	True		True		s570	True
-399.659	0.56	0.5479212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-402.516	0.56	0.4019212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-404.97	0.56	0.1709212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-407.327	0.56	0.0749212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-409.983	0.56	0.3309212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-412.239	0.56	0.3589212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-414.495	0.56	0.2499212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-416.748	0.56	0.20592125984251972	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-419.201	0.56	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-421.557	0.56	0.7979212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-423.809	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-426.162	0.56	0.3369212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-428.617	0.56	1.0289212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-430.97	0.56	0.0939212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-433.226	0.56	0.20392125984251971	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-435.479	0.56	1.1359212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-437.831	0.56	0.9829212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-440.183	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-442.538	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-445.494	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-447.746	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-450.102	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-452.355	0.56	0.0679212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-454.808	0.56	0.0919212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-457.16	0.56	0.0419212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-459.713	0.56	0.6219212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-462.268	0.56	0.5209212598425197	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-464.524	0.56	0.3489212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-466.776	0.56	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-469.529	0.56	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-471.885	0.56	0.3869212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-474.138	0.56	0.2989212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-476.594	0.56	0.5379212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-478.846	0.56	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-481.202	0.56	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-483.459	0.56	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-485.715	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-487.968	0.56	0.3119212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-490.224	0.56	0.014921259842519703	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-492.479	0.56	-0.1740787401574803	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-494.834	0.56	0.2919212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-497.389	0.56	0.6199212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-500.345	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-502.597	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-504.952	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-507.504	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-509.76	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-512.115	0.56	0.1649212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-514.668	0.56	-0.1070787401574803	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-517.12	0.56	0.4709212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-518.475	0.56	-0.6460787401574803		0.0	motor_selective_stop_signal	-1.0	True		True		s570	True
-529.988	0.56	0.1349212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-532.639	0.56	0.2649212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-535.191	0.56	0.2669212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-537.945	0.56	0.3839212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-540.213	0.56	0.6429212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-542.665	0.56	0.6949212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-545.42	0.56	0.5449212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-547.976	0.56	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-550.328	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-552.584	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-555.238	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-557.492	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-559.847	0.56	0.7429212598425197	950.0	0.0	motor_selective_stop_signal	89.0	True	71.0	False	crit_go	s570	True
-562.1	0.56	0.43992125984251973	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-564.453	0.56	0.08892125984251971	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-566.809	0.56	-0.0810787401574803	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-569.062	0.56	0.4369212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-571.915	0.56	0.2009212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-574.27	0.56	0.4769212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-576.523	0.56	0.0659212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-578.879	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-581.332	0.56	0.9199212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-583.589	0.56	0.2609212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-585.841	0.56	-0.0760787401574803	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
-588.593	0.56	-0.2050787401574803	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-590.945	0.56	0.6039212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-593.698	0.56	0.6899212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-596.154	0.56	0.43792125984251973	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-598.407	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-600.763	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-603.416	0.56	0.6439212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
-605.872	0.56	0.9249212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-608.124	0.56	0.3999212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-610.479	0.56	1.2699212598425198	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
-613.435	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-615.69	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-618.644	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-621.1	0.56	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-623.352	0.56	0.43892125984251973	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-625.704	0.56	0.4919212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
-628.156	0.56	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
-630.41	0.56	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-632.862	0.56	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-635.618	0.56	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-637.87	0.56	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-640.224	0.56	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-642.676	0.56	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-645.032	0.56	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-647.286	0.56	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
-649.84	0.56	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+3.018	0.561	0.4129212598425197	400.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+5.674	0.561	-0.6460787401574803	400.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+7.926	0.561	-0.0700787401574803	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+10.579	0.561	-0.0610787401574803	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+12.933	0.561	0.1099212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+15.189	0.561	0.11792125984251971	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+17.445	0.561	0.5249212598425197	450.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+19.697	0.561	0.2119212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+22.052	0.561	0.2689212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+24.604	0.561	0.0629212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+26.958	0.561	0.3059212598425197	450.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+29.411	0.561	0.3679212598425197	400.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+31.865	0.561	-0.6460787401574803	400.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+34.219	0.561	0.3449212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+36.474	0.561	0.07392125984251971	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+39.029	0.561	0.4549212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+41.585	0.561	0.2179212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+43.841	0.561	0.08792125984251971	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+46.095	0.561	-0.6460787401574803	450.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+48.547	0.561	0.1139212598425197	500.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+50.903	0.561	0.4509212598425197	500.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+53.155	0.561	0.5429212598425197	500.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+56.311	0.561	0.3169212598425197	500.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+58.965	0.561	-0.6460787401574803	500.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+61.221	0.561	0.37692125984251973	500.0	0.0	motor_selective_stop_signal	89.0	True	71.0	False	crit_stop_failure	s570	True
+63.674	0.561	-0.0820787401574803	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+66.527	0.561	0.4589212598425197	450.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+68.978	0.561	0.4719212598425197	450.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+71.234	0.561	0.37792125984251973	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+73.489	0.561	0.3489212598425197	450.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+76.045	0.561	-0.6460787401574803	450.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+78.297	0.561	0.7479212598425197	500.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+80.65	0.561	-0.6460787401574803	500.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+83.004	0.561	0.8819212598425197	550.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+85.258	0.561	0.6399212598425197	550.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+87.614	0.561	0.7889212598425197	550.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+89.867	0.561	0.3329212598425197	550.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+92.319	0.561	0.4169212598425197	550.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+94.576	0.561	0.14192125984251971	550.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+96.929	0.561	0.08792125984251971	550.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+99.386	0.561	-0.6460787401574803	550.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+101.641	0.561	0.8799212598425197	600.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+103.895	0.561	-0.6460787401574803	600.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+106.751	0.561	0.0949212598425197	600.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+109.007	0.561	0.4569212598425197	600.0	0.0	motor_selective_stop_signal	89.0	True	71.0	False	crit_go	s570	True
+112.459	0.561	-0.015078740157480296	600.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+114.811	0.561	0.009921259842519703	600.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+117.163	0.561	-0.6460787401574803	600.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+119.519	0.561	-0.6460787401574803	600.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+121.972	0.561	0.0329212598425197	650.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+123.526	0.561	-0.6460787401574803		0.0	motor_selective_stop_signal	-1.0	True		True		s570	True
+135.036	0.561	-0.0740787401574803	650.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+137.387	0.561	0.0979212598425197	650.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+139.643	0.561	0.2769212598425197	600.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+141.897	0.561	0.4499212598425197	600.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+144.951	0.561	0.7919212598425197	600.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+147.405	0.561	1.2729212598425197	600.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+149.758	0.561	-0.6460787401574803	600.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+152.015	0.561	-0.6460787401574803	650.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+155.267	0.561	0.37592125984251973	700.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+158.219	0.561	-0.6460787401574803	700.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+160.771	0.561	0.4899212598425197	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+163.126	0.561	-0.6460787401574803	750.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+165.678	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+168.034	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+170.288	0.561	-0.0450787401574803	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+172.74	0.561	0.2069212598425197	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+175.096	0.561	0.07192125984251971	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+177.752	0.561	0.5879212598425198	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+180.006	0.561	0.4769212598425197	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+182.262	0.561	0.9969212598425197	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+184.718	0.561	0.2989212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+186.973	0.561	-0.6460787401574803	750.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+189.524	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+191.776	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+194.132	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+196.386	0.561	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+198.941	0.561	0.7899212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+201.493	0.561	1.5109212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+203.845	0.561	0.6599212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+206.197	0.561	0.0769212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+208.45	0.561	0.3039212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+210.906	0.561	0.3909212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+213.159	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+215.615	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+218.269	0.561	0.5049212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+220.721	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+223.073	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+225.327	0.561	0.8009212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+227.882	0.561	0.014921259842519703	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+230.139	0.561	0.4329212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+232.391	0.561	0.1449212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+234.747	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+237.001	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+239.656	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+242.009	0.561	0.0179212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+244.461	0.561	-0.011078740157480296	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+246.817	0.561	0.4769212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+249.07	0.561	0.5939212598425198	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+251.324	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+253.58	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+254.834	0.561	-0.6460787401574803		0.0	motor_selective_stop_signal	-1.0	True		True		s570	True
+266.344	0.561	-0.0380787401574803	950.0	0.0	motor_selective_stop_signal	89.0	True	71.0	False	crit_stop_failure	s570	True
+268.696	0.561	-0.049078740157480295	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+272.049	0.561	-0.08407874015748029	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+274.601	0.561	0.3869212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+277.353	0.561	0.5579212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+280.109	0.561	0.25092125984251973	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+282.763	0.561	0.2279212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+285.219	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+287.471	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+289.824	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+292.281	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+295.333	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+297.689	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+299.946	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+302.298	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+304.653	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+307.008	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+309.36	0.561	1.0879212598425196	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+311.716	0.561	-0.018078740157480296	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+313.968	0.561	0.037921259842519706	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+316.322	0.561	-0.028078740157480298	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+318.774	0.561	0.2539212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+321.127	0.561	-0.017078740157480298	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+323.982	0.561	0.1979212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+326.534	0.561	-0.004078740157480297	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+329.291	0.561	0.002921259842519703	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+331.547	0.561	0.07392125984251971	750.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+333.8	0.561	0.2899212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+336.652	0.561	-0.0650787401574803	700.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+339.007	0.561	0.014921259842519703	700.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+341.259	0.561	-0.6460787401574803	700.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+343.515	0.561	0.7449212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+345.768	0.561	0.4799212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+348.123	0.561	0.3299212598425197	750.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+350.776	0.561	-0.6460787401574803	750.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+353.528	0.561	0.6669212598425197	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+355.784	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+358.54	0.561	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+360.792	0.561	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+363.144	0.561	0.0429212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+365.499	0.561	0.4469212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+368.055	0.561	0.2439212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+370.311	0.561	1.1089212598425198	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+372.567	0.561	0.8229212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+374.82	0.561	0.4859212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+377.176	0.561	0.3699212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+379.828	0.561	0.3559212598425197	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+382.179	0.561	0.7849212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+384.435	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+386.788	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+388.143	0.561	-0.6460787401574803		0.0	motor_selective_stop_signal	-1.0	True		True		s570	True
+399.659	0.561	0.5479212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+402.516	0.561	0.4019212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+404.97	0.561	0.1709212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+407.327	0.561	0.0749212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+409.983	0.561	0.3309212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+412.239	0.561	0.3589212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+414.495	0.561	0.2499212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+416.748	0.561	0.20592125984251972	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+419.201	0.561	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+421.557	0.561	0.7979212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+423.809	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+426.162	0.561	0.3369212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+428.617	0.561	1.0289212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+430.97	0.561	0.0939212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+433.226	0.561	0.20392125984251971	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+435.479	0.561	1.1359212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+437.831	0.561	0.9829212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+440.183	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+442.538	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+445.494	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+447.746	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+450.102	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+452.355	0.561	0.0679212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+454.808	0.561	0.0919212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+457.16	0.561	0.0419212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+459.713	0.561	0.6219212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+462.268	0.561	0.5209212598425197	800.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+464.524	0.561	0.3489212598425197	800.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+466.776	0.561	-0.6460787401574803	800.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+469.529	0.561	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+471.885	0.561	0.3869212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+474.138	0.561	0.2989212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+476.594	0.561	0.5379212598425197	850.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+478.846	0.561	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+481.202	0.561	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+483.459	0.561	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+485.715	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+487.968	0.561	0.3119212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+490.224	0.561	0.014921259842519703	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+492.479	0.561	-0.1740787401574803	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+494.834	0.561	0.2919212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+497.389	0.561	0.6199212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+500.345	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+502.597	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+504.952	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+507.504	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+509.76	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+512.115	0.561	0.1649212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+514.668	0.561	-0.1070787401574803	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+517.12	0.561	0.4709212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+518.475	0.561	-0.6460787401574803		0.0	motor_selective_stop_signal	-1.0	True		True		s570	True
+529.988	0.561	0.1349212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+532.639	0.561	0.2649212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+535.191	0.561	0.2669212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+537.945	0.561	0.3839212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+540.213	0.561	0.6429212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+542.665	0.561	0.6949212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+545.42	0.561	0.5449212598425197	850.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+547.976	0.561	-0.6460787401574803	850.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+550.328	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+552.584	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+555.238	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+557.492	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+559.847	0.561	0.7429212598425197	950.0	0.0	motor_selective_stop_signal	89.0	True	71.0	False	crit_go	s570	True
+562.1	0.561	0.43992125984251973	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+564.453	0.561	0.08892125984251971	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+566.809	0.561	-0.0810787401574803	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+569.062	0.561	0.4369212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+571.915	0.561	0.2009212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+574.27	0.561	0.4769212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+576.523	0.561	0.0659212598425197	950.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+578.879	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+581.332	0.561	0.9199212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+583.589	0.561	0.2609212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+585.841	0.561	-0.0760787401574803	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_nosignal	s570	False
+588.593	0.561	-0.2050787401574803	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+590.945	0.561	0.6039212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+593.698	0.561	0.6899212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+596.154	0.561	0.43792125984251973	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+598.407	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+600.763	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+603.416	0.561	0.6439212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_stop_failure	s570	False
+605.872	0.561	0.9249212598425197	900.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+608.124	0.561	0.3999212598425197	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+610.479	0.561	1.2699212598425198	900.0	1.0	motor_selective_stop_signal	89.0	True	71.0	False	noncrit_signal	s570	False
+613.435	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+615.69	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+618.644	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+621.1	0.561	-0.6460787401574803	900.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+623.352	0.561	0.43892125984251973	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+625.704	0.561	0.4919212598425197	950.0	1.0	motor_selective_stop_signal	71.0	True	71.0	False	crit_go	s570	False
+628.156	0.561	-0.6460787401574803	950.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True	crit_stop_success	s570	False
+630.41	0.561	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+632.862	0.561	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+635.618	0.561	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+637.87	0.561	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+640.224	0.561	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+642.676	0.561	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+645.032	0.561	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+647.286	0.561	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
+649.84	0.561	-0.6460787401574803	1000.0	0.0	motor_selective_stop_signal	-1.0	True	71.0	True		s570	True
