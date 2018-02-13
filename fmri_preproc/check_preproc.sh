@@ -52,7 +52,7 @@ do
             # if a session exists in data, check that the directory exists in fmriprep
             if [[  -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session} ]]; then
                 num_epi=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
-                if [[ -d /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-${session} ]]; then
+                if [[ -d /oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/fmriprep/fmriprep/sub-${sid}/ses-${session} ]]; then
                     num_preproc=$(ls /oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc.nii.gz | wc -l)
                     echo fmriprep session ${session} run
                     if [ $num_epi -ne $num_preproc ]; then
