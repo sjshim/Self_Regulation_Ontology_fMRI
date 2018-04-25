@@ -124,13 +124,12 @@ RUN pip install -r requirements.txt && \
     rm -rf ~/.cache/pip
 
 # Set up data and script directories
-RUN mkdir /Data
+RUN mkdir /data
 RUN mkdir /output
 RUN mkdir /event_files
-ADD Data/event_files /event_files
-ADD fmri_analysis /SRO
+Run mkdir /scripts
 
-WORKDIR /SRO
+WORKDIR /scripts
 CMD ["/bin/bash"]
 
 
