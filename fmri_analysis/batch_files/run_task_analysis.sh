@@ -32,12 +32,12 @@ do
     done
     if [ "$tasks" != "" ]; then
         echo Running $sid task analysis on $tasks
-        sed -e "s/{sid}/$sid/g" -e "s/{tasks}/$tasks/g" task_analysis.batch | sbatch --time=20:00:00 #-p russpold
+        sed -e "s/{sid}/$sid/g" -e "s/{tasks}/$tasks/g" task_analysis.batch | sbatch --time=36:00:00 #-p russpold
     fi
 
     if [ "$tasks_noRT" != "" ]; then
         echo Running $sid task analysis noRT on $tasks_noRT
-        sed -e "s/{sid}/$sid/g" -e "s/{tasks}/$tasks_noRT/g" task_analysis_noRT.batch | sbatch --time=20:00:00 #-p russpold
+        sed -e "s/{sid}/$sid/g" -e "s/{tasks}/$tasks_noRT/g" task_analysis_noRT.batch | sbatch --time=36:00:00 #-p russpold
     fi
 
 done

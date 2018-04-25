@@ -1,14 +1,15 @@
 #!/bin/bash
-#SBATCH --job-name={sid}-prep
-#SBATCH --output=.out/{sid}-prep.job.out
-#SBATCH --error=.err/{sid}-prep.job.err
+#SBATCH --job-name=subj_prep
+#SBATCH --output=.out/subj-prep.job.out
+#SBATCH --error=.err/subj-prep.job.err
 #SBATCH --time=20:00:00
-# SBATCH --mem=120000
-#SBATCH --qos=russpold
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ieisenbe@stanford.edu
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=10
+#SBATCH --mem-per-cpu=6400M
+#SBATCH -p russpold
 module load singularity
+sid=s130
 export PYTHONPATH=""
-singularity run /share/PI/russpold/singularity_images/poldracklab_fmriprep_1.0.3-2018-01-04-4eea8159c198.img /oak/stanford/groups/russpold/data/uh2 /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep participant --participant_label {sid} -w $SCRATCH --output-space template T1w
+singularity run /share/PI/russpold/singularity_images/poldracklab_fmriprep_1.0.8-2018-02-23-8c60ec5604ac.img /oak/stanford/groups/russpold/data/uh2/BIDS_data /oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/fmriprep participant --participant_label ${sid} -w /scratch/users/ieisenbe --fs-license-file /home/users/ieisenbe/docs/fs-license.txt --output-space template T1w --mem_mb 40000 --nthreads 10 
