@@ -5,7 +5,10 @@ mriqc_subjects_completed=0
 fmriprep_subjects_run=0
 fmriprep_subjects_completed=0
 
-for path in /oak/stanford/groups/russpold/data/uh2/sub*
+data_path=`sed '6q;d' singularity_config.txt`
+out_path=`sed '8q;d' singularity_config.txt`
+
+for path in ${data_path}/sub*
 do
     echo "*******************************************"
     sid=${path:(-4)}
@@ -21,11 +24,11 @@ do
         for session in 1 2 3
         do
         # if a session exists in data, check that some files exist in the corresponding mriqc directory
-        if [ -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session} ]; then
+        if [ -d ${data_path}/sub-${sid}/ses-${session} ]; then
             # number of epi scans found in session folder
-            num_epi=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
+            num_epi=$(ls ${data_path}/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
             # check mriqc
-            mriqc_files=( $(find /scratch/PI/russpold/work/ieisenbe/uh2/mriqc/reports/ -name "*${sid}*ses-${session}*run-*") )
+            mriqc_files=( $(find ${out_path}/fmri_analysis/mriqc/reports/ -name "*${sid}*ses-${session}*run-*") )
             if [[ ${#mriqc_files[@]} -ne 0 ]]; then
                 echo mriqc session ${session} run
                 if [[ ${#mriqc_files[@]} -ne $num_epi ]]; then
@@ -50,10 +53,10 @@ do
         for session in 1 2 3
         do
             # if a session exists in data, check that the directory exists in fmriprep
-            if [[  -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session} ]]; then
-                num_epi=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
-                if [[ -d /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-${session} ]]; then
-                    num_preproc=$(ls /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc.nii.gz | wc -l)
+            if [[  -d ${data_path}/sub-${sid}/ses-${session} ]]; then
+                num_epi=$(ls ${data_path}/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
+                if [[ -d ${out_path}/fmriprep/fmriprep/sub-${sid}/ses-${session} ]]; then
+                    num_preproc=$(ls ${out_path}/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc.nii.gz | wc -l)
                     echo fmriprep session ${session} run
                     if [ $num_epi -ne $num_preproc ]; then
                         echo Number of task scans \($num_epi\) does not equal number of preprocessed scans \($num_preproc\)
@@ -65,7 +68,7 @@ do
             fi
         done
         # if no T1 do not run
-        num_T1=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-*/anat/*T1* | wc -l)
+        num_T1=$(ls ${data_path}/sub-${sid}/ses-*/anat/*T1* | wc -l)
         if [ $num_T1 -eq 0 ]; then
             echo no T1 found for ${sid}! Cannot run fmriprep
             check_fmriprep=0

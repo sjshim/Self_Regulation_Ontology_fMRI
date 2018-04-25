@@ -1,6 +1,6 @@
 # sro_prep singularity image
-sro_fmri-2018-01-06-fc3eacf4cb0f.img
+sro_fmri-2018-01-08-89fca40e79ab.img
 # location of singularity images
 /oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/singularity_images
-# analysis folder
+# first level folder
 /oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis

@@ -7,6 +7,18 @@ from create_event_utils import create_events
 # some DVs are defined in utils if they deviate from normal expanalysis
 from utils import get_timing_correction
 
+# set up map between file names and task names
+name_map = {'attention_network_task': 'ANT',
+            'columbia_card_task_hot': 'CCTHot',
+            'discount_fixed': 'discountFix',
+            'dot_pattern_expectancy': 'DPX',
+            'motor_selective_stop_signal': 'motorSelectiveStop',
+            'stop_signal': 'stopSignal',
+            'stroop': 'stroop',
+            'survey_medley': 'surveyMedley',
+            'twobytwo': 'twoByTwo',
+            'ward_and_allport': 'WATT3'}
+
 # set up dictionary of dataframes for each task
 tasks = ['attention_network_task','columbia_card_task_fmri',
          'discount_fixed', 'dot_pattern_expectancy', 
@@ -37,6 +49,9 @@ for subj_file in glob('../Data/raw/*/*'):
         df.time_elapsed-=get_timing_correction(filey)
         # add exp_id to every row
         exp_id = df.iloc[-2].exp_id
+        # make sure the file name matches the actual experiment
+        assert name_map[exp_id] in subj_file, \
+            print('file %s does not much exp_id: %s' % (subj_file, exp_id))
         if exp_id == 'columbia_card_task_hot':
             exp_id = 'columbia_card_task_fmri'
         df.loc[:,'experiment_exp_id'] = exp_id

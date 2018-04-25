@@ -8,7 +8,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ieisenbe@stanford.edu
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=8
 #SBATCH -p russpold
 # module load system
 module load singularity
@@ -20,7 +20,8 @@ base_singularity=`sed '4q;d' singularity_config.txt`
 singularity_loc=${base_singularity}/$img
 analysis_loc=`sed '6q;d' singularity_config.txt`
 output_dir=${analysis_loc}/{output}/2ndLevel
+scripts_loc=../scripts
 
 # run singularity, scratch is automatically mounted
-singularity exec -B ${analysis_loc}:/Data -B ${output_dir}:/output ${singularity_loc} \
-        python /SRO/scripts/group_plots.py /output/Plots --data_dir /Data/{output}/2ndLevel/Plots
+singularity exec -B ${scripts_loc}:/scripts -B ${analysis_loc}:/data -B ${output_dir}:/output ${singularity_loc} \
+        python /scripts/group_plots.py /output/Plots --data_dir /data/{output}/2ndLevel/custom_modeling

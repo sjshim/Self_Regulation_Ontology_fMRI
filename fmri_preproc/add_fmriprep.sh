@@ -1,8 +1,13 @@
 set -e
+
+fmriprep_path=`sed '4q;d' singularity_config.txt`
+data_path=`sed '6q;d' singularity_config.txt`
+out_path=`sed '8q;d' singularity_config.txt`
+
 ignore_list=ignore_list.txt
 subjects_completed=0
 subjects_run=0
-for path in /oak/stanford/groups/russpold/data/uh2/sub*
+for path in ${data_path}/sub*
 do
     sid=${path:(-4)}
     echo "*******************${sid}************************"
@@ -13,10 +18,10 @@ do
         for session in 1 2 3
         do
             # if a session exists in data, check that the directory exists in fmriprep
-            if [[  -d /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session} ]]; then
-                num_epi=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
-                if [[ -d /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-${session} ]]; then
-                    num_preproc=$(ls /scratch/PI/russpold/work/ieisenbe/uh2/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc.nii.gz | wc -l)
+            if [[  -d ${data_path}/sub-${sid}/ses-${session} ]]; then
+                num_epi=$(ls ${data_path}/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
+                if [[ -d ${out_path}/fmriprep/fmriprep/sub-${sid}/ses-${session} ]]; then
+                    num_preproc=$(ls ${out_path}/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc.nii.gz | wc -l)
                     echo fmriprep session ${session} run
                     if [ $num_epi -ne $num_preproc ]; then
                         echo Number of task scans \($num_epi\) does not equal number of preprocessed scans \($num_preproc\)
@@ -28,14 +33,14 @@ do
             fi
         done
         # if no T1 do not run
-        num_T1=$(ls /oak/stanford/groups/russpold/data/uh2/sub-${sid}/ses-*/anat/*T1* | wc -l)
+        num_T1=$(ls ${data_path}/sub-${sid}/ses-*/anat/*T1* | wc -l)
         if [ $num_T1 -eq 0 ]; then
             echo no T1 found for ${sid}! Cannot run fmriprep
             check_fmriprep=0
         else
             if [[ $check_fmriprep>0 ]]; then
                 echo "**Running fmriprep on $sid**"
-                sed "s/{sid}/$sid/g" fmriprep.batch | sbatch -p russpold
+                echo singularity run ${fmriprep_path} ${data_path} ${out_path}/fmriprep participant --participant_label ${sid} -w $SCRATCH --fs-license-file ~/docs/fs-license.txt --output-space template T1w --mem_mb 40000 --nthreads 10 >> preproc_task_list.sh
                 (( subjects_run+=1 ))
             else
                 (( subjects_completed+=1 ))
@@ -45,4 +50,3 @@ do
     fi
 done
 echo Subjects running: $subjects_run, subjects completed: $subjects_completed
-

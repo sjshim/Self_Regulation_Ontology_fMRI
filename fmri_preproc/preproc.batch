@@ -1,0 +1,29 @@
+#!/bin/bash
+#SBATCH -J preproc                # Give me a job name
+#SBATCH --array=1-106%10 
+                                  # and have max 10 tasks running in parallel at a time
+#SBATCH -p russpold             
+#SBATCH --time=48:00:00           # Wallclock time
+
+#SBATCH -n 1                      # Each line of tasks_list.sh is an independent task
+#SBATCH --cpus-per-task=10        # Say you want each line to use 10 cpus.
+#SBATCH --ntasks-per-node=1       # Necessary for the job array to allocate resources correctly
+#SBATCH --mem-per-cpu=6400M       # Take over all available RAM per node
+
+# Outputs ----------------------------------
+#SBATCH -o .out/%A-%a.out
+#SBATCH -e .err/%A-%a.err
+#SBATCH --mail-user=ieisenbe@stanford.edu
+#SBATCH --mail-type=ALL
+# ------------------------------------------
+
+module load system                          # Only Sherlock2
+module load singularity                     # load singularity (both Sherlock 1 and 2)
+
+unset PYTHONPATH
+export FS_LICENSE=$PWD/.freesurfer.txt      # Necessary for FMRIPREP only
+
+# The heavylifting happens here
+# Make sure you have a tasks_list.sh file ready in the same working directory,
+# with one task per line.
+eval $( sed "${SLURM_ARRAY_TASK_ID}q;d" preproc_task_list.sh )
