@@ -15,7 +15,6 @@ import pandas as pd
 import pickle
 from scipy.cluster.hierarchy import dendrogram, linkage
 import seaborn as sns
-from utils.utils import concat_and_smooth, get_contrast_names
 
 def dendroheatmap_left(df, labels = True, label_fontsize = 'large'):
     """
