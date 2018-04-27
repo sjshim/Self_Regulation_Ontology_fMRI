@@ -75,8 +75,7 @@ if events_dir is not None:
 # *********************************************
 
 # helper function to create bunch
-def subjectinfo(data_dir, subject_id, task, use_events=True,
-                regress_rt=True): 
+def getsubjectinfo(data_dir, subject_id, task, regress_rt=True): 
     from glob import glob
     from os.path import join
     import pandas as pd
@@ -91,13 +90,14 @@ def subjectinfo(data_dir, subject_id, task, use_events=True,
                                '*', 'func',
                                '*%s*confounds.tsv' % task))[0]
     regressors, regressor_names = process_confounds(confounds_file)
-    if use_events:
-        ## Get the Events File
-        # Read the TSV file and convert to pandas dataframe
-        event_file = glob(join(data_dir,
-                               'sub-%s' % subject_id,
-                               '*', 'func',
-                               '*%s*events.tsv' % task))[0]
+    ## Get the Events File if it exists
+    # Read the TSV file and convert to pandas dataframe
+    event_file = glob(join(data_dir,
+                           'sub-%s' % subject_id,
+                           '*', 'func',
+                           '*%s*events.tsv' % task))
+    if len(event_file)>0:
+        event_file = event_file[0]
         events_df = pd.read_csv(event_file,sep = '\t')
         # set up contrasts
         EV_dict = parse_EVs(events_df, task, regress_rt)
@@ -112,15 +112,18 @@ def subjectinfo(data_dir, subject_id, task, use_events=True,
                                       regressor_names=regressor_names,
                                       regressors=regressors.T.tolist())
         contrasts = get_contrasts(task, regress_rt)
-        # create base_subject info
-        base_subjectinfo = Bunch(subject_id=subject_id,
-                                 task=task,
-                                 tmod=None,
-                                 pmod=None,
-                                 regressor_names=regressor_names,
-                                 regressors=regressors.T.tolist())
-        
-        return contrast_subjectinfo, base_subjectinfo, contrasts # this output will later be returned to infosource
+    else:
+        contrast_subjectinfo = Bunch()
+        contrasts=[]
+    # create base_subject info
+    base_subjectinfo = Bunch(subject_id=subject_id,
+                             task=task,
+                             tmod=None,
+                             pmod=None,
+                             regressor_names=regressor_names,
+                             regressors=regressors.T.tolist())
+
+    return contrast_subjectinfo, base_subjectinfo, contrasts # this output will later be returned to infosource
 
 def save_subjectinfo(base_directory, subject_id, task, subjectinfo, contrasts):
     from os import makedirs
@@ -140,16 +143,15 @@ def save_subjectinfo(base_directory, subject_id, task, subjectinfo, contrasts):
 # *********************************************
 
 # Get Subject Info - get subject specific condition information
-getsubjectinfo = Node(Function(input_names=['data_dir', 'subject_id', 'task',
-                                            'use_events', 'regress_rt'],
+subjectinfo = Node(Function(input_names=['data_dir', 'subject_id', 'task',
+                                            'regress_rt'],
                                output_names=['contrast_subjectinfo', 
                                              'base_subjectinfo',
                                              'contrasts'],
-                               function=subjectinfo),
+                               function=getsubjectinfo),
                       name='getsubjectinfo')
-getsubjectinfo.inputs.data_dir = data_dir
-getsubjectinfo.inputs.use_events = use_events
-getsubjectinfo.inputs.regress_rt = regress_rt
+subjectinfo.inputs.data_dir = data_dir
+subjectinfo.inputs.regress_rt = regress_rt
 
 # Infosource - a function free node to iterate over the list of subject names
 infosource = Node(IdentityInterface(fields=['subject_id',
@@ -211,7 +213,7 @@ filmgls = Node(fsl.FILMGLS(), name="GLS")
 # *********************************************
 # # Workflow
 # *********************************************
-def init_wf(name='wf')
+def init_wf(name='wf'):
   wf = Workflow(name=name)
   wf.connect([(modelspec, level1design, [('session_info','session_info')]),
               (level1design, level1model, [('ev_files', 'ev_files'),
@@ -229,8 +231,8 @@ def init_wf(name='wf')
                                     ('sigmasquareds', '%s.@sigmasquareds' % name)])])
   return wf
 
-wf1 = init_contrast_wf(name='wf1')
-wf2 = init_contrast_wf(name='wf1')
+wf1 = init_wf(name='wf1')
+wf2 = init_wf(name='wf2')
 
 # Initiation of the 1st-level analysis workflow
 l1analysis = Workflow(name='l1analysis')
@@ -239,9 +241,9 @@ l1analysis.base_dir = join(output_dir, working_dir)
 # Connect up the 1st-level analysis components
 l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
                                                ('task', 'task')]),
-                    (infosource, getsubjectinfo, [('subject_id','subject_id'),
+                    (infosource, subjectinfo, [('subject_id','subject_id'),
                                                  ('task', 'task')]),
-                    (getsubjectinfo, save_subjectinfo, [('subject_id','subject_id'),
+                    (subjectinfo, save_subjectinfo, [('subject_id','subject_id'),
                                                         ('task','tasj'),
                                                         ('subjectinfo','subjectinfo'),
                                                         ('contrasts','contrasts')]),
@@ -251,19 +253,19 @@ l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
 
 # add on contrast wf
 l1analysis.connect([
-                    (getsubjectinfo, wf1, [('contrast_subjectinfo','modelspec.subject_info')]),
+                    (subjectinfo, wf1, [('contrast_subjectinfo','modelspec.subject_info')]),
                     (masker, wf1, [('out_file', 'modelspec.functional_runs')]),
-                    (getsubjectinfo, wf1, [('contrasts','level1design.contrasts')]),
+                    (subjectinfo, wf1, [('contrasts','level1design.contrasts')]),
                     (masker, wf1, [('out_file','GLS.in_file')])
                     ])
 # add on residual wf
 l1analysis.connect([
-                    (getsubjectinfo, wf2, [('base_subjectinfo','modelspec.subject_info')]),
+                    (subjectinfo, wf2, [('base_subjectinfo','modelspec.subject_info')]),
                     (masker, wf2, [('out_file', 'modelspec.functional_runs')]),
                     (masker, wf2, [('out_file','GLS.in_file')])
                     ])
 
-l1analysis.run('MultiProc')
+l1analysis.run('MultiProc', plugin_args={'n_procs': 4})
 
 
 # workflow without events file
