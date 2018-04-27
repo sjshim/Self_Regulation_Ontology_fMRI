@@ -1,4 +1,5 @@
 #!/bin/bash
+docker build --file Dockerfile_notebook --rm -t fmri_notebook .
 docker build --rm -t fmri_env .
 `docker rmi $(docker images -f 'dangling=true' -q)` # remove dangling docker images
 rm -f singularity_images/*img
