@@ -1,43 +1,9 @@
 """
 some util functions
 """
-from glob import glob
 import numpy as np
-from os.path import basename, dirname, join, exists
 import pandas as pd
-import shutil
 
-# ********************************************************
-# Behavioral Utility Functions
-# ********************************************************
-
-def move_EV(subj, task, events_dir, fmri_dir):
-    subj = subj.replace('sub-','')
-    # get event file
-    ev_file = glob(join(events_dir,'*%s*%s*' % (subj, task)))[0]
-    task_fmri_files = glob(join(fmri_dir, '*%s*' % subj,'*', 
-                                'func','*%s*bold*' % task))
-    task_fmri_dir = dirname(task_fmri_files[0])
-    base_name = basename(task_fmri_files[0]).split('_bold')[0]
-    new_events_file = join(task_fmri_dir, base_name+'_events.tsv')
-    shutil.copyfile(ev_file, new_events_file)
-    return new_events_file
-    
-def move_EVs(events_dir, fmri_dir, tasks, overwrite=True, verbose=False):
-    created_files = []
-    for subj_file in sorted(glob(join(fmri_dir,'sub-s???'))):
-        subj = basename(subj_file)
-        for task in tasks:
-            if overwrite==True or not exists(join(subj_file,'*',
-                                                 'func', '*%s*' % task)):
-                try:
-                    name = move_EV(subj, task, events_dir, fmri_dir)
-                    created_files.append(name)
-                except IndexError:
-                    print('Move_EV failed for the %s: %s' % (subj, task))
-    if verbose:
-        print('\n'.join(created_files))
-        
 # ********************************************************
 # 1st level analysis utility functions
 # ********************************************************

@@ -7,38 +7,18 @@ from nipype.interfaces.utility import Function, IdentityInterface
 from nipype.interfaces.io import SelectFiles, DataSink
 from nipype.pipeline.engine import Workflow, Node
 from os.path import join
-from utils.event_utils import move_EVs
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
-parser.add_argument('-output_dir', default='/output', help='The directory where the output files '
-                    'should be stored. If you are running group level analysis '
-                    'this folder should be prepopulated with the results of the'
-                    'participant level analysis.')
-parser.add_argument('-data_dir',help='The directory of the preprocessed fmri'
-                    'data (output of fmriprep) along with event files',
-                    default='/data')
-parser.add_argument('--participant_label',help='The label(s) of the participant(s)'
-                   'that should be analyzed. Multiple '
-                   'participants can be specified with a space separated list.',
-                   nargs="+")
-parser.add_argument('--events_dir', help='The directory of the events file. If'
-                    'provided, events files will be copied to data_dir before'
-                    'continuing', default=None)
-parser.add_argument('--tasks',help='The label(s) of the task(s)'
-                   'that should be analyzed. If this parameter is not '
-                   'provided all tasks should be analyzed.',
-                   nargs="+")
-parser.add_argument('--use_events', action='store_false', 
-                    help='If included, use events file')
-parser.add_argument('--ignore_rt', action='store_true', 
-                    help='If included, ignore respone'
-                    'time as a regressor')
-parser.add_argument('--cleanup', action='store_true', 
-                    help='If included, delete working directory')
-parser.add_argument('--overwrite_event', action='store_true',
-                    help='If included and events_dir is included, overwrite'
-                    'events files')
+parser.add_argument('-output_dir', default='/output')
+parser.add_argument('-data_dir', default='/data')
+parser.add_argument('--participant_label',nargs="+")
+parser.add_argument('--events_dir', default=None)
+parser.add_argument('--tasks', nargs="+")
+parser.add_argument('--use_events', action='store_false')
+parser.add_argument('--ignore_rt', action='store_true')
+parser.add_argument('--cleanup', action='store_true')
+parser.add_argument('--overwrite_event', action='store_true')
 
 args = parser.parse_args()
 # list of subject identifiers
@@ -63,12 +43,6 @@ working_dir = 'workingdir'
 # TR of functional images
 TR = .68
 
-# ****************************************************************************
-# move events files if necessary
-# ***************************************************************************
-# move events  
-if events_dir is not None:
-    move_EVs(events_dir, data_dir, task_list, args.overwrite_event)
         
 # *********************************************
 # ### Define helper functions
