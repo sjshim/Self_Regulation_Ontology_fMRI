@@ -125,8 +125,7 @@ RUN pip install -r requirements.txt && \
 
 # Set up data and script directories
 RUN mkdir /data
-RUN mkdir /output
-RUN mkdir /event_files
+RUN mkdir /derivatives
 Run mkdir /scripts
 
 WORKDIR /scripts

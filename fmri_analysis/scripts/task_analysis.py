@@ -10,7 +10,7 @@ from os.path import join
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
-parser.add_argument('-output_dir', default='/output')
+parser.add_argument('-derivatives_dir', default='/output')
 parser.add_argument('-data_dir', default='/data')
 parser.add_argument('--participant_label',nargs="+")
 parser.add_argument('--events_dir', default=None)
@@ -33,10 +33,8 @@ else:
                'twoByTwo', 'WATT3']
 
 regress_rt = not args.ignore_rt
-use_events = args.use_events
 #### Experiment Variables
-output_dir = args.output_dir
-events_dir = args.events_dir
+fmriprep_dir = join(args.derivatives_dir, 'fmriprep', 'fmriprep')
 data_dir = args.data_dir
 first_level_dir = '1stLevel'
 working_dir = 'workingdir'
@@ -49,7 +47,7 @@ TR = .68
 # *********************************************
 
 # helper function to create bunch
-def getsubjectinfo(data_dir, subject_id, task, regress_rt=True): 
+def getsubjectinfo(data_dir, fmriprep_dir, subject_id, task, regress_rt=True): 
     from glob import glob
     from os.path import join
     import pandas as pd
@@ -59,7 +57,7 @@ def getsubjectinfo(data_dir, subject_id, task, regress_rt=True):
     subject_id = subject_id.replace('sub-','')
     ## Get the Confounds File (output of fmriprep)
     # Read the TSV file and convert to pandas dataframe
-    confounds_file = glob(join(data_dir,
+    confounds_file = glob(join(fmriprep_dir,
                                'sub-%s' % subject_id,
                                '*', 'func',
                                '*%s*confounds.tsv' % task))[0]
@@ -117,13 +115,14 @@ def save_subjectinfo(base_directory, subject_id, task, subjectinfo, contrasts):
 # *********************************************
 
 # Get Subject Info - get subject specific condition information
-subjectinfo = Node(Function(input_names=['data_dir', 'subject_id', 'task',
-                                            'regress_rt'],
+subjectinfo = Node(Function(input_names=['data_dir', 'fmiriprep_dir',
+                                         'subject_id', 'task','regress_rt'],
                                output_names=['contrast_subjectinfo', 
                                              'base_subjectinfo',
                                              'contrasts'],
                                function=getsubjectinfo),
                       name='getsubjectinfo')
+subjectinfo.inputs.fmriprep_dir = fmriprep_dir
 subjectinfo.inputs.data_dir = data_dir
 subjectinfo.inputs.regress_rt = regress_rt
 
