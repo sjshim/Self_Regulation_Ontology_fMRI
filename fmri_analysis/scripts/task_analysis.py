@@ -19,7 +19,6 @@ parser.add_argument('--use_events', action='store_false')
 parser.add_argument('--ignore_rt', action='store_true')
 parser.add_argument('--cleanup', action='store_true')
 parser.add_argument('--overwrite_event', action='store_true')
-
 args = parser.parse_args()
 # list of subject identifiers
 subject_list = args.participant_label
@@ -34,7 +33,8 @@ else:
 
 regress_rt = not args.ignore_rt
 #### Experiment Variables
-fmriprep_dir = join(args.derivatives_dir, 'fmriprep', 'fmriprep')
+derivatives_dir = args.derivatives_dir
+fmriprep_dir = join(derivatives_dir, 'fmriprep', 'fmriprep')
 data_dir = args.data_dir
 first_level_dir = '1stLevel'
 working_dir = 'workingdir'
@@ -143,7 +143,7 @@ selectfiles = Node(SelectFiles(templates,
                                sort_filelist=True),
                    name="selectfiles")
 # Datasink - creates output folder for important outputs
-datasink = Node(DataSink(base_directory = output_dir,
+datasink = Node(DataSink(base_directory=derivatives_dir,
                          container=first_level_dir),
                 name="datasink")
 # Save python objects that aren't accomodated by datasink nodes
@@ -152,7 +152,7 @@ save_subjectinfo = Node(Function(input_names=['base_directory','subject_id',
                                  output_names=['output_path'],
                                 function=save_subjectinfo),
                        name="savesubjectinfo")
-save_subjectinfo.inputs.base_directory = join(output_dir,first_level_dir)
+save_subjectinfo.inputs.base_directory = join(derivatives_dir,first_level_dir)
 
 # Use the following DataSink output substitutions
 substitutions = [('_subject_id_', ''),
@@ -209,7 +209,7 @@ wf2 = init_wf(name='wf2')
 
 # Initiation of the 1st-level analysis workflow
 l1analysis = Workflow(name='l1analysis')
-l1analysis.base_dir = join(output_dir, working_dir)
+l1analysis.base_dir = join(derivatives_dir, working_dir)
 
 # Connect up the 1st-level analysis components
 l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
