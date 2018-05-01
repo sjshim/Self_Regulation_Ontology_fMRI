@@ -20,6 +20,7 @@ do
             if [[ -f ${out_path}/fmriprep/freesurfer/sub-${sid}/mri/aseg.mgz ]]; then
                 echo fmriprep-anat session ${session} run
             else
+                #rm -r ${out_path}/fmriprep/freesurfer/sub-${sid}
                 check_fmriprep=1
             fi
         fi

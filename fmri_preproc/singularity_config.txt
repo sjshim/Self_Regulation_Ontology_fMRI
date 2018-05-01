@@ -5,4 +5,4 @@
 # location of fmri data
 /oak/stanford/groups/russpold/data/uh2/BIDS_data
 # location of fmri analysis output
-/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis
+/oak/stanford/groups/russpold/data/uh2/BIDS_data/derivatives
