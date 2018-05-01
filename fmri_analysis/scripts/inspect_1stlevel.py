@@ -1,0 +1,62 @@
+import argparse
+from inspect import currentframe, getframeinfo
+import nilearn
+from pathlib import Path
+from os import path
+from utils.plot_utils import get_design_df, plot_design, plot_fmri_resid
+from utils.utils import get_event_dfs, load_atlas
+"""
+# parse arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('derivatives_dir')
+parser.add_argument('data_dir')
+parser.add_argument('--participant_labels', nargs="+")
+parser.add_argument('--tasks', nargs="+")
+args = parser.parse_args()
+
+derivatives_dir = args.derivatives_dir
+data_dir = args.data_dir
+# list of subject identifiers
+subject_list = args.participant_labels
+# list of task identifiers
+if args.tasks:
+    task_list = args.tasks
+else:
+  task_list = ['ANT', 'CCTHot', 'discountFix',
+               'DPX', 'motorSelectiveStop',
+               'stopSignal', 'stroop', 'surveyMedley',
+               'twoByTwo', 'WATT3']
+"""
+
+derivatives_dir = '/home/ian/tmp/fmri/derivatives/'
+data_dir = '/home/ian/tmp/fmri/data/'
+task_list = ['stopSignal']
+
+filename = getframeinfo(currentframe()).filename
+current_directory = str(Path(filename).resolve().parent)
+
+# set up atlas
+# glasser atlas
+atlas_path = path.join(current_directory, 'atlases', 'HCPMMP1_on_MNI152_ICBM2009a_nlin_hd.nii.gz')
+atlas_label_path = path.join(current_directory, 'atlases', 'HCPMMP1_on_MNI152_ICBM2009a_nlin.txt')
+atlas = load_atlas(atlas_path, atlas_label_path)
+# harvard atlas
+atlas=nilearn.datasets.fetch_atlas_harvard_oxford('cort-maxprob-thr25-2mm')
+
+
+task = 'stopSignal'
+subject = 's130'
+for wf in ['contrast_wf', 'base_wf']:
+    # inspect design
+    design_path = path.join(derivatives_dir, '1stLevel', wf, '%s_task_%s' % (subject, task))
+    subjectinfo_path = path.join(derivatives_dir, '1stLevel', 'subject_info', '%s_task_%s' % (subject, task))
+    
+    design_df = get_design_df(design_path, subjectinfo_path)
+    plot_design(design_df)
+
+    # inspect event
+    event_df = get_event_dfs(data_dir, subj=subject, task=task)[subject][task]
+    
+    # inspect residuals
+    resid_path = path.join(derivatives_dir, '1stLevel', wf, '%s_task_%s' % (subject, task), 'res4d.nii.gz')
+    time_series = plot_fmri_resid(resid_path, atlas)
