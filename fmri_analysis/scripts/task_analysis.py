@@ -12,7 +12,7 @@ from os.path import join
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
 parser.add_argument('-derivatives_dir', default='/output')
 parser.add_argument('-data_dir', default='/data')
-parser.add_argument('--participant_label',nargs="+")
+parser.add_argument('--participant_labels',nargs="+")
 parser.add_argument('--events_dir', default=None)
 parser.add_argument('--tasks', nargs="+")
 parser.add_argument('--use_events', action='store_false')
@@ -21,7 +21,7 @@ parser.add_argument('--cleanup', action='store_true')
 parser.add_argument('--overwrite_event', action='store_true')
 args = parser.parse_args()
 # list of subject identifiers
-subject_list = args.participant_label
+subject_list = args.participant_labels
 # list of task identifiers
 if args.tasks:
     task_list = args.tasks
