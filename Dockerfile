@@ -1,7 +1,7 @@
 # Use Ubuntu 16.04 LTS
 FROM jupyter/base-notebook
 #FROM ubuntu:xenial-20161213
-#USER root
+USER root
 
 # Pre-cache neurodebian key
 COPY docker_files/neurodebian.gpg /root/.neurodebian.gpg
