@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[ ]:
+# In[1]:
 
 
 import argparse
@@ -25,7 +25,7 @@ import sys
 # - conversion command:
 #   - jupyter nbconvert --to script --execute task_analysis.ipynb
 
-# In[ ]:
+# In[2]:
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
@@ -48,7 +48,7 @@ else:
 
 # ### Initial Setup
 
-# In[ ]:
+# In[3]:
 
 
 # get current directory to pass to function nodes
@@ -77,7 +77,7 @@ working_dir = 'workingdir'
 TR = .68
 
 
-# In[ ]:
+# In[4]:
 
 
 # print
@@ -91,7 +91,7 @@ print('*'*79)
 
 # ### Define helper functions
 
-# In[ ]:
+# In[5]:
 
 
 # helper function to create bunch
@@ -169,41 +169,34 @@ def save_subjectinfo(base_directory,base_subjectinfo, contrast_subjectinfo, cont
 
 # ### Specify Input and Output Stream
 
-# In[ ]:
+# In[6]:
 
 
-# Get Subject Info - get subject specific condition information
-subjectinfo = Node(Function(input_names=['data_dir', 'fmriprep_dir','subject_id', 
-                                         'task','regress_rt', 'utils_path'],
-                               output_names=['base_subjectinfo', 
-                                             'contrast_subjectinfo',
-                                             'contrasts'],
-                               function=getsubjectinfo),
-                      name='getsubjectinfo')
-subjectinfo.inputs.fmriprep_dir = fmriprep_dir
-subjectinfo.inputs.data_dir = data_dir
-subjectinfo.inputs.regress_rt = regress_rt
-subjectinfo.inputs.utils_path = current_directory
+def get_subjectinfo(name):
+    # Get Subject Info - get subject specific condition information
+    subjectinfo = Node(Function(input_names=['data_dir', 'fmriprep_dir','subject_id', 
+                                             'task','regress_rt', 'utils_path'],
+                                   output_names=['base_subjectinfo', 
+                                                 'contrast_subjectinfo',
+                                                 'contrasts'],
+                                   function=name),
+                          name=name)
+    subjectinfo.inputs.fmriprep_dir = fmriprep_dir
+    subjectinfo.inputs.data_dir = data_dir
+    subjectinfo.inputs.regress_rt = regress_rt
+    subjectinfo.inputs.utils_path = current_directory
+    return subjectinfo
 
-# Save python objects that aren't accomodated by datasink nodes
-save_subjectinfo = Node(Function(input_names=['base_directory',
-                                              'base_subjectinfo',
-                                              'contrast_subjectinfo','contrasts'],
-                                 output_names=['output_path'],
-                                function=save_subjectinfo),
-                       name="savesubjectinfo")
-save_subjectinfo.inputs.base_directory = join(derivatives_dir,first_level_dir)
-
-# mask and blur
-masker = Node(fsl.maths.ApplyMask(),name='masker')
-
-
-# # Create workflow
-
-# ### helper functions
-
-# In[ ]:
-
+def get_savesubjectinfo(name):
+    # Save python objects that aren't accomodated by datasink nodes
+    save_subjectinfo = Node(Function(input_names=['base_directory',
+                                                  'base_subjectinfo',
+                                                  'contrast_subjectinfo','contrasts'],
+                                     output_names=['output_path'],
+                                    function=name),
+                           name=name)
+    save_subjectinfo.inputs.base_directory = join(derivatives_dir,first_level_dir)
+    return save_subjectinfo
 
 def get_selector(name, session=None):
     if session is None:
@@ -220,6 +213,18 @@ def get_selector(name, session=None):
                                    sort_filelist=True),
                        name=name)
     return selectfiles
+
+def get_masker(name):
+    # mask and blur
+    return Node(fsl.maths.ApplyMask(),name=name)
+
+
+# # Create workflow
+
+# ### helper functions
+
+# In[7]:
+
 
 def init_GLM_wf(name='wf'):
     # Datasink - creates output folder for important outputs
@@ -267,6 +272,32 @@ def init_GLM_wf(name='wf'):
     return wf
 
 
+def init_common_wf(workflow, task):
+        # Infosource - a function free node to iterate over the list of subject names
+    infosource = Node(IdentityInterface(fields=['subject_id',
+                                                'task']),
+                      name="%s_infosource" % task)
+    infosource.iterables = [('subject_id', subject_list)]
+    infosource.inputs.task = task
+    
+    # initiate basic nodes
+    subjectinfo = get_subjectinfo('%s_subjectinfo' % task)
+    save_subjectinfo = get_savesubjectinfo('%s_savesubjectinfo' % task)
+    masker = get_masker('%s_masker' % task)
+    selectfiles = get_selector('%s_selectFiles' % task)
+    
+    # Connect up the 1st-level analysis components
+    workflow.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
+                                                   ('task', 'task')]),
+                        (infosource, subjectinfo, [('subject_id','subject_id'),
+                                                     ('task', 'task')]),
+                        (subjectinfo, save_subjectinfo, [('base_subjectinfo','base_subjectinfo'),
+                                                         ('contrast_subjectinfo','contrast_subjectinfo'),
+                                                         ('contrasts','contrasts')]),
+                        (selectfiles, masker, [('func','in_file'),
+                                               ('mask', 'mask_file')])
+                        ])
+
 def get_task_wfs(task):
     # set up workflow lookup
     wf_dict = {'rest': [(init_GLM_wf, {'name': 'base_wf'})]}
@@ -282,7 +313,7 @@ def get_task_wfs(task):
     
 
 
-# In[ ]:
+# In[8]:
 
 
 # Initiation of the 1st-level analysis workflow
@@ -290,29 +321,11 @@ l1analysis = Workflow(name='l1analysis')
 l1analysis.base_dir = join(derivatives_dir, working_dir)
 
 for task in task_list:
-    # Infosource - a function free node to iterate over the list of subject names
-    infosource = Node(IdentityInterface(fields=['subject_id',
-                                                'task']),
-                      name="%s_infosource" % task)
-    infosource.iterables = [('subject_id', subject_list)]
-    infosource.inputs.task = task
-    
-    # initiate file selector
-    selectfiles = get_selector(task+'_selectFiles')
-    
-    # Connect up the 1st-level analysis components
-    l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
-                                                   ('task', 'task')]),
-                        (infosource, subjectinfo, [('subject_id','subject_id'),
-                                                     ('task', 'task')]),
-                        (subjectinfo, save_subjectinfo, [('base_subjectinfo','base_subjectinfo'),
-                                                         ('contrast_subjectinfo','contrast_subjectinfo'),
-                                                         ('contrasts','contrasts')]),
-                        (selectfiles, masker, [('func','in_file'),
-                                               ('mask', 'mask_file')])
-                        ])
-    
+    init_common_wf(l1analysis, task)
     task_workflows = get_task_wfs(task)
+    # get nodes to pass
+    subjectinfo = l1analysis.get_node('%s_subjectinfo' % task)
+    masker = l1analysis.get_node('%s_masker' % task)
     for wf in task_workflows:
         l1analysis.connect([
                             (subjectinfo, wf, [('contrast_subjectinfo','modelspec.subject_info')]),
@@ -329,7 +342,7 @@ for task in task_list:
 # ### Run the Workflow
 # 
 
-# In[ ]:
+# In[51]:
 
 
 #l1analysis.run()
