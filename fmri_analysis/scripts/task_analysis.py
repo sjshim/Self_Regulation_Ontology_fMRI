@@ -300,10 +300,10 @@ def init_common_wf(workflow, task):
 
 def get_task_wfs(task):
     # set up workflow lookup
-    wf_dict = {'rest': [(init_GLM_wf, {'name': 'base_wf'})]}
+    wf_dict = {'rest': [(init_GLM_wf, {'name': '%s_base_wf' % task})]}
     
-    default_wf = [(init_GLM_wf, {'name': 'contrast_wf'}), 
-                  (init_GLM_wf, {'name': 'base_wf'})]
+    default_wf = [(init_GLM_wf, {'name': '%s_contrast_wf' % task}), 
+                  (init_GLM_wf, {'name': '%s_base_wf' % task})]
     
     # get workflow
     workflows = []
