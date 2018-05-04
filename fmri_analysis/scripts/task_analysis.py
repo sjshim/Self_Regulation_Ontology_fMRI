@@ -42,7 +42,7 @@ else:
     args = parser.parse_args([])
     args.derivatives_dir = '/mnt/OAK/derivatives/'
     args.data_dir = '/mnt/OAK'
-    args.tasks = ['stroop']
+    args.tasks = ['ANT']
     args.participant_labels = ['s130']
 
 
@@ -179,7 +179,7 @@ def get_subjectinfo(name):
                                    output_names=['base_subjectinfo', 
                                                  'contrast_subjectinfo',
                                                  'contrasts'],
-                                   function=name),
+                                   function=getsubjectinfo),
                           name=name)
     subjectinfo.inputs.fmriprep_dir = fmriprep_dir
     subjectinfo.inputs.data_dir = data_dir
@@ -189,14 +189,14 @@ def get_subjectinfo(name):
 
 def get_savesubjectinfo(name):
     # Save python objects that aren't accomodated by datasink nodes
-    save_subjectinfo = Node(Function(input_names=['base_directory',
+    savesubjectinfo = Node(Function(input_names=['base_directory',
                                                   'base_subjectinfo',
                                                   'contrast_subjectinfo','contrasts'],
                                      output_names=['output_path'],
-                                    function=name),
+                                    function=save_subjectinfo),
                            name=name)
-    save_subjectinfo.inputs.base_directory = join(derivatives_dir,first_level_dir)
-    return save_subjectinfo
+    savesubjectinfo.inputs.base_directory = join(derivatives_dir,first_level_dir)
+    return savesubjectinfo
 
 def get_selector(name, session=None):
     if session is None:
@@ -282,7 +282,7 @@ def init_common_wf(workflow, task):
     
     # initiate basic nodes
     subjectinfo = get_subjectinfo('%s_subjectinfo' % task)
-    save_subjectinfo = get_savesubjectinfo('%s_savesubjectinfo' % task)
+    savesubjectinfo = get_savesubjectinfo('%s_savesubjectinfo' % task)
     masker = get_masker('%s_masker' % task)
     selectfiles = get_selector('%s_selectFiles' % task)
     
@@ -291,7 +291,7 @@ def init_common_wf(workflow, task):
                                                    ('task', 'task')]),
                         (infosource, subjectinfo, [('subject_id','subject_id'),
                                                      ('task', 'task')]),
-                        (subjectinfo, save_subjectinfo, [('base_subjectinfo','base_subjectinfo'),
+                        (subjectinfo, savesubjectinfo, [('base_subjectinfo','base_subjectinfo'),
                                                          ('contrast_subjectinfo','contrast_subjectinfo'),
                                                          ('contrasts','contrasts')]),
                         (selectfiles, masker, [('func','in_file'),
@@ -342,9 +342,9 @@ for task in task_list:
 # ### Run the Workflow
 # 
 
-# In[51]:
+# In[ ]:
 
 
-#l1analysis.run()
-l1analysis.run('MultiProc', plugin_args={'n_procs': 8})
+l1analysis.run()
+#l1analysis.run('MultiProc', plugin_args={'n_procs': 8})
 
