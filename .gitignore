@@ -4,6 +4,7 @@ __pycache__
 .ipynb_checkpoints
 .out/
 .err/
+crash*
 behavioral_data/processed/*
 behavioral_data/event_files/*
 fmri_experiments/temp_tasklist.json
