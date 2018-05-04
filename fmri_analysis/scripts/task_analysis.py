@@ -34,10 +34,8 @@ parser.add_argument('-data_dir', default='/data')
 parser.add_argument('--participant_labels',nargs="+")
 parser.add_argument('--events_dir', default=None)
 parser.add_argument('--tasks', nargs="+")
-parser.add_argument('--use_events', action='store_false')
 parser.add_argument('--ignore_rt', action='store_true')
 parser.add_argument('--cleanup', action='store_true')
-parser.add_argument('--overwrite_event', action='store_true')
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
 else:
@@ -207,7 +205,7 @@ masker = Node(fsl.maths.ApplyMask(),name='masker')
 # In[ ]:
 
 
-def get_selector(session=None):
+def get_selector(name, session=None):
     if session is None:
         ses = '*'
     else:
@@ -220,7 +218,7 @@ def get_selector(session=None):
     selectfiles = Node(SelectFiles(templates,
                                    base_directory=fmriprep_dir,
                                    sort_filelist=True),
-                       name="selectfiles")
+                       name=name)
     return selectfiles
 
 def init_GLM_wf(name='wf'):
@@ -300,7 +298,7 @@ for task in task_list:
     infosource.inputs.task = task
     
     # initiate file selector
-    selectfiles = get_selector()
+    selectfiles = get_selector(task+'_selectFiles')
     
     # Connect up the 1st-level analysis components
     l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
