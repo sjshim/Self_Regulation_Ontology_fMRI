@@ -28,7 +28,7 @@ def get_design_df(design_path, subjectinfo_path):
     design_df = pd.DataFrame(desmtx, columns=columns)
     return design_df
 
-def plot_design(design_df, output_dir=None):
+def plot_design(design_df, size=12, output_dir=None):
     if 'junk' in design_df.columns:
         end_index = list(design_df.columns).index('junk')
     else:
@@ -38,7 +38,7 @@ def plot_design(design_df, output_dir=None):
         regs = design_df.iloc[0:max_trial,0:end_index:2]
         if 'response_time' in design_df.columns:
             regs = pd.concat([regs, design_df.ix[0:max_trial, 'response_time']], axis=1)
-        f = plt.figure(figsize=(12,12))
+        f = plt.figure(figsize=(size,size))
         ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2)
         ax2 = plt.subplot2grid((3, 2), (1, 0))
         ax3 = plt.subplot2grid((3, 2), (1, 1))
