@@ -492,6 +492,30 @@ def get_base_EVs(events_df):
                 duration='duration')   
     return output_dict
 
+def get_beta_series(events_df, regress_rt=True):
+    output_dict = {
+        'conditions': [],
+        'onsets': [],
+        'durations': [],
+        'amplitudes': []
+        }
+    for i, row in events_df.iterrows():
+        output_dict['conditions'].append('trial_%s' % str(i+1))
+        output_dict['onsets'].append([row.onset])
+        output_dict['durations'].append([row.duration])
+        output_dict['amplitudes'].append([1])
+    # nuisance regressors
+    get_ev_vars(output_dict, events_df, 
+                condition_spec=[(True, 'junk')], 
+                col='junk', 
+                duration='duration')   
+    if regress_rt == True:
+        get_ev_vars(output_dict, events_df, 
+                    condition_spec='response_time', 
+                    duration='duration', 
+                    amplitude='response_time')
+    return output_dict
+    
 # How to model RT
 # For each condition model responses with constant duration 
 # (average RT across subjects or block duration)

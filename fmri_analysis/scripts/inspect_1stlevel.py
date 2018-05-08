@@ -29,7 +29,7 @@ else:
 """
 
 derivatives_dir = '/home/ian/tmp/fmri/derivatives/'
-data_dir = '/home/ian/tmp/fmri/data/'
+data_dir = '/mnt/OAK'
 task_list = ['stopSignal']
 
 filename = getframeinfo(currentframe()).filename
