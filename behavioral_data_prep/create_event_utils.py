@@ -8,7 +8,7 @@ def get_drop_columns(df, columns=None, use_default=True):
     default_cols = ['block_duration', 'correct_response', 'exp_stage', 
                     'feedback_duration', 'possible_responses', 
                    'rt', 'stim_duration', 'text', 'time_elapsed',
-                   'timing_post_trial', 'trial_id', 'trial_num']
+                   'timing_post_trial', 'trial_num']
     drop_columns = []
     if columns is not None:
         drop_columns = columns
@@ -341,19 +341,36 @@ def create_WATT_event(df, duration):
                                                       'problem_time',
                                                       'start_state'])
     
-    events_df = df[df['time_elapsed']>0]
+    events_df = df[df['exp_stage']=='test']
     # add junk regressor
-    events_df.loc[:,'junk'] = get_junk_trials(df)
-    # add planning indicator
-    first_moves = events_df.query('trial_id == "to_hand"' +
+    events_df.loc[:,'junk'] = False
+    # get planning, movement, and feedback index
+    planning_moves = events_df.query('trial_id == "to_hand"' +
                                   'and num_moves_made==1').index
+    other_moves = events_df.query('not (trial_id == "to_hand"' +
+                                  'and num_moves_made==1)' +
+                                  ' and trial_id != "feedback"').index   
+    feedback = events_df.query('trial_id == "feedback"').index
+    # add planning indicator
     events_df.insert(1,'planning',0)
-    events_df.loc[first_moves,'planning'] = 1
+    events_df.loc[planning_moves,'planning'] = 1
     
     # add durations for planning
-    events_df.loc[first_moves,'duration'] = duration['planning_time']
-    # add response time
-    events_df.insert(0,'response_time',events_df.rt-events_df.rt.mean())
+    events_df.loc[planning_moves,'duration'] = duration['planning_time']
+    # add mean centered rt
+    planning_mean = events_df.loc[planning_moves,'rt'].mean()
+    events_df.insert(0,'response_time',events_df.rt)
+    events_df.loc[planning_moves,'response_time']-=planning_mean
+    
+    # add durations for planning
+    events_df.loc[other_moves,'duration'] = duration['move_time']
+    # add mean centered rt
+    movement_mean = events_df.loc[other_moves,'rt'].mean()
+    events_df.loc[other_moves,'response_time']-=movement_mean
+    
+    # add durations for feedback
+    events_df.loc[feedback, 'duration'] = events_df.loc[feedback, 'block_duration']
+    
     
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
