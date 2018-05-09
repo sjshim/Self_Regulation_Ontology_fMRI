@@ -196,6 +196,11 @@ def get_ev_vars(output_dict, events_df, condition_spec, col=None,
             durations.append(group_df.loc[:,duration].tolist())
         elif type(duration) == list:
             durations.append(duration)
+    # ensure that each column added is all numeric
+    for attr in [durations, amplitudes, onsets]:
+        assert np.issubdtype(np.array(attr[-1]).dtype, np.number)   
+        assert pd.isnull(attr[-1]).sum() == 0
+    
 
 # specific task functions
 def get_ANT_EVs(events_df, regress_rt=True):
@@ -419,6 +424,7 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
             'amplitudes': []
             }
     # cue switch contrasts
+    events_df.cue_switch.fillna(1, inplace=True)
     cue_switches = events_df.cue_switch.replace({'switch':1,'stay':-1}).tolist()
     get_ev_vars(output_dict, events_df, 
                 condition_spec='cue_switch_cost_900',
