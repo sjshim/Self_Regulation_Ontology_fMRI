@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -J preproc                # Give me a job name
-#SBATCH --array=1-19%12 
+#SBATCH --array=1-2%12 
                                   # and have max 12 tasks running in parallel at a time
 #SBATCH -p russpold             
 #SBATCH --time=48:00:00           # Wallclock time

@@ -11,7 +11,7 @@ fmri_experiments/temp_tasklist.json
 fmri_analysis/data_settings.txt
 fmri_analysis/output
 fmri_analysis/Data/sub*
-fmri_preproc/*task_lists.sh
+fmri_preproc/*task_list.sh
 singularity_images/*img
 nilearn_cache*
 nipype_mem*

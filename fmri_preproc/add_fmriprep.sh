@@ -46,7 +46,7 @@ do
         else
             if [[ $check_fmriprep -eq 1 ]]; then
                 echo "**Running fmriprep on $sid**"
-                echo singularity run ${fmriprep_path} ${data_path} ${out_path}/fmriprep participant --participant_label ${sid} -w $SCRATCH --fs-license-file ~/docs/fs-license.txt --output-space template T1w --mem_mb 40000 --nthreads 10 >> preproc_task_list.sh
+                echo singularity run ${fmriprep_path} ${data_path} ${out_path}/fmriprep participant --participant_label ${sid} -w $SCRATCH --fs-license-file ~/docs/fs-license.txt --output-space template T1w fsaverage --mem_mb 40000 --nthreads 10 >> preproc_task_list.sh
                 (( subjects_run+=1 ))
             elif [[ $check_fmriprep -eq -1 ]]; then
                 (( no_freesurfer+=1 ))
