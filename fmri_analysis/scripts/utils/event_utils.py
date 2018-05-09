@@ -460,7 +460,7 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
                     amplitude='response_time')
     return output_dict
 
-def get_WATT3_EVs(events_df):
+def get_WATT3_EVs(events_df, regress_rt=True):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -469,10 +469,8 @@ def get_WATT3_EVs(events_df):
             }
     # planning conditions
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('UA_with_intermediate','plan_UA_with'), 
-                            ('UA_without_intermediate','plan_UA_without'),
-                            ('PA_with_intermediate','plan_PA_with'),
-                            ('PA_without_intermediate','plan_PA_without')],
+                condition_spec=[('PA_with_intermediate','plan_PA_with'),
+                                ('PA_without_intermediate','plan_PA_without')],
                 col='condition', 
                 duration='duration', 
                 subset="planning==1")
@@ -480,6 +478,17 @@ def get_WATT3_EVs(events_df):
     get_ev_vars(output_dict, events_df, 
                 condition_spec='movement', 
                 onset_column='movement_onset')
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='feedback', 
+                duration='duration',
+                subset="trial_id=='feedback'")
+    
+    if regress_rt == True:
+        get_ev_vars(output_dict, events_df, 
+                    condition_spec='response_time', 
+                    duration='duration', 
+                    amplitude='response_time',
+                    subset="trial_id != 'feedback'")
     return output_dict
 
 def get_base_EVs(events_df):
@@ -527,7 +536,7 @@ def get_beta_series(events_df, regress_rt=True):
 # (average RT across subjects or block duration)
 # RT as a separate regressor for each onset, constant duration, 
 # amplitude as parameteric regressor (function of RT)
-def parse_EVs(events_df, task, regress_rt=True):
+def parse_EVs(events_df, task, regress_rt=True, beta=True):
     if task == "ANT":
         EV_dict = get_ANT_EVs(events_df, regress_rt=True)
     elif task == "CCTHot": 
@@ -551,6 +560,9 @@ def parse_EVs(events_df, task, regress_rt=True):
     # covers generic conversion of events_df into trial design file
     elif task == 'base':
         EV_dict = get_base_EVs(events_df)
+    if beta == True:
+        beta_dict = get_beta_series(events_df, regress_rt)
+        return EV_dict, beta_dict
     return EV_dict
 
     

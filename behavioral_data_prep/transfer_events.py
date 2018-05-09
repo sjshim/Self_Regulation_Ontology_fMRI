@@ -24,6 +24,7 @@ def move_EV(subj, task, fmri_dir):
     
 def move_EVs(fmri_dir, tasks, overwrite=True, verbose=False):
     created_files = []
+    total_transfers = {t:0 for t in tasks}
     for subj_file in sorted(glob(join(fmri_dir,'sub-s???'))):
         subj = basename(subj_file)
         if verbose: print('Transferring subject %s' % subj)
@@ -36,12 +37,14 @@ def move_EVs(fmri_dir, tasks, overwrite=True, verbose=False):
                     try:
                         name = move_EV(subj, task, fmri_dir)
                         created_files.append(name)
+                        total_transfers[task] += 1
                     except IndexError:
                         print('Move_EV failed for the %s: %s' % (subj, task))
             else:
                 print('**** No %s bold found' % task)
     if verbose:
         print('\n'.join(created_files))
+        print(total_transfers)
         
         
 if __name__ == "__main__":
