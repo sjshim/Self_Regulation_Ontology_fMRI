@@ -94,11 +94,12 @@ for task,df in task_dfs.items():
 task_50th_rts = {task: df.rt.quantile(.5) for task,df in task_dfs.items()}
 # ward and allport requires more complicated durations
 test_df = task_dfs['ward_and_allport'].query('exp_stage == "test"')
+# get the first move times (plan times)
 plan_times = test_df.query('trial_id == "to_hand" and num_moves_made==1').rt
-move_times = test_df.query('trial_id in ["to_hand", "to_board"]') \
-                    .groupby(['worker_id','problem_id']).rt.sum()
-move_times.index = plan_times.index
-move_times-=plan_times
+# get other move times
+move_times = test_df.query('not (trial_id == "to_hand" and num_moves_made==1)')
+# drop feedback
+move_times = move_times.query('trial_id != "feedback"').rt
 task_50th_rts['ward_and_allport'] = {'planning_time': plan_times.quantile(.5),
                                      'move_time': move_times.quantile(.5)}
 

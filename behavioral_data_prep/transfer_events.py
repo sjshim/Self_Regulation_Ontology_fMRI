@@ -29,7 +29,7 @@ def move_EVs(fmri_dir, tasks, overwrite=True, verbose=False):
         if verbose: print('Transferring subject %s' % subj)
         for task in tasks:
             bold_files = glob(join(subj_file,'*', 'func', '*%s*bold.nii.gz' % task))
-            assert len(bold_files) <= 1, "Multiple bold files found for %s_%s" % (subj, task)
+            assert len(bold_files) <= 1, "%s bold files found for %s_%s" % (len(bold_files), subj, task)
             if len(bold_files) == 1:
                 event_files = glob(join(subj_file,'*', 'func', '*%s*events.tsv' % task))
                 if overwrite==True or len(event_files)==0:
@@ -44,23 +44,23 @@ def move_EVs(fmri_dir, tasks, overwrite=True, verbose=False):
         print('\n'.join(created_files))
         
         
-
-parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
-parser.add_argument('-data_dir', default='/data')
-parser.add_argument('--tasks', default=None)
-parser.add_argument('--overwrite_event', action='store_true')
-parser.add_argument('--verbose', action='store_true')
-args = parser.parse_args()
-
-overwrite_event = args.overwrite_event
-verbose = args.verbose
-data_dir = args.data_dir
-if args.tasks:
-    task_list = args.tasks
-else:
-  task_list = ['ANT', 'CCTHot', 'discountFix',
-               'DPX', 'motorSelectiveStop',
-               'stopSignal', 'stroop', 'surveyMedley',
-               'twoByTwo', 'WATT3']
-
-move_EVs(data_dir, task_list, overwrite_event, verbose=verbose)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
+    parser.add_argument('-data_dir', default='/data')
+    parser.add_argument('--tasks', default=None, nargs="+")
+    parser.add_argument('--overwrite_event', action='store_true')
+    parser.add_argument('--verbose', action='store_true')
+    args = parser.parse_args()
+    
+    overwrite_event = args.overwrite_event
+    verbose = args.verbose
+    data_dir = args.data_dir
+    if args.tasks:
+        task_list = args.tasks
+    else:
+      task_list = ['ANT', 'CCTHot', 'discountFix',
+                   'DPX', 'motorSelectiveStop',
+                   'stopSignal', 'stroop', 'surveyMedley',
+                   'twoByTwo', 'WATT3']
+    
+    move_EVs(data_dir, task_list, overwrite_event, verbose=verbose)
