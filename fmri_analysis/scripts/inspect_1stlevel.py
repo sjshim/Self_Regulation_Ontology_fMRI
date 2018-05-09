@@ -39,14 +39,17 @@ current_directory = str(Path(filename).resolve().parent)
 # glasser atlas
 atlas_path = path.join(current_directory, 'atlases', 'HCPMMP1_on_MNI152_ICBM2009a_nlin_hd.nii.gz')
 atlas_label_path = path.join(current_directory, 'atlases', 'HCPMMP1_on_MNI152_ICBM2009a_nlin.txt')
-atlas = load_atlas(atlas_path, atlas_label_path)
+try:
+    atlas = load_atlas(atlas_path, atlas_label_path)
+except FileNotFoundError:
+    print('Glasser atlas not found')
 # harvard atlas
 atlas=nilearn.datasets.fetch_atlas_harvard_oxford('cort-maxprob-thr25-2mm')
 
 
-task = 'stopSignal'
+task = 'twoByTwo'
 subject = 's130'
-for wf in ['contrast_wf', 'base_wf']:
+for wf in ['contrast_wf', 'beta_wf']:
     # inspect design
     design_path = path.join(derivatives_dir, '1stLevel', wf, '%s_task_%s' % (subject, task))
     subjectinfo_path = path.join(derivatives_dir, '1stLevel', 'subject_info', '%s_task_%s' % (subject, task))
