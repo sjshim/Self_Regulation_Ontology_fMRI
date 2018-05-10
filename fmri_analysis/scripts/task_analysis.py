@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[11]:
+# In[1]:
 
 
 import argparse
@@ -30,7 +30,7 @@ from utils.event_utils import get_beta_series, get_contrasts, parse_EVs, process
 # - conversion command:
 #   - jupyter nbconvert --to script --execute task_analysis.ipynb
 
-# In[12]:
+# In[2]:
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
@@ -54,7 +54,7 @@ else:
 
 # ### Initial Setup
 
-# In[13]:
+# In[3]:
 
 
 # get current directory to pass to function nodes
@@ -85,7 +85,7 @@ n_procs = args.n_procs
 TR = .68
 
 
-# In[14]:
+# In[4]:
 
 
 # print
@@ -101,7 +101,7 @@ print('*'*79)
 
 # ### Define helper functions
 
-# In[15]:
+# In[5]:
 
 
 def get_events_regressors(data_dir, fmirprep_dir, subject_id, task):
@@ -155,7 +155,7 @@ def save_subjectinfo(save_directory, subjectinfo):
 
 # ### Specify Input and Output Stream
 
-# In[16]:
+# In[6]:
 
 
 def get_selector(task, subject_id, session=None):
@@ -185,7 +185,7 @@ def get_masker(name):
 
 # ### helper functions
 
-# In[17]:
+# In[7]:
 
 
 def init_common_wf(workflow, task):
@@ -207,8 +207,8 @@ def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
     datasink.inputs.substitutions = substitutions
     # ridiculous regexp substitution to get files just right
     # link to ridiculousness: https://regex101.com/r/ljS5zK/2
-    match_str = "(?P<sub>s[0-9]+)\/(?P<task>[a-z_]+)_(?P<model>model-[a-z]+)_(?P<submodel>wf-[a-z]+)\/s[0-9]+"
-    replace_str = "\g<sub>/\g<task>/\g<model>/\g<submodel>"
+    match_str = "(?P<sub>s[0-9]+)\/(?P<task>[A-Za-z_]+)_(?P<model>model-[a-z]+)_(?P<submodel>wf-[a-z]+)\/(s[0-9]+/|)"
+    replace_str = "\g<sub>/\g<task>/\g<model>/\g<submodel>/"
     regexp_substitutions = [(match_str, replace_str)]
     datasink.inputs.regexp_substitutions = regexp_substitutions
     
@@ -272,7 +272,7 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
     
 
 
-# In[18]:
+# In[8]:
 
 
 # Initiation of the 1st-level analysis workflow
@@ -308,7 +308,7 @@ for task in task_list:
 # ### Run the Workflow
 # 
 
-# In[ ]:
+# In[9]:
 
 
 #l1analysis.run()
