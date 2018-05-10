@@ -8,16 +8,20 @@
 
 import argparse
 from inspect import currentframe, getframeinfo
+from glob import glob
 from pathlib import Path
 from nipype.interfaces import fsl
 from nipype.algorithms.modelgen import SpecifyModel
+from nipype.interfaces.base import Bunch
 from nipype.interfaces.utility import Function, IdentityInterface
 from nipype.interfaces.io import SelectFiles, DataSink
 from nipype.pipeline.engine import Workflow, Node
 import os
 from os.path import join
+import pandas as pd
+import pickle
 import sys
-from utils.event_utils import get_contrasts
+from utils.event_utils import get_beta_series, get_contrasts, parse_EVs, process_confounds
 
 
 # ### Parse Arguments
@@ -32,9 +36,8 @@ from utils.event_utils import get_contrasts
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
 parser.add_argument('-derivatives_dir', default='/derivatives')
 parser.add_argument('-data_dir', default='/data')
-parser.add_argument('--participant_labels',nargs="+")
+parser.add_argument('--participant_label')
 parser.add_argument('--tasks', nargs="+")
-parser.add_argument('--ignore_rt', action='store_true')
 parser.add_argument('--cleanup', action='store_true')
 parser.add_argument('--n_procs', default=16)
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
@@ -44,7 +47,7 @@ else:
     args.derivatives_dir = '/mnt/OAK/derivatives'
     args.data_dir = '/mnt/OAK'
     args.tasks = ['stroop']
-    args.participant_labels = ['s130']
+    args.participant_label = 's130'
     args.n_procs=4
 
 
@@ -58,7 +61,7 @@ filename = getframeinfo(currentframe()).filename
 current_directory = str(Path(filename).resolve().parent)
 
 # list of subject identifiers
-subject_list = args.participant_labels
+subject_id = args.participant_label
 # list of task identifiers
 if args.tasks is not None:
     task_list = args.tasks
@@ -68,11 +71,6 @@ else:
                'stopSignal', 'stroop', 'surveyMedley',
                'twoByTwo', 'WATT3']
 
-regress_rt = not args.ignore_rt
-if regress_rt:
-    rt_suffix = 'rt'
-else:
-    rt_suffix = 'nort'
 #### Experiment Variables
 derivatives_dir = args.derivatives_dir
 fmriprep_dir = join(derivatives_dir, 'fmriprep', 'fmriprep')
@@ -89,8 +87,8 @@ TR = .68
 
 # print
 print('*'*79)
-print('Task List: %s\n, Subjects: %s\n, derivatives_dir: %s\n, data_dir: %s' % 
-     (task_list, subject_list, derivatives_dir, data_dir))
+print('Task List: %s\n, Subject: %s\n, derivatives_dir: %s\n, data_dir: %s' % 
+     (task_list, subject_id, derivatives_dir, data_dir))
 print('*'*79)
 
 
@@ -101,15 +99,7 @@ print('*'*79)
 # In[ ]:
 
 
-# helper function to create bunch
-def getsubjectinfo(data_dir, fmriprep_dir, subject_id, task, regress_rt, utils_path): 
-    from glob import glob
-    from os.path import join
-    import pandas as pd
-    from nipype.interfaces.base import Bunch
-    import sys
-    sys.path.append(utils_path)
-    from utils.event_utils import get_beta_series, parse_EVs, process_confounds
+def get_events_regressors(data_dir, fmirprep_dir, subject_id, task):
     # strip "sub" from beginning of subject_id if provided
     subject_id = subject_id.replace('sub-','')
     ## Get the Confounds File (output of fmriprep)
@@ -124,96 +114,47 @@ def getsubjectinfo(data_dir, fmriprep_dir, subject_id, task, regress_rt, utils_p
     event_file = glob(join(data_dir,
                            'sub-%s' % subject_id,
                            '*', 'func',
-                           '*%s*events.tsv' % task))
-    beta_subjectinfo = None
-    contrast_subjectinfo = None
-    contrast = None
+                           '*%s*events.tsv' % task))   
     if len(event_file)>0:
         # set up events file
         event_file = event_file[0]
         events_df = pd.read_csv(event_file,sep = '\t')
-        EV_dict, beta_dict = parse_EVs(events_df, task, regress_rt, beta=True)
-        # create beta series info
-        beta_subjectinfo = Bunch(subject_id=subject_id,
-                                 task=task,
-                                 conditions=beta_dict['conditions'],
-                                 onsets=beta_dict['onsets'],
-                                 durations=beta_dict['durations'],
-                                 amplitudes=beta_dict['amplitudes'],
-                                 tmod=None,
-                                 pmod=None,
-                                 regressor_names=regressor_names,
-                                 regressors=regressors.T.tolist())
-        # set up contrasts
-        contrast_subjectinfo = Bunch(subject_id=subject_id,
-                                     task=task,
-                                     conditions=EV_dict['conditions'],
-                                     onsets=EV_dict['onsets'],
-                                     durations=EV_dict['durations'],
-                                     amplitudes=EV_dict['amplitudes'],
-                                     tmod=None,
-                                     pmod=None,
-                                     regressor_names=regressor_names,
-                                     regressors=regressors.T.tolist())
-    return beta_subjectinfo, contrast_subjectinfo
+    else:
+        events_df = None
+    regressors, regressor_names = process_confounds(confounds_file)
+    return events_df, regressors, regressor_names
+
+# helper function to create bunch
+def getsubjectinfo(events_dr, regressors, regressor_names, task='beta', regress_rt=True): 
+    EV_dict = parse_EVs(events_df, task, regress_rt)
+    if task not in ['beta']:
+        contrasts = get_contrasts(task, regress_rt)
+    else:
+        contrasts=None
+    # create beta series info
+    subjectinfo = Bunch(conditions=EV_dict['conditions'],
+                        onsets=EV_dict['onsets'],
+                        durations=EV_dict['durations'],
+                        amplitudes=EV_dict['amplitudes'],
+                        tmod=None,
+                        pmod=None,
+                        regressor_names=regressor_names,
+                        regressors=regressors.T.tolist(),
+                        contrasts=contrasts)
+    return subjectinfo
     
-def save_subjectinfo(save_directory, beta_subjectinfo, contrast_subjectinfo, contrasts=[], model_name='standard'):
-    from os import makedirs
-    from os.path import join
-    import pickle
-    subject_id = beta_subjectinfo.subject_id
-    task = beta_subjectinfo.task
-    subjectinfo_dir = join(save_directory, subject_id, task, 'model-%s' % model_name)
-    makedirs(subjectinfo_dir, exist_ok=True)
-    # save beta subject info
-    makedirs(join(subjectinfo_dir, 'wf-beta'), exist_ok=True)
-    beta_path = join(subjectinfo_dir, 'wf-beta', 'subjectinfo.pkl')
-    pickle.dump(beta_subjectinfo, open(beta_path,'wb'))
-    # save contrast subject info
-    if len(contrast_subjectinfo.items()) > 0:
-        makedirs(join(subjectinfo_dir, 'wf-contrast'), exist_ok=True)
-        contrast_path = join(subjectinfo_dir, 'wf-contrast', 'subjectinfo.pkl')
-        pickle.dump(contrast_subjectinfo, open(contrast_path,'wb'))
-        # save contrast list
-        contrastlist_path = join(subjectinfo_dir,'wf-contrast', 'contrasts.pkl')
-        pickle.dump(contrasts, open(contrastlist_path,'wb'))
+def save_subjectinfo(save_directory, subjectinfo):
+    os.makedirs(save_directory, exist_ok=True)
+    subjectinfo_path = join(save_directory, 'subjectinfo.pkl')
+    pickle.dump(subjectinfo, open(subjectinfo_path,'wb'))
 
-
-# View one events file used in subject info
 
 # ### Specify Input and Output Stream
 
 # In[ ]:
 
 
-def get_subjectinfo(name):
-    # Get Subject Info - get subject specific condition information
-    subjectinfo = Node(Function(input_names=['data_dir', 'fmriprep_dir','subject_id', 
-                                             'task','regress_rt', 'utils_path'],
-                                   output_names=['beta_subjectinfo', 
-                                                 'contrast_subjectinfo'],
-                                   function=getsubjectinfo),
-                          name=name)
-    subjectinfo.inputs.fmriprep_dir = fmriprep_dir
-    subjectinfo.inputs.data_dir = data_dir
-    subjectinfo.inputs.regress_rt = regress_rt
-    subjectinfo.inputs.utils_path = current_directory
-    return subjectinfo
-
-def get_savesubjectinfo(name):
-    # Save python objects that aren't accomodated by datasink nodes
-    savesubjectinfo = Node(Function(input_names=['save_directory',
-                                                 'beta_subjectinfo',
-                                                 'contrast_subjectinfo',
-                                                 'contrasts',
-                                                 'model_name'],
-                                    function=save_subjectinfo),
-                           name=name)
-    savesubjectinfo.inputs.save_directory = first_level_dir
-    savesubjectinfo.inputs.model_name = rt_suffix
-    return savesubjectinfo
-
-def get_selector(name, session=None):
+def get_selector(task, subject_id, session=None):
     if session is None:
         ses = '*'
     else:
@@ -226,7 +167,9 @@ def get_selector(name, session=None):
     selectfiles = Node(SelectFiles(templates,
                                    base_directory=fmriprep_dir,
                                    sort_filelist=True),
-                       name=name)
+                       name='%s_selectFiles' % task)
+    selectfiles.inputs.task = task
+    selectfiles.inputs.subject_id = subject_id
     return selectfiles
 
 def get_masker(name):
@@ -242,34 +185,16 @@ def get_masker(name):
 
 
 def init_common_wf(workflow, task):
-        # Infosource - a function free node to iterate over the list of subject names
-    infosource = Node(IdentityInterface(fields=['subject_id',
-                                                'task',
-                                                'contrasts']),
-                      name="%s_infosource" % task)
-    infosource.iterables = [('subject_id', subject_list)]
-    infosource.inputs.task = task
-    infosource.inputs.contrasts = get_contrasts(task, regress_rt)
-    
     # initiate basic nodes
-    subjectinfo = get_subjectinfo('%s_subjectinfo' % task)
-    savesubjectinfo = get_savesubjectinfo('%s_savesubjectinfo' % task)
     masker = get_masker('%s_masker' % task)
-    selectfiles = get_selector('%s_selectFiles' % task)
-    
+    selectfiles = get_selector(task, subject_id)
     # Connect up the 1st-level analysis components
-    workflow.connect([(infosource, selectfiles, [('subject_id', 'subject_id'), ('task', 'task')]),
-                      (infosource, subjectinfo, [('subject_id','subject_id'), ('task', 'task')]),
-                      (infosource, savesubjectinfo, [('contrasts','contrasts')]),
-                      (subjectinfo, savesubjectinfo, [('beta_subjectinfo','beta_subjectinfo'),
-                                                      ('contrast_subjectinfo','contrast_subjectinfo')]),
-                      (selectfiles, masker, [('func','in_file'),
-                                             ('mask', 'mask_file')])
-                        ])
+    workflow.connect([(selectfiles, masker, [('func','in_file'), ('mask', 'mask_file')])])
 
-def init_GLM_wf(name='wf-standard'):
+def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
     # Datasink - creates output folder for important outputs
-    datasink = Node(DataSink(base_directory=first_level_dir), name="datasink")
+    datasink = Node(DataSink(base_directory=first_level_dir,
+                             container=subject_id), name="datasink")
     # Use the following DataSink output substitutions
     substitutions = [('_subject_id_', ''),
                     ('fstat', 'FSTST'),
@@ -288,11 +213,14 @@ def init_GLM_wf(name='wf-standard'):
                                   time_repetition=TR,
                                   high_pass_filter_cutoff=80),
                      name="modelspec")
+    modelspec.inputs.subject_info = subject_info
     # Level1Design - Creates FSL config file 
     level1design = Node(fsl.Level1Design(bases={'dgamma':{'derivs': True}},
                                          interscan_interval=TR,
                                          model_serial_correlations=True),
                             name="level1design")
+    if subject_info.contrasts is not None:
+        level1design.inputs.contrasts=subject_info.contrasts
     # FEATmodel generates an FSL design matrix
     level1model = Node(fsl.FEATModel(), name="FEATModel")
 
@@ -302,34 +230,41 @@ def init_GLM_wf(name='wf-standard'):
 
     wf = Workflow(name=name)
     wf.connect([(modelspec, level1design, [('session_info','session_info')]),
-              (level1design, level1model, [('ev_files', 'ev_files'),
+                (level1design, level1model, [('ev_files', 'ev_files'),
                                              ('fsf_files','fsf_file')]),
-              (level1model, datasink, [('design_file', '%s.@design_file' % name)]),
-              (level1model, filmgls, [('design_file', 'design_file'),
-                                      ('con_file', 'tcon_file'),
-                                      ('fcon_file', 'fcon_file')]),
-              (filmgls, datasink, [('copes', '%s.@copes' % name),
-                                    ('zstats', '%s.@Z' % name),
-                                    ('fstats', '%s.@F' % name),
-                                    ('tstats','%s.@T' % name),
-                                    ('param_estimates','%s.@param_estimates' % name),
-                                    ('residual4d', '%s.@residual4d' % name),
-                                    ('sigmasquareds', '%s.@sigmasquareds' % name)])
+                (level1model, datasink, [('design_file', '%s.@design_file' % name)]),
+                (level1model, filmgls, [('design_file', 'design_file'),
+                                        ('con_file', 'tcon_file'),
+                                        ('fcon_file', 'fcon_file')]),
+                (filmgls, datasink, [('copes', '%s.@copes' % name),
+                                     ('zstats', '%s.@Z' % name),
+                                     ('fstats', '%s.@F' % name),
+                                     ('tstats','%s.@T' % name),
+                                     ('param_estimates','%s.@param_estimates' % name),
+                                     ('residual4d', '%s.@residual4d' % name),
+                                     ('sigmasquareds', '%s.@sigmasquareds' % name)])
                ])
     return wf
 
 
 
-def get_task_wfs(task):
-    wf_dict = {}
+def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress_rt=True):
+    rt_suffix = 'RT' if regress_rt else 'noRT'
     # set up workflow lookup
-    default_wf = [(init_GLM_wf, {'name': '%s_model-%s_wf-contrast' % (task, rt_suffix)}), 
-                  (init_GLM_wf, {'name': '%s_model-%s_wf-beta' % (task, rt_suffix)})]
+    wf_dict = {'contrast': (init_GLM_wf, {'name': '%s_model-%s_wf-contrast' % (task, rt_suffix)}), 
+                'beta': (init_GLM_wf, {'name': '%s_model-%s_wf-beta' % (task, rt_suffix)})}
     
-    # get workflow
     workflows = []
-    for func, kwargs in wf_dict.get(task, default_wf):
-        workflows.append(func(**kwargs))
+    if beta_subjectinfo:
+        save_directory = join(first_level_dir, subject_id, task, 'model-%s' % rt_suffix, 'wf-beta')
+        save_subjectinfo(save_directory, beta_subjectinfo)
+        func, kwargs = wf_dict['beta']
+        workflows.append(func(beta_subjectinfo, **kwargs))
+    if contrast_subjectinfo:
+        save_directory = join(first_level_dir, subject_id, task, 'model-%s' % rt_suffix, 'wf-contrast')
+        save_subjectinfo(save_directory, contrast_subjectinfo)
+        func, kwargs = wf_dict['contrast']
+        workflows.append(func(contrast_subjectinfo, **kwargs))
     return workflows
     
 
@@ -338,26 +273,30 @@ def get_task_wfs(task):
 
 
 # Initiation of the 1st-level analysis workflow
-l1analysis = Workflow(name='l1analysis_model-%s' % rt_suffix)
+l1analysis = Workflow(name='l1analysis')
 l1analysis.base_dir = join(derivatives_dir, working_dir)
 
 for task in task_list:
     init_common_wf(l1analysis, task)
-    task_workflows = get_task_wfs(task)
     # get nodes to pass
-    infosource = l1analysis.get_node('%s_infosource' % task)
-    subjectinfo = l1analysis.get_node('%s_subjectinfo' % task)
     masker = l1analysis.get_node('%s_masker' % task)
-    for wf in task_workflows:
-        l1analysis.connect([
-                            (infosource, wf, [('subject_id','datasink.container')]),
-                            (subjectinfo, wf, [('contrast_subjectinfo','modelspec.subject_info')]),
-                            (masker, wf, [('out_file', 'modelspec.functional_runs')]),
-                            (masker, wf, [('out_file','GLS.in_file')])
-                            ])
+    # get info to pass to task workflows
+    events_df, regressors, regressor_names = get_events_regressors(data_dir, fmriprep_dir,
+                                                                   subject_id, task)
+    # perform analyses both by regressing rt and not
+    regress_rt_conditions = [True, False]
+    if 'stop' in task:
+        regress_rt_conditions = ['False']
+    for regress_rt in regress_rt_conditions:
+        betainfo = getsubjectinfo(events_df, regressors, regressor_names, task='beta', regress_rt=regress_rt)
+        contrastinfo = getsubjectinfo(events_df, regressors, regressor_names, task=task, regress_rt=regress_rt)
+        task_workflows = get_task_wfs(task, betainfo, contrastinfo, regress_rt)
+        for wf in task_workflows:
+            l1analysis.connect([
+                                (masker, wf, [('out_file', 'modelspec.functional_runs')]),
+                                (masker, wf, [('out_file','GLS.in_file')])
+                                ])
         
-        if 'contrast' in wf.name:
-            l1analysis.connect([(infosource, wf, [('contrasts','level1design.contrasts')])])
 
 
 # ### Run the Workflow

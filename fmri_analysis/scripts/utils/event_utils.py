@@ -536,33 +536,30 @@ def get_beta_series(events_df, regress_rt=True):
 # (average RT across subjects or block duration)
 # RT as a separate regressor for each onset, constant duration, 
 # amplitude as parameteric regressor (function of RT)
-def parse_EVs(events_df, task, regress_rt=True, beta=True):
+def parse_EVs(events_df, task, regress_rt=True):
     if task == "ANT":
-        EV_dict = get_ANT_EVs(events_df, regress_rt=True)
+        EV_dict = get_ANT_EVs(events_df, regress_rt)
     elif task == "CCTHot": 
-        EV_dict = get_CCTHot_EVs(events_df, regress_rt=True)
+        EV_dict = get_CCTHot_EVs(events_df, regress_rt)
     elif task == "discountFix": 
-        EV_dict = get_discountFix_EVs(events_df, regress_rt=True)
+        EV_dict = get_discountFix_EVs(events_df, regress_rt)
     elif task == "DPX":
-        EV_dict = get_DPX_EVs(events_df, regress_rt=True)
+        EV_dict = get_DPX_EVs(events_df, regress_rt)
     elif task == "motorSelectiveStop": 
         EV_dict = get_motorSelectiveStop_EVs(events_df)
     elif task == 'surveyMedley':
-        EV_dict = get_surveyMedley_EVs(events_df)
+        EV_dict = get_surveyMedley_EVs(events_df, regress_rt)
     elif task == "stopSignal":
         EV_dict = get_stopSignal_EVs(events_df)
     elif task == "stroop":
-        EV_dict = get_stroop_EVs(events_df, regress_rt=True)
+        EV_dict = get_stroop_EVs(events_df, regress_rt)
     elif task == "twoByTwo":
-        EV_dict = get_twoByTwo_EVs(events_df, regress_rt=True)
+        EV_dict = get_twoByTwo_EVs(events_df, regress_rt)
     elif task == "WATT3":
-        EV_dict = get_WATT3_EVs(events_df)
+        EV_dict = get_WATT3_EVs(events_df, regress_rt)
     # covers generic conversion of events_df into trial design file
-    elif task == 'base':
-        EV_dict = get_base_EVs(events_df)
-    if beta == True:
-        beta_dict = get_beta_series(events_df, regress_rt)
-        return EV_dict, beta_dict
+    elif task == 'beta':
+        EV_dict = get_beta_series(events_df, regress_rt)
     return EV_dict
 
     
