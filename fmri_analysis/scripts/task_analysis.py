@@ -249,7 +249,7 @@ def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
 
 
 def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress_rt=True):
-    rt_suffix = 'RT' if regress_rt else 'noRT'
+    rt_suffix = 'rt' if regress_rt else 'nort'
     # set up workflow lookup
     wf_dict = {'contrast': (init_GLM_wf, {'name': '%s_model-%s_wf-contrast' % (task, rt_suffix)}), 
                 'beta': (init_GLM_wf, {'name': '%s_model-%s_wf-beta' % (task, rt_suffix)})}
@@ -273,7 +273,7 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
 
 
 # Initiation of the 1st-level analysis workflow
-l1analysis = Workflow(name='l1analysis')
+l1analysis = Workflow(name='%s_l1analysis' % subject_id)
 l1analysis.base_dir = join(derivatives_dir, working_dir)
 
 for task in task_list:
