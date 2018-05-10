@@ -40,7 +40,7 @@ if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
 else:
     args = parser.parse_args([])
-    args.derivatives_dir = '/home/ian/tmp/fmri/derivatives/'
+    args.derivatives_dir = '/mnt/OAK/derivatives'
     args.data_dir = '/mnt/OAK'
     args.tasks = ['stroop']
     args.participant_labels = ['s130']
@@ -67,6 +67,10 @@ else:
                'twoByTwo', 'WATT3']
 
 regress_rt = not args.ignore_rt
+if regress_rt:
+    rt_suffix = 'rt'
+else:
+    rt_suffix = 'nort'
 #### Experiment Variables
 derivatives_dir = args.derivatives_dir
 fmriprep_dir = join(derivatives_dir, 'fmriprep', 'fmriprep')
@@ -150,24 +154,25 @@ def getsubjectinfo(data_dir, fmriprep_dir, subject_id, task, regress_rt, utils_p
                                      regressors=regressors.T.tolist())
     return beta_subjectinfo, contrast_subjectinfo
     
-def save_subjectinfo(save_directory, beta_subjectinfo, contrast_subjectinfo, contrasts=[]):
+def save_subjectinfo(save_directory, beta_subjectinfo, contrast_subjectinfo, contrasts=[], model_name='standard'):
     from os import makedirs
     from os.path import join
     import pickle
     subject_id = beta_subjectinfo.subject_id
     task = beta_subjectinfo.task
-    subjectinfo_dir = join(save_directory, subject_id, '%s_subject_info' % task)
+    subjectinfo_dir = join(save_directory, subject_id, task, 'model-%s' % model_name)
     makedirs(subjectinfo_dir, exist_ok=True)
     # save beta subject info
-    beta_path = join(subjectinfo_dir,'beta_subjectinfo.pkl')
+    makedirs(join(subjectinfo_dir, 'wf-beta'), exist_ok=True)
+    beta_path = join(subjectinfo_dir, 'wf-beta', 'subjectinfo.pkl')
     pickle.dump(beta_subjectinfo, open(beta_path,'wb'))
     # save contrast subject info
     if len(contrast_subjectinfo.items()) > 0:
-        contrast_path = join(subjectinfo_dir,'contrast_subjectinfo.pkl')
+        makedirs(join(subjectinfo_dir, 'wf-contrast'), exist_ok=True)
+        contrast_path = join(subjectinfo_dir, 'wf-contrast', 'subjectinfo.pkl')
         pickle.dump(contrast_subjectinfo, open(contrast_path,'wb'))
-    # save contrast list
-    if len(contrasts) > 0:
-        contrastlist_path = join(subjectinfo_dir,'contrasts.pkl')
+        # save contrast list
+        contrastlist_path = join(subjectinfo_dir,'wf-contrast', 'contrasts.pkl')
         pickle.dump(contrasts, open(contrastlist_path,'wb'))
 
 
@@ -195,11 +200,14 @@ def get_subjectinfo(name):
 def get_savesubjectinfo(name):
     # Save python objects that aren't accomodated by datasink nodes
     savesubjectinfo = Node(Function(input_names=['save_directory',
-                                                  'beta_subjectinfo',
-                                                  'contrast_subjectinfo','contrasts'],
+                                                 'beta_subjectinfo',
+                                                 'contrast_subjectinfo',
+                                                 'contrasts',
+                                                 'model_name'],
                                     function=save_subjectinfo),
                            name=name)
     savesubjectinfo.inputs.save_directory = first_level_dir
+    savesubjectinfo.inputs.model_name = rt_suffix
     return savesubjectinfo
 
 def get_selector(name, session=None):
@@ -256,14 +264,21 @@ def init_common_wf(workflow, task):
                                              ('mask', 'mask_file')])
                         ])
 
-def init_GLM_wf(name='wf'):
+def init_GLM_wf(name='wf-standard'):
     # Datasink - creates output folder for important outputs
     datasink = Node(DataSink(base_directory=first_level_dir), name="datasink")
     # Use the following DataSink output substitutions
     substitutions = [('_subject_id_', ''),
                     ('fstat', 'FSTST'),
                     ('run0.mat', 'designfile.mat')]
+    
     datasink.inputs.substitutions = substitutions
+    # ridiculous regexp substitution to get files just right
+    # link to ridiculousness: https://regex101.com/r/ljS5zK/1
+    match_str = "(?P<sub>s[0-9]+)\/(?P<task>[a-z_]+)_(?P<model>model-[a-z]+)_(?P<submodel>wf-[a-z_]+)\/s[0-9]+"
+    replace_str = "\g<sub>/\g<task>/\g<model>/\g<submodel>"
+    regexp_substitutions = [(match_str, replace_str)]
+    datasink.inputs.regexp_substitutions = regexp_substitutions
     
     # SpecifyModel - Generates FSL-specific Model
     modelspec = Node(SpecifyModel(input_units='secs',
@@ -286,10 +301,10 @@ def init_GLM_wf(name='wf'):
     wf.connect([(modelspec, level1design, [('session_info','session_info')]),
               (level1design, level1model, [('ev_files', 'ev_files'),
                                              ('fsf_files','fsf_file')]),
+              (level1model, datasink, [('design_file', '%s.@design_file' % name)]),
               (level1model, filmgls, [('design_file', 'design_file'),
                                       ('con_file', 'tcon_file'),
                                       ('fcon_file', 'fcon_file')]),
-              (level1model, datasink, [('design_file', '%s.@design_file' % name)]),
               (filmgls, datasink, [('copes', '%s.@copes' % name),
                                     ('zstats', '%s.@Z' % name),
                                     ('fstats', '%s.@F' % name),
@@ -305,8 +320,8 @@ def init_GLM_wf(name='wf'):
 def get_task_wfs(task):
     wf_dict = {}
     # set up workflow lookup
-    default_wf = [(init_GLM_wf, {'name': '%s_contrast_wf' % task}), 
-                  (init_GLM_wf, {'name': '%s_beta_wf' % task})]
+    default_wf = [(init_GLM_wf, {'name': '%s_model-%s_wf-contrast' % (task, rt_suffix)}), 
+                  (init_GLM_wf, {'name': '%s_model-%s_wf-beta' % (task, rt_suffix)})]
     
     # get workflow
     workflows = []
@@ -345,7 +360,7 @@ for task in task_list:
 # ### Run the Workflow
 # 
 
-# In[ ]:
+# In[9]:
 
 
 #l1analysis.run()
