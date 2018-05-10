@@ -249,7 +249,7 @@ def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
 
 
 def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress_rt=True):
-    rt_suffix = 'rt' if regress_rt else 'nort'
+    rt_suffix = 'rt' if regress_rt==True else 'nort'
     # set up workflow lookup
     wf_dict = {'contrast': (init_GLM_wf, {'name': '%s_model-%s_wf-contrast' % (task, rt_suffix)}), 
                 'beta': (init_GLM_wf, {'name': '%s_model-%s_wf-beta' % (task, rt_suffix)})}
@@ -286,7 +286,7 @@ for task in task_list:
     # perform analyses both by regressing rt and not
     regress_rt_conditions = [True, False]
     if 'stop' in task:
-        regress_rt_conditions = ['False']
+        regress_rt_conditions = [False]
     for regress_rt in regress_rt_conditions:
         betainfo = getsubjectinfo(events_df, regressors, regressor_names, task='beta', regress_rt=regress_rt)
         contrastinfo = getsubjectinfo(events_df, regressors, regressor_names, task=task, regress_rt=regress_rt)
