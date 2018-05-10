@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[1]:
+# In[11]:
 
 
 import argparse
@@ -30,7 +30,7 @@ from utils.event_utils import get_beta_series, get_contrasts, parse_EVs, process
 # - conversion command:
 #   - jupyter nbconvert --to script --execute task_analysis.ipynb
 
-# In[5]:
+# In[12]:
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
@@ -54,7 +54,7 @@ else:
 
 # ### Initial Setup
 
-# In[9]:
+# In[13]:
 
 
 # get current directory to pass to function nodes
@@ -85,7 +85,7 @@ n_procs = args.n_procs
 TR = .68
 
 
-# In[10]:
+# In[14]:
 
 
 # print
@@ -101,7 +101,7 @@ print('*'*79)
 
 # ### Define helper functions
 
-# In[ ]:
+# In[15]:
 
 
 def get_events_regressors(data_dir, fmirprep_dir, subject_id, task):
@@ -132,10 +132,9 @@ def get_events_regressors(data_dir, fmirprep_dir, subject_id, task):
 # helper function to create bunch
 def getsubjectinfo(events_dr, regressors, regressor_names, task='beta', regress_rt=True): 
     EV_dict = parse_EVs(events_df, task, regress_rt)
+    contrasts = []
     if task not in ['beta']:
         contrasts = get_contrasts(task, regress_rt)
-    else:
-        contrasts=None
     # create beta series info
     subjectinfo = Bunch(conditions=EV_dict['conditions'],
                         onsets=EV_dict['onsets'],
@@ -156,7 +155,7 @@ def save_subjectinfo(save_directory, subjectinfo):
 
 # ### Specify Input and Output Stream
 
-# In[ ]:
+# In[16]:
 
 
 def get_selector(task, subject_id, session=None):
@@ -186,7 +185,7 @@ def get_masker(name):
 
 # ### helper functions
 
-# In[ ]:
+# In[17]:
 
 
 def init_common_wf(workflow, task):
@@ -224,8 +223,7 @@ def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
                                          interscan_interval=TR,
                                          model_serial_correlations=True),
                             name="level1design")
-    if subject_info.contrasts is not None:
-        level1design.inputs.contrasts=subject_info.contrasts
+    level1design.inputs.contrasts=subject_info.contrasts
     # FEATmodel generates an FSL design matrix
     level1model = Node(fsl.FEATModel(), name="FEATModel")
 
@@ -257,7 +255,7 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
     rt_suffix = 'rt' if regress_rt==True else 'nort'
     # set up workflow lookup
     wf_dict = {'contrast': (init_GLM_wf, {'name': '%s_model-%s_wf-contrast' % (task, rt_suffix)}), 
-                'beta': (init_GLM_wf, {'name': '%s_model-%s_wf-beta' % (task, rt_suffix)})}
+               'beta': (init_GLM_wf, {'name': '%s_model-%s_wf-beta' % (task, rt_suffix)})}
     
     workflows = []
     if beta_subjectinfo:
@@ -274,7 +272,7 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
     
 
 
-# In[ ]:
+# In[18]:
 
 
 # Initiation of the 1st-level analysis workflow
