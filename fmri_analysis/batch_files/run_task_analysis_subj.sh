@@ -34,7 +34,7 @@ do
     done
     if [ "$tasks" != "" ]; then
         echo Running $sid task analysis on $tasks
-        sed -e "s/{sid}/$sid/g" -e "s/{tasks}/$tasks/g" task_analysis.batch | sbatch --time=20:00:00 #-p russpold
+        sed -e "s/{sid}/$sid/g" -e "s/{tasks}/$tasks/g" -e "s/{RT_flag}//g" task_analysis.batch | sbatch
     fi
     if [ "$tasks_noRT" != "" ]; then
         echo Running $sid task analysis without RT on $tasks_noRT
