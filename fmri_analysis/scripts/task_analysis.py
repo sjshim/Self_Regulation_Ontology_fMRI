@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[ ]:
+# In[1]:
 
 
 import argparse
@@ -30,7 +30,7 @@ from utils.event_utils import get_beta_series, get_contrasts, parse_EVs, process
 # - conversion command:
 #   - jupyter nbconvert --to script --execute task_analysis.ipynb
 
-# In[ ]:
+# In[5]:
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
@@ -38,7 +38,8 @@ parser.add_argument('-derivatives_dir', default='/derivatives')
 parser.add_argument('-data_dir', default='/data')
 parser.add_argument('--participant_label')
 parser.add_argument('--tasks', nargs="+")
-parser.add_argument('--cleanup', action='store_true')
+parser.add_argument('--skip_beta', action='store_false')
+parser.add_argument('--skip_contrast', action='store_false')
 parser.add_argument('--n_procs', default=16)
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
@@ -46,14 +47,14 @@ else:
     args = parser.parse_args([])
     args.derivatives_dir = '/mnt/OAK/derivatives'
     args.data_dir = '/mnt/OAK'
-    args.tasks = ['stroop']
-    args.participant_label = 's130'
+    args.tasks = ['stroop', 'stopSignal']
+    args.participant_label = 's497'
     args.n_procs=4
 
 
 # ### Initial Setup
 
-# In[ ]:
+# In[9]:
 
 
 # get current directory to pass to function nodes
@@ -77,18 +78,22 @@ fmriprep_dir = join(derivatives_dir, 'fmriprep', 'fmriprep')
 data_dir = args.data_dir
 first_level_dir = join(derivatives_dir,'1stLevel')
 working_dir = 'workingdir'
+run_beta = args.skip_beta
+run_contrast = args.skip_contrast
 n_procs = args.n_procs
 # TR of functional images
 TR = .68
 
 
-# In[ ]:
+# In[10]:
 
 
 # print
 print('*'*79)
 print('Task List: %s\n, Subject: %s\n, derivatives_dir: %s\n, data_dir: %s' % 
      (task_list, subject_id, derivatives_dir, data_dir))
+print('Running Contrast?: %s, Running Beta?: %s' % 
+     (['No','Yes'][run_contrast], ['No','Yes'][run_beta]))
 print('*'*79)
 
 
@@ -203,7 +208,7 @@ def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
     datasink.inputs.substitutions = substitutions
     # ridiculous regexp substitution to get files just right
     # link to ridiculousness: https://regex101.com/r/ljS5zK/2
-    match_str = "(?P<sub>s[0-9]+)\/(?P<task>[a-z_]+)_(?P<model>model-[a-z]+)_(?P<submodel>wf-[a-z_]+)\/s[0-9]+"
+    match_str = "(?P<sub>s[0-9]+)\/(?P<task>[a-z_]+)_(?P<model>model-[a-z]+)_(?P<submodel>wf-[a-z]+)\/s[0-9]+"
     replace_str = "\g<sub>/\g<task>/\g<model>/\g<submodel>"
     regexp_substitutions = [(match_str, replace_str)]
     datasink.inputs.regexp_substitutions = regexp_substitutions
@@ -287,9 +292,12 @@ for task in task_list:
     regress_rt_conditions = [True, False]
     if 'stop' in task:
         regress_rt_conditions = [False]
+    betainfo = None; contrastinfo = None
     for regress_rt in regress_rt_conditions:
-        betainfo = getsubjectinfo(events_df, regressors, regressor_names, task='beta', regress_rt=regress_rt)
-        contrastinfo = getsubjectinfo(events_df, regressors, regressor_names, task=task, regress_rt=regress_rt)
+        if run_beta:
+            betainfo = getsubjectinfo(events_df, regressors, regressor_names, task='beta', regress_rt=regress_rt)
+        if run_contrast:
+            contrastinfo = getsubjectinfo(events_df, regressors, regressor_names, task=task, regress_rt=regress_rt)
         task_workflows = get_task_wfs(task, betainfo, contrastinfo, regress_rt)
         for wf in task_workflows:
             l1analysis.connect([
