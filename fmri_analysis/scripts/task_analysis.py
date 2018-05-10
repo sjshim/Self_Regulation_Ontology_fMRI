@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[1]:
+# In[ ]:
 
 
 import argparse
@@ -26,7 +26,7 @@ from utils.event_utils import get_contrasts
 # - conversion command:
 #   - jupyter nbconvert --to script --execute task_analysis.ipynb
 
-# In[2]:
+# In[ ]:
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
@@ -36,6 +36,7 @@ parser.add_argument('--participant_labels',nargs="+")
 parser.add_argument('--tasks', nargs="+")
 parser.add_argument('--ignore_rt', action='store_true')
 parser.add_argument('--cleanup', action='store_true')
+parser.add_argument('--n_procs', default=16)
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
 else:
@@ -44,11 +45,12 @@ else:
     args.data_dir = '/mnt/OAK'
     args.tasks = ['stroop']
     args.participant_labels = ['s130']
+    args.n_procs=4
 
 
 # ### Initial Setup
 
-# In[3]:
+# In[ ]:
 
 
 # get current directory to pass to function nodes
@@ -77,11 +79,12 @@ fmriprep_dir = join(derivatives_dir, 'fmriprep', 'fmriprep')
 data_dir = args.data_dir
 first_level_dir = join(derivatives_dir,'1stLevel')
 working_dir = 'workingdir'
+n_procs = args.n_procs
 # TR of functional images
 TR = .68
 
 
-# In[4]:
+# In[ ]:
 
 
 # print
@@ -95,7 +98,7 @@ print('*'*79)
 
 # ### Define helper functions
 
-# In[5]:
+# In[ ]:
 
 
 # helper function to create bunch
@@ -180,7 +183,7 @@ def save_subjectinfo(save_directory, beta_subjectinfo, contrast_subjectinfo, con
 
 # ### Specify Input and Output Stream
 
-# In[6]:
+# In[ ]:
 
 
 def get_subjectinfo(name):
@@ -235,7 +238,7 @@ def get_masker(name):
 
 # ### helper functions
 
-# In[7]:
+# In[ ]:
 
 
 def init_common_wf(workflow, task):
@@ -274,7 +277,7 @@ def init_GLM_wf(name='wf-standard'):
     
     datasink.inputs.substitutions = substitutions
     # ridiculous regexp substitution to get files just right
-    # link to ridiculousness: https://regex101.com/r/ljS5zK/1
+    # link to ridiculousness: https://regex101.com/r/ljS5zK/2
     match_str = "(?P<sub>s[0-9]+)\/(?P<task>[a-z_]+)_(?P<model>model-[a-z]+)_(?P<submodel>wf-[a-z_]+)\/s[0-9]+"
     replace_str = "\g<sub>/\g<task>/\g<model>/\g<submodel>"
     regexp_substitutions = [(match_str, replace_str)]
@@ -331,11 +334,11 @@ def get_task_wfs(task):
     
 
 
-# In[8]:
+# In[ ]:
 
 
 # Initiation of the 1st-level analysis workflow
-l1analysis = Workflow(name='l1analysis')
+l1analysis = Workflow(name='l1analysis_model-%s' % rt_suffix)
 l1analysis.base_dir = join(derivatives_dir, working_dir)
 
 for task in task_list:
@@ -360,9 +363,9 @@ for task in task_list:
 # ### Run the Workflow
 # 
 
-# In[9]:
+# In[ ]:
 
 
 #l1analysis.run()
-l1analysis.run('MultiProc', plugin_args={'n_procs': 8})
+l1analysis.run('MultiProc', plugin_args={'n_procs': n_procs})
 
