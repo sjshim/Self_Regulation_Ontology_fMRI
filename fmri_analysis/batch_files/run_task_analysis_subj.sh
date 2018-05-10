@@ -8,11 +8,12 @@ do
     echo ******************************${sid}***************************************
     echo ""
     tasks=""
+    tasks_noRT=""
     # find tasks that haven't been run...
     for task in ANT CCTHot discountFix DPX motorSelectiveStop stopSignal stroop surveyMedley twoByTwo WATT3
     do
         # ...with RT as a regressor
-        if [ -f ${derivatives_loc}/1stLevel/${sid}_task_${task}/cope1.nii.gz ]; 
+        if [ -f ${derivatives_loc}/1stLevel/${sid}/${task}/model-rt/contrast_wf/cope1.nii.gz ]; 
         then
             : # echo task analysis already run on $sid $task
         else
@@ -20,9 +21,23 @@ do
                 tasks="$tasks$task "
             fi
         fi
+        # ...with RT as a regressor
+        if [ -f ${derivatives_loc}/1stLevel/${sid}/${task}/model-nort/contrast_wf/cope1.nii.gz ];
+        then
+            : # echo task analysis already run on $sid $task
+        else
+            if [ -f ${data_loc}/*${sid}/*/func/*${task}*events.tsv -a -f ${derivatives_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*confounds.tsv ];  then
+                tasks_noRT="$tasks$task "
+            fi
+        fi
+
     done
     if [ "$tasks" != "" ]; then
         echo Running $sid task analysis on $tasks
         sed -e "s/{sid}/$sid/g" -e "s/{tasks}/$tasks/g" task_analysis.batch | sbatch --time=20:00:00 #-p russpold
+    fi
+    if [ "$tasks_noRT" != "" ]; then
+        echo Running $sid task analysis without RT on $tasks_noRT
+        sed -e "s/{sid}/$sid/g" -e "s/{tasks}/$tasks_noRT/g" -e "s/{RT_flag}/--ignore_rt/g" task_analysis.batch | sbatch 
     fi
 done

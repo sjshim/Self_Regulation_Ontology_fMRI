@@ -22,7 +22,7 @@ scripts_loc=../scripts
 
 # run singularity, scratch is automatically mounted
 singularity exec -B ${scripts_loc}:/scripts  ${singularity_loc} \
-        python /scripts/task_analysis.py -derivatives_dir ${derivatives_loc} -data_dir ${data_loc} --participant_label {sid} --tasks {tasks}
+        python /scripts/task_analysis.py -derivatives_dir ${derivatives_loc} -data_dir ${data_loc} --participant_label {sid} --tasks {tasks} {RT_flag}
 
 
 
