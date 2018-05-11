@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[13]:
+# In[ ]:
 
 
 import argparse
@@ -30,7 +30,7 @@ from utils.event_utils import get_beta_series, get_contrasts, parse_EVs, process
 # - conversion command:
 #   - jupyter nbconvert --to script --execute task_analysis.ipynb
 
-# In[14]:
+# In[ ]:
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
@@ -54,7 +54,7 @@ else:
 
 # ### Initial Setup
 
-# In[15]:
+# In[ ]:
 
 
 # get current directory to pass to function nodes
@@ -85,7 +85,7 @@ n_procs = args.n_procs
 TR = .68
 
 
-# In[16]:
+# In[ ]:
 
 
 # print
@@ -101,7 +101,7 @@ print('*'*79)
 
 # ### Define helper functions
 
-# In[17]:
+# In[ ]:
 
 
 def get_events_regressors(data_dir, fmirprep_dir, subject_id, task):
@@ -155,7 +155,7 @@ def save_subjectinfo(save_directory, subjectinfo):
 
 # ### Specify Input and Output Stream
 
-# In[18]:
+# In[ ]:
 
 
 def get_selector(task, subject_id, session=None):
@@ -185,7 +185,7 @@ def get_masker(name):
 
 # ### helper functions
 
-# In[27]:
+# In[ ]:
 
 
 def init_common_wf(workflow, task):
@@ -195,7 +195,7 @@ def init_common_wf(workflow, task):
     # Connect up the 1st-level analysis components
     workflow.connect([(selectfiles, masker, [('func','in_file'), ('mask', 'mask_file')])])
 
-def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
+def init_GLM_wf(subject_info, task, name='model-standard_wf-standard', contrasts=None):
     # Datasink - creates output folder for important outputs
     datasink = Node(DataSink(base_directory=first_level_dir,
                              container=subject_id), name="datasink")
@@ -216,22 +216,22 @@ def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
     modelspec = Node(SpecifyModel(input_units='secs',
                                   time_repetition=TR,
                                   high_pass_filter_cutoff=80),
-                     name="%s_modelspec" % name)
+                     name="%s_modelspec" % task)
     modelspec.inputs.subject_info = subject_info
     # Level1Design - Creates FSL config file 
     level1design = Node(fsl.Level1Design(bases={'dgamma':{'derivs': True}},
                                          interscan_interval=TR,
                                          model_serial_correlations=True),
-                            name="%s_level1design" % name)
+                            name="%s_level1design" % task)
     level1design.inputs.contrasts=subject_info.contrasts
     # FEATmodel generates an FSL design matrix
-    level1model = Node(fsl.FEATModel(), name="%s_FEATModel" % name)
+    level1model = Node(fsl.FEATModel(), name="%s_FEATModel" % task)
 
     # FILMGLs
     # smooth_autocorr, check default, use FSL default
-    filmgls = Node(fsl.FILMGLS(), name="%s_GLS" % name)
+    filmgls = Node(fsl.FILMGLS(), name="%s_GLS" % task)
 
-    wf = Workflow(name=name)
+    wf = Workflow(name='%s_%s' % (task,name))
     wf.connect([(modelspec, level1design, [('session_info','session_info')]),
                 (level1design, level1model, [('ev_files', 'ev_files'),
                                              ('fsf_files','fsf_file')]),
@@ -254,8 +254,10 @@ def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
 def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress_rt=True):
     rt_suffix = 'rt' if regress_rt==True else 'nort'
     # set up workflow lookup
-    wf_dict = {'contrast': (init_GLM_wf, {'name': '%s_model-%s_wf-contrast' % (task, rt_suffix)}), 
-               'beta': (init_GLM_wf, {'name': '%s_model-%s_wf-beta' % (task, rt_suffix)})}
+    wf_dict = {'contrast': (init_GLM_wf, {'name': 'model-%s_wf-contrast' % rt_suffix,
+                                          'task': task}), 
+               'beta': (init_GLM_wf, {'name': 'model-%s_wf-beta' % rt_suffix,
+                                      'task': task})}
     
     workflows = []
     if beta_subjectinfo:
@@ -272,7 +274,7 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
     
 
 
-# In[28]:
+# In[ ]:
 
 
 # Initiation of the 1st-level analysis workflow
@@ -299,8 +301,8 @@ for task in task_list:
         task_workflows = get_task_wfs(task, betainfo, contrastinfo, regress_rt)
         for wf in task_workflows:
             l1analysis.connect([
-                                (masker, wf, [('out_file', 'modelspec.functional_runs')]),
-                                (masker, wf, [('out_file','GLS.in_file')])
+                                (masker, wf, [('out_file', '%s_modelspec.functional_runs' % task)]),
+                                (masker, wf, [('out_file','%s_GLS.in_file' % task)])
                                 ])
         
 
@@ -308,7 +310,7 @@ for task in task_list:
 # ### Run the Workflow
 # 
 
-# In[29]:
+# In[ ]:
 
 
 #l1analysis.run()
