@@ -28,9 +28,9 @@ else:
                'twoByTwo', 'WATT3']
 """
 
-derivatives_dir = '/home/ian/tmp/fmri/derivatives/'
+derivatives_dir = '/mnt/OAK/derivatives/'
 data_dir = '/mnt/OAK'
-task_list = ['stopSignal']
+task_list = ['stroop']
 
 filename = getframeinfo(currentframe()).filename
 current_directory = str(Path(filename).resolve().parent)
@@ -47,19 +47,18 @@ except FileNotFoundError:
 atlas=nilearn.datasets.fetch_atlas_harvard_oxford('cort-maxprob-thr25-2mm')
 
 
-task = 'twoByTwo'
-subject = 's130'
-for wf in ['contrast_wf', 'beta_wf']:
+task = task_list[0]
+subject = 's497'
+model = 'model-rt'
+for wf in ['wf-contrast', 'wf-beta']:
     # inspect design
-    design_path = path.join(derivatives_dir, '1stLevel', wf, '%s_task_%s' % (subject, task))
-    subjectinfo_path = path.join(derivatives_dir, '1stLevel', 'subject_info', '%s_task_%s' % (subject, task))
-    
-    design_df = get_design_df(design_path, subjectinfo_path)
-    plot_design(design_df)
+    GLM_path = path.join(derivatives_dir, '1stLevel', subject, task, model, wf)
+    design_df = get_design_df(GLM_path)
+    plot_design(design_df, size=20)
 
     # inspect event
     event_df = get_event_dfs(data_dir, subj=subject, task=task)[subject][task]
     
     # inspect residuals
-    resid_path = path.join(derivatives_dir, '1stLevel', wf, '%s_task_%s' % (subject, task), 'res4d.nii.gz')
+    resid_path = path.join(derivatives_dir, '1stLevel', subject, task, model, wf, 'res4d.nii.gz')
     time_series = plot_fmri_resid(resid_path, atlas)

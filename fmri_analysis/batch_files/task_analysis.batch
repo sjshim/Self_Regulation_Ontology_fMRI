@@ -2,7 +2,7 @@
 #SBATCH --job-name={sid}-task_analysis
 #SBATCH --output=.out/{sid}-task_analysis.out
 #SBATCH --error=.err/{sid}-task_analysis.err
-#SBATCH --time=64:00:00
+#SBATCH --time=48:00:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ieisenbe@stanford.edu
 #SBATCH --cpus-per-task=16
@@ -19,9 +19,8 @@ singularity_loc=${base_singularity}/$img
 derivatives_loc=`sed '6q;d' singularity_config.txt`
 data_loc=`sed '8q;d' singularity_config.txt`
 scripts_loc=../scripts
-
 # run singularity, scratch is automatically mounted
 singularity exec -B ${scripts_loc}:/scripts  ${singularity_loc} \
-        python /scripts/task_analysis.py -derivatives_dir ${derivatives_loc} -data_dir ${data_loc} --participant_label {sid} --tasks {tasks}
+    python /scripts/task_analysis.py -derivatives_dir ${derivatives_loc} -data_dir ${data_loc} --participant_label {sid} --tasks {tasks} {ANALYSIS_FLAG}
 
 

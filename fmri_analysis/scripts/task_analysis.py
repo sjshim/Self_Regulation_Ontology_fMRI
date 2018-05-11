@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[1]:
+# In[13]:
 
 
 import argparse
@@ -30,7 +30,7 @@ from utils.event_utils import get_beta_series, get_contrasts, parse_EVs, process
 # - conversion command:
 #   - jupyter nbconvert --to script --execute task_analysis.ipynb
 
-# In[2]:
+# In[14]:
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
@@ -47,14 +47,14 @@ else:
     args = parser.parse_args([])
     args.derivatives_dir = '/mnt/OAK/derivatives'
     args.data_dir = '/mnt/OAK'
-    args.tasks = ['stroop', 'stopSignal']
-    args.participant_label = 's497'
+    args.tasks = ['stroop']
+    args.participant_label = 's611'
     args.n_procs=4
 
 
 # ### Initial Setup
 
-# In[3]:
+# In[15]:
 
 
 # get current directory to pass to function nodes
@@ -85,7 +85,7 @@ n_procs = args.n_procs
 TR = .68
 
 
-# In[4]:
+# In[16]:
 
 
 # print
@@ -101,7 +101,7 @@ print('*'*79)
 
 # ### Define helper functions
 
-# In[5]:
+# In[17]:
 
 
 def get_events_regressors(data_dir, fmirprep_dir, subject_id, task):
@@ -155,7 +155,7 @@ def save_subjectinfo(save_directory, subjectinfo):
 
 # ### Specify Input and Output Stream
 
-# In[6]:
+# In[18]:
 
 
 def get_selector(task, subject_id, session=None):
@@ -185,7 +185,7 @@ def get_masker(name):
 
 # ### helper functions
 
-# In[7]:
+# In[27]:
 
 
 def init_common_wf(workflow, task):
@@ -206,7 +206,7 @@ def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
     
     datasink.inputs.substitutions = substitutions
     # ridiculous regexp substitution to get files just right
-    # link to ridiculousness: https://regex101.com/r/ljS5zK/2
+    # link to ridiculousness: https://regex101.com/r/ljS5zK/3
     match_str = "(?P<sub>s[0-9]+)\/(?P<task>[A-Za-z1-9_]+)_(?P<model>model-[a-z]+)_(?P<submodel>wf-[a-z]+)\/(s[0-9]+/|)"
     replace_str = "\g<sub>/\g<task>/\g<model>/\g<submodel>/"
     regexp_substitutions = [(match_str, replace_str)]
@@ -216,20 +216,20 @@ def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
     modelspec = Node(SpecifyModel(input_units='secs',
                                   time_repetition=TR,
                                   high_pass_filter_cutoff=80),
-                     name="modelspec")
+                     name="%s_modelspec" % name)
     modelspec.inputs.subject_info = subject_info
     # Level1Design - Creates FSL config file 
     level1design = Node(fsl.Level1Design(bases={'dgamma':{'derivs': True}},
                                          interscan_interval=TR,
                                          model_serial_correlations=True),
-                            name="level1design")
+                            name="%s_level1design" % name)
     level1design.inputs.contrasts=subject_info.contrasts
     # FEATmodel generates an FSL design matrix
-    level1model = Node(fsl.FEATModel(), name="FEATModel")
+    level1model = Node(fsl.FEATModel(), name="%s_FEATModel" % name)
 
     # FILMGLs
     # smooth_autocorr, check default, use FSL default
-    filmgls = Node(fsl.FILMGLS(), name="GLS")
+    filmgls = Node(fsl.FILMGLS(), name="%s_GLS" % name)
 
     wf = Workflow(name=name)
     wf.connect([(modelspec, level1design, [('session_info','session_info')]),
@@ -272,7 +272,7 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
     
 
 
-# In[8]:
+# In[28]:
 
 
 # Initiation of the 1st-level analysis workflow
@@ -308,7 +308,7 @@ for task in task_list:
 # ### Run the Workflow
 # 
 
-# In[9]:
+# In[29]:
 
 
 #l1analysis.run()
