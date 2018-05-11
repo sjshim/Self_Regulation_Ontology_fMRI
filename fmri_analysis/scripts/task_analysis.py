@@ -207,7 +207,7 @@ def init_GLM_wf(subject_info, name='wf-standard', contrasts=None):
     datasink.inputs.substitutions = substitutions
     # ridiculous regexp substitution to get files just right
     # link to ridiculousness: https://regex101.com/r/ljS5zK/2
-    match_str = "(?P<sub>s[0-9]+)\/(?P<task>[A-Za-z_]+)_(?P<model>model-[a-z]+)_(?P<submodel>wf-[a-z]+)\/(s[0-9]+/|)"
+    match_str = "(?P<sub>s[0-9]+)\/(?P<task>[A-Za-z1-9_]+)_(?P<model>model-[a-z]+)_(?P<submodel>wf-[a-z]+)\/(s[0-9]+/|)"
     replace_str = "\g<sub>/\g<task>/\g<model>/\g<submodel>/"
     regexp_substitutions = [(match_str, replace_str)]
     datasink.inputs.regexp_substitutions = regexp_substitutions
