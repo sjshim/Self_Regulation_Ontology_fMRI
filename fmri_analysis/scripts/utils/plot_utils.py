@@ -8,6 +8,7 @@ mpl.use('Agg')
 from matplotlib import pyplot as plt
 import nilearn.plotting
 import nilearn.image
+from nilearn.input_data import NiftiLabelsMasker
 import numpy as np
 from os import makedirs
 from os.path import basename, join, sep
@@ -16,10 +17,9 @@ import pickle
 from scipy.cluster.hierarchy import dendrogram, linkage
 import seaborn as sns
     
-def get_design_df(design_path, subjectinfo_path):
-    wf_prefix = design_path.split(sep)[-2].rstrip('_wf')
-    designfile_path = join(design_path, 'designfile.mat')
-    subjectinfo_path = join(subjectinfo_path, '%s_subjectinfo.pkl' % wf_prefix)
+def get_design_df(GLM_path):
+    designfile_path = join(GLM_path, 'designfile.mat')
+    subjectinfo_path = join(GLM_path, 'subjectinfo.pkl')
     subjectinfo = pickle.load(open(subjectinfo_path,'rb'))
     desmtx=np.loadtxt(designfile_path,skiprows=5)
     # condition columns and their temporal derivatives
@@ -35,17 +35,21 @@ def plot_design(design_df, size=12, output_dir=None):
         end_index = list(design_df.columns).index('X')
     if end_index != 0:
         max_trial = max(len(design_df)//5, 100)
-        regs = design_df.iloc[0:max_trial,0:end_index:2]
+        regs = design_df.iloc[:,0:end_index:2]
         if 'response_time' in design_df.columns:
-            regs = pd.concat([regs, design_df.ix[0:max_trial, 'response_time']], axis=1)
+            regs = pd.concat([regs, design_df.ix[:, 'response_time']], axis=1)
         f = plt.figure(figsize=(size,size))
         ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2)
         ax2 = plt.subplot2grid((3, 2), (1, 0))
         ax3 = plt.subplot2grid((3, 2), (1, 1))
         ax4 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
         # plot regressors over time
-        regs.plot(legend=True, ax=ax1, title='TS: Regressors of Interest', fontsize=15)
+        if len(regs.columns<5):
+            regs.plot(legend=True, ax=ax1, title='TS: Regressors of Interest', fontsize=15)
+        else:
+            regs.plot(ax=ax1, title='TS: Regressors of Interest', fontsize=15)
         ax1.set_xlabel('Trial')
+        ax1.set_xlim([0, max_trial])
         # plot correlations amongst regressors
         sns.heatmap(regs.corr(), ax=ax2, square=True, annot=True, cbar=False, xticklabels=False)
         ax2.set_title('Heatmap: Regressors of Interest', fontsize=15)
@@ -62,7 +66,6 @@ def plot_design(design_df, size=12, output_dir=None):
         makedirs(output_dir, exist_ok=True)
         f.savefig(join(output_dir,'design_plot.png'))
 
-from nilearn.input_data import NiftiLabelsMasker
 
 def plot_fmri_resid(resid_path, atlas=None):
     image = nilearn.image.load_img(resid_path)
@@ -72,41 +75,38 @@ def plot_fmri_resid(resid_path, atlas=None):
         time_series = masker.fit_transform(image)
         time_series = pd.DataFrame(time_series)
         if 'labels' in atlas.keys():
-            time_series.columns = atlas['labels']
+            labels = [i for i in atlas['labels'] if i != 'Background']
+            time_series.columns = labels
         # remove ROIs with no variance
         no_variance = time_series.std(axis=0)==0
         print('No variance, removing ROIs: %s' % list(no_variance[no_variance].index))
         time_series = time_series.loc[:,no_variance==False]
         sns.clustermap(time_series.corr(), square=True, figsize=[15,15])
         return time_series
-            
-        
-        
 
-def plot_zmaps(task_path, smoothness=8):
+def plot_1stLevel_maps(task_path, lookup='zstat?.nii.gz', smoothness=8, size=12, vmax=None):
     fmri_contrast_paths = join(task_path, 'zstat?.nii.gz')
     fmri_contrast_files = sorted(glob(fmri_contrast_paths))
-    contrasts_path = join(task_path, 'contrasts.pkl')
-    contrasts = pickle.load(open(contrasts_path,'rb'))
+    subjectinfo_path = join(task_path, 'subjectinfo.pkl')
+    subject_id = subjectinfo_path.split(sep)[-5]
+    task = subjectinfo_path.split(sep)[-4]
+    subjectinfo = pickle.load(open(subjectinfo_path,'rb'))
+    contrasts = subjectinfo.contrasts
     contrast_names = [c[0] for c in contrasts]
+    # plot
+    plt.figure(figsize=[size,size/2.5*len(fmri_contrast_files)])
+    plt.suptitle('%s: %s' % (subject_id, task), fontsize=size*2)
+    gs = plt.GridSpec(len(fmri_contrast_files),4)
     for i, contrast_img in enumerate(fmri_contrast_files):
+        ax = plt.subplot(gs[i, :])
         smooth_img = nilearn.image.smooth_img(contrast_img, smoothness)
         nilearn.plotting.plot_glass_brain(smooth_img,
                                           display_mode='lyrz', 
-                                          colorbar=True, 
+                                          colorbar=True, vmax=vmax, vmin=vmax,
                                           plot_abs=False, threshold=0,
-                                          title=contrast_names[i])
-
-def plot_tstats(task_path, smoothness=8):
-    fmri_contrast_paths = join(task_path, 'tstat?.nii.gz')
-    fmri_contrast_files = sorted(glob(fmri_contrast_paths))
-    contrasts_path = join(task_path, 'contrasts.pkl')
-    contrasts = pickle.load(open(contrasts_path,'rb'))
-    contrast_names = [c[0] for c in contrasts]
-    for i, contrast_img in enumerate(fmri_contrast_files):
-        smooth_img = nilearn.image.smooth_img(contrast_img, smoothness)
-        nilearn.plotting.plot_stat_map(smooth_img, threshold=0,
-                                        title=contrast_names[i])
+                                          title=contrast_names[i], 
+                                          axes=ax)
+        
 
 def plot_contrasts(data_dir, task, plot_individual=False,
                contrast_index=None, output_dir=None):
