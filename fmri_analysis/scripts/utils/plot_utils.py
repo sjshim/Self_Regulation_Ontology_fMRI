@@ -44,7 +44,7 @@ def plot_design(design_df, size=12, output_dir=None):
         ax3 = plt.subplot2grid((3, 2), (1, 1))
         ax4 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
         # plot regressors over time
-        if len(regs.columns<5):
+        if len(regs.columns)<5:
             regs.plot(legend=True, ax=ax1, title='TS: Regressors of Interest', fontsize=15)
         else:
             regs.plot(ax=ax1, title='TS: Regressors of Interest', fontsize=15)
@@ -85,8 +85,7 @@ def plot_fmri_resid(resid_path, atlas=None):
         return time_series
 
 def plot_1stLevel_maps(task_path, lookup='zstat?.nii.gz', smoothness=8, size=12, vmax=None):
-    fmri_contrast_paths = join(task_path, 'zstat?.nii.gz')
-    fmri_contrast_files = sorted(glob(fmri_contrast_paths))
+    fmri_contrast_files= sorted(glob(join(task_path, lookup)))
     subjectinfo_path = join(task_path, 'subjectinfo.pkl')
     subject_id = subjectinfo_path.split(sep)[-5]
     task = subjectinfo_path.split(sep)[-4]
@@ -106,6 +105,8 @@ def plot_1stLevel_maps(task_path, lookup='zstat?.nii.gz', smoothness=8, size=12,
                                           plot_abs=False, threshold=0,
                                           title=contrast_names[i], 
                                           axes=ax)
+    return fmri_contrast_files
+    
         
 
 def plot_contrasts(data_dir, task, plot_individual=False,
