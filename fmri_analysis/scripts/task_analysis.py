@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[ ]:
+# In[1]:
 
 
 import argparse
@@ -30,7 +30,7 @@ from utils.event_utils import get_beta_series, get_contrasts, parse_EVs, process
 # - conversion command:
 #   - jupyter nbconvert --to script --execute task_analysis.ipynb
 
-# In[ ]:
+# In[2]:
 
 
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
@@ -45,16 +45,16 @@ if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
 else:
     args = parser.parse_args([])
-    args.derivatives_dir = '/mnt/OAK/derivatives'
+    args.derivatives_dir = '/home/ian/tmp/fmri/derivatives/'
     args.data_dir = '/mnt/OAK'
     args.tasks = ['stroop']
-    args.participant_label = 's611'
+    args.participant_label = 's130'
     args.n_procs=4
 
 
 # ### Initial Setup
 
-# In[ ]:
+# In[3]:
 
 
 # get current directory to pass to function nodes
@@ -85,7 +85,7 @@ n_procs = args.n_procs
 TR = .68
 
 
-# In[ ]:
+# In[4]:
 
 
 # print
@@ -101,7 +101,7 @@ print('*'*79)
 
 # ### Define helper functions
 
-# In[ ]:
+# In[5]:
 
 
 def get_events_regressors(data_dir, fmirprep_dir, subject_id, task):
@@ -155,7 +155,7 @@ def save_subjectinfo(save_directory, subjectinfo):
 
 # ### Specify Input and Output Stream
 
-# In[ ]:
+# In[6]:
 
 
 def get_selector(task, subject_id, session=None):
@@ -185,7 +185,7 @@ def get_masker(name):
 
 # ### helper functions
 
-# In[ ]:
+# In[7]:
 
 
 def init_common_wf(workflow, task):
@@ -229,7 +229,7 @@ def init_GLM_wf(subject_info, task, name='model-standard_wf-standard', contrasts
 
     # FILMGLs
     # smooth_autocorr, check default, use FSL default
-    filmgls = Node(fsl.FILMGLS(), name="%s_GLS" % task)
+    filmgls = Node(fsl.FILMGLS(threshold=1000), name="%s_GLS" % task)
 
     wf = Workflow(name='%s_%s' % (task,name))
     wf.connect([(modelspec, level1design, [('session_info','session_info')]),
@@ -274,7 +274,7 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
     
 
 
-# In[ ]:
+# In[8]:
 
 
 # Initiation of the 1st-level analysis workflow
