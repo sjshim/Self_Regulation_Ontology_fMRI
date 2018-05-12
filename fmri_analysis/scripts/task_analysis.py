@@ -185,7 +185,7 @@ def get_masker(name):
 
 # ### helper functions
 
-# In[7]:
+# In[8]:
 
 
 def init_common_wf(workflow, task):
@@ -195,7 +195,8 @@ def init_common_wf(workflow, task):
     # Connect up the 1st-level analysis components
     workflow.connect([(selectfiles, masker, [('func','in_file'), ('mask', 'mask_file')])])
 
-def init_GLM_wf(subject_info, task, name='model-standard_wf-standard', contrasts=None):
+def init_GLM_wf(subject_info, task, wf_label='model-standard_wf-standard', contrasts=None):
+    name = '%s_%s' % (task, wf_label)
     # Datasink - creates output folder for important outputs
     datasink = Node(DataSink(base_directory=first_level_dir,
                              container=subject_id), name="datasink")
@@ -231,7 +232,7 @@ def init_GLM_wf(subject_info, task, name='model-standard_wf-standard', contrasts
     # smooth_autocorr, check default, use FSL default
     filmgls = Node(fsl.FILMGLS(threshold=1000), name="%s_GLS" % task)
 
-    wf = Workflow(name='%s_%s' % (task,name))
+    wf = Workflow(name=name)
     wf.connect([(modelspec, level1design, [('session_info','session_info')]),
                 (level1design, level1model, [('ev_files', 'ev_files'),
                                              ('fsf_files','fsf_file')]),
@@ -254,9 +255,9 @@ def init_GLM_wf(subject_info, task, name='model-standard_wf-standard', contrasts
 def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress_rt=True):
     rt_suffix = 'rt' if regress_rt==True else 'nort'
     # set up workflow lookup
-    wf_dict = {'contrast': (init_GLM_wf, {'name': 'model-%s_wf-contrast' % rt_suffix,
+    wf_dict = {'contrast': (init_GLM_wf, {'wf_label': 'model-%s_wf-contrast' % rt_suffix,
                                           'task': task}), 
-               'beta': (init_GLM_wf, {'name': 'model-%s_wf-beta' % rt_suffix,
+               'beta': (init_GLM_wf, {'wf_label': 'model-%s_wf-beta' % rt_suffix,
                                       'task': task})}
     
     workflows = []
@@ -274,7 +275,7 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
     
 
 
-# In[8]:
+# In[9]:
 
 
 # Initiation of the 1st-level analysis workflow
@@ -310,7 +311,7 @@ for task in task_list:
 # ### Run the Workflow
 # 
 
-# In[ ]:
+# In[10]:
 
 
 #l1analysis.run()
