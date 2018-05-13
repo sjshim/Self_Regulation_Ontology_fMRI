@@ -36,6 +36,7 @@ from utils.event_utils import get_beta_series, get_contrasts, parse_EVs, process
 parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
 parser.add_argument('-derivatives_dir', default='/derivatives')
 parser.add_argument('-data_dir', default='/data')
+parser.add_argument('-working_dir', default=None)
 parser.add_argument('--participant_label')
 parser.add_argument('--tasks', nargs="+")
 parser.add_argument('--skip_beta', action='store_false')
@@ -77,7 +78,10 @@ derivatives_dir = args.derivatives_dir
 fmriprep_dir = join(derivatives_dir, 'fmriprep', 'fmriprep')
 data_dir = args.data_dir
 first_level_dir = join(derivatives_dir,'1stLevel')
-working_dir = 'workingdir'
+if args.working_dir is None:
+    working_dir = join(derivatives_dir, 'workingdir')
+else:
+    working_dir = args.working_dir
 run_beta = args.skip_beta
 run_contrast = args.skip_contrast
 n_procs = args.n_procs
@@ -185,7 +189,7 @@ def get_masker(name):
 
 # ### helper functions
 
-# In[8]:
+# In[7]:
 
 
 def init_common_wf(workflow, task):
@@ -275,12 +279,12 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
     
 
 
-# In[9]:
+# In[8]:
 
 
 # Initiation of the 1st-level analysis workflow
 l1analysis = Workflow(name='%s_l1analysis' % subject_id)
-l1analysis.base_dir = join(derivatives_dir, working_dir)
+l1analysis.base_dir = working_dir
 
 for task in task_list:
     init_common_wf(l1analysis, task)
@@ -311,7 +315,7 @@ for task in task_list:
 # ### Run the Workflow
 # 
 
-# In[10]:
+# In[9]:
 
 
 #l1analysis.run()
