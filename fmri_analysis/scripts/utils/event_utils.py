@@ -279,11 +279,13 @@ def get_discountFix_EVs(events_df, regress_rt=True):
             'amplitudes': []
             }
     # regressors of interest
-    trial_type = events_df.trial_type.replace({'larger_later': 1, 'smaller_sooner': -1}).tolist()
+    trial_type = events_df.query('junk == False').trial_type \
+                .replace({'larger_later': 1, 'smaller_sooner': -1}).tolist()
     get_ev_vars(output_dict, events_df, 
                 condition_spec='LL_vs_SS',
                 amplitude=trial_type,
-                duration='duration')
+                duration='duration',
+                subset='junk == False')
     get_ev_vars(output_dict, events_df, 
                 condition_spec='subjective_value', 
                 duration='duration', 
