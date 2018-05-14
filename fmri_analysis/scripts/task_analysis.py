@@ -79,9 +79,9 @@ fmriprep_dir = join(derivatives_dir, 'fmriprep', 'fmriprep')
 data_dir = args.data_dir
 first_level_dir = join(derivatives_dir,'1stLevel')
 if args.working_dir is None:
-    working_dir = join(derivatives_dir, 'workingdir')
+    working_dir = join(derivatives_dir, '1stLevel_workingdir')
 else:
-    working_dir = args.working_dir
+    working_dir = join(args.working_dir, '1stLevel_workingdir')
 run_beta = args.skip_beta
 run_contrast = args.skip_contrast
 n_procs = args.n_procs
@@ -235,7 +235,7 @@ def init_GLM_wf(subject_info, task, wf_label='model-standard_wf-standard', contr
     # FILMGLs
     # smooth_autocorr, check default, use FSL default
     filmgls = Node(fsl.FILMGLS(threshold=1000), name="%s_GLS" % task)
-
+    
     wf = Workflow(name=name)
     wf.connect([(modelspec, level1design, [('session_info','session_info')]),
                 (level1design, level1model, [('ev_files', 'ev_files'),
@@ -256,6 +256,7 @@ def init_GLM_wf(subject_info, task, wf_label='model-standard_wf-standard', contr
 
 
 
+                
 def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress_rt=True):
     rt_suffix = 'rt' if regress_rt==True else 'nort'
     # set up workflow lookup
@@ -285,7 +286,6 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
 # Initiation of the 1st-level analysis workflow
 l1analysis = Workflow(name='%s_l1analysis' % subject_id)
 l1analysis.base_dir = working_dir
-
 for task in task_list:
     init_common_wf(l1analysis, task)
     # get nodes to pass
@@ -294,7 +294,7 @@ for task in task_list:
     events_df, regressors, regressor_names = get_events_regressors(data_dir, fmriprep_dir,
                                                                    subject_id, task)
     # perform analyses both by regressing rt and not
-    regress_rt_conditions = [True, False]
+    regress_rt_conditions = [False, True]
     if 'stop' in task:
         regress_rt_conditions = [False]
     betainfo = None; contrastinfo = None
@@ -315,7 +315,7 @@ for task in task_list:
 # ### Run the Workflow
 # 
 
-# In[9]:
+# In[ ]:
 
 
 #l1analysis.run()
