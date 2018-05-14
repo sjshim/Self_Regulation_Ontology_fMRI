@@ -91,7 +91,7 @@ for task,df in task_dfs.items():
     df.to_csv('../behavioral_data/processed/group_data/%s.csv' % task, index=False)
     
 # get 90th percentile reaction time for events files:
-task_50th_rts = {task: df.rt.quantile(.5) for task,df in task_dfs.items()}
+task_50th_rts = {task: df.rt[df.rt>0].quantile(.5) for task,df in task_dfs.items()}
 # ward and allport requires more complicated durations
 test_df = task_dfs['ward_and_allport'].query('exp_stage == "test"')
 # get the first move times (plan times)
