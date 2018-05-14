@@ -23,7 +23,7 @@ do
         then
             : # echo task analysis already run on $sid $task
         else
-            if [ -f ${data_loc}/*${sid}/*/func/*${task}*events.tsv -a -f ${derivatives_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*confounds.tsv ];  then
+            if [ -f ${data_loc}/*${sid}/*/func/*${task}*events.tsv -a -f ${derivatives_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*confounds.tsv -a -f ${derivatives_loc}/fmriprep/fmriprep/*${sid}/*/func/*${task}*MNI*preproc.nii.gz ];  then
                 tasks="$tasks$task "
             fi
         fi
