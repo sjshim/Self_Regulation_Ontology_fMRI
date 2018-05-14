@@ -8,7 +8,7 @@ elif [ $1 == "contrast" ]; then
 fi
 
 
-for path in ${derivatives_loc}/fmriprep/fmriprep/sub-s6??
+for path in ${derivatives_loc}/fmriprep/fmriprep/sub-s???
 do
     sid=${path: -4}
     echo ""
@@ -19,7 +19,7 @@ do
     for task in ANT CCTHot discountFix DPX motorSelectiveStop stopSignal stroop surveyMedley twoByTwo WATT3
     do
         # ...with RT as a regressor
-        if [ -f ${derivatives_loc}/1stLevel/${sid}/${task}/model-rt/wf-contrast/cope1.nii.gz ]; 
+        if [ -f ${derivatives_loc}/1stLevel/${sid}/${task}/model-nort/wf-contrast/cope1.nii.gz ]; 
         then
             : # echo task analysis already run on $sid $task
         else
