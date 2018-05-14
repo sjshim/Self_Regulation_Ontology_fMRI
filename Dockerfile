@@ -1,6 +1,5 @@
 # Use Ubuntu 16.04 LTS
 FROM jupyter/base-notebook
-#FROM ubuntu:xenial-20161213
 USER root
 
 # Pre-cache neurodebian key
@@ -23,25 +22,15 @@ RUN apt-get update && \
     (apt-key adv --refresh-keys --keyserver hkp://ha.pool.sks-keyservers.net 0xA5D32F012649A5A9 || true) && \
     apt-get update
 
-# Installing Neurodebian packages (FSL, AFNI, git)
+# Installing Neurodebian packages (AFNI)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-                    fsl-core=5.0.9-4~nd16.04+1 \
-                    fsl-mni152-templates=5.0.7-2 \
-                    afni=16.2.07~dfsg.1-5~nd16.04+1
+    apt-get install -y --no-install-recommends afni=16.2.07~dfsg.1-5~nd16.04+1
 
-ENV FSLDIR=/usr/share/fsl/5.0 \
-    FSLOUTPUTTYPE=NIFTI_GZ \
-    FSLMULTIFILEQUIT=TRUE \
-    POSSUMDIR=/usr/share/fsl/5.0 \
-    LD_LIBRARY_PATH=/usr/lib/fsl/5.0:$LD_LIBRARY_PATH \
-    FSLTCLSH=/usr/bin/tclsh \
-    FSLWISH=/usr/bin/wish \
-    AFNI_MODELPATH=/usr/lib/afni/models \
+ENV AFNI_MODELPATH=/usr/lib/afni/models \
     AFNI_IMSAVE_WARNINGS=NO \
     AFNI_TTATLAS_DATASET=/usr/share/afni/atlases \
     AFNI_PLUGINPATH=/usr/lib/afni/plugins
-ENV PATH=/usr/lib/fsl/5.0:/usr/lib/afni/bin:$PATH
+ENV PATH=/usr/lib/afni/bin:$PATH
 
 # Installing ANTs 2.2.0 (NeuroDocker build)
 ENV ANTSPATH=/usr/lib/ants
@@ -76,15 +65,6 @@ RUN mkdir -p /opt/ICA-AROMA && \
 
 ENV PATH=/opt/ICA-AROMA:$PATH
 
-# Installing and setting up miniconda
-RUN curl -sSLO https://repo.continuum.io/miniconda/Miniconda3-4.3.11-Linux-x86_64.sh && \
-    bash Miniconda3-4.3.11-Linux-x86_64.sh -b -p /usr/local/miniconda && \
-    rm Miniconda3-4.3.11-Linux-x86_64.sh
-
-ENV PATH=/usr/local/miniconda/bin:$PATH \
-    LANG=C.UTF-8 \
-    LC_ALL=C.UTF-8
-
 # Installing precomputed python packages
 RUN conda install -y mkl=2017.0.1 mkl-service &&  \
     conda install -y numpy=1.12.0 \
@@ -97,13 +77,21 @@ RUN conda install -y mkl=2017.0.1 mkl-service &&  \
                      libxml2=2.9.4 \
                      libxslt=1.1.29\
                      traits=4.6.0 &&  \
-    chmod +x /usr/local/miniconda/bin/* && \
+    chmod +x $CONDA_DIR/* && \
     conda clean --all -y && \
     python -c "from matplotlib import font_manager" && \
     sed -i 's/\(backend *: \).*$/\1Agg/g' $( python -c "import matplotlib; print(matplotlib.matplotlib_fname())" )
 
 # Precaching fonts
 RUN python -c "from matplotlib import font_manager"
+
+# Installing and configuring FSL
+COPY docker_files/fslinstaller.py /home/fslinstaller.py
+RUN python2 /home/fslinstaller.py --quiet --dest=/usr/share/fsl -E
+
+ENV FSLDIR=/usr/share/fsl
+RUN . ${FSLDIR}/etc/fslconf/fsl.sh
+ENV PATH=${FSLDIR}/bin:${PATH}
 
 # Installing Ubuntu packages and cleaning up
 RUN apt-get update && \
@@ -124,11 +112,7 @@ RUN pip install -r requirements.txt && \
     rm -rf ~/.cache/pip
 
 # Set up data and script directories
-RUN mkdir /data
-RUN mkdir /derivatives
 Run mkdir /scripts
-
 WORKDIR /scripts
-CMD ["/bin/bash"]
 
 
