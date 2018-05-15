@@ -1,10 +1,8 @@
 #!/bin/bash
-#SBATCH --job-name=group_analysis_{output}
-#SBATCH --output=.out/group_analysis_{output}.out
-#SBATCH --error=.err/group_analysis_{output}.err
+#SBATCH --job-name=2ndlevel
+#SBATCH --output=.out/2ndlevel.out
+#SBATCH --error=.err/2ndlevel.err
 #SBATCH --time=20:00:00
-# SBATCH --mem=120000
-#SBATCH --qos=russpold
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ieisenbe@stanford.edu
 #SBATCH --ntasks-per-node=1
@@ -25,4 +23,5 @@ scratch_loc=/scratch/users/ieisenbe
 # run singularity, scratch is automatically mounted
 singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
     python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} -working_dir $scratch_loc --n_procs 16
+
 
