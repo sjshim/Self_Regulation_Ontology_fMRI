@@ -133,8 +133,12 @@ def get_contrast_tmap(task, regress_rt=True, smoothness=4.4,
     # get contrasts
     subjectinfo_paths = glob(path.join(first_level_dir, '*', task, model, 
                                        'wf-contrast','subjectinfo.pkl'))
-    contrasts = pickle.load(open(subjectinfo_paths[0], 'rb')).contrasts
-    contrast_names = [i[0] for i in contrasts]
+    try:
+        contrasts = pickle.load(open(subjectinfo_paths[0], 'rb')).contrasts
+        contrast_names = [i[0] for i in contrasts]
+    except IndexError:
+        print('No subjectinfo found for %s_%s' % (task, model))
+        return
 
     if verbose: print('Creating %s group map' % task)
     for i, contrast_name in enumerate(contrast_names):
