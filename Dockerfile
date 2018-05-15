@@ -67,15 +67,17 @@ ENV PATH=/opt/ICA-AROMA:$PATH
 
 # Installing precomputed python packages
 RUN conda install -y mkl=2017.0.1 mkl-service &&  \
-    conda install -y numpy=1.12.0 \
-                     scipy=0.18.1 \
-                     scikit-learn=0.18.1 \
-                     matplotlib=2.0.0 \
-                     pandas=0.19.2 \
-                     ipython=5.1.0 \
-                     seaborn=0.7.1 \
+    conda install -y ipython=5.1.0 \
+                     joblib=0.11 \
                      libxml2=2.9.4 \
                      libxslt=1.1.29\
+                     matplotlib=2.0.0 \
+                     numpy=1.12.0 \
+                     pandas=0.19.2 \
+                     scipy=0.18.1 \
+                     scikit-learn=0.18.1 \
+                     seaborn=0.7.1 \
+
                      traits=4.6.0 &&  \
     chmod +x $CONDA_DIR/* && \
     conda clean --all -y && \
