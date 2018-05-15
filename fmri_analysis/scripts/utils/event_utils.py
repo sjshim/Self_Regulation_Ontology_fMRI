@@ -121,7 +121,13 @@ def get_contrasts(task, regress_rt=True):
         c2 = ['plan_PA_without','T', ['plan_PA_without'], [1]]
         # contrasts
         c3 = ['search_depth','T', ['plan_PA_with','plan_PA_without'], [1,-1]]
-        contrast_list = [c1,c2,c3]
+        # nuisance
+        c4 = ['movement', 'T', ['response_time'], [1]]
+        c5 = ['feedback', 'T', ['response_time'], [1]]
+        if regress_rt:
+            c6 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c6)
+        contrast_list = [c1,c2,c3,c4,c5,c6]
     # base covers generic contrast that just looks at all trials
     elif task == 'base':
         c1 = ['trial', 'T', ['trial'], [1]]
@@ -215,13 +221,15 @@ def get_ANT_EVs(events_df, regress_rt=True):
     get_ev_vars(output_dict, events_df, 
                 condition_spec='orienting_network',
                 amplitude=cue_amplitudes,
-                duration='duration')
+                duration='duration',
+                subset='junk==False')
     # conflict type
     conflict_amplitudes = ((events_df.flanker_type=='incongruent')*2-1).tolist()
     get_ev_vars(output_dict, events_df,
                 condition_spec='conflict_network',
                 amplitude=conflict_amplitudes,
-                duration='duration')
+                duration='duration',
+                subset='junk==False')
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
@@ -231,7 +239,8 @@ def get_ANT_EVs(events_df, regress_rt=True):
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
                     duration='duration', 
-                    amplitude='response_time')
+                    amplitude='response_time',
+                    subset='junk==False')
     return output_dict
 
 
@@ -246,19 +255,23 @@ def get_CCTHot_EVs(events_df, regress_rt):
     get_ev_vars(output_dict, events_df, 
                 condition_spec='EV', 
                 duration='duration', 
-                amplitude='EV')
+                amplitude='EV',
+                subset='junk==False')
     get_ev_vars(output_dict, events_df, 
                 condition_spec='risk',
                 duration='duration', 
-                amplitude='risk')
+                amplitude='risk',
+                subset='junk==False')
     # other regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec='num_click_in_round', 
                 duration='duration', 
-                amplitude='num_click_in_round')
+                amplitude='num_click_in_round',
+                subset='junk==False')
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(1,'reward'), (0,'punishment')], 
-                col='feedback')
+                col='feedback',
+                subset='junk==False')
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
@@ -268,7 +281,8 @@ def get_CCTHot_EVs(events_df, regress_rt):
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
                     duration='duration', 
-                    amplitude='response_time')
+                    amplitude='response_time',
+                    subset='junk==False')
     return output_dict
 
 def get_discountFix_EVs(events_df, regress_rt=True):
@@ -289,7 +303,8 @@ def get_discountFix_EVs(events_df, regress_rt=True):
     get_ev_vars(output_dict, events_df, 
                 condition_spec='subjective_value', 
                 duration='duration', 
-                amplitude='subjective_value')
+                amplitude='subjective_value',
+                subset='junk==False')
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')],
@@ -299,7 +314,8 @@ def get_discountFix_EVs(events_df, regress_rt=True):
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
                     duration='duration', 
-                    amplitude='response_time')
+                    amplitude='response_time',
+                    subset='junk==False')
     return output_dict
 
 def get_DPX_EVs(events_df, regress_rt=True):
@@ -312,7 +328,8 @@ def get_DPX_EVs(events_df, regress_rt=True):
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[('AX','AX'), ('AY','AY'), ('BX', 'BX'), ('BY','BY')],
                 col='condition', 
-                duration='duration')
+                duration='duration',
+                subset='junk==False')
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
@@ -322,7 +339,8 @@ def get_DPX_EVs(events_df, regress_rt=True):
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
                     duration='duration', 
-                    amplitude='response_time')
+                    amplitude='response_time',
+                    subset='junk==False')
     return output_dict
 
 def get_motorSelectiveStop_EVs(events_df):
@@ -359,7 +377,8 @@ def get_stopSignal_EVs(events_df):
                             ('stop_success', 'stop_success'), 
                             ('stop_failure', 'stop_failure')],
                 col='trial_type', 
-                duration='duration')
+                duration='duration',
+                subset='junk==False')
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
@@ -378,7 +397,8 @@ def get_stroop_EVs(events_df, regress_rt=True):
     get_ev_vars(output_dict, events_df,
                 condition_spec='incongruent-congruent',
                 amplitude=conflict_amplitudes,
-                duration='duration')
+                duration='duration',
+                subset='junk==False')
     
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
@@ -389,7 +409,8 @@ def get_stroop_EVs(events_df, regress_rt=True):
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
                     duration='duration', 
-                    amplitude='response_time')
+                    amplitude='response_time',
+                    subset='junk==False')
     return output_dict
 
 def get_surveyMedley_EVs(events_df, regress_rt=True):
@@ -414,7 +435,8 @@ def get_surveyMedley_EVs(events_df, regress_rt=True):
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
                     duration='duration', 
-                    amplitude='response_time')
+                    amplitude='response_time',
+                    subset='junk==False')
     return output_dict
 
     
@@ -432,24 +454,28 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
                 condition_spec='cue_switch_cost_900',
                 amplitude=cue_switches,
                 duration='duration',
-                subset="CTI==900 and task_switch=='stay'")
+                subset="CTI==900 and task_switch=='stay'",
+                subset='junk==False')
     get_ev_vars(output_dict, events_df, 
                 condition_spec='cue_switch_cost_100',
                 amplitude=cue_switches,
                 duration='duration',
-                subset="CTI==100 and task_switch=='stay'")
+                subset="CTI==100 and task_switch=='stay'",
+                subset='junk==False')
     # task switch contrasts
     task_switches = events_df.task_switch.replace({'switch':1,'stay':-1}).tolist()
     get_ev_vars(output_dict, events_df, 
                 condition_spec='task_switch_cost_900',
                 amplitude=task_switches,
                 duration='duration',
-                subset="CTI==900 and cue_switch!='stay'")
+                subset="CTI==900 and cue_switch!='stay'",
+                subset='junk==False')
     get_ev_vars(output_dict, events_df, 
                 condition_spec='task_switch_cost_100',
                 amplitude=task_switches,
                 duration='duration',
-                subset="CTI==100 and cue_switch!='stay'")
+                subset="CTI==100 and cue_switch!='stay'",
+                subset='junk==False')
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
@@ -459,7 +485,8 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
                     duration='duration', 
-                    amplitude='response_time')
+                    amplitude='response_time',
+                    subset='junk==False')
     return output_dict
 
 def get_WATT3_EVs(events_df, regress_rt=True):
@@ -517,10 +544,11 @@ def get_beta_series(events_df, regress_rt=True):
         'amplitudes': []
         }
     for i, row in events_df.iterrows():
-        output_dict['conditions'].append('trial_%s' % str(i+1))
-        output_dict['onsets'].append([row.onset])
-        output_dict['durations'].append([row.duration])
-        output_dict['amplitudes'].append([1])
+        if row.junk == False:
+            output_dict['conditions'].append('trial_%s' % str(i+1))
+            output_dict['onsets'].append([row.onset])
+            output_dict['durations'].append([row.duration])
+            output_dict['amplitudes'].append([1])
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
@@ -530,7 +558,8 @@ def get_beta_series(events_df, regress_rt=True):
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
                     duration='duration', 
-                    amplitude='response_time')
+                    amplitude='response_time',
+                    subset='junk==False')
     return output_dict
     
 # How to model RT
