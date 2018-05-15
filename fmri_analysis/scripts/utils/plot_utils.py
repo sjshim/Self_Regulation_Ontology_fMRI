@@ -107,10 +107,10 @@ def plot_1stlevel_maps(task_path, lookup='zstat?.nii.gz', smoothness=8, size=12,
                                           axes=ax)
     return fmri_contrast_files
     
-def plot_2ndlevel_maps(group_path, lookup='*raw*',  vmax=None, size=10):
+def plot_2ndlevel_maps(group_path, lookup='*raw*',  vmax=None, size=10, threshold=.95):
     group_files = sorted(glob(join(group_path, lookup)))
     # plot
-    f, axes = plt.subplots(len(group_files), 1, figsize=(size, size))
+    f, axes = plt.subplots(len(group_files), 1, figsize=(size, size/2.5*len(group_files)))
     if len(group_files)==1:
         axes = [axes]
     for i, img_path in enumerate(group_files):
@@ -119,7 +119,7 @@ def plot_2ndlevel_maps(group_path, lookup='*raw*',  vmax=None, size=10):
         nilearn.plotting.plot_glass_brain(img_path,
                                           display_mode='lyrz', 
                                           colorbar=True, vmax=vmax, vmin=vmax,
-                                          plot_abs=False, threshold=0,
+                                          plot_abs=False, threshold=threshold,
                                           title=contrast_name, 
                                           axes=ax)
         
