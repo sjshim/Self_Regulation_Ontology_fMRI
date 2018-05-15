@@ -77,7 +77,6 @@ RUN conda install -y mkl=2017.0.1 mkl-service &&  \
                      scipy=0.18.1 \
                      scikit-learn=0.18.1 \
                      seaborn=0.7.1 \
-
                      traits=4.6.0 &&  \
     chmod +x $CONDA_DIR/* && \
     conda clean --all -y && \
