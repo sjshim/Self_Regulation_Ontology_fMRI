@@ -199,7 +199,7 @@ def init_common_wf(workflow, task):
     # Connect up the 1st-level analysis components
     workflow.connect([(selectfiles, masker, [('func','in_file'), ('mask', 'mask_file')])])
 
-def init_GLM_wf(subject_info, task, wf_label='model-standard_wf-standard', contrasts=None):
+def init_GLM_wf(subject_info, task, wf_label='model-standard_wf-standard', derivs=True):
     name = '%s_%s' % (task, wf_label)
     # Datasink - creates output folder for important outputs
     datasink = Node(DataSink(base_directory=first_level_dir,
@@ -224,7 +224,7 @@ def init_GLM_wf(subject_info, task, wf_label='model-standard_wf-standard', contr
                      name="%s_modelspec" % task)
     modelspec.inputs.subject_info = subject_info
     # Level1Design - Creates FSL config file 
-    level1design = Node(fsl.Level1Design(bases={'dgamma':{'derivs': True}},
+    level1design = Node(fsl.Level1Design(bases={'dgamma':{'derivs': derivs}},
                                          interscan_interval=TR,
                                          model_serial_correlations=True),
                             name="%s_level1design" % task)
@@ -261,9 +261,11 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
     rt_suffix = 'rt' if regress_rt==True else 'nort'
     # set up workflow lookup
     wf_dict = {'contrast': (init_GLM_wf, {'wf_label': 'model-%s_wf-contrast' % rt_suffix,
-                                          'task': task}), 
+                                          'task': task,
+                                          'derives': True}), 
                'beta': (init_GLM_wf, {'wf_label': 'model-%s_wf-beta' % rt_suffix,
-                                      'task': task})}
+                                      'task': task,
+                                      'derives': False})}
     
     workflows = []
     if beta_subjectinfo:
