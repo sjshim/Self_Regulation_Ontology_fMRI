@@ -19,7 +19,7 @@ do
     #for task in DPX
     do
         # ...with RT as a regressor
-        if [ -f ${derivatives_loc}/1stlevel/${sid}/${task}/model-nort/wf-contrast/cope1.nii.gz ]; 
+        if [ -f ${derivatives_loc}/1stlevel/${sid}/${task}/model-nort/wf-$2/cope1.nii.gz ]; 
         then
             : # echo task analysis already run on $sid $task
         else
