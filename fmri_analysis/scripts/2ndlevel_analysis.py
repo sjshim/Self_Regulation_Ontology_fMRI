@@ -70,6 +70,10 @@ if args.tasks:
 
 
 # ### Create group Mask
+
+# In[ ]:
+
+
 def create_group_mask(mask_loc, fmriprep_dir, threshold=.8, verbose=True):
     if verbose:
         print('Creating Group mask...')
@@ -86,7 +90,14 @@ def create_group_mask(mask_loc, fmriprep_dir, threshold=.8, verbose=True):
 # create 95% brain mask
 mask_loc = path.join(second_level_dir, 'group_mask.nii.gz')
 if path.exists(mask_loc) == False:
-    create_group_mask(mask_loc, fmriprep_dir, .8)# save subject names in order on 1st iteration
+    create_group_mask(mask_loc, fmriprep_dir, .8)
+
+
+# In[ ]:
+
+
+"""
+# save subject names in order on 1st iteration
 if i==0:
     subj_ids = [re.search('s[0-9][0-9][0-9]', file).group(0) 
                     for file in map_files]
@@ -102,6 +113,9 @@ if i==0:
             json.dump(subj_ids, open(join(task_dir, 'subj_ids.json'),'w'))
     except FileNotFoundError:
         json.dump(subj_ids, open(join(task_dir, 'subj_ids.json'),'w'))
+"""
+
+
 # In[57]:
 
 
@@ -183,6 +197,11 @@ for regress_rt in [True, False]:
 
 #plot_2ndlevel_maps(path.join(second_level_dir,'CCTHot','model-rt','wf-contrast'))
 
+
+# In[ ]:
+
+
+"""
 # ********************************************************
 # Set up parcellation
 # ********************************************************
@@ -269,3 +288,5 @@ for parcellation_name, parcellation_file in parcellation_files:
                                                    filename=join(output_dir, 
                                                         '%s_neural_features.json'  
                                                         % parcellation_name))
+"""
+
