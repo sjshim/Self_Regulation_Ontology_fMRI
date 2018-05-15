@@ -18,10 +18,11 @@ export PYTHONPATH=""
 img=`sed '2q;d' singularity_config.txt`
 base_singularity=`sed '4q;d' singularity_config.txt`
 singularity_loc=${base_singularity}/$img
-analysis_loc=`sed '6q;d' singularity_config.txt`
-output_dir=${analysis_loc}/{output}/2ndLevel
+derivatives_loc=`sed '6q;d' singularity_config.txt`
+data_loc=`sed '8q;d' singularity_config.txt`
 scripts_loc=../scripts
+scratch_loc=/scratch/users/ieisenbe
 # run singularity, scratch is automatically mounted
-singularity exec -B ${scripts_loc}:/scripts -B ${analysis_loc}:/data -B ${output_dir}:/output ${singularity_loc} \
-        python /scripts/group_analysis.py /output --data_dir /data/{output}/1stLevel --mask_dir /data/fmriprep/fmriprep
+singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} -working_dir $scratch_loc --n_procs 16
 
