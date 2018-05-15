@@ -19,7 +19,7 @@ import shutil
 
 # parse arguments
 parser = argparse.ArgumentParser(description='fMRI Analysis Entrypoint Script.')
-parser.add_argument('output_dir', default = None, 
+parser.add_argument('derivatives_dir', default = None, 
                     help='The directory where the output files '
                     'should be stored. These just consist of plots.')
 parser.add_argument('--data_dir')

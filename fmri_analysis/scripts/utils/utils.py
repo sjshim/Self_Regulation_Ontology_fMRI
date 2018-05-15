@@ -55,11 +55,6 @@ def concat_and_smooth(map_files, smoothness=None):
         smooth_copes[subj] = smooth_cope
     return smooth_copes
 
-def get_contrast_names(contrast_path):
-    contrasts = pickle.load(open(contrast_path,'rb'))
-    contrast_names = [c[0] for c in contrasts]
-    return contrast_names
-
 # function to get TS within labels
 def project_contrast(img_files, parcellation_file, mask_file):
     parcellation = image.load_img(parcellation_file)
