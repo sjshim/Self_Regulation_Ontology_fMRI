@@ -84,7 +84,7 @@ def plot_fmri_resid(resid_path, atlas=None):
         sns.clustermap(time_series.corr(), square=True, figsize=[15,15])
         return time_series
 
-def plot_1stLevel_maps(task_path, lookup='zstat?.nii.gz', smoothness=8, size=12, vmax=None):
+def plot_1stlevel_maps(task_path, lookup='zstat?.nii.gz', smoothness=8, size=12, vmax=None):
     fmri_contrast_files= sorted(glob(join(task_path, lookup)))
     subjectinfo_path = join(task_path, 'subjectinfo.pkl')
     subject_id = subjectinfo_path.split(sep)[-5]
@@ -107,8 +107,22 @@ def plot_1stLevel_maps(task_path, lookup='zstat?.nii.gz', smoothness=8, size=12,
                                           axes=ax)
     return fmri_contrast_files
     
+def plot_2ndlevel_maps(group_path, lookup='*raw*',  vmax=None, size=10):
+    group_files = sorted(glob(join(group_path, lookup)))
+    # plot
+    f, axes = plt.subplots(len(group_files), 1, figsize=(size, size))
+    if len(group_files)==1:
+        axes = [axes]
+    for i, img_path in enumerate(group_files):
+        ax = axes[i]
+        contrast_name = '_'.join(basename(img_path).split('_')[:-2])
+        nilearn.plotting.plot_glass_brain(img_path,
+                                          display_mode='lyrz', 
+                                          colorbar=True, vmax=vmax, vmin=vmax,
+                                          plot_abs=False, threshold=0,
+                                          title=contrast_name, 
+                                          axes=ax)
         
-
 def plot_contrasts(data_dir, task, plot_individual=False,
                contrast_index=None, output_dir=None):
     """Function to plot contrasts stored in a pickle object
