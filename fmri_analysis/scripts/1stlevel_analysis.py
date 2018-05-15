@@ -28,7 +28,7 @@ from utils.event_utils import get_beta_series, get_contrasts, parse_EVs, process
 # These are not needed for the jupyter notebook, but are used after conversion to a script for production
 # 
 # - conversion command:
-#   - jupyter nbconvert --to script --execute task_analysis.ipynb
+#   - jupyter nbconvert --to script --execute 1stlevel_analysis.ipynb
 
 # In[2]:
 
@@ -41,7 +41,7 @@ parser.add_argument('--participant_label')
 parser.add_argument('--tasks', nargs="+")
 parser.add_argument('--skip_beta', action='store_false')
 parser.add_argument('--skip_contrast', action='store_false')
-parser.add_argument('--n_procs', default=16)
+parser.add_argument('--n_procs', default=16, type=int)
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
 else:
@@ -77,11 +77,11 @@ else:
 derivatives_dir = args.derivatives_dir
 fmriprep_dir = join(derivatives_dir, 'fmriprep', 'fmriprep')
 data_dir = args.data_dir
-first_level_dir = join(derivatives_dir,'1stLevel')
+first_level_dir = join(derivatives_dir,'1stlevel')
 if args.working_dir is None:
-    working_dir = join(derivatives_dir, '1stLevel_workingdir')
+    working_dir = join(derivatives_dir, '1stlevel_workingdir')
 else:
-    working_dir = join(args.working_dir, '1stLevel_workingdir')
+    working_dir = join(args.working_dir, '1stlevel_workingdir')
 run_beta = args.skip_beta
 run_contrast = args.skip_contrast
 n_procs = args.n_procs

@@ -40,7 +40,7 @@ parser = argparse.ArgumentParser(description='fMRI Analysis Entrypoint Script.')
 parser.add_argument('-derivatives_dir')
 parser.add_argument('-working_dir', default=None)
 parser.add_argument('--tasks', nargs="+")
-parser.add_argument('--n_procs', default=4)
+parser.add_argument('--n_procs', default=4, type=int)
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
 else:
