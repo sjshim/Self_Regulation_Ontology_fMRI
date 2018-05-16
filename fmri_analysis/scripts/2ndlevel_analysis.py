@@ -33,7 +33,7 @@ from utils.plot_utils import plot_2ndlevel_maps
 # - conversion command:
 #   - jupyter nbconvert --to script --execute 2ndlevel_analysis.ipynb
 
-# In[2]:
+# In[16]:
 
 
 parser = argparse.ArgumentParser(description='fMRI Analysis Entrypoint Script.')
@@ -41,6 +41,8 @@ parser.add_argument('-derivatives_dir')
 parser.add_argument('-working_dir', default=None)
 parser.add_argument('--tasks', nargs="+")
 parser.add_argument('--n_procs', default=4, type=int)
+parser.add_argument('--num_perm', default=1000, type=int, help="Passed to fsl.randomize")
+
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
 else:
@@ -116,7 +118,7 @@ if i==0:
 """
 
 
-# In[57]:
+# In[ ]:
 
 
 # ********************************************************
@@ -165,18 +167,18 @@ def get_contrast_tmap(task, regress_rt=True, smoothness=4.4,
                 one_sample_group_mean=True,
                 tfce=True,  # look at paper
                 vox_p_values=True,
-                num_perm=100)
+                num_perm=args.num_perm)
             # save results
-            tfile_loc = path.join(task_dir, "%s_raw_tfile.nii.gz" % name)
+            tfile_loc = path.join(task_dir, "%s_raw_tfile.nii" % name)
             tfile_corrected_loc = path.join(task_dir,
-                                       "%s_corrected_tfile.nii.gz" % name)
+                                       "%s_corrected_tfile.nii" % name)
             raw_tfile = randomise_results.outputs.tstat_files[0]
             corrected_tfile = randomise_results.outputs.t_corrected_p_files[0]
             shutil.move(raw_tfile, tfile_loc)
             shutil.move(corrected_tfile, tfile_corrected_loc)
 
 
-# In[59]:
+# In[ ]:
 
 
 # create group maps
@@ -190,16 +192,20 @@ for regress_rt in [True, False]:
     Parallel(n_jobs=args.n_procs)(delayed(contrast_tmap_parallel)(task) for task in tasks)
 
 
-# In[23]:
+# In[ ]:
 
 
 #plot_1stlevel_maps('/mnt/OAK/derivatives/1stlevel/s061/stroop/model-rt/wf-contrast/')
 
 
-# In[70]:
+# In[15]:
 
 
-#plot_2ndlevel_maps(path.join(second_level_dir,'CCTHot','model-rt','wf-contrast'))
+#% matplotlib inline
+#task='WATT3'
+#model='model-nort'
+#plot_2ndlevel_maps(path.join(second_level_dir,task,model,'wf-contrast'), lookup='*raw*')
+#plot_2ndlevel_maps(path.join(second_level_dir,task,model,'wf-contrast'), lookup='*corrected*', threshold=.95)
 
 
 # In[ ]:
