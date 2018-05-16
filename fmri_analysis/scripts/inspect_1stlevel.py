@@ -3,7 +3,7 @@ from inspect import currentframe, getframeinfo
 import nilearn
 from pathlib import Path
 from os import path
-from utils.plot_utils import get_design_df, plot_design, plot_fmri_resid, plot_1stLevel_maps
+from utils.plot_utils import get_design_df, plot_design, plot_fmri_resid, plot_1stlevel_maps
 from utils.utils import get_event_dfs, load_atlas
 """
 # parse arguments
@@ -47,15 +47,15 @@ except FileNotFoundError:
 atlas=nilearn.datasets.fetch_atlas_harvard_oxford('cort-maxprob-thr25-2mm')
 
 
-task = task_list[0]
-subject = 's130'
+task = 'surveyMedley'
+subject = 's582'
 model = 'model-rt'
-for wf in ['wf-contrast']:
+for wf in ['wf-beta']:
     # inspect design
-    GLM_path = path.join(derivatives_dir, '1stLevel', subject, task, model, wf)
+    GLM_path = path.join(derivatives_dir, '1stlevel', subject, task, model, wf)
     design_df = get_design_df(GLM_path)
     plot_design(design_df, size=20)
-    contrast_files = plot_1stLevel_maps(GLM_path)
+    contrast_files = plot_1stlevel_maps(GLM_path)
 
     # inspect event
     event_df = get_event_dfs(data_dir, subj=subject, task=task)[subject][task]
