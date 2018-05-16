@@ -454,28 +454,24 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
                 condition_spec='cue_switch_cost_900',
                 amplitude=cue_switches,
                 duration='duration',
-                subset="CTI==900 and task_switch=='stay'",
-                subset='junk==False')
+                subset="CTI==900 and task_switch=='stay' and junk==False")
     get_ev_vars(output_dict, events_df, 
                 condition_spec='cue_switch_cost_100',
                 amplitude=cue_switches,
                 duration='duration',
-                subset="CTI==100 and task_switch=='stay'",
-                subset='junk==False')
+                subset="CTI==100 and task_switch=='stay' and junk==False")
     # task switch contrasts
     task_switches = events_df.task_switch.replace({'switch':1,'stay':-1}).tolist()
     get_ev_vars(output_dict, events_df, 
                 condition_spec='task_switch_cost_900',
                 amplitude=task_switches,
                 duration='duration',
-                subset="CTI==900 and cue_switch!='stay'",
-                subset='junk==False')
+                subset="CTI==900 and cue_switch!='stay' and junk==False")
     get_ev_vars(output_dict, events_df, 
                 condition_spec='task_switch_cost_100',
                 amplitude=task_switches,
                 duration='duration',
-                subset="CTI==100 and cue_switch!='stay'",
-                subset='junk==False')
+                subset="CTI==100 and cue_switch!='stay' and junk==False")
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
