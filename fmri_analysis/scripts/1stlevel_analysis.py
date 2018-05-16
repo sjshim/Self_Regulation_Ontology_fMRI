@@ -262,10 +262,10 @@ def get_task_wfs(task, beta_subjectinfo=None, contrast_subjectinfo=None, regress
     # set up workflow lookup
     wf_dict = {'contrast': (init_GLM_wf, {'wf_label': 'model-%s_wf-contrast' % rt_suffix,
                                           'task': task,
-                                          'derives': True}), 
+                                          'derivs': True}), 
                'beta': (init_GLM_wf, {'wf_label': 'model-%s_wf-beta' % rt_suffix,
                                       'task': task,
-                                      'derives': False})}
+                                      'derivs': False})}
     
     workflows = []
     if beta_subjectinfo:
