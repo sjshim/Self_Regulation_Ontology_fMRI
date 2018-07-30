@@ -28,7 +28,7 @@ do
             # number of epi scans found in session folder
             num_epi=$(ls ${data_path}/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
             # check mriqc
-            mriqc_files=( $(find ${out_path}/fmri_analysis/mriqc/reports/ -name "*${sid}*ses-${session}*run-*") )
+            mriqc_files=( $(find ${out_path}/mriqc/reports/ -name "*${sid}*ses-${session}*run-*") )
             if [[ ${#mriqc_files[@]} -ne 0 ]]; then
                 echo mriqc session ${session} run
                 if [[ ${#mriqc_files[@]} -ne $num_epi ]]; then
