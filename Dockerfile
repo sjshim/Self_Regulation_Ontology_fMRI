@@ -1,6 +1,5 @@
 # Use Ubuntu 16.04 LTS
-FROM jupyter/base-notebook
-USER root
+FROM ubuntu:xenial-20161213
 
 # Pre-cache neurodebian key
 COPY docker_files/neurodebian.gpg /root/.neurodebian.gpg
@@ -22,22 +21,26 @@ RUN apt-get update && \
     (apt-key adv --refresh-keys --keyserver hkp://ha.pool.sks-keyservers.net 0xA5D32F012649A5A9 || true) && \
     apt-get update
 
-# Installing Neurodebian packages (AFNI)
+# Installing Neurodebian packages (FSL, AFNI, git)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends afni=16.2.07~dfsg.1-5~nd16.04+1
+    apt-get install -y --no-install-recommends \
+                    fsl-core=5.0.9-4~nd16.04+1 \
+                    fsl-mni152-templates=5.0.7-2 \
+                    afni=16.2.07~dfsg.1-5~nd16.04+1 \
+                    convert3d
 
-ENV AFNI_MODELPATH=/usr/lib/afni/models \
+ENV FSLDIR=/usr/share/fsl/5.0 \
+    FSLOUTPUTTYPE=NIFTI_GZ \
+    FSLMULTIFILEQUIT=TRUE \
+    LD_LIBRARY_PATH=/usr/lib/fsl/5.0:$LD_LIBRARY_PATH \
+    POSSUMDIR=/usr/share/fsl/5.0 \
+    FSLTCLSH=/usr/bin/tclsh \
+    FSLWISH=/usr/bin/wish \
+    AFNI_MODELPATH=/usr/lib/afni/models \
     AFNI_IMSAVE_WARNINGS=NO \
     AFNI_TTATLAS_DATASET=/usr/share/afni/atlases \
     AFNI_PLUGINPATH=/usr/lib/afni/plugins
-ENV PATH=/usr/lib/afni/bin:$PATH
-
-# Installing ANTs 2.2.0 (NeuroDocker build)
-ENV ANTSPATH=/usr/lib/ants
-RUN mkdir -p $ANTSPATH && \
-    curl -sSL "https://dl.dropbox.com/s/2f4sui1z6lcgyek/ANTs-Linux-centos5_x86_64-v2.2.0-0740f91.tar.gz" \
-    | tar -xzC $ANTSPATH --strip-components 1
-ENV PATH=$ANTSPATH:$PATH
+ENV PATH=/usr/lib/fsl/5.0:/usr/lib/afni/bin:$PATH
 
 # Installing and setting up c3d
 RUN mkdir -p /opt/c3d && \
@@ -65,34 +68,34 @@ RUN mkdir -p /opt/ICA-AROMA && \
 
 ENV PATH=/opt/ICA-AROMA:$PATH
 
+# Installing and setting up miniconda
+RUN curl -sSLO https://repo.continuum.io/miniconda/Miniconda3-4.5.4-Linux-x86_64.sh && \
+    bash Miniconda3-4.5.4-Linux-x86_64.sh -b -p /usr/local/miniconda && \
+    rm Miniconda3-4.5.4-Linux-x86_64.sh
+
+ENV PATH=/usr/local/miniconda/bin:$PATH \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    PYTHONNOUSERSITE=1
+    
 # Installing precomputed python packages
-RUN conda install -y mkl=2017.0.1 mkl-service &&  \
-    conda install -y ipython=5.1.0 \
-                     joblib=0.11 \
+RUN conda install -y mkl=2018.0.3 mkl-service;  sync &&\
+    conda install -y numpy=1.14.3 \
+                     scipy=1.1.0 \
+                     scikit-learn=0.19.1 \
+                     matplotlib=2.2.0 \
+                     pandas=0.23.0 \
                      libxml2=2.9.4 \
-                     libxslt=1.1.29\
-                     matplotlib=2.0.0 \
-                     numpy=1.12.0 \
-                     pandas=0.19.2 \
-                     scipy=0.18.1 \
-                     scikit-learn=0.18.1 \
-                     seaborn=0.7.1 \
-                     traits=4.6.0 &&  \
-    chmod +x $CONDA_DIR/* && \
-    conda clean --all -y && \
-    python -c "from matplotlib import font_manager" && \
+                     libxslt=1.1.29 \
+                     traits=4.6.0; sync &&  \
+    chmod -R a+rX /usr/local/miniconda; sync && \
+    chmod +x /usr/local/miniconda/bin/*; sync && \
+    conda clean --all -y; sync && \
+    conda clean -tipsy && sync
+
+# Precaching fonts, set 'Agg' as default backend for matplotlib
+RUN python -c "from matplotlib import font_manager" && \
     sed -i 's/\(backend *: \).*$/\1Agg/g' $( python -c "import matplotlib; print(matplotlib.matplotlib_fname())" )
-
-# Precaching fonts
-RUN python -c "from matplotlib import font_manager"
-
-# Installing and configuring FSL
-COPY docker_files/fslinstaller.py /home/fslinstaller.py
-RUN python2 /home/fslinstaller.py --quiet --dest=/usr/share/fsl -E
-
-ENV FSLDIR=/usr/share/fsl
-RUN . ${FSLDIR}/etc/fslconf/fsl.sh
-ENV PATH=${FSLDIR}/bin:${PATH}
 
 # Installing Ubuntu packages and cleaning up
 RUN apt-get update && \
@@ -112,8 +115,19 @@ ADD requirements.txt requirements.txt
 RUN pip install -r requirements.txt && \
     rm -rf ~/.cache/pip
 
+# Install Jupyter
+RUN pip install jupyter
+RUN pip install ipywidgets
+RUN jupyter nbextension enable --py widgetsnbextension
+
+# Install JupyterLab
+RUN pip install jupyterlab && jupyter serverextension enable --py jupyterlab
+
 # Set up data and script directories
 Run mkdir /scripts
 WORKDIR /scripts
 
-
+# Expose Jupyter port & cmd
+EXPOSE 8888
+RUN mkdir -p /opt/app/data
+CMD jupyter lab --ip=* --port=8888 --no-browser --notebook-dir=/opt/app/data --allow-root
