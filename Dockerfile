@@ -115,13 +115,9 @@ ADD requirements.txt requirements.txt
 RUN pip install -r requirements.txt && \
     rm -rf ~/.cache/pip
 
-# Install Jupyter
-RUN pip install jupyter
-RUN pip install ipywidgets
-RUN jupyter nbextension enable --py widgetsnbextension
-
 # Install JupyterLab
-RUN pip install jupyterlab && jupyter serverextension enable --py jupyterlab
+RUN conda install -c conda-forge jupyterlab
+ENV SHELL=/bin/bash
 
 # Set up data and script directories
 Run mkdir /scripts
@@ -130,4 +126,6 @@ WORKDIR /scripts
 # Expose Jupyter port & cmd
 EXPOSE 8888
 RUN mkdir -p /opt/app/data
-CMD jupyter lab --ip=* --port=8888 --no-browser --notebook-dir=/opt/app/data --allow-root
+CMD jupyter lab --ip=0.0.0.0 --port=8888 --no-browser \
+    --notebook-dir=/opt/app/data --allow-root \
+    --NotebookApp.token='secret'
