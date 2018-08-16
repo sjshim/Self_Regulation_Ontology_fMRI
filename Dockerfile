@@ -117,11 +117,12 @@ RUN pip install -r requirements.txt && \
 
 # Install JupyterLab
 RUN conda install -c conda-forge jupyterlab
-ENV SHELL=/bin/bash
 
-# Set up data and script directories
+# Set up data and script directories, ENV variables
 Run mkdir /scripts
 WORKDIR /scripts
+ENV SHELL=/bin/bash
+ENV HOME=/scripts
 
 # Expose Jupyter port & cmd
 EXPOSE 8888
