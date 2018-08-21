@@ -56,17 +56,18 @@ def concat_and_smooth(map_files, smoothness=None):
     return smooth_copes
 
 # function to get TS within labels
-def project_contrast(img_files, parcellation_file, mask_file):
-    parcellation = image.load_img(parcellation_file)
+def project_contrast(img_files, parcellation, mask_file):
+    if type(parcellation) == str:
+        parcellation = image.load_img(parcellation)
     resampled_images = image.resample_img(img_files, parcellation.affine)
     if len(parcellation.shape) == 3:
-        masker = input_data.NiftiLabelsMasker(labels_img=parcellation_file, 
+        masker = input_data.NiftiLabelsMasker(labels_img=parcellation, 
                                                resampling_target="labels", 
                                                standardize=False,
                                                memory='nilearn_cache', 
                                                memory_level=1)
     elif len(parcellation.shape) == 4:
-         masker = input_data.NiftiMapsMasker(maps_img=parcellation_file, 
+         masker = input_data.NiftiMapsMasker(maps_img=parcellation, 
                                              mask_img=mask_file,
                                              resampling_target="maps", 
                                              standardize=False,
@@ -75,30 +76,22 @@ def project_contrast(img_files, parcellation_file, mask_file):
     time_series = masker.fit_transform(resampled_images)
     return time_series, masker
 
-def create_projections_df(parcellation_file, mask_file, 
+def create_projections_df(parcellation, mask_file, 
                          data_dir, tasks, filename=None):
     
     # project contrasts into lower dimensional space    
     projections = []
     index = []
     for task in tasks:
-        # get all contrasts
-        contrast_path = glob(join(data_dir,'*%s/contrasts.pkl' % task))
-        if len(contrast_path)>0:
-            contrast_path = contrast_path[0]
-        else:
-            continue # move to next iteration if no contrast files found
-        contrast_names = get_contrast_names(contrast_path)
+        task_files = get_map_files(tasks=[task])
         # for each contrast, project into space defined by parcellation file
-        for i,name in enumerate(contrast_names):
-            func_files = sorted(glob(join(data_dir, '*%s/zstat%s.nii.gz' 
-                                          % (task, i+1))))
+        for contrast_name, func_files in task_files.items():
             TS, masker = project_contrast(func_files,
-                                          parcellation_file, 
+                                          parcellation, 
                                           mask_file)
             projections.append(TS)
             index += [re.search('s[0-9][0-9][0-9]',f).group(0)
-                        + '_%s_%s' % (task, name)
+                        + '_%s' % (contrast_name)
                         for f in func_files]
     projections_df = pd.DataFrame(np.vstack(projections), index)
     
