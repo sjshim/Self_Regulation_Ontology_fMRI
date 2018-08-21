@@ -1,3 +1,4 @@
+# ** Taken from fMRIPREP **
 # Use Ubuntu 16.04 LTS
 FROM ubuntu:xenial-20161213
 
@@ -115,6 +116,12 @@ ADD requirements.txt requirements.txt
 RUN pip install -r requirements.txt && \
     rm -rf ~/.cache/pip
 
+# ** Additions to fMRIPrep **
+RUN conda install -y joblib==0.12.2 \
+                     seaborn==0.9.0 
+RUN conda install -c bioconda pymvpa 
+
+                     
 # Install JupyterLab
 RUN conda install -c conda-forge jupyterlab
 

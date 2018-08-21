@@ -16,5 +16,6 @@ fmri_analysis/Data/sub*
 fmri_preproc/*task_list.sh
 singularity_images/*img
 nilearn_cache*
+nilearn_data*
 nipype_mem*
 .spyproject
