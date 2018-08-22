@@ -94,6 +94,10 @@ RUN conda install -y mkl=2018.0.3 mkl-service;  sync &&\
     conda clean --all -y; sync && \
     conda clean -tipsy && sync
 
+# ** Additions to fMRIPrep **
+RUN conda install -y joblib==0.12.2 \
+                     seaborn==0.9.0 
+
 # Precaching fonts, set 'Agg' as default backend for matplotlib
 RUN python -c "from matplotlib import font_manager" && \
     sed -i 's/\(backend *: \).*$/\1Agg/g' $( python -c "import matplotlib; print(matplotlib.matplotlib_fname())" )
@@ -115,21 +119,19 @@ WORKDIR /home
 ADD requirements.txt requirements.txt
 RUN pip install -r requirements.txt && \
     rm -rf ~/.cache/pip
-
-# ** Additions to fMRIPrep **
-RUN conda install -y joblib==0.12.2 \
-                     seaborn==0.9.0 
-RUN conda install -c bioconda pymvpa 
-
                      
 # Install JupyterLab
 RUN conda install -c conda-forge jupyterlab
+
+# add jupyterlab extensions
+#RUN conda install flake8 
+#RUN jupyter labextension install jupyterlab-flake8
+RUN jupyter labextension install @jupyterlab/toc
 
 # Set up data and script directories, ENV variables
 Run mkdir /scripts
 WORKDIR /scripts
 ENV SHELL=/bin/bash
-ENV HOME=/scripts
 
 # Expose Jupyter port & cmd
 EXPOSE 8888
