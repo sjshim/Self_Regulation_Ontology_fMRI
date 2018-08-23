@@ -1,8 +1,9 @@
 from collections import OrderedDict as odict
-import glob as glob
+from glob import glob
 import numpy as np
-from os import path
+from os import makedirs, path
 import pandas as pd
+import pickle
 import re
 
 from sklearn.linear_model import LogisticRegressionCV
@@ -15,13 +16,92 @@ from nilearn import datasets, image, input_data
 from nilearn.decomposition import CanICA
 
 # ********************************************************
+# Misc Functions
+# ********************************************************
+def get_contrast_names(subjectinfo_path):
+    try:
+        contrasts = pickle.load(open(subjectinfo_path, 'rb')).contrasts
+        contrast_names = [i[0] for i in contrasts]
+    except IndexError:
+        print('No subjectinfo found for %s_%s' % (task, model))
+        contrast_names = None
+    return contrast_names
+
+def create_group_mask(mask_loc, fmriprep_dir, threshold=.8, verbose=True):
+    if verbose:
+        print('Creating Group mask...')
+    makedirs(path.dirname(mask_loc), exist_ok=True)
+    brainmasks = glob(path.join(fmriprep_dir,'sub-s???',
+                               '*','func','*MNI152NLin2009cAsym_brainmask*'))
+    mean_mask = image.mean_img(brainmasks)
+    group_mask = image.math_img("a>=%s" % str(threshold), a=mean_mask)
+    group_mask.to_filename(mask_loc)
+    if verbose:
+        print('Finished creating group mask')
+        
+# ********************************************************
+# Functions to create Group Maps
+# ********************************************************
+def save_smooth_maps(task, model, 
+                     second_level_dir,
+                     first_level_dir,
+                     mask_loc,
+                     smoothness=4.4,
+                     verbose=True):
+    task_dir = path.join(second_level_dir, task, model, 'wf-contrast')
+    makedirs(task_dir, exist_ok=True)
+    if verbose: print('Creating %s group map' % task)
+    all_map_files = get_map_files(first_level_dir, [task], model, map_prefix='cope')
+    for contrast_name, map_files in all_map_files.items():
+        if verbose: print('    Contrast: %s' % contrast_name)
+        # if there are map files, create group map
+        if len(map_files) > 1:
+            smooth_copes = concat_and_smooth(map_files, smoothness=smoothness)
+            copes_concat = image.concat_imgs(
+                smooth_copes.values(), auto_resample=True)
+            # remove task from beginning of contrast name
+            short_contrast_name = '_'.join(contrast_name.split('_')[1:])
+            copes_loc = path.join(task_dir, "%s_copes.nii.gz" % short_contrast_name)
+            copes_concat.to_filename(copes_loc)
+            
+def save_tmaps(task, model,
+               second_level_dir,
+               mask_loc,
+               working_dir,
+               permutations):
+    task_dir = path.join(second_level_dir, task, model, 'wf-contrast')
+    contrasts = glob(path.join(task_dir, '*copes.nii.gz'))
+    for copes_loc in contrasts:
+        contrast_name = path.basename(copes_loc).split('_copes')[0]
+        contrast_working_dir = path.join(working_dir, task, contrast_name)
+        makedirs(contrast_working_dir)
+        # perform permutation test to assess significance
+        mem = Memory(base_dir=contrast_working_dir)
+        randomise = mem.cache(fsl.Randomise)
+        randomise_results = randomise(
+            in_file=copes_loc,
+            mask=mask_loc,
+            one_sample_group_mean=True,
+            tfce=True,  # look at paper
+            vox_p_values=True,
+            num_perm=permutations)
+        # save results
+        tfile_loc = path.join(task_dir, "%s_raw_tfile.nii.gz" % contrast_name)
+        tfile_corrected_loc = path.join(task_dir,
+                                   "%s_corrected_tfile.nii.gz" % contrast_name)
+        raw_tfile = randomise_results.outputs.tstat_files[0]
+        corrected_tfile = randomise_results.outputs.t_corrected_p_files[0]
+        shutil.move(raw_tfile, tfile_loc)
+        shutil.move(corrected_tfile, tfile_corrected_loc)
+        
+# ********************************************************
 # Functions to get fmri maps and get/create parcellations
 # ********************************************************
 def get_map_files(first_level_dir,
                   tasks,
                   model,
                   map_prefix='zstat',
-                  selectors=None):
+                  selectors='default'):
     map_files = odict()
     for task in tasks: 
         subjectinfo_paths = sorted(glob(path.join(first_level_dir,'*', task, model, 'wf-contrast', 'subjectinfo.pkl')))
@@ -33,20 +113,44 @@ def get_map_files(first_level_dir,
             continue
 
         # select only a subset of contrasts (i.e.  get explicit contrasts, not vs rest)
-        if selectors is None:
-            selectors = ['-', 'network', 'response_time']
+        if selectors == 'default':
+            selectors = ['-', 'response_time',
+                        'network',
+                        'EV', 'risk', #CCT
+                        'subjective_value', 'LL_vs_SS', #discount
+                         'cue_switch', 'task_switch', #twoByTwo
+                        'search_depth'] #WATT3
+        elif selectors is None:
+            selectors = []
         for i, name in enumerate(contrast_names):
-            if np.logical_or.reduce([sel in name for sel in selectors]):
+            if any([sel in name for sel in selectors]) or len(selectors)==0:
                 map_files[task+'_'+name] = sorted(glob(path.join(first_level_dir,
                                                                  '*', 
                                                                  task,
                                                                  model,
                                                                  'wf-contrast', 
-                                                                 'zstat%s.nii.gz' % str(i+1))))
+                                                                 '%s%s.nii.gz' % (map_prefix, str(i+1)))))
     return map_files
 
-def flatten_map_files(map_files):
-    return [item for sublist in map_files.values() for item in sublist]
+def get_group_maps(second_level_dir,
+                    tasks,
+                    model,
+                    match_string='copes'):
+    map_files = odict()
+    for task in tasks: 
+        group_files = sorted(glob(path.join(second_level_dir, task, 
+                                            model, 'wf-contrast','*%s*.nii.gz' % match_string)))
+        for filey in group_files:
+            contrast_name = path.basename(filey).split(match_string)[0].rstrip('_')
+            img = image.load_img(filey)
+            if len(img.shape)==4:
+                img = image.mean_img(img)
+            map_files[task+'_'+contrast_name] = img
+    return map_files
+        
+def flatten(lst):
+    # flattens list of lists
+    return [item for sublist in lst for item in sublist]
 
 def get_ICA_parcellation(map_files,
                          mask_loc,
@@ -54,9 +158,11 @@ def get_ICA_parcellation(map_files,
                          second_level_dir,
                          n_comps=20,
                          smoothing=4.4,
-                         file_name=''):
-    if type(map_files) == dict:
-        map_files = flatten_map_files(map_files)
+                         filename=None):
+    try:
+        map_files = flatten(map_files.values())
+    except AttributeError:
+        pass
     group_mask = nibabel.load(mask_loc)
     ##  get components
     canica = CanICA(mask = group_mask, n_components=n_comps, 
@@ -66,23 +172,28 @@ def get_ICA_parcellation(map_files,
     canica.fit(map_files)
     masker = canica.masker_
     components_img = masker.inverse_transform(canica.components_)
-    components_img.to_filename(path.join(second_level_dir, 
-                                        '%s_canica%s.nii.gz' 
-                                        % (file_name, n_comps)))
+    if filename is not None:
+        prefix = filename+'_'
+        components_img.to_filename(path.join(second_level_dir, 
+                                             'parcellation',
+                                            '%scanica%s.nii.gz' 
+                                            % (prefix, n_comps)))
     return components_img
     
 def get_established_parcellation(parcellation="Harvard_Oxford", target_img=None):
     if parcellation == "Harvard_Oxford":
+        name = "Harvard_Oxford_cort-prob-2mm"
         data = datasets.fetch_atlas_harvard_oxford('cort-prob-2mm')
         parcel = nibabel.load(data['maps'])
         labels = data['labels'][1:] # first label is background
     if parcellation == "smith":
+        name = "smith_rsn70"
         data = datasets.fetch_atlas_smith_2009()['rsn70']
         parcel = nibabel.load(data)
         labels = range(parcel.shape[-1])
     if target_img:
         parcel = image.resample_to_img(parcel, target_img)
-    return parcel, labels
+    return parcel, labels, name
 
 # ********************************************************
 # Functions to extract ROIs from parcellations
@@ -95,8 +206,10 @@ def get_ROI_from_parcel(parcel, ROI, threshold):
 
 def extract_roi_vals(map_files, parcel, threshold, labels=None):
     """ Mask nifti images using a parcellation"""
-    if type(map_files) == dict:
-        map_files = flatten_map_files(map_files)
+    try:
+        map_files = flatten(map_files.values())
+    except AttributeError:
+        pass
     roi_vals = odict()
     for roi_i in range(parcel.shape[-1]):
         roi_masker = input_data.NiftiMasker(get_ROI_from_parcel(parcel, roi_i, threshold))
