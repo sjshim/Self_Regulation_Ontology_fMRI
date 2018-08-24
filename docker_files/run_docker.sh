@@ -10,7 +10,6 @@ python task_analysis.py /output /Data --participant s358 --tasks stopSignal
 
 # as notebook
 scripts_loc=~/Experiments/Self_Regulation_Ontology_fMRI/fmri_analysis/scripts
-data_loc=$HOME/tmp/fmri/example_data
 data_loc=/mnt/OAK/uh2/BIDS_data    
 output=$HOME/tmp/fmri/output
 docker run --rm  \

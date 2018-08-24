@@ -1,5 +1,6 @@
 from collections import OrderedDict as odict
 from glob import glob
+from joblib import Parallel
 import numpy as np
 from os import makedirs, path
 import pandas as pd
@@ -180,15 +181,16 @@ def get_ICA_parcellation(map_files,
                                             % (prefix, n_comps)))
     return components_img
     
-def get_established_parcellation(parcellation="Harvard_Oxford", target_img=None):
+def get_established_parcellation(parcellation="Harvard_Oxford", target_img=None,
+                                download_dir=None):
     if parcellation == "Harvard_Oxford":
         name = "Harvard_Oxford_cort-prob-2mm"
-        data = datasets.fetch_atlas_harvard_oxford('cort-prob-2mm')
+        data = datasets.fetch_atlas_harvard_oxford('cort-prob-2mm', data_dir=download_dir)
         parcel = nibabel.load(data['maps'])
         labels = data['labels'][1:] # first label is background
     if parcellation == "smith":
         name = "smith_rsn70"
-        data = datasets.fetch_atlas_smith_2009()['rsn70']
+        data = datasets.fetch_atlas_smith_2009(data_dir=download_dir)['rsn70']
         parcel = nibabel.load(data)
         labels = range(parcel.shape[-1])
     if target_img:
@@ -204,20 +206,28 @@ def get_ROI_from_parcel(parcel, ROI, threshold):
     roi_mask = image.new_img_like(parcel, roi_mask)
     return roi_mask
 
-def extract_roi_vals(map_files, parcel, threshold, labels=None):
+def extract_roi_vals(map_files, parcel, threshold, labels=None, n_procs=1):
     """ Mask nifti images using a parcellation"""
+    def mask_map_files(roi_i):
+        if labels:
+            key = labels[roi_i]
+        else:
+            key = roi_i
+        mask_img = get_ROI_from_parcel(parcel, roi_i, threshold)
+        return {key: nilearn.masking.apply_mask(map_files, mask_img=mask_img)}
     try:
         map_files = flatten(map_files.values())
     except AttributeError:
         pass
     roi_vals = odict()
-    for roi_i in range(parcel.shape[-1]):
-        roi_masker = input_data.NiftiMasker(get_ROI_from_parcel(parcel, roi_i, threshold))
-        if labels:
-            key = labels[roi_i]
-        else:
-            key = roi_i
-        roi_vals[key] = roi_masker.fit_transform(map_files)
+    # parallelize
+    if n_procs > 1:
+        out = Parallel(n_jobs=n_procs)(delayed(mask_map_files)(roi_i) for roi_i in range(parcel.shape[-1]))
+        for val in out:
+            roi_vals.update(val)
+    else:
+        for roi_i in range(parcel.shape[-1]):
+            roi_vals.update(mask_map_files(roi_i))
     return roi_vals
 
 # ********************************************************
