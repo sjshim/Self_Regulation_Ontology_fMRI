@@ -2,10 +2,11 @@ from collections import OrderedDict as odict
 from glob import glob
 from joblib import Parallel
 import numpy as np
-from os import makedirs, path
+from os import makedirs, path, sep
 import pandas as pd
 import pickle
 import re
+import shutil
 
 from sklearn.linear_model import LogisticRegressionCV
 from sklearn.metrics import confusion_matrix
@@ -13,8 +14,11 @@ from sklearn.model_selection import cross_val_predict
 
 #fmri imports
 import nibabel
-from nilearn import datasets, image, input_data
+from nilearn import datasets, image, input_data, masking
 from nilearn.decomposition import CanICA
+from nipype.caching import Memory
+from nipype.interfaces import fsl
+
 
 # ********************************************************
 # Misc Functions
@@ -43,40 +47,20 @@ def create_group_mask(mask_loc, fmriprep_dir, threshold=.8, verbose=True):
 # ********************************************************
 # Functions to create Group Maps
 # ********************************************************
-def save_smooth_maps(task, model, 
-                     second_level_dir,
-                     first_level_dir,
-                     mask_loc,
-                     smoothness=4.4,
-                     verbose=True):
-    task_dir = path.join(second_level_dir, task, model, 'wf-contrast')
-    makedirs(task_dir, exist_ok=True)
-    if verbose: print('Creating %s group map' % task)
-    all_map_files = get_map_files(first_level_dir, [task], model, map_prefix='cope')
-    for contrast_name, map_files in all_map_files.items():
-        if verbose: print('    Contrast: %s' % contrast_name)
-        # if there are map files, create group map
-        if len(map_files) > 1:
-            smooth_copes = concat_and_smooth(map_files, smoothness=smoothness)
-            copes_concat = image.concat_imgs(
-                smooth_copes.values(), auto_resample=True)
-            # remove task from beginning of contrast name
-            short_contrast_name = '_'.join(contrast_name.split('_')[1:])
-            copes_loc = path.join(task_dir, "%s_copes.nii.gz" % short_contrast_name)
-            copes_concat.to_filename(copes_loc)
-            
-def save_tmaps(task, model,
-               second_level_dir,
+def save_tmaps(copes_loc,
                mask_loc,
                working_dir,
-               permutations):
-    task_dir = path.join(second_level_dir, task, model, 'wf-contrast')
-    contrasts = glob(path.join(task_dir, '*copes.nii.gz'))
-    for copes_loc in contrasts:
-        contrast_name = path.basename(copes_loc).split('_copes')[0]
-        contrast_working_dir = path.join(working_dir, task, contrast_name)
-        makedirs(contrast_working_dir)
-        # perform permutation test to assess significance
+               permutations,
+               rerun=False):
+    task_dir = path.dirname(copes_loc)
+    contrast_name = path.basename(copes_loc).split('_cope')[0]
+    contrast_working_dir = path.join(working_dir, path.basename(copes_loc))
+    tfile_loc = path.join(task_dir, "%s_raw_tfile.nii.gz" % contrast_name)
+    tfile_corrected_loc = path.join(task_dir,
+                               "%s_corrected_tfile.nii.gz" % contrast_name)
+    makedirs(contrast_working_dir, exist_ok=True)
+    # perform permutation test to assess significance
+    if not path.exists(tfile_loc) or rerun:
         mem = Memory(base_dir=contrast_working_dir)
         randomise = mem.cache(fsl.Randomise)
         randomise_results = randomise(
@@ -87,14 +71,13 @@ def save_tmaps(task, model,
             vox_p_values=True,
             num_perm=permutations)
         # save results
-        tfile_loc = path.join(task_dir, "%s_raw_tfile.nii.gz" % contrast_name)
-        tfile_corrected_loc = path.join(task_dir,
-                                   "%s_corrected_tfile.nii.gz" % contrast_name)
         raw_tfile = randomise_results.outputs.tstat_files[0]
         corrected_tfile = randomise_results.outputs.t_corrected_p_files[0]
         shutil.move(raw_tfile, tfile_loc)
         shutil.move(corrected_tfile, tfile_corrected_loc)
-        
+        shutil.rmtree(contrast_working_dir)
+    return tfile_loc, tfile_corrected_loc
+
 # ********************************************************
 # Functions to get fmri maps and get/create parcellations
 # ********************************************************
@@ -104,33 +87,31 @@ def get_map_files(first_level_dir,
                   map_prefix='zstat',
                   selectors='default'):
     map_files = odict()
+    # select only a subset of contrasts (i.e.  get explicit contrasts, not vs rest)
+    if selectors == 'default':
+        selectors = ['-', 'response_time',
+                    'network',
+                    'EV', 'risk', #CCT
+                    'subjective_value', 'LL_vs_SS', #discount
+                     'cue_switch', 'task_switch', #twoByTwo
+                    'search_depth'] #WATT3
+    elif selectors is None:
+        selectors = []
     for task in tasks: 
-        subjectinfo_paths = sorted(glob(path.join(first_level_dir,'*', task, model, 'wf-contrast', 'subjectinfo.pkl')))
-        if len(subjectinfo_paths)>0:
+        subjectinfo_paths = glob(path.join(first_level_dir,'*', task, model, 'wf-contrast', 'subjectinfo.pkl'))
+        if len(subjectinfo_paths) > 0:
             contrast_names = get_contrast_names(subjectinfo_paths[0])
         else:
-            continue # move to next iteration if no contrast files found
-        if contrast_names is None:
+            print("No subjectinfo found for %s, Model-%s" % (task, model))
             continue
-
-        # select only a subset of contrasts (i.e.  get explicit contrasts, not vs rest)
-        if selectors == 'default':
-            selectors = ['-', 'response_time',
-                        'network',
-                        'EV', 'risk', #CCT
-                        'subjective_value', 'LL_vs_SS', #discount
-                         'cue_switch', 'task_switch', #twoByTwo
-                        'search_depth'] #WATT3
-        elif selectors is None:
-            selectors = []
         for i, name in enumerate(contrast_names):
             if any([sel in name for sel in selectors]) or len(selectors)==0:
                 map_files[task+'_'+name] = sorted(glob(path.join(first_level_dir,
-                                                                 '*', 
-                                                                 task,
-                                                                 model,
-                                                                 'wf-contrast', 
-                                                                 '%s%s.nii.gz' % (map_prefix, str(i+1)))))
+                                                            '*', 
+                                                             task,
+                                                             model,
+                                                             'wf-contrast', 
+                                                             '%s%s.nii.gz' % (map_prefix, str(i+1)))))
     return map_files
 
 def get_group_maps(second_level_dir,
@@ -140,7 +121,7 @@ def get_group_maps(second_level_dir,
     map_files = odict()
     for task in tasks: 
         group_files = sorted(glob(path.join(second_level_dir, task, 
-                                            model, 'wf-contrast','*%s*.nii.gz' % match_string)))
+                                             model, 'wf-contrast','*%s*.nii.gz' % match_string)))
         for filey in group_files:
             contrast_name = path.basename(filey).split(match_string)[0].rstrip('_')
             img = image.load_img(filey)
@@ -148,11 +129,74 @@ def get_group_maps(second_level_dir,
                 img = image.mean_img(img)
             map_files[task+'_'+contrast_name] = img
     return map_files
-        
+
 def flatten(lst):
     # flattens list of lists
     return [item for sublist in lst for item in sublist]
 
+def get_metadata(map_files):
+    tasks = []
+    contrast_names = []
+    for k,v in map_files.items():
+        try:
+            tasks += [k.split('_')[0]]*len(v)
+            contrast_names += ['_'.join(k.split('_')[1:])]*len(v)
+        except TypeError:
+            tasks += [k.split('_')[0]]
+            contrast_names += ['_'.join(k.split('_')[1:])]
+    if len(tasks) != len(map_files): # thus there must have been multiple images per contrast
+        out = flatten(map_files.values())
+        subjects = [i.split(sep)[-5] for i in out]
+        df = pd.DataFrame({'task': tasks,
+                         'contrast_name': contrast_names,
+                         'subject': subjects})
+    else:
+        df = pd.DataFrame({'task': tasks,
+                         'contrast_name': contrast_names})
+    return df
+
+def concat_map_files(map_files, file_type,second_level_dir, model, verbose=False, rerun=True):
+    filenames = []
+    for k,v in map_files.items():
+        if verbose: print("Concatenating %s" % k)
+        task, *contrast = k.split('_')
+        contrast_name = '_'.join(contrast)
+        filename = path.join(second_level_dir, task, model,
+                                          'wf-contrast', '%s_%s_concat.nii.gz' % (contrast_name, file_type))
+        if rerun or not(path.exists(filename)):
+            makedirs(path.dirname(filename), exist_ok=True)
+            concat_image = image.concat_imgs(v)
+            concat_image.to_filename(filename)
+        filenames.append(filename)
+    return filenames
+
+def smooth_concat_files(concat_files, fwhm=4.4, verbose=False, rerun=True):
+    filenames = []
+    for filey in concat_files:
+        if verbose: print("Smoothing %s" % k)
+        smoothed = image.smooth_img(filey, fwhm)
+        smooth_name = filey.replace('concat', 'concat-smoothed_fwhm-%s' % str(fwhm))
+        if rerun or not(path.exists(smooth_name)):
+            smoothed.to_filename(smooth_name)
+        filenames.append(smooth_name)
+    return filenames
+
+def get_mean_maps(image_list, contrast_name_list, save=True, rerun=True):
+    assert len(image_list) == len(contrast_name_list)
+    map_files = odict()
+    for contrast_name,filey in zip(contrast_name_list, image_list):
+        filename = path.join(path.dirname(filey),path.basename(filey).rstrip('nii.gz')+'_group.nii.gz')
+        if not path.exists(filename) or rerun:
+            d = path.dirname(filey)
+            name = path.basename(filey)
+            mean_img = image.mean_img(image.load_img(filey))
+            if save:
+                mean_img.to_filename(filename)
+        else:
+            mean_img = image.load_img(filename)
+        map_files[contrast_name] = mean_img
+    return map_files
+    
 def get_ICA_parcellation(map_files,
                          mask_loc,
                          working_dir,
@@ -188,35 +232,51 @@ def get_established_parcellation(parcellation="Harvard_Oxford", target_img=None,
         data = datasets.fetch_atlas_harvard_oxford('cort-prob-2mm', data_dir=download_dir)
         parcel = nibabel.load(data['maps'])
         labels = data['labels'][1:] # first label is background
+        atlas_threshold = 25
     if parcellation == "smith":
         name = "smith_rsn70"
         data = datasets.fetch_atlas_smith_2009(data_dir=download_dir)['rsn70']
         parcel = nibabel.load(data)
         labels = range(parcel.shape[-1])
+        atlas_threshold = 4
     if target_img:
         parcel = image.resample_to_img(parcel, target_img)
-    return parcel, labels, name
+    return parcel, labels, name, atlas_threshold
 
+def parcel_to_atlas(parcel, threshold):
+    # convert parcel to atlas by finding maximum values
+    # example below is based on Harvard_Oxford's strategy "cort-maxprob-thr25-2mm"
+    data = parcel.get_data().copy()
+    data[data<threshold] = 0
+    atlas=image.new_img_like(parcel, np.argmax(data,3))
+    return atlas
 # ********************************************************
 # Functions to extract ROIs from parcellations
 # ********************************************************
+
 def get_ROI_from_parcel(parcel, ROI, threshold):
     # convert a probabilistic parcellation into an ROI mask
     roi_mask = parcel.get_data()[:,:,:,ROI]>threshold 
     roi_mask = image.new_img_like(parcel, roi_mask)
     return roi_mask
 
-def extract_roi_vals(map_files, parcel, threshold, labels=None, n_procs=1):
+def extract_roi_vals(map_files, parcel, threshold, labels=None, metadata=None, n_procs=1):
     """ Mask nifti images using a parcellation"""
-    def mask_map_files(roi_i):
+    def mask_map_files(roi_i, metadata=metadata):
         if labels:
             key = labels[roi_i]
         else:
             key = roi_i
+        print("Masking %s" % key)
         mask_img = get_ROI_from_parcel(parcel, roi_i, threshold)
-        return {key: nilearn.masking.apply_mask(map_files, mask_img=mask_img)}
+        masked_map = masking.apply_mask(map_files, mask_img=mask_img)
+        if metadata is not None:
+            masked_map = pd.concat([metadata, pd.DataFrame(masked_map)], axis=1)
+        return {key: masked_map}
     try:
         map_files = flatten(map_files.values())
+    except TypeError:
+        map_files = map_files.values()
     except AttributeError:
         pass
     roi_vals = odict()
@@ -237,24 +297,15 @@ def get_RDMs(ROI_dict):
     # converts ROI dictionary (returned by extract_roi_vals) of contrast X voxel values to RDMs
     RDMs = {}
     for key,val in ROI_dict.items():
+        if type(val) == pd.core.frame.DataFrame:
+            subset_cols = [c for c in val.columns if type(c) != str]
+            val = val.loc[:, subset_cols].values
         RDMs[key] = 1-np.corrcoef(val)
     return RDMs
         
 # ********************************************************
 # 2nd level analysis utility functions
 # ********************************************************
-
-def concat_and_smooth(map_files, smoothness=None):
-    """
-    Loads and smooths files specified in 
-    map_files and creates a dictionary of them
-    """
-    smooth_copes = odict()
-    for img_i, img in enumerate(sorted(map_files)):
-        subj = re.search('s[0-9][0-9][0-9]',img).group(0)
-        smooth_cope = image.smooth_img(img, smoothness)
-        smooth_copes[subj] = smooth_cope
-    return smooth_copes
 
 # function to get TS within labels
 def project_contrast(img_files, parcellation, mask_file):
