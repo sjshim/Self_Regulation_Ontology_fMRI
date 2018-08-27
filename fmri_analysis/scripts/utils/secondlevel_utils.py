@@ -2,10 +2,11 @@ from collections import OrderedDict as odict
 from glob import glob
 from joblib import Parallel
 import numpy as np
-from os import makedirs, path
+from os import makedirs, path, sep
 import pandas as pd
 import pickle
 import re
+import shutil
 
 from sklearn.linear_model import LogisticRegressionCV
 from sklearn.metrics import confusion_matrix
@@ -15,6 +16,9 @@ from sklearn.model_selection import cross_val_predict
 import nibabel
 from nilearn import datasets, image, input_data, masking
 from nilearn.decomposition import CanICA
+from nipype.caching import Memory
+from nipype.interfaces import fsl
+
 
 # ********************************************************
 # Misc Functions
@@ -46,30 +50,34 @@ def create_group_mask(mask_loc, fmriprep_dir, threshold=.8, verbose=True):
 def save_tmaps(copes_loc,
                mask_loc,
                working_dir,
-               permutations):
-    task_dir = path.basename(copes_loc)
+               permutations,
+               rerun=False):
+    task_dir = path.dirname(copes_loc)
     contrast_name = path.basename(copes_loc).split('_cope')[0]
-    contrast_working_dir = path.join(working_dir, task, contrast_name)
-    makedirs(contrast_working_dir)
-    # perform permutation test to assess significance
-    mem = Memory(base_dir=contrast_working_dir)
-    randomise = mem.cache(fsl.Randomise)
-    randomise_results = randomise(
-        in_file=copes_loc,
-        mask=mask_loc,
-        one_sample_group_mean=True,
-        tfce=True,  # look at paper
-        vox_p_values=True,
-        num_perm=permutations)
-    # save results
+    contrast_working_dir = path.join(working_dir, path.basename(copes_loc))
     tfile_loc = path.join(task_dir, "%s_raw_tfile.nii.gz" % contrast_name)
     tfile_corrected_loc = path.join(task_dir,
                                "%s_corrected_tfile.nii.gz" % contrast_name)
-    raw_tfile = randomise_results.outputs.tstat_files[0]
-    corrected_tfile = randomise_results.outputs.t_corrected_p_files[0]
-    shutil.move(raw_tfile, tfile_loc)
-    shutil.move(corrected_tfile, tfile_corrected_loc)}
-        
+    makedirs(contrast_working_dir, exist_ok=True)
+    # perform permutation test to assess significance
+    if not path.exists(tfile_loc) or rerun:
+        mem = Memory(base_dir=contrast_working_dir)
+        randomise = mem.cache(fsl.Randomise)
+        randomise_results = randomise(
+            in_file=copes_loc,
+            mask=mask_loc,
+            one_sample_group_mean=True,
+            tfce=True,  # look at paper
+            vox_p_values=True,
+            num_perm=permutations)
+        # save results
+        raw_tfile = randomise_results.outputs.tstat_files[0]
+        corrected_tfile = randomise_results.outputs.t_corrected_p_files[0]
+        shutil.move(raw_tfile, tfile_loc)
+        shutil.move(corrected_tfile, tfile_corrected_loc)
+        shutil.rmtree(contrast_working_dir)
+    return tfile_loc, tfile_corrected_loc
+
 # ********************************************************
 # Functions to get fmri maps and get/create parcellations
 # ********************************************************
@@ -122,7 +130,32 @@ def get_group_maps(second_level_dir,
             map_files[task+'_'+contrast_name] = img
     return map_files
 
-def concat_map_files(map_files, file_type,second_level_dir, model, verbose=False):
+def flatten(lst):
+    # flattens list of lists
+    return [item for sublist in lst for item in sublist]
+
+def get_metadata(map_files):
+    tasks = []
+    contrast_names = []
+    for k,v in map_files.items():
+        try:
+            tasks += [k.split('_')[0]]*len(v)
+            contrast_names += ['_'.join(k.split('_')[1:])]*len(v)
+        except TypeError:
+            tasks += [k.split('_')[0]]
+            contrast_names += ['_'.join(k.split('_')[1:])]
+    if len(tasks) != len(map_files): # thus there must have been multiple images per contrast
+        out = flatten(map_files.values())
+        subjects = [i.split(sep)[-5] for i in out]
+        df = pd.DataFrame({'task': tasks,
+                         'contrast_name': contrast_names,
+                         'subject': subjects})
+    else:
+        df = pd.DataFrame({'task': tasks,
+                         'contrast_name': contrast_names})
+    return df
+
+def concat_map_files(map_files, file_type,second_level_dir, model, verbose=False, rerun=True):
     filenames = []
     for k,v in map_files.items():
         if verbose: print("Concatenating %s" % k)
@@ -130,26 +163,40 @@ def concat_map_files(map_files, file_type,second_level_dir, model, verbose=False
         contrast_name = '_'.join(contrast)
         filename = path.join(second_level_dir, task, model,
                                           'wf-contrast', '%s_%s_concat.nii.gz' % (contrast_name, file_type))
-        makedirs(path.dirname(filename), exist_ok=True)
-        concat_image = image.concat_imgs(v)
-        concat_image.to_filename(filename)
+        if rerun or not(path.exists(filename)):
+            makedirs(path.dirname(filename), exist_ok=True)
+            concat_image = image.concat_imgs(v)
+            concat_image.to_filename(filename)
         filenames.append(filename)
     return filenames
 
-def smooth_concat_files(concat_files, fwhm=4.4, verbose=False):
+def smooth_concat_files(concat_files, fwhm=4.4, verbose=False, rerun=True):
     filenames = []
     for filey in concat_files:
         if verbose: print("Smoothing %s" % k)
         smoothed = image.smooth_img(filey, fwhm)
         smooth_name = filey.replace('concat', 'concat-smoothed_fwhm-%s' % str(fwhm))
-        smoothed.to_filename(smooth_name)
+        if rerun or not(path.exists(smooth_name)):
+            smoothed.to_filename(smooth_name)
         filenames.append(smooth_name)
     return filenames
 
-def flatten(lst):
-    # flattens list of lists
-    return [item for sublist in lst for item in sublist]
-
+def get_mean_maps(image_list, contrast_name_list, save=True, rerun=True):
+    assert len(image_list) == len(contrast_name_list)
+    map_files = odict()
+    for contrast_name,filey in zip(contrast_name_list, image_list):
+        filename = path.join(path.dirname(filey),path.basename(filey).rstrip('nii.gz')+'_group.nii.gz')
+        if not path.exists(filename) or rerun:
+            d = path.dirname(filey)
+            name = path.basename(filey)
+            mean_img = image.mean_img(image.load_img(filey))
+            if save:
+                mean_img.to_filename(filename)
+        else:
+            mean_img = image.load_img(filename)
+        map_files[contrast_name] = mean_img
+    return map_files
+    
 def get_ICA_parcellation(map_files,
                          mask_loc,
                          working_dir,
@@ -206,24 +253,30 @@ def parcel_to_atlas(parcel, threshold):
 # ********************************************************
 # Functions to extract ROIs from parcellations
 # ********************************************************
+
 def get_ROI_from_parcel(parcel, ROI, threshold):
     # convert a probabilistic parcellation into an ROI mask
     roi_mask = parcel.get_data()[:,:,:,ROI]>threshold 
     roi_mask = image.new_img_like(parcel, roi_mask)
     return roi_mask
 
-def extract_roi_vals(map_files, parcel, threshold, labels=None, n_procs=1):
+def extract_roi_vals(map_files, parcel, threshold, labels=None, metadata=None, n_procs=1):
     """ Mask nifti images using a parcellation"""
-    def mask_map_files(roi_i):
+    def mask_map_files(roi_i, metadata=metadata):
         if labels:
             key = labels[roi_i]
         else:
             key = roi_i
         print("Masking %s" % key)
         mask_img = get_ROI_from_parcel(parcel, roi_i, threshold)
-        return {key: masking.apply_mask(map_files, mask_img=mask_img)}
+        masked_map = masking.apply_mask(map_files, mask_img=mask_img)
+        if metadata is not None:
+            masked_map = pd.concat([metadata, pd.DataFrame(masked_map)], axis=1)
+        return {key: masked_map}
     try:
         map_files = flatten(map_files.values())
+    except TypeError:
+        map_files = map_files.values()
     except AttributeError:
         pass
     roi_vals = odict()
@@ -244,6 +297,9 @@ def get_RDMs(ROI_dict):
     # converts ROI dictionary (returned by extract_roi_vals) of contrast X voxel values to RDMs
     RDMs = {}
     for key,val in ROI_dict.items():
+        if type(val) == pd.core.frame.DataFrame:
+            subset_cols = [c for c in val.columns if type(c) != str]
+            val = val.loc[:, subset_cols].values
         RDMs[key] = 1-np.corrcoef(val)
     return RDMs
         
