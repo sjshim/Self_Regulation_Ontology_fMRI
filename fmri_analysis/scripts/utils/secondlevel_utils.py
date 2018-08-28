@@ -254,41 +254,76 @@ def parcel_to_atlas(parcel, threshold):
 # Functions to extract ROIs from parcellations
 # ********************************************************
 
-def get_ROI_from_parcel(parcel, ROI, threshold):
-    # convert a probabilistic parcellation into an ROI mask
-    roi_mask = parcel.get_data()[:,:,:,ROI]>threshold 
+def get_ROI_from_parcel(parcel, ROI, threshold=0):
+    """
+    Extracts ROI from parcel
+    If 4D probabilistic parcel, a threshould must be defined to determine the cutoff for the ROI.
+    If 3d parcel (atlas), threshold is ignored.
+    """
+    if len(parcel.shape) == 4:
+        # convert a probabilistic parcellation into an ROI mask
+        roi_mask = parcel.get_data()[:,:,:,ROI]>threshold 
+    else:
+        roi_mask = parcel.get_data()==ROI
     roi_mask = image.new_img_like(parcel, roi_mask)
     return roi_mask
 
-def extract_roi_vals(map_files, parcel, threshold, labels=None, metadata=None, n_procs=1):
-    """ Mask nifti images using a parcellation"""
-    def mask_map_files(roi_i, metadata=metadata):
-        if labels:
-            key = labels[roi_i]
-        else:
-            key = roi_i
+def mask_map_files(parcel, roi_i, map_files, extraction_dir, 
+                   metadata=None, labels=None, rerun=True,
+                   threshold=0):
+    """
+    Extracts an ROI from a parcel and masks a set of fmri maps
+    Args:
+        parcel: a 3D or 4D parcellation to pass to get_ROI_from_parcel
+        roi_i: the index of the parcel
+        map_files: a list of 3D or 4D fmri maps
+        extraction_dir: the location to save the masked maps
+        metadata (optional): metadata the same length as the sum of the map files 4th dimension.
+            If 3D map files are passed, this is just the length of the list of files.
+        labels (optional): list of labels for the parcellation. Will be used to label the output file
+        rerun: If False will not run if a previous file is found
+        threshold: threshold passed to get_ROI_from_parcel
+    """
+    if labels is not None:
+        key = labels[roi_i]
+    else:
+        key = roi_i
+    file = path.join(extraction_dir, 'contrasts_ROI-%s_extraction.pkl' % key)
+    if not path.exists(file) or rerun:
         print("Masking %s" % key)
         mask_img = get_ROI_from_parcel(parcel, roi_i, threshold)
         masked_map = masking.apply_mask(map_files, mask_img=mask_img)
         if metadata is not None:
             masked_map = pd.concat([metadata, pd.DataFrame(masked_map)], axis=1)
-        return {key: masked_map}
+
+        masked_map.to_pickle(file)
+    return file
+    
+def extract_roi_vals(map_files, parcel, extraction_dir, threshold=0,
+                     metadata=None, labels=None, rerun=True, n_procs=1,):
+    """ 
+    Mask nifti images using a parcellation
+    
+    Runs mask_map_files on each ROI of the parcellation. See mask_map_files for argument definitions
+    """
     try:
         map_files = flatten(map_files.values())
     except TypeError:
         map_files = map_files.values()
     except AttributeError:
         pass
-    roi_vals = odict()
     # parallelize
+    files = []
     if n_procs > 1:
-        out = Parallel(n_jobs=n_procs)(delayed(mask_map_files)(roi_i) for roi_i in range(parcel.shape[-1]))
-        for val in out:
-            roi_vals.update(val)
+        partial_func = partial(mask_map_files, parcel=parcel, map_files=map_files, 
+                                 extraction_dir=extraction_dir, metadata=metadata, 
+                                 labels=labels, rerun=rerun, threshold=threshold)
+        files = Parallel(n_jobs=n_procs)(delayed(partial_func)(roi_i) for roi_i in range((parcel.shape[-1])))
     else:
-        for roi_i in range(parcel.shape[-1]):
-            roi_vals.update(mask_map_files(roi_i))
-    return roi_vals
+        for roi in range(parcel.shape[-1]):
+            files.append(mask_map_files(parcel, roi_i, map_files, extraction_dir, metadata, labels, rerun, threshold))
+    return files
+
 
 # ********************************************************
 # RDM functions
