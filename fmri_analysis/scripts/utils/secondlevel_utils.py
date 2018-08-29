@@ -268,7 +268,7 @@ def get_ROI_from_parcel(parcel, ROI, threshold=0):
     roi_mask = image.new_img_like(parcel, roi_mask)
     return roi_mask
 
-def mask_map_files(parcel, roi_i, map_files, extraction_dir, 
+def mask_map_files(map_files, parcel, roi_i, extraction_dir, 
                    metadata=None, labels=None, rerun=True,
                    threshold=0):
     """
@@ -299,8 +299,8 @@ def mask_map_files(parcel, roi_i, map_files, extraction_dir,
         masked_map.to_pickle(file)
     return file
     
-def extract_roi_vals(map_files, parcel, extraction_dir, threshold=0,
-                     metadata=None, labels=None, rerun=True, n_procs=1,):
+def extract_roi_vals(map_files, parcel, extraction_dir, rois=None, threshold=0,
+                     metadata=None, labels=None, rerun=True, n_procs=1):
     """ 
     Mask nifti images using a parcellation
     
@@ -312,16 +312,18 @@ def extract_roi_vals(map_files, parcel, extraction_dir, threshold=0,
         map_files = map_files.values()
     except AttributeError:
         pass
-    # parallelize
+    if rois is None:
+        rois = range(parcel.shape[-1])
     files = []
+    # parallelize
     if n_procs > 1:
         partial_func = partial(mask_map_files, parcel=parcel, map_files=map_files, 
                                  extraction_dir=extraction_dir, metadata=metadata, 
                                  labels=labels, rerun=rerun, threshold=threshold)
-        files = Parallel(n_jobs=n_procs)(delayed(partial_func)(roi_i) for roi_i in range((parcel.shape[-1])))
+        files = Parallel(n_jobs=n_procs)(delayed(partial_func)(roi_i) for roi_i in rois)
     else:
-        for roi in range(parcel.shape[-1]):
-            files.append(mask_map_files(parcel, roi_i, map_files, extraction_dir, metadata, labels, rerun, threshold))
+        for roi_i in rois:
+            files.append(mask_map_files(map_files, parcel, roi_i, extraction_dir, metadata, labels, rerun, threshold))
     return files
 
 
