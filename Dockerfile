@@ -121,7 +121,7 @@ RUN pip install -r requirements.txt && \
     rm -rf ~/.cache/pip
                      
 # Install JupyterLab
-RUN conda install -c conda-forge jupyterlab
+RUN conda install -c conda-forge jupyterlab nbstripout
 
 # add jupyterlab extensions
 #RUN conda install flake8 
