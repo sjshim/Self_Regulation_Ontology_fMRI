@@ -1,4 +1,5 @@
 from collections import OrderedDict as odict
+from functools import partial
 from glob import glob
 from joblib import Parallel
 import numpy as np
@@ -226,51 +227,69 @@ def get_ICA_parcellation(map_files,
     return components_img
     
 def get_established_parcellation(parcellation="Harvard_Oxford", target_img=None,
-                                download_dir=None):
+                                parcellation_dir=None):
     if parcellation == "Harvard_Oxford":
         name = "Harvard_Oxford_cort-prob-2mm"
-        data = datasets.fetch_atlas_harvard_oxford('cort-prob-2mm', data_dir=download_dir)
+        data = datasets.fetch_atlas_harvard_oxford('cort-prob-2mm', data_dir=parcellation_dir)
         parcel = nibabel.load(data['maps'])
         labels = data['labels'][1:] # first label is background
         atlas_threshold = 25
-    if parcellation == "smith":
+    elif parcellation == "smith":
         name = "smith_rsn70"
-        data = datasets.fetch_atlas_smith_2009(data_dir=download_dir)['rsn70']
+        data = datasets.fetch_atlas_smith_2009(data_dir=parcellation_dir)['rsn70']
         parcel = nibabel.load(data)
         labels = range(parcel.shape[-1])
         atlas_threshold = 4
+    elif parcellation == "glasser":
+        glasser_dir = path.join(parcellation_dir, 'glasser')
+        data = image.load_img(path.join(glasser_dir, 'HCP-MMP1_on_MNI152_ICBM2009a_nlin.nii.gz'))
+        parcel = image.new_img_like(data, (data.get_fdata()+.01).astype(int))
+        labels = list(np.genfromtxt(path.join(glasser_dir, 'HCP-MMP1_on_MNI152_ICBM2009a_nlin.txt'),
+                                    dtype=str, usecols=1))
+        name = 'glasser'
+        atlas_threshold = None
+        # split down midline into lateralized ROIs
+        data_coords = np.where(parcel.get_data())
+        right_coords = *(i[data_coords[0]>parcel.shape[0]//2] for i in data_coords), # tuple comprehension
+        parcel.get_data()[right_coords] += len(labels)
+        labels = labels + [l.replace('L_', 'R_') for l in labels]
     if target_img:
-        parcel = image.resample_to_img(parcel, target_img)
+        parcel = image.resample_to_img(parcel, target_img, interpolation='nearest')
     return parcel, labels, name, atlas_threshold
 
 def parcel_to_atlas(parcel, threshold):
     # convert parcel to atlas by finding maximum values
     # example below is based on Harvard_Oxford's strategy "cort-maxprob-thr25-2mm"
-    data = parcel.get_data().copy()
+    data = parcel.get_fdata().copy()
     data[data<threshold] = 0
     atlas=image.new_img_like(parcel, np.argmax(data,3))
     return atlas
 # ********************************************************
 # Functions to extract ROIs from parcellations
 # ********************************************************
-
 def get_ROI_from_parcel(parcel, ROI, threshold=0):
     """
     Extracts ROI from parcel
     If 4D probabilistic parcel, a threshould must be defined to determine the cutoff for the ROI.
     If 3d parcel (atlas), threshold is ignored.
+    
+    Args:
+        parcel: 3D or 4D parcel
+        ROI: index of ROI. Should be 0 indexed. For 4D, extract the ROI_i slice in the 4th dimension.
+                If 3D, find values that are equal to ROI_i+1 (assumes 0 is used to reflect background)
     """
     if len(parcel.shape) == 4:
         # convert a probabilistic parcellation into an ROI mask
-        roi_mask = parcel.get_data()[:,:,:,ROI]>threshold 
+        roi_mask = parcel.get_fdata()[:,:,:,ROI]>threshold 
     else:
-        roi_mask = parcel.get_data()==ROI
+        roi_mask = parcel.get_fdata() == (ROI+1)
+    assert np.sum(roi_mask) != 0, "ROI doesn't exist. Returned empty map"
     roi_mask = image.new_img_like(parcel, roi_mask)
     return roi_mask
 
-def mask_map_files(parcel, roi_i, map_files, extraction_dir, 
+def mask_map_files(map_files, parcel, roi_i, extraction_dir, 
                    metadata=None, labels=None, rerun=True,
-                   threshold=0):
+                   threshold=0, save=False):
     """
     Extracts an ROI from a parcel and masks a set of fmri maps
     Args:
@@ -295,12 +314,16 @@ def mask_map_files(parcel, roi_i, map_files, extraction_dir,
         masked_map = masking.apply_mask(map_files, mask_img=mask_img)
         if metadata is not None:
             masked_map = pd.concat([metadata, pd.DataFrame(masked_map)], axis=1)
-
-        masked_map.to_pickle(file)
-    return file
+        if save:
+            masked_map.to_pickle(file)
+            return file
+        else:
+            return masked_map
+    else:
+        return pickle.load(open(file, 'rb'))
     
-def extract_roi_vals(map_files, parcel, extraction_dir, threshold=0,
-                     metadata=None, labels=None, rerun=True, n_procs=1,):
+def extract_roi_vals(map_files, parcel, extraction_dir, rois=None, threshold=0,
+                     metadata=None, labels=None, rerun=True, n_procs=1, save=True):
     """ 
     Mask nifti images using a parcellation
     
@@ -312,17 +335,24 @@ def extract_roi_vals(map_files, parcel, extraction_dir, threshold=0,
         map_files = map_files.values()
     except AttributeError:
         pass
+    if rois is None:
+        if len(parcel.shape) == 4:
+            rois = range(parcel.shape[-1])
+        else:
+            rois = range(len(np.unique(parcel.get_data().flatten()))-1)
+    out = []
     # parallelize
-    files = []
     if n_procs > 1:
         partial_func = partial(mask_map_files, parcel=parcel, map_files=map_files, 
                                  extraction_dir=extraction_dir, metadata=metadata, 
-                                 labels=labels, rerun=rerun, threshold=threshold)
-        files = Parallel(n_jobs=n_procs)(delayed(partial_func)(roi_i) for roi_i in range((parcel.shape[-1])))
+                                 labels=labels, rerun=rerun, threshold=threshold,
+                                 save=save)
+        out = Parallel(n_jobs=n_procs)(delayed(partial_func)(roi_i) for roi_i in rois)
     else:
-        for roi in range(parcel.shape[-1]):
-            files.append(mask_map_files(parcel, roi_i, map_files, extraction_dir, metadata, labels, rerun, threshold))
-    return files
+        for roi_i in rois:
+            out.append(mask_map_files(map_files, parcel, roi_i, extraction_dir, metadata, labels, rerun, threshold,
+                                      save=save))
+    return out
 
 
 # ********************************************************
