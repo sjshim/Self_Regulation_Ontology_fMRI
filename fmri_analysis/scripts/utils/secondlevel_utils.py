@@ -1,7 +1,7 @@
 from collections import OrderedDict as odict
 from functools import partial
 from glob import glob
-from joblib import Parallel
+from joblib import Parallel, delayed
 import numpy as np
 from os import makedirs, path, sep
 import pandas as pd
@@ -287,7 +287,7 @@ def get_ROI_from_parcel(parcel, ROI, threshold=0):
     roi_mask = image.new_img_like(parcel, roi_mask)
     return roi_mask
 
-def mask_map_files(map_files, parcel, roi_i, extraction_dir, 
+def mask_map_files(roi_i, map_files, parcel, extraction_dir, 
                    metadata=None, labels=None, rerun=True,
                    threshold=0, save=False):
     """
@@ -312,6 +312,8 @@ def mask_map_files(map_files, parcel, roi_i, extraction_dir,
         print("Masking %s" % key)
         mask_img = get_ROI_from_parcel(parcel, roi_i, threshold)
         masked_map = masking.apply_mask(map_files, mask_img=mask_img)
+        # fill 0 values with mean of values
+        masked_map[masked_map==0] = np.mean(masked_map)
         if metadata is not None:
             masked_map = pd.concat([metadata, pd.DataFrame(masked_map)], axis=1)
         if save:
@@ -332,7 +334,7 @@ def extract_roi_vals(map_files, parcel, extraction_dir, rois=None, threshold=0,
     try:
         map_files = flatten(map_files.values())
     except TypeError:
-        map_files = map_files.values()
+        map_files = list(map_files.values())
     except AttributeError:
         pass
     if rois is None:
@@ -350,7 +352,7 @@ def extract_roi_vals(map_files, parcel, extraction_dir, rois=None, threshold=0,
         out = Parallel(n_jobs=n_procs)(delayed(partial_func)(roi_i) for roi_i in rois)
     else:
         for roi_i in rois:
-            out.append(mask_map_files(map_files, parcel, roi_i, extraction_dir, metadata, labels, rerun, threshold,
+            out.append(mask_map_files(roi_i, parcel, map_files, extraction_dir, metadata, labels, rerun, threshold,
                                       save=save))
     return out
 
@@ -360,12 +362,17 @@ def extract_roi_vals(map_files, parcel, extraction_dir, rois=None, threshold=0,
 # ********************************************************
 def get_RDMs(ROI_dict):
     # converts ROI dictionary (returned by extract_roi_vals) of contrast X voxel values to RDMs
-    RDMs = {}
+    RDMs = odict({})
     for key,val in ROI_dict.items():
         if type(val) == pd.core.frame.DataFrame:
             subset_cols = [c for c in val.columns if type(c) != str]
             val = val.loc[:, subset_cols].values
-        RDMs[key] = 1-np.corrcoef(val)
+            # no contrast is allowed to be completely constant, RDMs cannot be calculated
+            if np.sum(np.std(val,1)<1E-5) > 0:
+                RDMs[key] = None
+                continue
+        corr = 1-np.corrcoef(val)
+        RDMs[key] = corr
     return RDMs
         
 # ********************************************************

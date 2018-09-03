@@ -119,7 +119,7 @@ WORKDIR /home
 ADD docker_files/requirements.txt requirements.txt
 RUN pip install -r requirements.txt && \
     rm -rf ~/.cache/pip
-                     
+           
 # Install JupyterLab
 RUN conda install -c conda-forge jupyterlab nbstripout
 
@@ -127,6 +127,9 @@ RUN conda install -c conda-forge jupyterlab nbstripout
 #RUN conda install flake8 
 #RUN jupyter labextension install jupyterlab-flake8
 RUN jupyter labextension install @jupyterlab/toc
+
+# install updated nilearn
+RUN pip install git+https://github.com/nilearn/nilearn@e0573ede3ff2f155a2ff21a65d8047a7395d63fd
 
 # Set up data and script directories, ENV variables
 Run mkdir /scripts
