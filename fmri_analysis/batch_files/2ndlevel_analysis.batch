@@ -22,6 +22,6 @@ scripts_loc=../scripts
 scratch_loc=/scratch/users/ieisenbe
 # run singularity, scratch is automatically mounted
 singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} -working_dir $scratch_loc --n_procs 16 --num_perm 5000
+    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} -working_dir $scratch_loc --n_procs 16 --num_perm 1000
 
 
