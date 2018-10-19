@@ -38,6 +38,14 @@ do
                 check+=1
             fi
         fi
+        if [[  -d ${data_path}/sub-${sid}/ses-4 ]]; then
+            files=( $(find ${out_path}/mriqc/reports/ -name "*${sid}*ses-4*run-*") )
+            if [[ ${#files[@]} -ne 0 ]]; then
+                echo mriqc session 4 run
+            else
+                check+=1
+            fi
+        fi
         if [[ $check>0 ]]; then
             echo Running MRIQC on $sid
             echo singularity run ${mriqc_path} ${data_path} ${out_path}/mriqc participant --participant_label $sid -w $LOCAL_SCRATCH --ants-nthreads 8 --n_procs 16 --mem_gb 110 --verbose-reports >> preproc_task_list.sh
