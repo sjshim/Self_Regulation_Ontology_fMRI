@@ -8,7 +8,8 @@ __pycache__
 .err/
 crash*
 behavioral_data/processed/s*
-behavioral_data/event_files/s*                           
+behavioral_data/processed/group_data/*csv
+behavioral_data/event_files/s*                
 fmri_experiments/temp_tasklist.j son
 fmri_analysis/data_settings.txt
 fmri_analysis/output
