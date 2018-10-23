@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from expanalysis.experiments.jspsych_processing import calc_discount_fixed_DV
 
 # *********************************
 # helper functions
@@ -119,7 +120,6 @@ def create_CCT_event(df, duration=None):
     return events_df
 
 def create_discountFix_event(df, duration=None):
-    from jspsych_processing import calc_discount_fixed_DV
     columns_to_drop = get_drop_columns(df)
     events_df = df[df['time_elapsed']>0]
     # add junk regressor

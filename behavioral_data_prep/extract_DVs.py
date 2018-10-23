@@ -1,56 +1,66 @@
+import argparse
 from glob import glob
 import os
 import pandas as pd
 from expanalysis.experiments import processing
-from behavioral_data_prep.jspsych_processing import (calc_ANT_DV)
 
-
-def calc_exp_DVs(df, use_check = True, use_group_fun = True, group_kwargs=None):
-    '''Function to calculate dependent variables
-    :experiment: experiment key used to look up appropriate grouping variables
-    :param use_check: bool, if True exclude dataframes that have "False" in a 
-    passed_check column, if it exists. Passed_check would be defined by a post_process
-    function specific to that experiment
-    '''
-    lookup = {'attention_network_task': calc_ANT_DV}
-    assert (len(df.experiment_exp_id.unique()) == 1), "Dataframe has more than one experiment in it"
-    exp_id = df.experiment_exp_id.unique()[0]
-    fun = lookup.get(exp_id, None)
-    if group_kwargs is None:
-        group_kwargs = {}
-    if fun:
-        try:
-            DVs,description = fun(df, use_check=use_check, use_group_fun=use_group_fun, kwargs=group_kwargs)
-        except TypeError:
-            DVs,description = fun(df, use_check)
-        DVs, valence = processing.organize_DVs(DVs)
-        return DVs, valence, description
-    else:
-        return None, None, None
-    
-def get_exp_DVs():
+def get_exp_DVs(use_group_fun=True, group_kwargs=None, out_dir=None):
     file_dir = os.path.dirname(__file__)
     # calculate DVs
-    group_kwargs = {'samples': 50,
-                    'burn': 10,
-                    'thin': 1}
+    if group_kwargs is None:
+        group_kwargs = {}
     exp_DVs = {}
-    for task_data in glob(os.path.join(file_dir, '../behavioral_data/processed/group_data/*csv')):
+    for task_data in glob(os.path.join(file_dir, '../behavioral_data/processed/group_data/*.csv')):
         df = pd.read_csv(task_data)
         exp_id = df.experiment_exp_id.unique()[0]
         print(exp_id)
-        # Eperiments whose analysis has been overwritten in this repo
-        DVs, valence, description = calc_exp_DVs(df, 
-                                                 use_group_fun=True,
-                                                 group_kwargs=group_kwargs)
-        # else use default expanalysis
-        if DVs is None:
-            DVs, valence, description = processing.calc_exp_DVs(df, 
-                                                    use_group_fun=True,
-                                                    group_kwargs=group_kwargs)
+        if out_dir:
+            group_kwargs['outfile'] = os.path.join(out_dir, exp_id)
+        DVs, valence, description = processing.calc_exp_DVs(df, 
+                                                use_group_fun=use_group_fun,
+                                                group_kwargs=group_kwargs)
         exp_DVs[exp_id] = DVs
     DV_df = pd.DataFrame()
     for name, DV in exp_DVs.items():
-        DV.columns = [name+'_%s' % i for i in DV.columns]
-        DV_df = pd.concat([DV_df, DV], axis=1) 
+        if DV is not None:
+            DV.columns = [name+'_%s' % i for i in DV.columns]
+            DV_df = pd.concat([DV_df, DV], axis=1) 
     return DV_df
+
+if __name__ =='__main__':
+    # parse arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--no_group', action='store_false')
+    # HDDM params
+    parser.add_argument('--out_dir', default=None)
+    parser.add_argument('--hddm_samples', default=450, type=int)
+    parser.add_argument('--hddm_burn', default=50, type=int)
+    parser.add_argument('--hddm_thin', default=2, type=int)
+    parser.add_argument('--no_parallel', action='store_false')
+    parser.add_argument('--num_cores', default=None, type=int)
+    parser.add_argument('--mode', default=None, type=str)
+    
+    args = parser.parse_args()
+    out_dir = args.out_dir
+    use_group = args.no_group
+    # HDDM variables
+    hddm_samples = args.hddm_samples
+    hddm_burn= args.hddm_burn
+    hddm_thin= args.hddm_thin
+    parallel = args.no_parallel
+    num_cores = args.num_cores
+    # mode for motor selective stop signal
+    mode = args.mode
+       
+    #calculate DVs
+    group_kwargs = {'parallel': parallel,
+                    'num_cores': num_cores,
+                    'samples': hddm_samples,
+                    'burn': hddm_burn,
+                    'thin': hddm_thin}
+    
+    DV_df = get_exp_DVs(use_group, group_kwargs, out_dir)
+    if out_dir is not None:
+        DV_df.to_pickle(os.path.join(out_dir, 'fmri_DVs.pkl'))
+    
+
