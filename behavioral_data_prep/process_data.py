@@ -125,19 +125,3 @@ for subj_file in glob('../behavioral_data/raw/*/*'):
             print("Events file wasn't created for %s" % subj_file)
 
 if verbose: print("Finished Processing")
-"""
-exp_DVs = {}
-# calculate DVs
-for task_data in glob('../behavioral_data/processed/group_data/*csv'):
-    df = pd.read_csv(task_data)
-    exp_id = df.experiment_exp_id.unique()[0]
-    print(exp_id)
-    # Experiments whose analysis aren't defined in expanalysis
-    if exp_id in ['attention_network_task']:
-        # fmri ANT analysis identical to expanalysis except two conditions are dropped
-        dvs,description = calc_ANT_DV(df, use_group_fun = False)
-        DVs, valence = organize_DVs(dvs)
-    else:
-        DVs, valence, description = calc_exp_DVs(df, use_group_fun = False)
-    exp_DVs[exp_id] = DVs
-"""
