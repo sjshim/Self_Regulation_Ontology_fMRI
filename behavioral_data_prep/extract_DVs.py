@@ -29,12 +29,12 @@ def calc_exp_DVs(df, use_check = True, use_group_fun = True, group_kwargs=None):
         return None, None, None
     
 def get_exp_DVs():
+    file_dir = os.path.dirname(__file__)
     # calculate DVs
     group_kwargs = {'samples': 50,
                     'burn': 10,
-                    'thin': 2}
+                    'thin': 1}
     exp_DVs = {}
-    file_dir = os.path.dirname(__file__)
     for task_data in glob(os.path.join(file_dir, '../behavioral_data/processed/group_data/*csv')):
         df = pd.read_csv(task_data)
         exp_id = df.experiment_exp_id.unique()[0]
