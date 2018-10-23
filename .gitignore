@@ -7,9 +7,10 @@ __pycache__
 .out/
 .err/
 crash*
-behavioral_data/processed/*
-behavioral_data/event_files/*
-fmri_experiments/temp_tasklist.json
+behavioral_data/processed/s*
+behavioral_data/processed/group_data/*csv
+behavioral_data/event_files/s*                
+fmri_experiments/temp_tasklist.j son
 fmri_analysis/data_settings.txt
 fmri_analysis/output
 fmri_analysis/Data/sub*
