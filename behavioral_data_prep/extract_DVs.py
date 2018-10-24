@@ -20,6 +20,8 @@ def get_exp_DVs(use_group_fun=True, group_kwargs=None, out_dir=None):
                                                 use_group_fun=use_group_fun,
                                                 group_kwargs=group_kwargs)
         exp_DVs[exp_id] = DVs
+        if out_dir:
+            DVs.to_pickle(os.path.join(out_dir, exp_id+'_DVs.pkl'))
     DV_df = pd.DataFrame()
     for name, DV in exp_DVs.items():
         if DV is not None:
@@ -33,9 +35,9 @@ if __name__ =='__main__':
     parser.add_argument('--no_group', action='store_false')
     # HDDM params
     parser.add_argument('--out_dir', default=None)
-    parser.add_argument('--hddm_samples', default=450, type=int)
-    parser.add_argument('--hddm_burn', default=50, type=int)
-    parser.add_argument('--hddm_thin', default=2, type=int)
+    parser.add_argument('--hddm_samples', default=20000, type=int)
+    parser.add_argument('--hddm_burn', default=10000, type=int)
+    parser.add_argument('--hddm_thin', default=1, type=int)
     parser.add_argument('--no_parallel', action='store_false')
     parser.add_argument('--num_cores', default=None, type=int)
     parser.add_argument('--mode', default=None, type=str)
