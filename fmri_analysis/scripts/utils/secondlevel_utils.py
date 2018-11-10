@@ -380,7 +380,7 @@ def get_RDMs(ROI_dict):
 # ********************************************************
 
 # function to get TS within labels
-def project_contrast(img_files, parcellation, mask_file):
+def project_contrast(img_files, parcellation, mask_file, resample=True):
     if type(parcellation) == str:
         parcellation = image.load_img(parcellation)
     resampled_images = image.resample_img(img_files, parcellation.affine)
