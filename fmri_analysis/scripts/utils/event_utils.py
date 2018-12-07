@@ -11,22 +11,25 @@ import pandas as pd
 def get_contrasts(task, regress_rt=True):
     contrast_list = []
     if task == 'ANT':
-                # contrasts vs baseline
-        c1 = ['orienting_network','T', ['orienting_network'], [1]]
-        c2 = ['conflict_network','T', ['conflict_network'], [1]]
-        contrast_list = [c1,c2]
-        
-        if regress_rt:
-            c3 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c3)
-    elif task == 'CCTHot':
+        # task
+        c1 = ['task','T', ['task'], [1]]
         # contrasts vs baseline
-        c1 = ['EV','T', ['EV'], [1]]
-        c2 = ['risk','T', ['risk'], [1]]
-        contrast_list = [c1,c2]
+        c2 = ['orienting_network','T', ['orienting_network'], [1]]
+        c3 = ['conflict_network','T', ['conflict_network'], [1]]
+        contrast_list = [c1,c2, c3]
         if regress_rt:
-            c3 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c3)
+            c4 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c4)
+    elif task == 'CCTHot':
+        # task
+        c1 = ['task','T', ['task'], [1]]
+        # contrasts vs baseline
+        c2 = ['EV','T', ['EV'], [1]]
+        c3 = ['risk','T', ['risk'], [1]]
+        contrast_list = [c1,c2,c3]
+        if regress_rt:
+            c4 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c4)
     elif task == 'discountFix':
         c1 = ['subjective_value','T', ['subjective_value'], [1]]
         c2 = ['LL_vs_SS','T', ['LL_vs_SS'], [1]]
@@ -88,11 +91,12 @@ def get_contrasts(task, regress_rt=True):
                 ['stop_failure', 'stop_success'], [1,-1]]
         contrast_list = [c1,c2,c3,c4,c5,c6,c7]
     elif task == 'stroop':
-        c1 = ['incongruent-congruent','T', ['incongruent-congruent'], [1]]
-        contrast_list = [c1]
+        c1 = ['task', 'T', ['task'], [1]]
+        c2 = ['incongruent-congruent','T', ['incongruent-congruent'], [1]]
+        contrast_list = [c1, c2]
         if regress_rt:
-            c2 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c2)
+            c3 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c3)
     elif task == 'surveyMedley':
         # contrasts vs baseline
         c1 = ['stim_duration','T', ['stim_duration'], [1]]
@@ -102,19 +106,20 @@ def get_contrasts(task, regress_rt=True):
             c4 = ['response_time', 'T', ['response_time'], [1]]
             contrast_list.append(c4)
     elif task == 'twoByTwo':
+        c1 = ['task', 'T', ['task'], [1]]
         # contrasts
-        c1 = ['cue_switch_cost_100','T', 
+        c2 = ['cue_switch_cost_100','T', 
                 ['cue_switch_cost_100'], [1]]
-        c2 = ['cue_switch_cost_900','T', 
+        c3 = ['cue_switch_cost_900','T', 
                 ['cue_switch_cost_900'], [1]]
-        c3 = ['task_switch_cost_100','T', 
+        c4 = ['task_switch_cost_100','T', 
                 ['task_switch_cost_100'], [1]]
-        c4 = ['task_switch_cost_900','T', 
+        c5 = ['task_switch_cost_900','T', 
                 ['task_switch_cost_900'], [1]]
-        contrast_list = [c1,c2,c3,c4]
+        contrast_list = [c1,c2,c3,c4, c5]
         if regress_rt:
-            c5 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c5)
+            c6 = ['response_time', 'T', ['response_time'], [1]]
+            contrast_list.append(c6)
     elif task == 'WATT3':
         # contrasts vs baseline
         c1 = ['plan_PA_with','T', ['plan_PA_with'], [1]]
@@ -216,6 +221,11 @@ def get_ANT_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
+    # task
+    get_ev_vars(output_dict, events_df,
+                condition_spec='task',
+                duration='duration',
+                subset='junk==False')
     # cue type
     cue_amplitudes = ((events_df.cue=='spatial')*2-1).tolist()
     get_ev_vars(output_dict, events_df, 
@@ -251,6 +261,11 @@ def get_CCTHot_EVs(events_df, regress_rt):
             'durations': [],
             'amplitudes': []
             }
+    # task
+    get_ev_vars(output_dict, events_df,
+                condition_spec='task',
+                duration='duration',
+                subset='junk==False')
     # add main parametric regressors: EV and risk
     get_ev_vars(output_dict, events_df, 
                 condition_spec='EV', 
@@ -393,6 +408,12 @@ def get_stroop_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
+    # task regressor
+    get_ev_vars(output_dict, events_df,
+                condition_spec='task',
+                duration='duration',
+                subset='junk==False')
+    # contrast regressor
     conflict_amplitudes = ((events_df.condition=='incongruent')*2-1).tolist()
     get_ev_vars(output_dict, events_df,
                 condition_spec='incongruent-congruent',
@@ -447,6 +468,11 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
+    # task regressor
+    get_ev_vars(output_dict, events_df,
+                condition_spec='task',
+                duration='duration',
+                subset='junk==False')
     # cue switch contrasts
     events_df.cue_switch.fillna(1, inplace=True)
     cue_switches = events_df.cue_switch.replace({'switch':1,'stay':-1}).tolist()

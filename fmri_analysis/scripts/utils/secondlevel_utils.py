@@ -70,6 +70,7 @@ def save_tmaps(copes_loc,
             one_sample_group_mean=True,
             tfce=True,  # look at paper
             vox_p_values=True,
+            var_smooth=10,
             num_perm=permutations)
         # save results
         raw_tfile = randomise_results.outputs.tstat_files[0]
