@@ -129,10 +129,10 @@ def get_contrasts(task, regress_rt=True):
         # nuisance
         c4 = ['movement', 'T', ['response_time'], [1]]
         c5 = ['feedback', 'T', ['response_time'], [1]]
+        contrast_list = [c1,c2,c3,c4,c5]
         if regress_rt:
             c6 = ['response_time', 'T', ['response_time'], [1]]
             contrast_list.append(c6)
-        contrast_list = [c1,c2,c3,c4,c5,c6]
     # base covers generic contrast that just looks at all trials
     elif task == 'base':
         c1 = ['trial', 'T', ['trial'], [1]]
