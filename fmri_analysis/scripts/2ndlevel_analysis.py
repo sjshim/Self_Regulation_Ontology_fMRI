@@ -26,7 +26,6 @@ from sklearn.preprocessing import minmax_scale
 from scipy.spatial.distance import squareform
 
 from utils.secondlevel_utils import *
-from utils.secondlevel_plot_utils import *
 
 
 # In[ ]:
@@ -59,7 +58,7 @@ parser.add_argument('--n_procs', default=4, type=int)
 parser.add_argument('--num_perm', default=1000, type=int, help="Passed to fsl.randomize")
 parser.add_argument('--ignore_rt', action='store_false')
 parser.add_argument('--rerun', action='store_true')
-parser.add_argument('--mask_threshold', default=.8, type=float)
+parser.add_argument('--mask_threshold', default=.9, type=float)
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     matplotlib.use("agg")
     args = parser.parse_args()
@@ -201,14 +200,6 @@ contrast_tmap_parallel = partial(save_tmaps, mask_loc=mask_loc, working_dir=work
                                  permutations=args.num_perm, rerun=args.rerun)
 tmap_out = Parallel(n_jobs=args.n_procs)(delayed(contrast_tmap_parallel)(filey) for filey in smooth_out)
 tmap_raw, tmap_correct = zip(*tmap_out)
-
-
-# In[ ]:
-
-
-task_contrast_dirs = sorted(glob(path.join(second_level_dir, '*', model, 'wf-contrast')))
-for d in task_contrast_dirs:
-    plot_2ndlevel_maps(d, lookup='*corrected*', threshold=.95) # *raw* for raw
 
 
 # # Searchlight RSA

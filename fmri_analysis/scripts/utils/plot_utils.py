@@ -11,12 +11,23 @@ import nilearn.image
 from nilearn.input_data import NiftiLabelsMasker
 import numpy as np
 from os import makedirs
-from os.path import basename, join, sep
+from os.path import basename, dirname, join, sep
 import pandas as pd
 import pickle
 from scipy.cluster.hierarchy import dendrogram, linkage
 import seaborn as sns
+
+# general utilities
+def save_figure(fig, loc, save_kws=None):
+    """ Saves figure in location and creates directory tree if needed """
+    if save_kws is None:
+        save_kws = {}
+    directory = dirname(loc)
+    if directory != "":
+        makedirs(directory, exist_ok=True)
+    fig.savefig(loc, **save_kws)
     
+# design functions
 def get_design_df(GLM_path):
     designfile_path = join(GLM_path, 'designfile.mat')
     subjectinfo_path = join(GLM_path, 'subjectinfo.pkl')

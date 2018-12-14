@@ -54,7 +54,7 @@ def save_tmaps(copes_loc,
                permutations,
                rerun=False):
     task_dir = path.dirname(copes_loc)
-    contrast_name = path.basename(copes_loc).split('_cope')[0]
+    contrast_name = path.basename(copes_loc).split('_cope')[0].rstrip('.nii.gz')
     contrast_working_dir = path.join(working_dir, path.basename(copes_loc))
     tfile_loc = path.join(task_dir, "%s_raw_tfile.nii.gz" % contrast_name)
     tfile_corrected_loc = path.join(task_dir,
@@ -177,7 +177,7 @@ def smooth_concat_files(concat_files, fwhm=4.4, verbose=False, rerun=True):
     for filey in concat_files:
         if verbose: print("Smoothing %s" % k)
         smoothed = image.smooth_img(filey, fwhm)
-        smooth_name = filey.replace('concat', 'concat-smoothed_fwhm-%s' % str(fwhm))
+        smooth_name = filey.replace('concat', 'concatsmoothed-fwhm%s' % str(fwhm))
         if rerun or not(path.exists(smooth_name)):
             smoothed.to_filename(smooth_name)
         filenames.append(smooth_name)
@@ -187,7 +187,7 @@ def get_mean_maps(image_list, contrast_name_list, save=True, rerun=True):
     assert len(image_list) == len(contrast_name_list)
     map_files = odict()
     for contrast_name,filey in zip(contrast_name_list, image_list):
-        filename = path.join(path.dirname(filey),path.basename(filey).rstrip('nii.gz')+'_group.nii.gz')
+        filename = path.join(path.dirname(filey),path.basename(filey).rstrip('nii.gz')+'_mean.nii.gz')
         if not path.exists(filename) or rerun:
             d = path.dirname(filey)
             name = path.basename(filey)
