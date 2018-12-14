@@ -77,6 +77,7 @@ derivatives_dir = args.derivatives_dir
 fmriprep_dir = path.join(derivatives_dir, 'fmriprep', 'fmriprep')
 first_level_dir = path.join(derivatives_dir, '1stlevel')
 second_level_dir = path.join(derivatives_dir,'2ndlevel')
+regress_rt = args.ignore_rt
 model = 'model-rt' if regress_rt == True else 'model-nort'
 if args.working_dir is None:
     working_dir = path.join(derivatives_dir, '2ndlevel_workingdir', model)
@@ -90,7 +91,6 @@ tasks = ['ANT', 'CCTHot', 'discountFix',
          'surveyMedley', 'twoByTwo', 'WATT3']
 if args.tasks:
     tasks = args.tasks
-regress_rt = args.ignore_rt
 mask_threshold = args.mask_threshold
 
 
