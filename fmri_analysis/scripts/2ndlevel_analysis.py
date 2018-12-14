@@ -109,6 +109,7 @@ if path.exists(mask_loc) == False:
 # In[ ]:
 
 
+# % matplotlib inline
 plotting.plot_img(mask_loc, title='Group Mask, Threshold: %s%%' % str(mask_threshold*100))
 
 
@@ -131,12 +132,24 @@ get_ICA_parcellation = partial(get_ICA_parcellation, second_level_dir=second_lev
 file_type = 'zstat'
 map_files = get_map_files(map_prefix=file_type, 
                           first_level_dir=first_level_dir,
-                        tasks=tasks, model=model)
+                        tasks=tasks, model=model, selectors=None)
 contrast_names = list(map_files.keys())
 # reduce the number of files to make execution quicker for testing
 def random_sample(lst, n):
     return [lst[i] for i in np.random.choice(range(len(lst)), n, replace=False)]
 metadata = get_metadata(map_files)
+
+
+# In[ ]:
+
+
+# remove empty contrasts
+items = list(map_files.items())
+for key, val in items:
+    if len(val) == 0:
+        del map_files[key]
+        print('No contrasts found for %s!' % key)
+contrast_names = list(map_files.keys())
 
 
 # In[ ]:
@@ -172,31 +185,30 @@ group_meta = get_metadata(group_map_files)
 # In[ ]:
 
 
-# # #iterative version
-# # smooth_out = smooth_concat_files(concated_map_files, verbose=True)
-# # smooth files in parallel
-# smooth_concat_files = partial(smooth_concat_files, verbose=False, rerun=args.rerun)
-# smooth_out = Parallel(n_jobs=args.n_procs)(delayed(smooth_concat_files)([concat_file]) for concat_file in concat_out)
-# smooth_out = flatten(smooth_out)
+# #iterative version
+# smooth_out = smooth_concat_files(concated_map_files, verbose=True)
+# smooth files in parallel
+smooth_concat_files = partial(smooth_concat_files, verbose=False, fwhm=6.6, rerun=args.rerun)
+smooth_out = Parallel(n_jobs=args.n_procs)(delayed(smooth_concat_files)([concat_file]) for concat_file in concat_out)
+smooth_out = flatten(smooth_out)
 
 
 # In[ ]:
 
 
-# # then tmap
-# contrast_tmap_parallel = partial(save_tmaps, mask_loc=mask_loc, working_dir=working_dir, 
-#                                  permutations=args.num_perm, rerun=args.rerun)
-# tmap_out = Parallel(n_jobs=args.n_procs)(delayed(contrast_tmap_parallel)(filey) for filey in smooth_out)
-# tmap_raw, tmap_correct = zip(*tmap_out)
+# then tmap
+contrast_tmap_parallel = partial(save_tmaps, mask_loc=mask_loc, working_dir=working_dir, 
+                                 permutations=args.num_perm, rerun=args.rerun)
+tmap_out = Parallel(n_jobs=args.n_procs)(delayed(contrast_tmap_parallel)(filey) for filey in smooth_out)
+tmap_raw, tmap_correct = zip(*tmap_out)
 
 
 # In[ ]:
 
 
-# % matplotlib inline
-# task_contrast_dirs = sorted(glob(path.join(second_level_dir, '*', 'model-rt', 'wf-contrast')))
-# for d in task_contrast_dirs:
-#     plot_2ndlevel_maps(d, lookup='*corrected*', threshold=.95) # *raw* for raw
+task_contrast_dirs = sorted(glob(path.join(second_level_dir, '*', 'model-rt', 'wf-contrast')))
+for d in task_contrast_dirs:
+    plot_2ndlevel_maps(d, lookup='*raw*', threshold=.95) # *raw* for raw
 
 
 # # Searchlight RSA

@@ -164,7 +164,7 @@ def concat_map_files(map_files, file_type,second_level_dir, model, verbose=False
         task, *contrast = k.split('_')
         contrast_name = '_'.join(contrast)
         filename = path.join(second_level_dir, task, model,
-                                          'wf-contrast', '%s_%s_concat.nii.gz' % (contrast_name, file_type))
+                                          'wf-contrast', 'task-%s_contrast-%s_file-%s_concat.nii.gz' % (task, contrast_name, file_type))
         if rerun or not(path.exists(filename)):
             makedirs(path.dirname(filename), exist_ok=True)
             concat_image = image.concat_imgs(v)
