@@ -102,7 +102,7 @@ mask_threshold = args.mask_threshold
 # create mask over all tasks
 # create 95% brain mask
 mask_loc = path.join(second_level_dir, 'group_mask_thresh-%s.nii.gz' % str(mask_threshold))
-if path.exists(mask_loc) == False:
+if path.exists(mask_loc) == False or args.rerun:
     create_group_mask(mask_loc, fmriprep_dir, mask_threshold)
 
 
