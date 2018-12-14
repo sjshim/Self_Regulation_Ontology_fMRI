@@ -77,10 +77,11 @@ derivatives_dir = args.derivatives_dir
 fmriprep_dir = path.join(derivatives_dir, 'fmriprep', 'fmriprep')
 first_level_dir = path.join(derivatives_dir, '1stlevel')
 second_level_dir = path.join(derivatives_dir,'2ndlevel')
+model = 'model-rt' if regress_rt == True else 'model-nort'
 if args.working_dir is None:
-    working_dir = path.join(derivatives_dir, '2ndlevel_workingdir')
+    working_dir = path.join(derivatives_dir, '2ndlevel_workingdir', model)
 else:
-    working_dir = path.join(args.working_dir, '2ndlevel_workingdir')
+    working_dir = path.join(args.working_dir, '2ndlevel_workingdir', model)
 makedirs(working_dir, exist_ok=True)
     
 tasks = ['ANT', 'CCTHot', 'discountFix',
@@ -90,7 +91,6 @@ tasks = ['ANT', 'CCTHot', 'discountFix',
 if args.tasks:
     tasks = args.tasks
 regress_rt = args.ignore_rt
-model = 'model-rt' if regress_rt == True else 'model-nort'
 mask_threshold = args.mask_threshold
 
 
@@ -206,9 +206,9 @@ tmap_raw, tmap_correct = zip(*tmap_out)
 # In[ ]:
 
 
-task_contrast_dirs = sorted(glob(path.join(second_level_dir, '*', 'model-rt', 'wf-contrast')))
+task_contrast_dirs = sorted(glob(path.join(second_level_dir, '*', model, 'wf-contrast')))
 for d in task_contrast_dirs:
-    plot_2ndlevel_maps(d, lookup='*raw*', threshold=.95) # *raw* for raw
+    plot_2ndlevel_maps(d, lookup='*corrected*', threshold=.95) # *raw* for raw
 
 
 # # Searchlight RSA
