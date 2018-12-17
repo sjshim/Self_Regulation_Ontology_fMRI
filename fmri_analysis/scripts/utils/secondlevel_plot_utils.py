@@ -32,7 +32,7 @@ def plot_2ndlevel_maps(group_path, size=10, threshold=.95, plot_dir=None, ext='p
                                     title=title, 
                                     axes=ax)
     if plot_dir:
-        filename = '%s_groupmaps_p<%s.%s' % (task,str(1-threshold), ext)
+        filename = '%s_groupmaps_p<%s.%s' % (task,str(round(1-threshold,2)), ext)
         save_figure(f, path.join(plot_dir, filename))
         
         
