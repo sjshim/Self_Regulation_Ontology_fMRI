@@ -63,7 +63,7 @@ var future_time_items = [
 
 var future_time_responses = ['<span style="font-weight: normal; font-size: 30px">Very Untrue</span>', '1', '2', '3', '4', '5',  '<span style="font-weight: normal; font-size: 30px">Very True</span>']
 
-var future_time_codings = ['forward', 'forward', 'forward', 'forward', 'forward', 'forward', 'forward', 'forward', 'forward', 'forward', 'forward']
+var future_time_codings = ['forward', 'forward', 'forward', 'forward', 'forward', 'forward', 'forward', 'forward', 'reverse', 'reverse', 'reverse']
 
 var impulse_venture_items = [
 'Do you welcome new and exciting experiences and sensations even if they are a little frightening and unconventional?',
