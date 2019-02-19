@@ -290,7 +290,10 @@ def create_survey_event(df, duration=None):
                                                   'trial_type'])
     events_df = df[df['time_elapsed']>0]
     # add junk regressor
-    events_df.loc[:,'junk'] = get_junk_trials(df)
+    junk = get_junk_trials(df)
+    # response with a key outside of item responses
+    wrong_response = df.apply(lambda x: str(x['key_press']) not in x['item_responses'], axis=1)
+    events_df.loc[:, 'junk'] = np.logical_or(junk, wrong_response)
     # add duration and response regressor
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)

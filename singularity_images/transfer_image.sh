@@ -1,1 +1,1 @@
-rsync -avzP --progress *img ieisenbe@oak-dtn.stanford.edu:/oak/stanford/groups/russpold/users/ieisenbe/Self_Regulation_Ontology/fmri_analysis/singularity_images
+rsync -avzP --progress *img ieisenbe@oak-dtn.stanford.edu:/oak/stanford/groups/russpold/users/ieisenbe/uh2/fmri_analysis/singularity_images
