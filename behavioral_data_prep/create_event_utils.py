@@ -32,7 +32,7 @@ def get_movement_times(df):
     timing post trial and the entire block duration to get the time when
     the trial started. Then add the reaction time to get the time of movement
     """
-    trial_time = df.time_elapsed - df.block_duration - df.timing_post_trial + \
+    trial_time = df.time_elapsed - df.block_duration + \
                  df.rt
     return trial_time
 
@@ -42,7 +42,7 @@ def get_trial_times(df):
     timing post trial and the entire block duration to get the time when
     the trial started
     """
-    trial_time = df.time_elapsed - df.block_duration - df.timing_post_trial
+    trial_time = df.time_elapsed - df.block_duration
     return trial_time
    
 def create_events(df, exp_id, duration=None):
