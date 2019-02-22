@@ -29,7 +29,7 @@ def move_EVs(fmri_dir, tasks, overwrite=True, verbose=False):
         subj = basename(subj_file)
         if verbose: print('Transferring subject %s' % subj)
         for task in tasks:
-            bold_files = glob(join(subj_file,'*', 'func', '*%s*bold.nii.gz' % task))
+            bold_files = glob(join(subj_file,'*', 'func', '*task-%s*bold.nii.gz' % task))
             assert len(bold_files) <= 1, "%s bold files found for %s_%s" % (len(bold_files), subj, task)
             if len(bold_files) == 1:
                 event_files = glob(join(subj_file,'*', 'func', '*%s*events.tsv' % task))
