@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from expanalysis.experiments.jspsych_processing import calc_discount_fixed_DV
-
+from utils import get_items_order
 # *********************************
 # helper functions
 # *********************************
@@ -283,17 +283,22 @@ def create_survey_event(df, duration=None):
                                                   'options',
                                                   'response',
                                                   'rt',
-                                                  'stim_duration'
+                                                  'stim_duration',
+                                                  'text',
                                                   'time_elapsed',
                                                   'timing_post_trial',
-                                                  'trial_id',
-                                                  'trial_type'])
+                                                  'trial_id'])
     events_df = df[df['time_elapsed']>0]
     # add junk regressor
     junk = get_junk_trials(df)
     # response with a key outside of item responses
-    wrong_response = df.apply(lambda x: str(x['key_press']) not in x['item_responses'], axis=1)
-    events_df.loc[:, 'junk'] = np.logical_or(junk, wrong_response)
+    if 'item_responses'  in df.columns:
+        wrong_response = df.apply(lambda x: str(x['key_press']) not in x['item_responses'], axis=1)
+        events_df.loc[:, 'junk'] = np.logical_or(junk, wrong_response)
+    else:
+        events_df.loc[:, 'junk'] = junk
+    # add signifiers for each question
+    events_df['trial_type'] = df['item_text'].map(get_items_order())
     # add duration and response regressor
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)

@@ -120,7 +120,7 @@ def get_items_order():
     ]
     
     item_text = grit_items + brief_items + future_time_items + upps_items + impulse_venture_items
-    item_id = ['Q%s' % str(i+1) for i in range(len(item_text))]
+    item_id = ['Q%s' % str(i+1).zfill(2) for i in range(len(item_text))]
     item_id_map = dict(zip(item_text, item_id))
 
     return item_id_map
