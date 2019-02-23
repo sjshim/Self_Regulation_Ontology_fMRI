@@ -6,141 +6,17 @@ import pandas as pd
 
 # ********************************************************
 # 1st level analysis utility functions
-# ********************************************************
-
-def get_contrasts(task, regress_rt=True):
-    contrast_list = []
-    if task == 'ANT':
-        # task
-        c1 = ['task','T', ['task'], [1]]
-        # contrasts vs baseline
-        c2 = ['orienting_network','T', ['orienting_network'], [1]]
-        c3 = ['conflict_network','T', ['conflict_network'], [1]]
-        contrast_list = [c1,c2, c3]
-        if regress_rt:
-            c4 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c4)
-    elif task == 'CCTHot':
-        # task
-        c1 = ['task','T', ['task'], [1]]
-        # contrasts vs baseline
-        c2 = ['EV','T', ['EV'], [1]]
-        c3 = ['risk','T', ['risk'], [1]]
-        contrast_list = [c1,c2,c3]
-        if regress_rt:
-            c4 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c4)
-    elif task == 'discountFix':
-        c1 = ['subjective_value','T', ['subjective_value'], [1]]
-        c2 = ['LL_vs_SS','T', ['LL_vs_SS'], [1]]
-        contrast_list = [c1,c2]
-        if regress_rt:
-            c3 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c3)
-    elif task == 'DPX':
-        # contrasts vs baseline
-        c1 = ['AX','T', ['AX'], [1]]
-        c2 = ['AY','T', ['AY'], [1]]
-        c3 = ['BX','T', ['BX'], [1]]
-        c4 = ['BY','T', ['BY'], [1]]
-        # contrasts 
-        c5 = ['BX-BY','T', ['BX','BY'], [1,-1]]
-        c6 = ['AY-BY','T', ['AY','BY'], [1,-1]]
-        c7 = ['AY-BX','T', ['AY','BX'], [1,-1]]
-        c8 = ['BX-AY','T', ['BX','AY'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8]
-        if regress_rt:
-            c9 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c9)
-    elif task == 'motorSelectiveStop':
-        # contrasts vs baseline
-        c1 = ['crit_go','T', ['crit_go'], [1]]
-        c2 = ['crit_stop_success','T', ['crit_stop_success'], [1]]
-        c3 = ['crit_stop_failure','T', ['crit_stop_failure'], [1]]
-        c4 = ['noncrit_signal','T', ['noncrit_signal'], [1]]
-        c5 = ['noncrit_nosignal','T', ['noncrit_nosignal'], [1]]
-        # contrasts
-        c6 = ['crit_stop_success-crit_go', 'T', 
-                ['crit_stop_success', 'crit_go'], [1,-1]]
-        c7 = ['crit_stop_failure-crit_go', 'T', 
-                ['crit_stop_failure', 'crit_go'], [1,-1]]
-        c8 = ['crit_go-noncrit_nosignal', 'T', 
-                ['crit_go', 'noncrit_nosignal'], [1,-1]]
-        c9 = ['noncrit_signal-noncrit_nosignal', 'T' ,
-                ['noncrit_signal','noncrit_nosignal'], [1,-1]]
-        c10 = ['crit_stop_success-crit_stop_failure','T',
-                ['crit_stop_success', 'crit_stop_failure'], [1,-1]]
-        c11 = ['crit_stop_failure-crit_stop_success','T', 
-                ['crit_stop_failure', 'crit_stop_success'], [1,-1]]
-        c12 = ['crit_stop_success-noncrit_signal','T',
-                ['crit_stop_success', 'noncrit_signal'], [1,-1]]
-        c13 = ['crit_stop_failure-noncrit_signal','T',
-                ['crit_stop_failure', 'noncrit_signal'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13]
-    elif task == 'stopSignal':
-        # contrasts vs baseline
-        c1 = ['go','T', ['go'], [1]]
-        c2 = ['stop_success','T', ['stop_success'], [1]]
-        c3 = ['stop_failure','T', ['stop_failure'], [1]]
-        # contrasts
-        c4 = ['stop_success-go','T', ['stop_success', 'go'], [1,-1]]
-        c5 = ['stop_failure-go','T', ['stop_failure', 'go'], [1,-1]]
-        c6 = ['stop_success-stop_failure','T', 
-                ['stop_success', 'stop_failure'], [1,-1]]
-        c7 = ['stop_failure-stop_success','T', 
-                ['stop_failure', 'stop_success'], [1,-1]]
-        contrast_list = [c1,c2,c3,c4,c5,c6,c7]
-    elif task == 'stroop':
-        c1 = ['task', 'T', ['task'], [1]]
-        c2 = ['incongruent-congruent','T', ['incongruent-congruent'], [1]]
-        contrast_list = [c1, c2]
-        if regress_rt:
-            c3 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c3)
-    elif task == 'surveyMedley':
-        # contrasts vs baseline
-        c1 = ['stim_duration','T', ['stim_duration'], [1]]
-        c2 = ['movement','T', ['movement'], [1]]
-        contrast_list = [c1,c2]
-        if regress_rt:
-            c4 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c4)
-    elif task == 'twoByTwo':
-        c1 = ['task', 'T', ['task'], [1]]
-        # contrasts
-        c2 = ['cue_switch_cost_100','T', 
-                ['cue_switch_cost_100'], [1]]
-        c3 = ['cue_switch_cost_900','T', 
-                ['cue_switch_cost_900'], [1]]
-        c4 = ['task_switch_cost_100','T', 
-                ['task_switch_cost_100'], [1]]
-        c5 = ['task_switch_cost_900','T', 
-                ['task_switch_cost_900'], [1]]
-        contrast_list = [c1,c2,c3,c4, c5]
-        if regress_rt:
-            c6 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c6)
-    elif task == 'WATT3':
-        # contrasts vs baseline
-        c1 = ['plan_PA_with','T', ['plan_PA_with'], [1]]
-        c2 = ['plan_PA_without','T', ['plan_PA_without'], [1]]
-        # contrasts
-        c3 = ['search_depth','T', ['plan_PA_with','plan_PA_without'], [1,-1]]
-        # nuisance
-        c4 = ['movement', 'T', ['response_time'], [1]]
-        c5 = ['feedback', 'T', ['response_time'], [1]]
-        contrast_list = [c1,c2,c3,c4,c5]
-        if regress_rt:
-            c6 = ['response_time', 'T', ['response_time'], [1]]
-            contrast_list.append(c6)
-    # base covers generic contrast that just looks at all trials
-    elif task == 'base':
-        c1 = ['trial', 'T', ['trial'], [1]]
-        contrast_list = [c1]
-    return contrast_list
-        
+# ********************************************************        
 # functions to extract fmri events
-      
+def temp_deriv(dataframe, columns=None):
+    if columns is None:
+        columns = dataframe.columns
+    td = dataframe.loc[:,columns].apply(np.gradient)
+    td.iloc[0,:] = 0
+    for i,col in td.iteritems():
+        insert_loc = design.columns.get_loc(i)
+        dataframe.insert(insert_loc+1, i+'_TD', col)   
+        
 def get_ev_vars(output_dict, events_df, condition_spec, col=None, 
                 amplitude=1, duration=0, subset=None, onset_column='onset'):
     """ adds amplitudes, conditions, durations and onsets to an output_dict
@@ -227,11 +103,6 @@ def get_ANT_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
-    # task
-    get_ev_vars(output_dict, events_df,
-                condition_spec='task',
-                duration='duration',
-                subset='junk==False')
     # cue type
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[('spatial', 'spatial'),
@@ -393,6 +264,7 @@ def get_stopSignal_EVs(events_df):
             'durations': [],
             'amplitudes': []
             }
+     # task regressor
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[('go','go'), 
                             ('stop_success', 'stop_success'), 
@@ -415,12 +287,7 @@ def get_stroop_EVs(events_df, regress_rt=True):
             'amplitudes': []
             }
     # task regressor
-    get_ev_vars(output_dict, events_df,
-                condition_spec='task',
-                duration='duration',
-                subset='junk==False')
     # contrast regressor
-    #conflict_amplitudes = ((events_df.condition=='incongruent')*2-1)
     get_ev_vars(output_dict, events_df,
                 condition_spec=[('incongruent', 'incongruent'),
                                ('congruent', 'congruent')],
@@ -646,13 +513,16 @@ def process_confounds(confounds_file):
     movement_regressor_names = ['X','Y','Z','RotX','RotY','RotZ']
     movement_regressors = confounds_df.loc[:,movement_regressor_names]
     movement_regressor_names += ['Xtd','Ytd','Ztd','RotXtd','RotYtd','RotZtd']
-    movement_deriv_regressors = np.gradient(movement_regressors,axis=0)
+    movement_regressors = np.hstack((movement_regressors, np.gradient(movement_regressors,axis=0)))
+    # add square
+    movement_regressor_names += [i+'_sq' for i in movement_regressor_names]
+    movement_regressors = np.hstack((movement_regressors, movement_regressors**2))
+    
     # add additional relevant regressors
-    add_regressor_names = ['FramewiseDisplacement', 'stdDVARS'] 
-    add_regressor_names += [i for i in confounds_df.columns if 'aCompCor' in i]
+    add_regressor_names = ['FramewiseDisplacement'] 
+    #add_regressor_names += [i for i in confounds_df.columns if 'aCompCor' in i]
     additional_regressors = confounds_df.loc[:,add_regressor_names].values
     regressors = np.hstack((movement_regressors,
-                            movement_deriv_regressors,
                             additional_regressors,
                             excessive_movement_regressors))
     # concatenate regressor names
