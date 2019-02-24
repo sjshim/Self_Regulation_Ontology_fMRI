@@ -44,7 +44,11 @@ def get_trial_times(df):
     """
     trial_time = df.time_elapsed - df.block_duration
     return trial_time
-   
+
+def normalize_rt(events_df):
+    events_df.rt.replace({-1: np.nan}, inplace=True)
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
+    
 def create_events(df, exp_id, duration=None):
     events_df = None
     lookup = {'attention_network_task': create_ANT_event,
@@ -78,7 +82,8 @@ def create_ANT_event(df, duration=None):
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
-    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
+    # normalize RT
+    normalize_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -102,7 +107,8 @@ def create_CCT_event(df, duration=None):
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
-    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
+    # normalize RT
+    normalize_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -127,8 +133,8 @@ def create_discountFix_event(df, duration=None):
    
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.choice
-    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
-
+    # normalize RT
+    normalize_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -157,7 +163,8 @@ def create_DPX_event(df, duration=None):
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.condition
-    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
+    # normalize RT
+    normalize_rt(events_df)
     # Cue-to-Probe time
     CPI=1000
     if duration is None:
@@ -206,7 +213,8 @@ def create_motorSelectiveStop_event(df, duration=None):
                         [noncrit_key,'go',False])] = 'noncrit_nosignal'
 
     events_df.loc[:,'trial_type'] = condition
-    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
+    # normalize RT
+    normalize_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -240,7 +248,8 @@ def create_stopSignal_event(df, duration=None):
     events_df.loc[SS_success_trials,'condition'] = 'stop_success'
     events_df.loc[SS_fail_trials,'condition'] = 'stop_failure'
     events_df.loc[:,'trial_type'] = events_df.condition
-    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
+    # normalize RT
+    normalize_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -261,7 +270,8 @@ def create_stroop_event(df, duration=None):
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.condition
-    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
+    # normalize RT
+    normalize_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -304,7 +314,8 @@ def create_survey_event(df, duration=None):
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
         events_df.insert(0,'duration',duration)
-    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
+    # normalize RT
+    normalize_rt(events_df)
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
@@ -323,7 +334,8 @@ def create_twobytwo_event(df, duration=None):
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
-    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
+    # normalize RT
+    normalize_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration+df.CTI)
     else:
