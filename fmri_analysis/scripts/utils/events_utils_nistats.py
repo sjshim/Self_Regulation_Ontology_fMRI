@@ -7,16 +7,7 @@ import pandas as pd
 # ********************************************************
 # 1st level analysis utility functions
 # ********************************************************        
-# functions to extract fmri events
-def temp_deriv(dataframe, columns=None):
-    if columns is None:
-        columns = dataframe.columns
-    td = dataframe.loc[:,columns].apply(np.gradient)
-    td.iloc[0,:] = 0
-    for i,col in td.iteritems():
-        insert_loc = design.columns.get_loc(i)
-        dataframe.insert(insert_loc+1, i+'_TD', col)   
-        
+# functions to extract fmri events        
 def get_ev_vars(output_dict, events_df, condition_spec, col=None, 
                 amplitude=1, duration=0, subset=None, onset_column='onset'):
     """ adds amplitudes, conditions, durations and onsets to an output_dict
@@ -255,9 +246,15 @@ def get_motorSelectiveStop_EVs(events_df):
                 condition_spec=[(True, 'junk')], 
                 col='junk', 
                 duration='duration')    
+    if regress_rt == True:
+        get_ev_vars(output_dict, events_df, 
+                    condition_spec='response_time', 
+                    duration='duration', 
+                    amplitude='response_time',
+                    subset='junk==False and trial_type!="crit_stop_success"')
     return output_dict
 
-def get_stopSignal_EVs(events_df):
+def get_stopSignal_EVs(events_df, regress_rt=True):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -277,6 +274,12 @@ def get_stopSignal_EVs(events_df):
                 condition_spec=[(True, 'junk')], 
                 col='junk', 
                 duration='duration')    
+    if regress_rt == True:
+        get_ev_vars(output_dict, events_df, 
+                    condition_spec='response_time', 
+                    duration='duration', 
+                    amplitude='response_time',
+                    subset='junk==False and trial_type!="stop_success"')
     return output_dict
 
 def get_stroop_EVs(events_df, regress_rt=True):
@@ -292,8 +295,7 @@ def get_stroop_EVs(events_df, regress_rt=True):
                 condition_spec=[('incongruent', 'incongruent'),
                                ('congruent', 'congruent')],
                 col='condition',
-                duration='duration',
-                subset='junk==False')
+                duration='duration')
     
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
@@ -304,8 +306,7 @@ def get_stroop_EVs(events_df, regress_rt=True):
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
                     duration='duration', 
-                    amplitude='response_time',
-                    subset='junk==False')
+                    amplitude='response_time')
     return output_dict
 
 def get_surveyMedley_EVs(events_df, regress_rt=True):
@@ -342,34 +343,31 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
-    # task regressor
-    get_ev_vars(output_dict, events_df,
-                condition_spec='task',
-                duration='duration',
-                subset='junk==False')
     # cue switch contrasts
-    events_df.cue_switch.fillna(1, inplace=True)
-    cue_switches = events_df.cue_switch.replace({'switch':1,'stay':-1})
     get_ev_vars(output_dict, events_df, 
-                condition_spec='cue_switch_cost_900',
-                amplitude=cue_switches,
+                condition_spec=[('switch', 'cue_switch_900'),
+                               ('stay', 'cue_stay_900')],
+                col='cue_switch',
                 duration='duration',
                 subset="CTI==900 and task_switch=='stay' and junk==False")
     get_ev_vars(output_dict, events_df, 
-                condition_spec='cue_switch_cost_100',
-                amplitude=cue_switches,
+                condition_spec=[('switch', 'cue_switch_100'),
+                               ('stay', 'cue_stay_100')],
+                col='cue_switch',
                 duration='duration',
                 subset="CTI==100 and task_switch=='stay' and junk==False")
+
     # task switch contrasts
-    task_switches = events_df.task_switch.replace({'switch':1,'stay':-1})
     get_ev_vars(output_dict, events_df, 
-                condition_spec='task_switch_cost_900',
-                amplitude=task_switches,
+                condition_spec=[('switch', 'task_switch_900'),
+                               ('stay', 'task_stay_900')],
+                col='task_switch',
                 duration='duration',
                 subset="CTI==900 and cue_switch!='stay' and junk==False")
     get_ev_vars(output_dict, events_df, 
-                condition_spec='task_switch_cost_100',
-                amplitude=task_switches,
+                condition_spec=[('switch', 'task_switch_100'),
+                               ('stay', 'task_stay_100')],
+                col='task_switch',
                 duration='duration',
                 subset="CTI==100 and cue_switch!='stay' and junk==False")
     # nuisance regressors
@@ -489,49 +487,4 @@ def parse_EVs(events_df, task, regress_rt=True):
         EV_dict = get_beta_series(events_df, regress_rt)
     return EV_dict
 
-    
-def process_confounds(confounds_file):
-    """
-    scrubbing for TASK
-    remove TRs where FD>.5, stdDVARS (that relates to DVARS>.5)
-    regressors to use
-    ['X','Y','Z','RotX','RotY','RotY','<-firsttemporalderivative','stdDVARs','FD','respiratory','physio','aCompCor0-5']
-    junk regressor: errors, ommissions, maybe very fast RTs (less than 50 ms)
-    """
-    confounds_df = pd.read_csv(confounds_file, sep = '\t', 
-                               na_values=['n/a']).fillna(0)
-    excessive_movement = (confounds_df.FramewiseDisplacement>.5) & \
-                            (confounds_df.stdDVARS>1.2)
-    excessive_movement_TRs = excessive_movement[excessive_movement].index
-    excessive_movement_regressors = np.zeros([confounds_df.shape[0], 
-                                   np.sum(excessive_movement)])
-    for i,TR in enumerate(excessive_movement_TRs):
-        excessive_movement_regressors[TR,i] = 1
-    excessive_movement_regressor_names = ['rejectTR_%d' % TR for TR in 
-                                          excessive_movement_TRs]
-    # get movement regressors
-    movement_regressor_names = ['X','Y','Z','RotX','RotY','RotZ']
-    movement_regressors = confounds_df.loc[:,movement_regressor_names]
-    movement_regressor_names += ['Xtd','Ytd','Ztd','RotXtd','RotYtd','RotZtd']
-    movement_regressors = np.hstack((movement_regressors, np.gradient(movement_regressors,axis=0)))
-    # add square
-    movement_regressor_names += [i+'_sq' for i in movement_regressor_names]
-    movement_regressors = np.hstack((movement_regressors, movement_regressors**2))
-    
-    # add additional relevant regressors
-    add_regressor_names = ['FramewiseDisplacement'] 
-    #add_regressor_names += [i for i in confounds_df.columns if 'aCompCor' in i]
-    additional_regressors = confounds_df.loc[:,add_regressor_names].values
-    regressors = np.hstack((movement_regressors,
-                            additional_regressors,
-                            excessive_movement_regressors))
-    # concatenate regressor names
-    regressor_names = movement_regressor_names + add_regressor_names + \
-                      excessive_movement_regressor_names
-    return regressors, regressor_names
-        
-def process_physio(cardiac_file, resp_file):
-    cardiac_file = '/mnt/temp/sub-s130/ses-1/func/sub-s130_ses-1_task-stroop_run-1_recording-cardiac_physio.tsv.gz'
-    resp_file = '/mnt/temp/sub-s130/ses-1/func/sub-s130_ses-1_task-stroop_run-1_recording-respiratory_physio.tsv.gz'
-    
     
