@@ -41,7 +41,7 @@ def move_EVs(fmri_dir, tasks, overwrite=True, verbose=False):
                     except IndexError:
                         print('Move_EV failed for the %s: %s' % (subj, task))
             else:
-                print('**** No %s bold found' % task)
+                print('**** No %s bold found for %s' % (task, subj))
     if verbose:
         print('\n'.join(created_files))
         print(total_transfers)
@@ -49,7 +49,7 @@ def move_EVs(fmri_dir, tasks, overwrite=True, verbose=False):
         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Example BIDS App entrypoint script.')
-    parser.add_argument('-data_dir', default='/data')
+    parser.add_argument('-data_dir', default='/data', help='BIDS directory')
     parser.add_argument('--tasks', default=None, nargs="+")
     parser.add_argument('--overwrite_event', action='store_true')
     parser.add_argument('--verbose', action='store_true')
