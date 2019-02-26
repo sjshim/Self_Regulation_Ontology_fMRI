@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 from nilearn import image, plotting
-
+from nistats.reporting import plot_design_matrix, plot_contrast_matrix
 
 def plot_design(subjinfo):
     fig, ax = plt.subplots(figsize=(15,8))

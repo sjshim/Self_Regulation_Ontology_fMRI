@@ -29,7 +29,7 @@ def create_design(events, confounds, task, TR, beta=True, regress_rt=False):
         EV_dict = parse_EVs(events, task, regress_rt=regress_rt)
     paradigm = get_paradigm(EV_dict)
     # make design
-    n_scans = confounds.shape[0]
+    n_scans = int(confounds.shape[0])
     design = make_first_level_design_matrix(np.arange(n_scans)*TR,
                                paradigm,
                                drift_model='cosine',
@@ -41,7 +41,8 @@ def create_design(events, confounds, task, TR, beta=True, regress_rt=False):
     temp_deriv(design, task_cols)
     return design
 
-def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR, beta=False, regress_rt=False):
+def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR, 
+                        regress_rt=False, beta=False):
     func_file, mask_file = get_func_file(fmriprep_dir, subject_id, task)
     if func_file is None or mask_file is None:
         print("Missing MRI files for %s: %s" % (subject_id, task))
@@ -62,18 +63,34 @@ def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR, beta=Fals
 def save_first_level_obj(subjinfo, output_dir):
     subj, task = subjinfo.ID.split('_')
     directory = path.join(output_dir, subj, task)
-    rt = "True" if subjinfo.model_settings['regress_rt'] else "False"
-    beta = "True" if subjinfo.model_settings['beta'] else "False"
-    filename = path.join(directory, 'firstlevel_RT-%s_beta-%s.pkl' % (rt, beta))
+    rt_flag = "True" if subjinfo.model_settings['regress_rt'] else "False"
+    beta_flag = "True" if subjinfo.model_settings['beta'] else "False"
+    filename = path.join(directory, 'firstlevel_RT-%s_beta-%s.pkl' % (rt_flag, beta_flag))
     makedirs(directory, exist_ok=True)
     f = open(filename, 'wb')
     pickle.dump(subjinfo, f)
     f.close()
 
-def get_first_level_objs(subject_id, task, output_dir):
-    files = path.join(output_dir, subject_id, task, '*pkl')
+def get_first_level_objs(subject_id, task, output_dir, regress_rt=False, beta=False):
+    rt_flag = 'RT-True' if regress_rt else 'RT-False'
+    beta_flag = 'beta-True' if beta else 'beta-False'
+    files = path.join(output_dir, subject_id, task, '*%s_%s*pkl' % (rt_flag, beta_flag))
     return glob(files)    
-    
+
+def load_first_level_objs(subjects, task, output_dir, regress_rt=False, beta=False):
+    subjinfos = []
+    for subject_id in subjects:
+        files = get_first_level_objs(subject_id, task, output_dir, 
+                                     regress_rt=regress_rt, beta=beta)
+        assert len(files) <= 1, print('%s has more than one file') % subject_id
+        if len(files) == 1:
+            f = open(files[0], 'rb')
+            subjinfos.append(pickle.load(f))
+            f.close()
+    return subjinfos
+
+
+
 # ********************************************************
 # helper classes 
 # ******************************************************** 
@@ -97,6 +114,15 @@ class FirstLevel():
                         self.design, 
                         self.contrasts, 
                         self.ID)
+    
+    def __str__(self):
+        s = """
+            ** %s **
+                * Func File: %s
+                * Mask File: %s
+                * Model Settings: %s
+            """ % (self.ID, self.func, self.mask, self.model_settings)
+        return s
     
 # ********************************************************
 # Process Functions
@@ -225,9 +251,6 @@ def get_paradigm(EV_dict):
     return paradigm
 
 def get_contrasts(task, design_matrix):
-    contrast_matrix = np.eye(design_matrix.shape[1])
-    contrasts = dict([(column, contrast_matrix[i])
-                      for i, column in enumerate(design_matrix.columns)])
     if task == 'ANT':
         contrasts = [('congruent', 'congruent'),
                     ('orienting_network', 'spatial-double'),
