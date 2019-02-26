@@ -295,7 +295,8 @@ def get_stroop_EVs(events_df, regress_rt=True):
                 condition_spec=[('incongruent', 'incongruent'),
                                ('congruent', 'congruent')],
                 col='condition',
-                duration='duration')
+                duration='duration',
+                subset='junk==False')
     
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
@@ -306,7 +307,8 @@ def get_stroop_EVs(events_df, regress_rt=True):
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
                     duration='duration', 
-                    amplitude='response_time')
+                    amplitude='response_time',
+                    subset='junk==False')
     return output_dict
 
 def get_surveyMedley_EVs(events_df, regress_rt=True):

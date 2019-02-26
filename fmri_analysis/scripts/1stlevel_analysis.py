@@ -151,7 +151,7 @@ for subjinfo in to_run:
                            period_cut=80,
                            n_jobs=1
                           )
-    get_ipython().run_line_magic('time', 'out = fmri_glm.fit(subjinfo.func, design_matrices=subjinfo.design)')
+    out = fmri_glm.fit(subjinfo.func, design_matrices=subjinfo.design)
     subjinfo.fit_model = out
     
     # run contrasts and save
