@@ -1,12 +1,13 @@
 
 # coding: utf-8
 
-# In[12]:
+# In[41]:
 
 
 import argparse
 from glob import glob
 from os import makedirs, path
+import pandas as pd
 import pickle
 import sys
 
@@ -44,7 +45,7 @@ else:
 
 # ### Setup
 
-# In[3]:
+# In[7]:
 
 
 # set paths
@@ -52,6 +53,15 @@ first_level_dir = path.join(args.derivatives_dir, '1stlevel')
 second_level_dir = path.join(args.derivatives_dir,'2ndlevel')
 fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep', 'fmriprep')
 
+# set tasks
+if args.tasks is not None:
+    tasks = args.tasks
+else:
+    tasks = ['ANT', 'CCTHot', 'discountFix',
+            'DPX', 'motorSelectiveStop',
+            'stopSignal', 'stroop',
+            'twoByTwo', 'WATT3']
+    
 # set other variables
 subjects = sorted([i[-4:] for i in glob(path.join(first_level_dir, 's*'))])
 regress_rt = args.rt
@@ -60,7 +70,7 @@ beta_series = args.beta
 
 # ### Create Mask
 
-# In[8]:
+# In[9]:
 
 
 mask_threshold = .95
@@ -81,6 +91,8 @@ beta_flag = "True" if beta_series else "False"
 for task in tasks:
     # load first level models
     first_levels = load_first_level_objs(subjects, task, first_level_dir, regress_rt=regress_rt)
+    if len(first_levels) == 0:
+        continue
     first_level_models = [subj.fit_model for subj in first_levels]
     # simple design for one sample test
     design_matrix = pd.DataFrame([1] * len(first_level_models), columns=['intercept'])
