@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[41]:
+# In[ ]:
 
 
 import argparse
@@ -16,6 +16,7 @@ from nistats.thresholding import map_threshold
 from nilearn import plotting
 from utils.firstlevel_utils import load_first_level_objs, FirstLevel
 from utils.secondlevel_utils import create_group_mask
+from utils.utils import get_contrasts
 
 
 # ### Parse Arguments
@@ -24,7 +25,7 @@ from utils.secondlevel_utils import create_group_mask
 # - conversion command:
 #   - jupyter nbconvert --to script --execute 2ndlevel_analysis.ipynb
 
-# In[2]:
+# In[ ]:
 
 
 parser = argparse.ArgumentParser(description='fMRI Analysis Entrypoint Script.')
@@ -45,7 +46,7 @@ else:
 
 # ### Setup
 
-# In[7]:
+# In[ ]:
 
 
 # set paths
@@ -70,7 +71,7 @@ beta_series = args.beta
 
 # ### Create Mask
 
-# In[9]:
+# In[ ]:
 
 
 mask_threshold = .95
@@ -103,4 +104,13 @@ for task in tasks:
     f = open(path.join(second_level_dir, task, 'secondlevel_RT-%s_beta-%s.pkl' % (rt_flag, beta_flag)), 'wb')
     pickle.dump(second_level_model, f)
     f.close()
+    # create contrast maps
+    task_contrasts = get_contrasts(task, regress_rt)
+    maps_dir = path.join(second_level_dir, task, 'secondlevel_RT-%s_beta-%s_maps' % (rt_flag, beta_flag))
+    makedirs(maps_dir, exist_ok=True)
+    for name, contrast in task_contrasts:
+        contrast_map = second_level_model.compute_contrast(first_level_contrast=contrast)
+        zmaps[name] = contrast_map
+        contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
+        contrast_map.to_filename(contrast_file)
 

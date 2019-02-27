@@ -11,3 +11,14 @@ def create_group_mask(fmriprep_dir, threshold=.8, verbose=True):
     return group_mask
     if verbose:
         print('Finished creating group mask')
+        
+def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
+    rt_flag = "True" if regress_rt else "False"
+    beta_flag = "True" if beta else "False"
+    maps_dir = path.join(second_level_dir, task, 'secondlevel_RT-%s_beta-%s_maps' % (rt_flag, beta_flag))
+    map_files = glob(path.join(maps_dir, '*'))
+    maps = {}
+    for f in map_files:
+        name = f.split('-')[-1]
+        maps[name] = image.load_img(f)
+    return maps

@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[1]:
+# In[ ]:
 
 
 import argparse
@@ -27,7 +27,7 @@ from utils.firstlevel_utils import get_first_level_objs, make_first_level_obj, s
 # - conversion command:
 #   - jupyter nbconvert --to script --execute 1stlevel_analysis.ipynb
 
-# In[2]:
+# In[ ]:
 
 
 parser = argparse.ArgumentParser(description='First Level Entrypoint script')
@@ -57,7 +57,7 @@ else:
     args.subject_ids = all_subjs
 
 
-# In[3]:
+# In[ ]:
 
 
 if not args.quiet:
@@ -69,7 +69,7 @@ else:
 
 # ### Initial Setup
 
-# In[4]:
+# In[ ]:
 
 
 # Set Paths
@@ -105,7 +105,7 @@ n_procs = args.n_procs
 TR = .68
 
 
-# In[5]:
+# In[ ]:
 
 
 # print
@@ -119,7 +119,7 @@ verboseprint('*'*79)
 
 # ### Run analysis
 
-# In[6]:
+# In[ ]:
 
 
 to_run = []
@@ -135,7 +135,7 @@ for subject_id in subjects:
 
 # ### Run model fit
 
-# In[9]:
+# In[ ]:
 
 
 for subjinfo in to_run:

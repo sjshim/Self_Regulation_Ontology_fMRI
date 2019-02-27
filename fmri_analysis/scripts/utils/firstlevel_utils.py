@@ -7,7 +7,8 @@ import pandas as pd
 import pickle
 import random
 from sklearn.preprocessing import scale
-from utils.events_utils_nistats import get_beta_series, parse_EVs
+from utils.events_utils import get_beta_series, parse_EVs
+from utils.utils import get_contrasts
 
 # ********************************************************
 # helper functions 
@@ -249,24 +250,3 @@ def get_paradigm(EV_dict):
                'duration': durations} 
     paradigm = pd.DataFrame(paradigm).sort_values(by='onset').reset_index()
     return paradigm
-
-def get_contrasts(task, design_matrix):
-    if task == 'ANT':
-        contrasts = [('congruent', 'congruent'),
-                    ('orienting_network', 'spatial-double'),
-                    ('conflict_network', 'incongruent-congruent')]
-        
-    elif task == 'stroop':
-        contrasts = [('congruent', 'congruent'),
-                    ('stroop', 'incongruent-congruent')]
-    
-    elif task == 'stopSignal':
-        contrasts = [('go', 'go'),
-                    ('stop_success-go', 'stop_success-go'),
-                     ('stop_failure-go', 'stop_failure-go'),
-                     ('stop_success-stop_failure', 'stop_success-stop_failure'),
-                     ('stop_failure-stop_success', 'stop_failure-stop_success')]
-    if 'response_time' in design_matrix:
-        contrasts.append(('RT','response_time'))
-    return contrasts
-
