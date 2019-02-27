@@ -22,4 +22,6 @@ scratch_loc=/scratch/users/ieisenbe
 singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
     python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks stroop stopSignal --rt
 
+singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks stroop stopSignal
 
