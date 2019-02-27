@@ -110,7 +110,6 @@ for task in tasks:
     makedirs(maps_dir, exist_ok=True)
     for name, contrast in task_contrasts:
         contrast_map = second_level_model.compute_contrast(first_level_contrast=contrast)
-        zmaps[name] = contrast_map
         contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
         contrast_map.to_filename(contrast_file)
 
