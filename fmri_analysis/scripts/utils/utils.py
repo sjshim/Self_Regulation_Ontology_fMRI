@@ -29,7 +29,7 @@ def get_contrasts(task, regress_rt=True):
         contrasts = [('go', 'go'),
                      ('stop_success', 'stop_success'),
                      ('stop_failure', 'stop_failure'),
-                    ('stop_success-go', 'stop_success-go'),
+                     ('stop_success-go', 'stop_success-go'),
                      ('stop_failure-go', 'stop_failure-go'),
                      ('stop_success-stop_failure', 'stop_success-stop_failure'),
                      ('stop_failure-stop_success', 'stop_failure-stop_success')]

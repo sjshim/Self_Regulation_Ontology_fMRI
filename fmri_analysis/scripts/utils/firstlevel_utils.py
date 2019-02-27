@@ -72,22 +72,20 @@ def save_first_level_obj(subjinfo, output_dir):
     pickle.dump(subjinfo, f)
     f.close()
 
-def get_first_level_objs(subject_id, task, output_dir, regress_rt=False, beta=False):
+def get_first_level_objs(subject_id, task, first_level_dir, regress_rt=False, beta=False):
     rt_flag = 'RT-True' if regress_rt else 'RT-False'
     beta_flag = 'beta-True' if beta else 'beta-False'
-    files = path.join(output_dir, subject_id, task, '*%s_%s*pkl' % (rt_flag, beta_flag))
+    files = path.join(first_level_dir, subject_id, task, '*%s_%s*pkl' % (rt_flag, beta_flag))
     return glob(files)    
 
-def load_first_level_objs(subjects, task, output_dir, regress_rt=False, beta=False):
+def load_first_level_objs(task, output_dir, regress_rt=False, beta=False):
     subjinfos = []
-    for subject_id in subjects:
-        files = get_first_level_objs(subject_id, task, output_dir, 
+    files = get_first_level_objs(*, task, output_dir, 
                                      regress_rt=regress_rt, beta=beta)
-        assert len(files) <= 1, print('%s has more than one file') % subject_id
-        if len(files) == 1:
-            f = open(files[0], 'rb')
-            subjinfos.append(pickle.load(f))
-            f.close()
+    for filey in files:
+        f = open(filey, 'rb')
+        subjinfos.append(pickle.load(f))
+        f.close()
     return subjinfos
 
 
