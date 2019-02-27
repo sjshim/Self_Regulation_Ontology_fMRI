@@ -1,6 +1,7 @@
 from glob import glob
 from nilearn import image
 from os import path
+from utils.utils import get_flags
 
 def create_group_mask(fmriprep_dir, threshold=.8, verbose=True):
     if verbose:
@@ -12,10 +13,11 @@ def create_group_mask(fmriprep_dir, threshold=.8, verbose=True):
     return group_mask
     if verbose:
         print('Finished creating group mask')
-        
+
+
+
 def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
-    rt_flag = "True" if regress_rt else "False"
-    beta_flag = "True" if beta else "False"
+    rt_flag, beta_flag = get_flags(regress_rt, beta)
     maps_dir = path.join(second_level_dir, task, 'secondlevel_RT-%s_beta-%s_N-*_maps' % (rt_flag, beta_flag))
     maps_dirs = glob(maps_dir)
     if len(maps_dirs) > 1:

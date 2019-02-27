@@ -11,6 +11,11 @@ import pandas as pd
 # ********************************************************
 # Basic Help Methods
 # ********************************************************
+def get_flags(regress_rt=False, beta=False):
+    rt_flag = "True" if regress_rt else "False"
+    beta_flag = "True" if beta else "False"
+    return rt_flag, beta_flag
+
 def get_contrasts(task, regress_rt=True):
     if task == 'ANT':
         contrasts = [('congruent', 'congruent'),

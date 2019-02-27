@@ -8,7 +8,7 @@ import pickle
 import random
 from sklearn.preprocessing import scale
 from utils.events_utils import get_beta_series, parse_EVs
-from utils.utils import get_contrasts
+from utils.utils import get_contrasts, get_flags
 
 # ********************************************************
 # helper functions 
@@ -55,8 +55,7 @@ def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR,
     confounds = get_confounds(fmriprep_dir, subject_id, task)
     design = create_design(events, confounds, task, TR, beta=beta, regress_rt=regress_rt)
     contrasts = get_contrasts(task, design)
-    subjinfo = FirstLevel(func_file, mask_file, design, contrasts, '%s_%s' % (subject_id, task))
-    subjinfo.events = events
+    subjinfo = FirstLevel(func_file, mask_file, events, design, contrasts, '%s_%s' % (subject_id, task))
     subjinfo.model_settings['beta'] = beta
     subjinfo.model_settings['regress_rt'] = regress_rt
     return subjinfo
@@ -64,17 +63,15 @@ def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR,
 def save_first_level_obj(subjinfo, output_dir):
     subj, task = subjinfo.ID.split('_')
     directory = path.join(output_dir, subj, task)
-    rt_flag = "True" if subjinfo.model_settings['regress_rt'] else "False"
-    beta_flag = "True" if subjinfo.model_settings['beta'] else "False"
-    filename = path.join(directory, 'firstlevel_RT-%s_beta-%s.pkl' % (rt_flag, beta_flag))
+    flags = subjinfo.get_flags()
+    filename = path.join(directory, 'firstlevel_%s.pkl' % flags)
     makedirs(directory, exist_ok=True)
     f = open(filename, 'wb')
     pickle.dump(subjinfo, f)
     f.close()
 
 def get_first_level_objs(subject_id, task, first_level_dir, regress_rt=False, beta=False):
-    rt_flag = 'RT-True' if regress_rt else 'RT-False'
-    beta_flag = 'beta-True' if beta else 'beta-False'
+    rt_flag, beta_flag = get_flags(regress_rt, beta)
     files = path.join(first_level_dir, subject_id, task, '*%s_%s*pkl' % (rt_flag, beta_flag))
     return glob(files)    
 
@@ -96,9 +93,10 @@ def load_first_level_objs(task, output_dir, regress_rt=False, beta=False):
 
 SubjInfo = namedtuple('subjinfo', ['func','mask','design','contrasts','ID'])
 class FirstLevel():
-    def __init__(self, func, mask, design, contrasts, ID):
+    def __init__(self, func, mask, events, design, contrasts, ID):
         self.func = func
         self.mask = mask
+        self.events = events
         self.design = design
         self.contrasts = contrasts
         self.ID = ID
@@ -113,6 +111,27 @@ class FirstLevel():
                         self.design, 
                         self.contrasts, 
                         self.ID)
+    
+    def export_design(self, directory):
+        directory = self._get_export_dir(directory)
+        flags = self.get_flags()
+        self.design.to_csv(path.join(directory, 'design_%s.csv' % flags))
+        
+    def export_events(self, directory):
+        directory = self._get_export_dir(directory)
+        flags = self.get_flags()
+        self.events.to_csv(path.join(directory, 'events_%s.csv' %flags))
+    
+    def get_flags(self):
+        rt_flag, beta_flag = get_flags(model_settings['regress_rt'],
+                                       model_settings['beta'])
+        return 'RT-%s_beta-%s' % (rt_flag, beta_flag)
+    
+    def _get_export_dir(self, obj):
+        subj, task = self.ID.split('_')
+        directory = path.join(directory, subj, task)
+        makedirs(directory, exist_ok=True)
+        return directory
     
     def __str__(self):
         s = """

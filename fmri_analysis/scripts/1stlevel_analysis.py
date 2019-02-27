@@ -82,7 +82,7 @@ if args.working_dir is None:
 else:
     working_dir = join(args.working_dir, '1stlevel_workingdir')
 
-# set task
+# set tasks
 if args.tasks is not None:
     tasks = args.tasks
 else:
@@ -161,4 +161,6 @@ for subjinfo in to_run:
         subjinfo.maps[name+'_zscore'] = z_map
     verboseprint('** saving')
     save_first_level_obj(subjinfo, first_level_dir)
+    subjinfo.export_design(first_level_dir)
+    subjinfo.export_events(first_level_dir)
 
