@@ -54,7 +54,7 @@ def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR,
         return None
     confounds = get_confounds(fmriprep_dir, subject_id, task)
     design = create_design(events, confounds, task, TR, beta=beta, regress_rt=regress_rt)
-    contrasts = get_contrasts(task, design)
+    contrasts = get_contrasts(task, regress_rt)
     subjinfo = FirstLevel(func_file, mask_file, events, design, contrasts, '%s_%s' % (subject_id, task))
     subjinfo.model_settings['beta'] = beta
     subjinfo.model_settings['regress_rt'] = regress_rt
@@ -77,7 +77,7 @@ def get_first_level_objs(subject_id, task, first_level_dir, regress_rt=False, be
 
 def load_first_level_objs(task, output_dir, regress_rt=False, beta=False):
     subjinfos = []
-    files = get_first_level_objs(*, task, output_dir, 
+    files = get_first_level_objs('*', task, output_dir, 
                                      regress_rt=regress_rt, beta=beta)
     for filey in files:
         f = open(filey, 'rb')
@@ -123,11 +123,11 @@ class FirstLevel():
         self.events.to_csv(path.join(directory, 'events_%s.csv' %flags))
     
     def get_flags(self):
-        rt_flag, beta_flag = get_flags(model_settings['regress_rt'],
-                                       model_settings['beta'])
+        rt_flag, beta_flag = get_flags(self.model_settings['regress_rt'],
+                                       self.model_settings['beta'])
         return 'RT-%s_beta-%s' % (rt_flag, beta_flag)
     
-    def _get_export_dir(self, obj):
+    def _get_export_dir(self, directory):
         subj, task = self.ID.split('_')
         directory = path.join(directory, subj, task)
         makedirs(directory, exist_ok=True)
