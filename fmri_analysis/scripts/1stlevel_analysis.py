@@ -34,7 +34,7 @@ parser = argparse.ArgumentParser(description='First Level Entrypoint script')
 parser.add_argument('-data_dir', default='/data')
 parser.add_argument('-derivatives_dir', default=None)
 parser.add_argument('-working_dir', default=None)
-parser.add_argument('--subject_ids', default=None, nargs="+")
+parser.add_argument('--subject_ids', nargs="+")
 parser.add_argument('--tasks', nargs="+", help="Choose from ANT, CCTHot, discountFix,                                     DPX, motorSelectiveStop, stopSignal,                                     stroop, surveyMedley, twoByTwo, WATT3")
 parser.add_argument('--rt', action='store_true')
 parser.add_argument('--beta', action='store_true')
@@ -48,13 +48,12 @@ else:
     args = parser.parse_args([])
     args.data_dir = '/data'
     args.derivatives_dir = '/data/derivatives'
-    args.tasks = ['stroop']
+    args.tasks = ['ANT','discountFix', 'DPX', 
+                  'motorSelectiveStop', 'stopSignal', 
+                  'stroop', 'twoByTwo']
     args.subject_ids = ['s358']
     args.rt=True
     args.n_procs=1
-    # get all subjects
-    all_subjs = sorted([i[-4:] for i in glob(os.path.join(args.data_dir, '*')) if 'sub-' in i])
-    args.subject_ids = all_subjs
 
 
 # In[ ]:
@@ -92,7 +91,7 @@ else:
             'twoByTwo', 'WATT3']
 
 # list of subject identifiers
-if args.subject_ids is None:
+if not args.subject_ids:
     subjects = sorted([i[-4:] for i in glob(os.path.join(args.data_dir, '*')) if 'sub-' in i])
 else:
     subjects = args.subject_ids

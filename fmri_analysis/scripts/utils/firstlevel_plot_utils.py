@@ -3,13 +3,13 @@ from scipy.stats import norm
 from nilearn import image, plotting
 from nistats.reporting import plot_design_matrix, plot_contrast_matrix
 
-def plot_design(subjinfo):
+def plot_design(subjinfo, plot_contrasts=False):
     fig, ax = plt.subplots(figsize=(15,8))
     plot_design_matrix(subjinfo.design, ax=ax, rescale=True)
-
-    for name, contrast in subjinfo.contrasts:
-        ax=plot_contrast_matrix(contrast, design_matrix=subj.design)
-        ax.set_xlabel(name)
+    if plot_contrasts:
+        for name, contrast in subjinfo.contrasts:
+            ax=plot_contrast_matrix(contrast, design_matrix=subjinfo.design)
+            ax.set_xlabel(name)
 
 def plot_contrast(subjinfo, contrast, **kwargs):
     if type(contrast) == int:

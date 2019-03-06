@@ -176,11 +176,10 @@ def get_discountFix_EVs(events_df, regress_rt=True):
             'amplitudes': []
             }
     # regressors of interest
-    trial_type = events_df.query('junk == False').trial_type \
-                .replace({'larger_later': 1, 'smaller_sooner': -1})
     get_ev_vars(output_dict, events_df, 
-                condition_spec='LL_vs_SS',
-                amplitude=trial_type,
+                condition_spec=[('larger_later', 'larger_later'),
+                                ('smaller_sooner', 'smaller_sooner')],
+                col='trial_type',
                 duration='duration',
                 subset='junk == False')
     get_ev_vars(output_dict, events_df, 
@@ -226,7 +225,7 @@ def get_DPX_EVs(events_df, regress_rt=True):
                     subset='junk==False')
     return output_dict
 
-def get_motorSelectiveStop_EVs(events_df):
+def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -347,13 +346,13 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
             }
     # cue switch contrasts
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('switch', 'cue_switch_900'),
+                condition_spec=[('switch', 'task_stay/cue_switch_900'),
                                ('stay', 'cue_stay_900')],
                 col='cue_switch',
                 duration='duration',
                 subset="CTI==900 and task_switch=='stay' and junk==False")
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('switch', 'cue_switch_100'),
+                condition_spec=[('switch', 'task_stay/cue_switch_100'),
                                ('stay', 'cue_stay_100')],
                 col='cue_switch',
                 duration='duration',
@@ -361,14 +360,12 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
 
     # task switch contrasts
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('switch', 'task_switch_900'),
-                               ('stay', 'task_stay_900')],
+                condition_spec=[('switch', 'task_switch_900')],
                 col='task_switch',
                 duration='duration',
                 subset="CTI==900 and cue_switch!='stay' and junk==False")
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('switch', 'task_switch_100'),
-                               ('stay', 'task_stay_100')],
+                condition_spec=[('switch', 'task_switch_100')],
                 col='task_switch',
                 duration='duration',
                 subset="CTI==100 and cue_switch!='stay' and junk==False")
