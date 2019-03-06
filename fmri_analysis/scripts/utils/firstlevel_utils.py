@@ -126,6 +126,7 @@ class FirstLevel():
         rt_flag, beta_flag = get_flags(self.model_settings['regress_rt'],
                                        self.model_settings['beta'])
         return '%s_%s' % (rt_flag, beta_flag)
+
     
     def _get_export_dir(self, directory):
         subj, task = self.ID.split('_')
