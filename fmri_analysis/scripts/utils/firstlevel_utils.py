@@ -72,7 +72,7 @@ def save_first_level_obj(subjinfo, output_dir, save_maps=False):
     pickle.dump(subjinfo, f)
     f.close()
     if save_maps:
-        maps_dir = path.join(directory, 'maps')
+        maps_dir = path.join(directory, 'maps_%s' % flags)
         makedirs(maps_dir, exist_ok=True)
         for name, contrast in subjinfo.contrasts:
             try:
