@@ -4,9 +4,11 @@ from nistats.design_matrix import make_first_level_design_matrix
 import numpy as np
 from os import makedirs, path
 import pandas as pd
+import patsy
 import pickle
 import random
 from sklearn.preprocessing import scale
+import warnings
 from utils.events_utils import get_beta_series, parse_EVs
 from utils.utils import get_contrasts, get_flags
 
@@ -60,7 +62,7 @@ def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR,
     subjinfo.model_settings['regress_rt'] = regress_rt
     return subjinfo
 
-def save_first_level_obj(subjinfo, output_dir):
+def save_first_level_obj(subjinfo, output_dir, save_maps=False):
     subj, task = subjinfo.ID.split('_')
     directory = path.join(output_dir, subj, task)
     flags = subjinfo.get_flags()
@@ -69,7 +71,17 @@ def save_first_level_obj(subjinfo, output_dir):
     f = open(filename, 'wb')
     pickle.dump(subjinfo, f)
     f.close()
-
+    if save_maps:
+        maps_dir = path.join(directory, 'maps')
+        makedirs(maps_dir, exist_ok=True)
+        for name, contrast in subjinfo.contrasts:
+            try:
+                contrast_map = subjinfo.fit_model.compute_contrast(contrast)
+                contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
+                contrast_map.to_filename(contrast_file)
+            except patsy.PatsyError:
+                warnings.warn('Contrast: %s failed for %s, %s' % (name, subj, task))
+                
 def get_first_level_objs(subject_id, task, first_level_dir, regress_rt=False, beta=False):
     rt_flag, beta_flag = get_flags(regress_rt, beta)
     files = path.join(first_level_dir, subject_id, task, 'firstlevel*%s_%s*pkl' % (rt_flag, beta_flag))
@@ -103,7 +115,6 @@ class FirstLevel():
         # for model
         self.model_settings = {'beta': False, 'regress_rt': False}
         self.fit_model = None
-        self.maps = {}
     
     def get_subjinfo(self):
         return SubjInfo(self.func, 

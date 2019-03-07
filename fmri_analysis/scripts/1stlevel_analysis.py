@@ -152,14 +152,15 @@ for subjinfo in to_run:
                           )
     out = fmri_glm.fit(subjinfo.func, design_matrices=subjinfo.design)
     subjinfo.fit_model = out
-    
-    # run contrasts and save
+    """
+    # run contrasts
     verboseprint('** computing contrasts')
     for name, contrast in subjinfo.contrasts:
         z_map = subjinfo.fit_model.compute_contrast(contrast, output_type='z_score')
         subjinfo.maps[name+'_zscore'] = z_map
+    """
     verboseprint('** saving')
-    save_first_level_obj(subjinfo, first_level_dir)
+    save_first_level_obj(subjinfo, first_level_dir, True)
     subjinfo.export_design(first_level_dir)
     subjinfo.export_events(first_level_dir)
 

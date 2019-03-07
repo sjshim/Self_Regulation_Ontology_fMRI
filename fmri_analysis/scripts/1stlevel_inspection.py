@@ -56,5 +56,5 @@ for task in tasks:
                     n_jobs=args.n_procs)
     canica.fit(func_filenames)
     components_img = canica.components_img_
-    components_img.to_filename(path.join(first_level_dir, '%s_canica_NComp-%s.nii.gz' % (task, str(n_comps))))
+    components_img.to_filename(path.join(first_level_dir, '%s_canica_NComp-%s.nii.gz' % (task, str(n_comps)))
 
