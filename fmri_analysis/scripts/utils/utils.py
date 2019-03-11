@@ -65,20 +65,20 @@ def get_contrasts(task, regress_rt=True):
                      ('stop_failure-stop_success', 'stop_failure-stop_success')]
     elif task == 'twoByTwo':
         contrasts = [('task_switch_900', 'task_switch_900'),
-                     ('task_stay/cue_switch_900', 'task_stay/cue_switch_900'),
+                     ('task_stay_cue_switch_900', 'task_stay_cue_switch_900'),
                      ('cue_stay_900', 'cue_stay_900'),
                      ('task_switch_100', 'task_switch_100'),
-                     ('task_stay/cue_switch_100', 'task_stay/cue_switch_100'),
+                     ('task_stay_cue_switch_100', 'task_stay_cue_switch_100'),
                      ('cue_stay_100', 'cue_stay_100'),
                      ('task_switch', 'task_switch_900+task_switch_100'),
-                     ('task_stay/cue_switch', 'task_stay/cue_switch_900+task_stay/cue_switch_100'),
+                     ('task_stay_cue_switch', 'task_stay_cue_switch_900+task_stay_cue_switch_100'),
                      ('cue_stay', 'cue_stay_900+cue_stay_100'),
-                     ('task_switch_cost_900', 'task_switch_900-task_stay/cue_switch_900'),
-                     ('cue_switch_cost_900', 'task_stay/cue_switch_900-cue_stay_900'),
-                     ('task_switch_cost_100', 'task_switch_100-task_stay/cue_switch_100'),
-                     ('cue_switch_cost_100', 'task_stay/cue_switch_100-cue_stay_100'),
-                     ('task_switch_cost', '(task_switch_900+task_switch_100)-(task_stay/cue_switch_900+task_stay/cue_switch_100)'),
-                     ('cue_switch_cost', '(task_stay/cue_switch_900+task_stay/cue_switch_100)-(cue_stay_900+cue_stay_100)')]
+                     ('task_switch_cost_900', 'task_switch_900-task_stay_cue_switch_900'),
+                     ('cue_switch_cost_900', 'task_stay_cue_switch_900-cue_stay_900'),
+                     ('task_switch_cost_100', 'task_switch_100-task_stay_cue_switch_100'),
+                     ('cue_switch_cost_100', 'task_stay_cue_switch_100-cue_stay_100'),
+                     ('task_switch_cost', '(task_switch_900+task_switch_100)-(task_stay_cue_switch_900+task_stay_cue_switch_100)'),
+                     ('cue_switch_cost', '(task_stay_cue_switch_900+task_stay_cue_switch_100)-(cue_stay_900+cue_stay_100)')]
     elif task == 'WATT3':
         return []
     if regress_rt:
