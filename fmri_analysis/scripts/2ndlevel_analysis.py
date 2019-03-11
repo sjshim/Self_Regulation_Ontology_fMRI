@@ -14,7 +14,10 @@ import sys
 from nistats.second_level_model import SecondLevelModel
 from nistats.thresholding import map_threshold
 from nilearn import plotting
-from utils.firstlevel_utils import load_first_level_objs, FirstLevel
+from utils.firstlevel_utils import (get_first_level_objs, 
+                                    get_first_level_maps, 
+                                    load_first_level_objs, 
+                                    FirstLevel)
 from utils.secondlevel_utils import create_group_mask
 from utils.utils import get_contrasts, get_flags
 
@@ -34,6 +37,7 @@ parser.add_argument('--tasks', nargs="+", help="Choose from ANT, CCTHot, discoun
 parser.add_argument('--rerun', action='store_true')
 parser.add_argument('--rt', action='store_true')
 parser.add_argument('--beta', action='store_true')
+parser.add_argument('--quiet', '-q', action='store_true')
 
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
@@ -42,6 +46,16 @@ else:
     args.derivatives_dir = '/data/derivatives'
     args.tasks = ['stroop']
     args.rt=True
+
+
+# In[ ]:
+
+
+if not args.quiet:
+    def verboseprint(*args, **kwargs):
+        print(*args, **kwargs)
+else:
+    verboseprint = lambda *a, **k: None # do-nothing function
 
 
 # ### Setup
@@ -76,6 +90,7 @@ beta_series = args.beta
 mask_threshold = .95
 mask_loc = path.join(second_level_dir, 'group_mask_thresh-%s.nii.gz' % str(mask_threshold))
 if path.exists(mask_loc) == False or args.rerun:
+    verboseprint('Making group mask')
     group_mask = create_group_mask(fmriprep_dir, mask_threshold)
     makedirs(path.dirname(mask_loc), exist_ok=True)
     group_mask.to_filename(mask_loc)
@@ -88,30 +103,65 @@ if path.exists(mask_loc) == False or args.rerun:
 
 rt_flag, beta_flag = get_flags(regress_rt, beta_series)
 for task in tasks:
+    verboseprint('Running 2nd level for %s' % task)
     # load first level models
     first_levels = load_first_level_objs(task, first_level_dir, regress_rt=regress_rt)
     if len(first_levels) == 0:
         continue
     first_level_models = [subj.fit_model for subj in first_levels]
-    
+    N = str(len(first_level_models)).zfill(2)
+
     # simple design for one sample test
     design_matrix = pd.DataFrame([1] * len(first_level_models), columns=['intercept'])
     
     # run second level
-    second_level_model = SecondLevelModel(mask=mask_loc, smoothing_fwhm=4.4).fit(
-        first_level_models, design_matrix=design_matrix)
+    verboseprint('*** Running model. %s first level files found' % N)
+    second_level_model = SecondLevelModel(mask=mask_loc, smoothing_fwhm=6).fit(
+        first_level_models[:10], design_matrix=design_matrix)
     makedirs(path.join(second_level_dir, task), exist_ok=True)
-    f = open(path.join(second_level_dir, task, 'secondlevel_RT-%s_beta-%s.pkl' % (rt_flag, beta_flag)), 'wb')
+    f = open(path.join(second_level_dir, task, 'secondlevel_%s_%s.pkl' % (rt_flag, beta_flag)), 'wb')
     pickle.dump(second_level_model, f)
     f.close()
     
     # create contrast maps
-    N = str(len(first_level_models)).zfill(2)
+    verboseprint('*** Creating maps')
     task_contrasts = get_contrasts(task, regress_rt)
-    maps_dir = path.join(second_level_dir, task, 'secondlevel_RT-%s_beta-%s_N-%s_maps' % (rt_flag, beta_flag, N))
+    maps_dir = path.join(second_level_dir, task, 'secondlevel_%s_%s_N-%s_maps' % (rt_flag, beta_flag, N))
     makedirs(maps_dir, exist_ok=True)
     for name, contrast in task_contrasts:
+        verboseprint('****** %s' % name)
         contrast_map = second_level_model.compute_contrast(first_level_contrast=contrast)
+        contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
+        contrast_map.to_filename(contrast_file)
+
+
+# ### If testing where the directories are no longer the same (first instance, on PC instead of sherlock), you can't use the first level files
+
+# In[ ]:
+
+
+rt_flag, beta_flag = get_flags(regress_rt, beta_series)
+for task in tasks:
+    verboseprint('Running 2nd level for %s' % task)
+    # load first level models
+    # create contrast maps
+    verboseprint('*** Creating maps')
+    first_level_files = get_first_level_objs('*', task, first_level_dir, regress_rt, beta_series)
+    N = str(len(first_level_files)).zfill(2)
+    task_contrasts = get_contrasts(task, regress_rt)
+    maps_dir = path.join(second_level_dir, task, 'secondlevel-%s_%s_N-%s_maps' % (rt_flag, beta_flag, N))
+    makedirs(maps_dir, exist_ok=True)
+    for name, contrast in task_contrasts:
+        second_level_model = SecondLevelModel(mask=mask_loc, smoothing_fwhm=6)
+        maps = get_first_level_maps('*', task, first_level_dir, name, regress_rt, beta_series)
+        verboseprint('****** %s, %s files found' % (name, N))
+        if len(maps) <= 1:
+            verboseprint('****** No Maps')
+            continue
+        design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept'])
+        second_level_model.fit(maps, design_matrix=design_matrix)
+        contrast_map = second_level_model.compute_contrast()
+        # save
         contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
         contrast_map.to_filename(contrast_file)
 

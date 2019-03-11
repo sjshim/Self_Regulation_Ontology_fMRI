@@ -87,9 +87,9 @@ def get_first_level_objs(subject_id, task, first_level_dir, regress_rt=False, be
     files = path.join(first_level_dir, subject_id, task, 'firstlevel*%s_%s*pkl' % (rt_flag, beta_flag))
     return glob(files)    
 
-def load_first_level_objs(task, output_dir, regress_rt=False, beta=False):
+def load_first_level_objs(task, first_level_dir, regress_rt=False, beta=False):
     subjinfos = []
-    files = get_first_level_objs(task, output_dir, 
+    files = get_first_level_objs('*', task, first_level_dir, 
                                  regress_rt=regress_rt, beta=beta)
     for filey in files:
         f = open(filey, 'rb')
@@ -97,7 +97,10 @@ def load_first_level_objs(task, output_dir, regress_rt=False, beta=False):
         f.close()
     return subjinfos
 
-
+def get_first_level_maps(subject_id, task, first_level_dir, contrast, regress_rt=False, beta=False):
+    rt_flag, beta_flag = get_flags(regress_rt, beta)
+    files = path.join(first_level_dir, subject_id, task, 'maps_%s_%s/contrast-%s.nii.gz' % (rt_flag, beta_flag, contrast))
+    return glob(files)    
 
 # ********************************************************
 # helper classes 

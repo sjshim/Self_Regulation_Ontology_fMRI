@@ -24,6 +24,8 @@ def get_contrasts(task, regress_rt=True):
                      ('double', 'double'),
                     ('orienting_network', 'spatial-double'),
                     ('conflict_network', 'incongruent-congruent')]
+    elif task == 'CCTHot':
+        return []
     elif task == 'discountFix':
         contrasts = [('subjective_value', 'subjective_value'),
                      ('Larger-Later', 'larger_later'),
@@ -53,7 +55,6 @@ def get_contrasts(task, regress_rt=True):
         contrasts = [('congruent', 'congruent'),
                      ('incongruent', 'congruent'),
                     ('stroop', 'incongruent-congruent')]
-    
     elif task == 'stopSignal':
         contrasts = [('go', 'go'),
                      ('stop_success', 'stop_success'),
@@ -78,7 +79,8 @@ def get_contrasts(task, regress_rt=True):
                      ('cue_switch_cost_100', 'task_stay/cue_switch_100-cue_stay_100'),
                      ('task_switch_cost', '(task_switch_900+task_switch_100)-(task_stay/cue_switch_900+task_stay/cue_switch_100)'),
                      ('cue_switch_cost', '(task_stay/cue_switch_900+task_stay/cue_switch_100)-(cue_stay_900+cue_stay_100)')]
-        
+    elif task == 'WATT3':
+        return []
     if regress_rt:
         contrasts.append(('RT','response_time'))
     return contrasts
