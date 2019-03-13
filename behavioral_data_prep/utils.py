@@ -55,14 +55,31 @@ def get_processed_files(subj):
         processed_files[exp_id] = df
     return processed_files
 
-def get_items_order():
+def get_median_rts(task_dfs):
+    task_50th_rts = {task: df.rt[df.rt>0].quantile(.5) for task,df in task_dfs.items()}
+    # special cases handled below
+    # ** twoByTwo **
+    median_cue_length = task_dfs['twoByTwo'].CTI.quantile(.5)
+    task_50th_rts['twoBytwo'] += median_cue_length
+    
+    # ** WATT3 **
+    WATT_df = task_dfs['ward_and_allport'].query('exp_stage == "test"')
+    # get the first move times (plan times)
+    plan_times = WATT_df.query('trial_id == "to_hand" and num_moves_made==1').rt
+    # get other move times
+    move_times = WATT_df.query('not (trial_id == "to_hand" and num_moves_made==1)')
+    # drop feedback
+    move_times = move_times.query('trial_id != "feedback"').rt
+    task_50th_rts['ward_and_allport'] = {'planning_time': plan_times.quantile(.5),
+                                         'move_time': move_times.quantile(.5)}
+    
+def get_survey_items_order():
     
     """Function which returns dictionary with ordering id (Q01-Q40) assigned to each question. 
     This dictionary can be further used to map all quesion to their unique (template) order, therefore, to obtain the same order of beta vales for each person
     Author: Karolina Finc
     """
     
-
     grit_items = [
         'New ideas and projects sometimes distract me from previous ones.',
         'Setbacks don\'t discourage me.',
@@ -102,7 +119,6 @@ def get_items_order():
         'There are only limited possibilities in my future.',
         'As I get older, I begin to experience time as limited.'
      ]
-
 
     upps_items = [
         "Sometimes when I feel bad, I can't seem to stop what I am doing even though it is making me feel worse.",
