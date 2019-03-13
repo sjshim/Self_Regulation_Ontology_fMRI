@@ -1,4 +1,5 @@
 import argparse
+from collections import defaultdict
 from expanalysis.experiments.processing import clean_data
 from glob import glob
 import os
@@ -28,15 +29,8 @@ if clear:
 
 # set up map between file names and task names
 name_map = get_name_map()
-# set up dictionary of dataframes for each task
-tasks = ['attention_network_task','columbia_card_task_fmri',
-         'discount_fixed', 'dot_pattern_expectancy', 
-         'motor_selective_stop_signal', 'stop_signal', 'stroop', 'survey_medley',
-         'twobytwo', 'ward_and_allport']
-task_dfs = {}
-for task in tasks:
-    task_dfs[task] = pd.DataFrame()
-        
+
+task_dfs = defaultdict(pd.DataFrame)    
 # clean data
 if verbose: print("Processing Tasks")
 for subj_file in glob('../behavioral_data/raw/*/*'):
@@ -57,8 +51,11 @@ for subj_file in glob('../behavioral_data/raw/*/*'):
         df.time_elapsed-=start_time
         # correct start time for problematic scans
         df.time_elapsed-=get_timing_correction(filey)
-        # add exp_id to every row
-        exp_id = df.iloc[-2].exp_id
+        # get exp_id
+        if 'exp_id' in df.columns:
+            exp_id = df.iloc[-2].exp_id
+        else:
+            exp_id = '_'.join(os.path.basename(subj_file).split('_')[1:]).rstrip('.csv')
         # make sure the file name matches the actual experiment
         assert name_map[exp_id] in subj_file, \
             print('file %s does not much exp_id: %s' % (subj_file, exp_id))
