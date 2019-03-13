@@ -15,8 +15,8 @@ def get_ev_vars(output_dict, events_df, condition_spec, col=None,
     Args:
         events_df: events file to parse
         condition_spec: string specfying condition name, or list of tuples of the fomr
-            (subset_key, name) where subset_key groups the rows in col. If a list,
-            col must be specified
+            (subset_key, name) where subset_key are one or more groups in col. If a list,
+            col must be specified. 
         col: the column to be subset by the keys in conditions
         amplitude: either an int or string. If int, sets a constant amplitude. If
             string, amplitude is set to that column
@@ -94,18 +94,15 @@ def get_ANT_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
+    events_df.trial_type = [c+'_'+f for c,f in 
+                            zip(events_df.cue, events_df.flanker_type)]
     # cue type
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('spatial', 'spatial'),
-                                  ('double', 'double')],
+                condition_spec=[('spatial_congruent', 'spatial_congruent'),
+                                ('spatial_incongruent', 'spatial_incongruent'),
+                                ('double_congruent', 'double_congruent'),
+                                ('double_incongruent', 'double_incongruent')],
                 col='cue',
-                duration='duration',
-                subset='junk==False')
-    # conflict type
-    get_ev_vars(output_dict, events_df,
-                condition_spec = [('congruent', 'congruent'),
-                                  ('incongruent', 'incongruent')],
-                col='flanker_type',
                 duration='duration',
                 subset='junk==False')
     # nuisance regressors
@@ -183,9 +180,9 @@ def get_discountFix_EVs(events_df, regress_rt=True):
                 duration='duration',
                 subset='junk == False')
     get_ev_vars(output_dict, events_df, 
-                condition_spec='subjective_value', 
+                condition_spec='subjective_choice_value', 
                 duration='duration', 
-                amplitude='subjective_value',
+                amplitude='subjective_choice_value',
                 subset='junk==False')
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 

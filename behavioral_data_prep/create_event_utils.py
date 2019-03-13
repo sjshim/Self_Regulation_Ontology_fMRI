@@ -1,14 +1,14 @@
 import numpy as np
 import pandas as pd
 from expanalysis.experiments.jspsych_processing import calc_discount_fixed_DV
-from utils import get_items_order
+from utils import get_survey_items_order
 # *********************************
 # helper functions
 # *********************************
 def get_drop_columns(df, columns=None, use_default=True):
     default_cols = ['block_duration', 'correct_response', 'exp_stage', 
                     'feedback_duration', 'possible_responses', 
-                   'rt', 'stim_duration', 'text', 'time_elapsed',
+                    'stim_duration', 'text', 'time_elapsed',
                    'timing_post_trial', 'trial_num']
     drop_columns = []
     if columns is not None:
@@ -48,6 +48,7 @@ def get_trial_times(df):
 def normalize_rt(events_df):
     events_df.rt.replace({-1: np.nan}, inplace=True)
     events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
+    events_df.rename(coluns = {'rt', 'original_rt'}, inplace=True)
     
 def create_events(df, exp_id, duration=None):
     events_df = None
@@ -149,7 +150,8 @@ def create_discountFix_event(df, duration=None):
     #subjective value
     worker_id = df.worker_id.unique()[0]
     discount_rate = calc_discount_fixed_DV(df)[0].get(worker_id).get('hyp_discount_rate_glm').get('value')
-    events_df.insert(0, 'subjective_value', events_df.large_amount/(1+discount_rate*events_df.later_delay))    
+    larger_value =  events_df.large_amount/(1+discount_rate*events_df.later_delay)
+    events_df.insert(0, 'subjective_choice_value', [larger_value[i] if events_df['trial_type'][i]=='larger_later' else 20 for i in events_df.index])   
     #inverse_delay
     events_df.insert(0, 'inverse_delay', 1/events_df.later_delay)
     # drop unnecessary columns
@@ -308,7 +310,7 @@ def create_survey_event(df, duration=None):
     else:
         events_df.loc[:, 'junk'] = junk
     # add signifiers for each question
-    events_df['trial_type'] = df['item_text'].map(get_items_order())
+    events_df['trial_type'] = df['item_text'].map(get_survey_items_order())
     # add duration and response regressor
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
@@ -334,12 +336,14 @@ def create_twobytwo_event(df, duration=None):
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
+    # add CTI to RT
+    df.loc[:, 'rt'] = [rt+CTI if rt > -1 else -1 for rt,CTI in zip(df.rt, df.CTI)]
     # normalize RT
     normalize_rt(events_df)
     if duration is None:
-        events_df.insert(0,'duration',events_df.stim_duration+df.CTI)
+        events_df.insert(0,'duration',events_df.stim_duration)
     else:
-        events_df.insert(0,'duration',duration+df.CTI)
+        events_df.insert(0,'duration',duration)
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df)-df.CTI)

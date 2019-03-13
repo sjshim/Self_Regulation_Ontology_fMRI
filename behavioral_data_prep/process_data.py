@@ -6,7 +6,7 @@ import os
 import pandas as pd
 from create_event_utils import create_events
 # some DVs are defined in utils if they deviate from normal expanalysis
-from utils import get_name_map, get_timing_correction
+from utils import get_name_map, get_timing_correction, get_median_rts
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--clear', action='store_true')
@@ -88,17 +88,8 @@ for task,df in task_dfs.items():
     df.to_csv('../behavioral_data/processed/group_data/%s.csv' % task, index=False)
     
 # get 90th percentile reaction time for events files:
-task_50th_rts = {task: df.rt[df.rt>0].quantile(.5) for task,df in task_dfs.items()}
-# ward and allport requires more complicated durations
-test_df = task_dfs['ward_and_allport'].query('exp_stage == "test"')
-# get the first move times (plan times)
-plan_times = test_df.query('trial_id == "to_hand" and num_moves_made==1').rt
-# get other move times
-move_times = test_df.query('not (trial_id == "to_hand" and num_moves_made==1)')
-# drop feedback
-move_times = move_times.query('trial_id != "feedback"').rt
-task_50th_rts['ward_and_allport'] = {'planning_time': plan_times.quantile(.5),
-                                     'move_time': move_times.quantile(.5)}
+task_50th_rts = get_median_rts(task_dfs)
+
 
 if verbose: print("Creating Event Files")
 # calculate event files
