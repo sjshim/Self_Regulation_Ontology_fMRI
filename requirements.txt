@@ -1,0 +1,3 @@
+git+https://github.com/IanEisenberg/expfactory-analysis
+nistats
+seaborn
