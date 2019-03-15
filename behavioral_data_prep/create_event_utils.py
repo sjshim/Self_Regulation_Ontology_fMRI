@@ -45,10 +45,10 @@ def get_trial_times(df):
     trial_time = df.time_elapsed - df.block_duration
     return trial_time
 
-def normalize_rt(events_df):
+def process_rt(events_df):
     events_df.rt.replace({-1: np.nan}, inplace=True)
-    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
-    events_df.rename(coluns = {'rt', 'original_rt'}, inplace=True)
+    events_df.rename(columns={'rt': 'response_time'}, inplace=True)
+
     
 def create_events(df, exp_id, duration=None):
     events_df = None
@@ -84,7 +84,7 @@ def create_ANT_event(df, duration=None):
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
     # normalize RT
-    normalize_rt(events_df)
+    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -109,7 +109,7 @@ def create_CCT_event(df, duration=None):
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
     # normalize RT
-    normalize_rt(events_df)
+    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -135,7 +135,7 @@ def create_discountFix_event(df, duration=None):
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.choice
     # normalize RT
-    normalize_rt(events_df)
+    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -166,7 +166,7 @@ def create_DPX_event(df, duration=None):
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.condition
     # normalize RT
-    normalize_rt(events_df)
+    process_rt(events_df)
     # Cue-to-Probe time
     CPI=1000
     if duration is None:
@@ -216,7 +216,7 @@ def create_motorSelectiveStop_event(df, duration=None):
 
     events_df.loc[:,'trial_type'] = condition
     # normalize RT
-    normalize_rt(events_df)
+    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -251,7 +251,7 @@ def create_stopSignal_event(df, duration=None):
     events_df.loc[SS_fail_trials,'condition'] = 'stop_failure'
     events_df.loc[:,'trial_type'] = events_df.condition
     # normalize RT
-    normalize_rt(events_df)
+    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -273,7 +273,7 @@ def create_stroop_event(df, duration=None):
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.condition
     # normalize RT
-    normalize_rt(events_df)
+    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -317,7 +317,7 @@ def create_survey_event(df, duration=None):
     else:
         events_df.insert(0,'duration',duration)
     # normalize RT
-    normalize_rt(events_df)
+    process_rt(events_df)
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
@@ -339,7 +339,7 @@ def create_twobytwo_event(df, duration=None):
     # add CTI to RT
     df.loc[:, 'rt'] = [rt+CTI if rt > -1 else -1 for rt,CTI in zip(df.rt, df.CTI)]
     # normalize RT
-    normalize_rt(events_df)
+    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -379,22 +379,14 @@ def create_WATT_event(df, duration):
     events_df.insert(1,'planning',0)
     events_df.loc[planning_moves,'planning'] = 1
     
+    process_rt(events_df)
     # add durations for planning
     events_df.loc[planning_moves,'duration'] = duration['planning_time']
-    # add mean centered rt
-    planning_mean = events_df.loc[planning_moves,'rt'].mean()
-    events_df.insert(0,'response_time',events_df.rt)
-    events_df.loc[planning_moves,'response_time']-=planning_mean
-    
     # add durations for planning
     events_df.loc[other_moves,'duration'] = duration['move_time']
-    # add mean centered rt
-    movement_mean = events_df.loc[other_moves,'rt'].mean()
-    events_df.loc[other_moves,'response_time']-=movement_mean
     
     # add durations for feedback
     events_df.loc[feedback, 'duration'] = events_df.loc[feedback, 'block_duration']
-    
     
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration

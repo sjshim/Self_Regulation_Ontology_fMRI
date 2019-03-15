@@ -5,6 +5,14 @@ import numpy as np
 import pandas as pd
 
 # ********************************************************
+# helper_functions
+# ********************************************************  
+def normalize_rt(events_df, groupby=None):
+    events_df.insert(0,'response_time',events_df.rt-events_df.rt[events_df.rt>0].mean())
+    events_df.rename(coluns = {'rt', 'original_rt'}, inplace=True)
+    
+    
+# ********************************************************
 # 1st level analysis utility functions
 # ********************************************************        
 # functions to extract fmri events        
