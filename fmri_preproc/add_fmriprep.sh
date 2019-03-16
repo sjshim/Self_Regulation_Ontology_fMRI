@@ -17,7 +17,7 @@ do
     else
         check_fmriprep=0
         if [[ -f ${out_path}/fmriprep/freesurfer/sub-${sid}/mri/aseg.mgz ]]; then
-            for session in 1 2 3
+            for session in 1 2 3 4
             do
                 # if a session exists in data, check that the directory exists in fmriprep
                 if [[  -d ${data_path}/sub-${sid}/ses-${session} ]]; then
