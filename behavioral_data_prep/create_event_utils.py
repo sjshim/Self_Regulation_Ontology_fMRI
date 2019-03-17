@@ -6,7 +6,7 @@ from utils import get_survey_items_order
 # helper functions
 # *********************************
 def get_drop_columns(df, columns=None, use_default=True):
-    default_cols = ['block_duration', 'correct_response', 'exp_stage', 
+    default_cols = ['correct_response', 'exp_stage', 
                     'feedback_duration', 'possible_responses', 
                     'stim_duration', 'text', 'time_elapsed',
                    'timing_post_trial', 'trial_num']
@@ -64,7 +64,10 @@ def create_events(df, exp_id, duration=None):
               'ward_and_allport': create_WATT_event}
     fun = lookup.get(exp_id)
     if fun is not None:
-        events_df = fun(df, duration=duration)
+        if exp_id != 'columbia_card_task_fmri':
+            events_df = fun(df, duration=duration)
+        else:
+            events_df = fun(df)
     return events_df
 
 def row_match(df,row_list):
@@ -83,8 +86,7 @@ def create_ANT_event(df, duration=None):
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
-    # normalize RT
-    process_rt(events_df)
+
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -92,13 +94,15 @@ def create_ANT_event(df, duration=None):
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
+    # process RT
+    process_rt(events_df)
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset','duration']]/=1000
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
 
-def create_CCT_event(df, duration=None):
+def create_CCT_event(df):
     columns_to_drop = get_drop_columns(df, columns = ['cards_left', 
                                                       'clicked_on_loss_card',
                                                       'round_points', 
@@ -108,20 +112,24 @@ def create_CCT_event(df, duration=None):
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
-    # normalize RT
-    process_rt(events_df)
-    if duration is None:
-        events_df.insert(0,'duration',events_df.stim_duration)
-    else:
-        events_df.insert(0,'duration',duration)
+    events_df.insert(0, 'duration', events_df.block_duration)
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
+    # change onset of ITI columns to reflect the fact that the stimulus changes 750 ms after blcok starts
+    ITI_trials = events_df.query('trial_id == "ITI"').index
+    events_df.loc[ITI_trials, 'onset'] += 750
+    events_df.loc[ITI_trials, 'duration'] = events_df.loc[ITI_trials, 'stim_duration']-750
+    # add motor onsets
+    events_df.insert(0,'movement_onset',get_movement_times(df))
+    # process RT
+    process_rt(events_df)
     # convert milliseconds to seconds
-    events_df.loc[:,['response_time','onset','duration']]/=1000
+    events_df.loc[:,['response_time','onset','block_duration',
+                     'duration','movement_onset']]/=1000
     # add feedback columns
     events_df.loc[:,'feedback'] = events_df.clicked_on_loss_card \
-                                    .apply(lambda x: not x)
+                                    .apply(lambda x: int(not x))
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
@@ -134,8 +142,6 @@ def create_discountFix_event(df, duration=None):
    
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.choice
-    # normalize RT
-    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -143,6 +149,8 @@ def create_discountFix_event(df, duration=None):
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
+    # process RT
+    process_rt(events_df)
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset','duration']]/=1000
 
@@ -165,8 +173,6 @@ def create_DPX_event(df, duration=None):
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.condition
-    # normalize RT
-    process_rt(events_df)
     # Cue-to-Probe time
     CPI=1000
     if duration is None:
@@ -179,6 +185,8 @@ def create_DPX_event(df, duration=None):
     events_df.insert(0,'onset',onsets)
     # add motor onsets
     events_df.insert(0,'movement_onset',get_movement_times(df))
+    # process RT
+    process_rt(events_df)
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset',
                      'duration','movement_onset']]/=1000
@@ -215,8 +223,6 @@ def create_motorSelectiveStop_event(df, duration=None):
                         [noncrit_key,'go',False])] = 'noncrit_nosignal'
 
     events_df.loc[:,'trial_type'] = condition
-    # normalize RT
-    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -224,6 +230,8 @@ def create_motorSelectiveStop_event(df, duration=None):
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
+    # process RT
+    process_rt(events_df)
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset','duration']]/=1000
     # drop unnecessary columns
@@ -250,8 +258,6 @@ def create_stopSignal_event(df, duration=None):
     events_df.loc[SS_success_trials,'condition'] = 'stop_success'
     events_df.loc[SS_fail_trials,'condition'] = 'stop_failure'
     events_df.loc[:,'trial_type'] = events_df.condition
-    # normalize RT
-    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -259,6 +265,8 @@ def create_stopSignal_event(df, duration=None):
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
+    # process RT
+    process_rt(events_df)
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset','duration']]/=1000
     # drop unnecessary columns
@@ -272,8 +280,6 @@ def create_stroop_event(df, duration=None):
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.condition
-    # normalize RT
-    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -281,6 +287,8 @@ def create_stroop_event(df, duration=None):
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
+    # process RT
+    process_rt(events_df)
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset','duration']]/=1000
     # drop unnecessary columns
@@ -294,7 +302,6 @@ def create_survey_event(df, duration=None):
                                                   'key_press',
                                                   'options',
                                                   'response',
-                                                  'rt',
                                                   'stim_duration',
                                                   'text',
                                                   'time_elapsed',
@@ -314,15 +321,15 @@ def create_survey_event(df, duration=None):
     # add duration and response regressor
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
-    else:
+    else:#
         events_df.insert(0,'duration',duration)
-    # normalize RT
-    process_rt(events_df)
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # add motor onsets
     events_df.insert(0,'movement_onset',get_movement_times(df))
+    # process RT
+    process_rt(events_df)
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset','duration',
                      'movement_onset']]/=1000
@@ -338,8 +345,6 @@ def create_twobytwo_event(df, duration=None):
     # reorganize and rename columns in line with BIDs specifications
     # add CTI to RT
     df.loc[:, 'rt'] = [rt+CTI if rt > -1 else -1 for rt,CTI in zip(df.rt, df.CTI)]
-    # normalize RT
-    process_rt(events_df)
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -349,6 +354,8 @@ def create_twobytwo_event(df, duration=None):
     events_df.insert(0,'onset',get_trial_times(df)-df.CTI)
     # add motor onsets
     events_df.insert(0,'movement_onset',get_movement_times(df))
+    # process RT
+    process_rt(events_df)
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset',
                      'duration','movement_onset']]/=1000
@@ -378,8 +385,7 @@ def create_WATT_event(df, duration):
     # add planning indicator
     events_df.insert(1,'planning',0)
     events_df.loc[planning_moves,'planning'] = 1
-    
-    process_rt(events_df)
+    # ** Durations **
     # add durations for planning
     events_df.loc[planning_moves,'duration'] = duration['planning_time']
     # add durations for planning
@@ -388,11 +394,14 @@ def create_WATT_event(df, duration):
     # add durations for feedback
     events_df.loc[feedback, 'duration'] = events_df.loc[feedback, 'block_duration']
     
+    # ** Onsets **
     # time elapsed is at the end of the trial, so have to remove the block 
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # add motor onsets
     events_df.insert(0,'movement_onset',get_movement_times(df))
+    # process RT
+    process_rt(events_df)
     # convert milliseconds to seconds
     events_df.loc[:,['onset','duration',
                      'response_time','movement_onset']]/=1000

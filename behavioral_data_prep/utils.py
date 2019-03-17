@@ -59,8 +59,8 @@ def get_median_rts(task_dfs):
     task_50th_rts = {task: df.rt[df.rt>0].quantile(.5) for task,df in task_dfs.items()}
     # special cases handled below
     # ** twoByTwo **
-    median_cue_length = task_dfs['twoByTwo'].CTI.quantile(.5)
-    task_50th_rts['twoBytwo'] += median_cue_length
+    median_cue_length = task_dfs['twobytwo'].CTI.quantile(.5)
+    task_50th_rts['twobytwo'] += median_cue_length
     
     # ** WATT3 **
     WATT_df = task_dfs['ward_and_allport'].query('exp_stage == "test"')
@@ -72,7 +72,8 @@ def get_median_rts(task_dfs):
     move_times = move_times.query('trial_id != "feedback"').rt
     task_50th_rts['ward_and_allport'] = {'planning_time': plan_times.quantile(.5),
                                          'move_time': move_times.quantile(.5)}
-    
+    return task_50th_rts
+
 def get_survey_items_order():
     
     """Function which returns dictionary with ordering id (Q01-Q40) assigned to each question. 
