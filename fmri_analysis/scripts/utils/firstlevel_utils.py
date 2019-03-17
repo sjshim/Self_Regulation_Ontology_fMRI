@@ -38,10 +38,11 @@ def create_design(events, confounds, task, TR, beta=True, regress_rt=False):
                                drift_model='cosine',
                                add_regs=confounds.values,
                                add_reg_names=list(confounds.columns))
-    design = design.apply(scale)
     # add temporal derivative to task columns
     task_cols = [i for i in paradigm.trial_type.unique() if i != 'junk']
     temp_deriv(design, task_cols)
+    # scale
+    design = design.apply(scale)
     return design
 
 def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR, 
@@ -280,5 +281,5 @@ def get_paradigm(EV_dict):
                'onset': onsets,
                'modulation': amplitudes,
                'duration': durations} 
-    paradigm = pd.DataFrame(paradigm).sort_values(by='onset').reset_index()
+    paradigm = pd.DataFrame(paradigm).sort_values(by='onset').reset_index(drop=True)
     return paradigm
