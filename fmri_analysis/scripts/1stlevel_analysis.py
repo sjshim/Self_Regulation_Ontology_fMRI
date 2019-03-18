@@ -18,6 +18,8 @@ import pickle
 import sys
 import nibabel as nib
 from nistats.first_level_model import FirstLevelModel
+import warnings
+from utils.firstlevel_plot_utils import plot_design
 from utils.firstlevel_utils import get_first_level_objs, make_first_level_obj, save_first_level_obj
 
 
@@ -46,14 +48,14 @@ if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
 else:
     args = parser.parse_args([])
-    args.data_dir = '/data'
-    args.derivatives_dir = '/data/derivatives'
-    args.tasks = ['ANT','discountFix', 'DPX', 
+    args.tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 
                   'motorSelectiveStop', 'stopSignal', 
-                  'stroop', 'twoByTwo']
+                  'stroop', 'twoByTwo', 'WATT3']
     args.subject_ids = ['s358']
     args.rt=True
     args.n_procs=1
+    args.derivatives_dir = '/mnt/OAK/data/uh2/BIDS_data/derivatives/'
+    args.data_dir = '/mnt/OAK/data/uh2/BIDS_data/'
 
 
 # In[ ]:
@@ -124,10 +126,14 @@ verboseprint('*'*79)
 to_run = []
 for subject_id in subjects:
     for task in tasks:
-        files = get_first_level_objs(subject_id, task, first_level_dir, regress_rt=True)
+        verboseprint('Setting up %s, %s' % (subject_id, task))
+        files = get_first_level_objs(subject_id, task, first_level_dir, regress_rt=regress_rt)
         if len(files) == 0 or args.overwrite:
-            subjinfo = make_first_level_obj(subject_id, task, fmriprep_dir, 
-                                            data_dir, TR, regress_rt=regress_rt)
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore",category=DeprecationWarning)
+                warnings.filterwarnings("ignore",category=UserWarning)
+                subjinfo = make_first_level_obj(subject_id, task, fmriprep_dir, 
+                                                data_dir, TR, regress_rt=regress_rt)
             if subjinfo is not None:
                 to_run.append(subjinfo)
 
