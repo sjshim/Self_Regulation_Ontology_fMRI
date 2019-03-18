@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=2ndlevel
-#SBATCH --output=.out/2ndlevel.out
-#SBATCH --error=.err/2ndlevel.err
+#SBATCH --job-name={task}-2ndlevel
+#SBATCH --output=.out/{task}-2ndlevel.out
+#SBATCH --error=.err/{task}-2ndlevel.err
 #SBATCH --time=20:00:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=ieisenbe@stanford.edu
@@ -20,8 +20,8 @@ scripts_loc=../scripts
 scratch_loc=/scratch/users/ieisenbe
 # run singularity, scratch is automatically mounted
 singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks stroop stopSignal --rt
+    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} stopSignal --rt
 
 singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks stroop stopSignal
+    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} stopSignal
 
