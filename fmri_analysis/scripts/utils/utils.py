@@ -27,7 +27,7 @@ def get_contrasts(task, regress_rt=True):
                     ('congruent', 'spatial_congruent + double_congruent'),
                     ('incongruent', 'spatial_incongruent + double_incongruent'),
                     ('orienting_network', '(spatial_congruent + spatial_incongruent) - (double_congruent+double_incongruent)'),
-                    ('conflict_network', '(spatial_incongruent+double_incongrunet)-(spatial_congruent-double_congruent)')]
+                    ('conflict_network', '(spatial_incongruent + double_incongruent) -(spatial_congruent - double_congruent)')]
     elif task == 'CCTHot':
         contrasts = [('task', 'task'),
                     ('EV', 'EV'),
