@@ -32,10 +32,13 @@ def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
         maps[name] = image.load_img(f)
     return maps
 
-def randomise(maps, output_loc, mask_loc, n_perms=500):
+def randomise(maps, output_loc, mask_loc, n_perms=500, fwhm=6):
     contrast_name = maps[0][maps[0].index('contrast')+9:].rstrip('.nii.gz')
     # create 4d image
     concat_images = image.concat_imgs(maps)
+    # smooth_concat_images
+    concat_images = image.smooth_img(concat_images, fwhm)
+    # save concat images temporarily
     concat_loc = path.join(output_loc, 'tmp_concat.nii.gz')
     concat_images.to_filename(concat_loc)
     # run randomise
