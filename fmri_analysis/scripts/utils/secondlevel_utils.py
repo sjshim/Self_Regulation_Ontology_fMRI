@@ -1,6 +1,9 @@
 from glob import glob
 from nilearn import image
-from os import path
+from nipype.caching import Memory
+from nipype.interfaces import fsl
+from os import path, remove
+import shutil
 from utils.utils import get_flags
 
 def create_group_mask(fmriprep_dir, threshold=.8, verbose=True):
@@ -13,8 +16,6 @@ def create_group_mask(fmriprep_dir, threshold=.8, verbose=True):
     return group_mask
     if verbose:
         print('Finished creating group mask')
-
-
 
 def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
     rt_flag, beta_flag = get_flags(regress_rt, beta)
@@ -30,3 +31,31 @@ def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
         name = f.split(path.sep)[-1][9:].rstrip('.nii.gz')
         maps[name] = image.load_img(f)
     return maps
+
+def randomise(maps, output_loc, mask_loc, n_perms=500):
+    contrast_name = maps[0][maps[0].index('contrast')+9:].rstrip('.nii.gz')
+    # create 4d image
+    concat_images = image.concat_imgs(maps)
+    concat_loc = path.join(output_loc, 'tmp_concat.nii.gz')
+    concat_images.to_filename(concat_loc)
+    # run randomise
+    mem = Memory(base_dir=output_loc)
+    randomise = mem.cache(fsl.Randomise)
+    randomise_results = randomise(
+        in_file=concat_loc,
+        mask=mask_loc,
+        one_sample_group_mean=True,
+        tfce=True,
+        vox_p_values=True,
+        var_smooth=10,
+        num_perm=n_perms)
+    # save results
+    tfile_loc = path.join(output_loc, "contrast-%s_raw_tfile.nii.gz" % contrast_name)
+    tfile_corrected_loc = path.join(output_loc, "contrast-%s_corrected_tfile.nii.gz" % contrast_name)
+    raw_tfile = randomise_results.outputs.tstat_files[0]
+    corrected_tfile = randomise_results.outputs.t_corrected_p_files[0]
+    shutil.move(raw_tfile, tfile_loc)
+    shutil.move(corrected_tfile, tfile_corrected_loc)
+    # remove temporary files
+    remove(concat_loc)
+    shutil.rmtree(path.join(output_loc, 'nipype_mem'))
