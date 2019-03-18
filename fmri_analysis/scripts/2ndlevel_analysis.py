@@ -128,13 +128,16 @@ for task in tasks:
         # save
         contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
         contrast_map.to_filename(contrast_file)
+         # write metadata
+        with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
+            f.write('Contrast-%s: %s maps\n' % (contrast, N))
         # save corrected map
         if n_perms > 0:
             verboseprint('*** Running Randomise')
             randomise(maps, maps_dir, mask_loc, n_perms=n_perms)
-        # write metadata
-        with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
-            f.write('Contrast-%s: %s maps\n' % (contrast, N))
+            # write metadata
+            with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
+                f.write('Contrast-%s: Randomise run with %s permutations\n' % (contrast, str(n_perms)))
     verboseprint('Done with %s' % task)
 
 
