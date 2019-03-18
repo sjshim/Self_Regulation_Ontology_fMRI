@@ -1,0 +1,26 @@
+#!/bin/bash
+#SBATCH --job-name=Visualization
+#SBATCH --output=.out/Visualization.out
+#SBATCH --error=.err/Visualization.err
+#SBATCH --time=20:00:00
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=ieisenbe@stanford.edu
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH -p russpold
+#module load system
+# set up paths
+# scratch is automatically mounted
+img=`sed '2q;d' singularity_config.txt`
+base_singularity=`sed '4q;d' singularity_config.txt`
+singularity_loc=${base_singularity}/$img
+derivatives_loc=`sed '6q;d' singularity_config.txt`
+data_loc=`sed '8q;d' singularity_config.txt`
+scripts_loc=../scripts
+scratch_loc=/scratch/users/ieisenbe
+# run singularity, scratch is automatically mounted
+singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+    python /scripts/Visualizations.py -derivatives_dir ${derivatives_loc} --skip_first --save
+
+singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+    python /scripts/Visualizations.py -derivatives_dir ${derivatives_loc} --skip_second --save
