@@ -18,19 +18,24 @@ def get_flags(regress_rt=False, beta=False):
 
 def get_contrasts(task, regress_rt=True):
     if task == 'ANT':
-        contrasts = [('congruent', 'congruent'),
-                     ('incongruent', 'incongruent'),
-                     ('spatial', 'spatial'),
-                     ('double', 'double'),
-                    ('orienting_network', 'spatial-double'),
-                    ('conflict_network', 'incongruent-congruent')]
+        contrasts = [('spatial_congruent', 'spatial_congruent'),
+                    ('spatial_incongruent', 'spatial_incongruent'),
+                    ('double_congruent', 'double_congruent'),
+                    ('double_incongruent', 'double_incongruent'),
+                    ('spatial', 'spatial_congruent + spatial_incongruent'),
+                    ('double', 'double_congruent + double_incongruent'),
+                    ('congruent', 'spatial_congruent + double_congruent'),
+                    ('incongruent', 'spatial_incongruent + double_incongruent'),
+                    ('orienting_network', '(spatial_congruent + spatial_incongruent) - (double_congruent+double_incongruent)'),
+                    ('conflict_network', '(spatial_incongruent+double_incongrunet)-(spatial_congruent-double_congruent)')]
     elif task == 'CCTHot':
-        return []
+        contrasts = [('task', 'task'),
+                    ('EV', 'EV'),
+                    ('risk', 'risk'),
+                    ('reward', 'reward'),
+                    ('punishment', 'punishment')]
     elif task == 'discountFix':
-        contrasts = [('subjective_value', 'subjective_value'),
-                     ('Larger-Later', 'larger_later'),
-                     ('Smaller-Sooner', 'smaller_sooner'),
-                     ('LL-SS', 'larger_later-smaller_sooner')]
+        contrasts = [('subjective_choice_value', 'subjective_choice_value')]
     elif task == 'DPX':
         contrasts = [('AX', 'AX'),
                      ('BX', 'BX'),
@@ -53,7 +58,7 @@ def get_contrasts(task, regress_rt=True):
                      ('crit_stop_failure-noncrit_signal', 'crit_stop_failure-noncrit_signal')]
     elif task == 'stroop':
         contrasts = [('congruent', 'congruent'),
-                     ('incongruent', 'congruent'),
+                     ('incongruent', 'incongruent'),
                     ('stroop', 'incongruent-congruent')]
     elif task == 'stopSignal':
         contrasts = [('go', 'go'),
@@ -64,23 +69,21 @@ def get_contrasts(task, regress_rt=True):
                      ('stop_success-stop_failure', 'stop_success-stop_failure'),
                      ('stop_failure-stop_success', 'stop_failure-stop_success')]
     elif task == 'twoByTwo':
-        contrasts = [('task_switch_900', 'task_switch_900'),
-                     ('task_stay_cue_switch_900', 'task_stay_cue_switch_900'),
-                     ('cue_stay_900', 'cue_stay_900'),
-                     ('task_switch_100', 'task_switch_100'),
-                     ('task_stay_cue_switch_100', 'task_stay_cue_switch_100'),
-                     ('cue_stay_100', 'cue_stay_100'),
-                     ('task_switch', 'task_switch_900+task_switch_100'),
-                     ('task_stay_cue_switch', 'task_stay_cue_switch_900+task_stay_cue_switch_100'),
-                     ('cue_stay', 'cue_stay_900+cue_stay_100'),
-                     ('task_switch_cost_900', 'task_switch_900-task_stay_cue_switch_900'),
+        contrasts = [('task_switch_cost_900', 'task_switch_900-task_stay_cue_switch_900'),
                      ('cue_switch_cost_900', 'task_stay_cue_switch_900-cue_stay_900'),
                      ('task_switch_cost_100', 'task_switch_100-task_stay_cue_switch_100'),
                      ('cue_switch_cost_100', 'task_stay_cue_switch_100-cue_stay_100'),
                      ('task_switch_cost', '(task_switch_900+task_switch_100)-(task_stay_cue_switch_900+task_stay_cue_switch_100)'),
                      ('cue_switch_cost', '(task_stay_cue_switch_900+task_stay_cue_switch_100)-(cue_stay_900+cue_stay_100)')]
+        for trial in ['task_switch', 'task_stay_cue_switch', 'cue_stay']:
+            contrasts.append((trial, '%s_900 + %s_100' % (trial, trial)))
+            for CSI in ['100', '900']:
+                contrasts.append((trial+'_'+CSI, trial+'_'+CSI))
     elif task == 'WATT3':
-        return []
+        contrasts = [('movement', 'movement'),
+                    ('PA_with_intermediate','PA_with_intermediate'),
+                    ('PA_without_intermediate','PA_without_intermediate'),
+                    ('search_depth', 'PA_with_intermediate-PA_without_intermediate')]
     if regress_rt:
         contrasts.append(('RT','response_time'))
     return contrasts
