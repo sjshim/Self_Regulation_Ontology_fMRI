@@ -84,12 +84,9 @@ if run_first_level:
         contrast_maps = glob(path.join(first_level_dir, '*', task, '*maps*', '*.nii.gz'))
         for map_file in contrast_maps:
             contrast_name = map_file[map_file.index('contrast')+9:].rstrip('.nii.gz')
-            f_simple = plot_map(map_file, title=contrast_name, simple_plot=True)
-            f = plot_map(map_file, title=contrast_name, simple_plot=False)
+            f = plot_map(map_file, title=contrast_name)
             if save:
-                simple_output = map_file.replace('.nii.gz', '_glass.pdf')
-                output = map_file.replace('.nii.gz', '_glass.pdf')
-                f_simple.savefig(simple_output)
+                output = map_file.replace('.nii.gz', '_plots.pdf')
                 f.savefig(output)
 
 
@@ -101,17 +98,12 @@ if run_first_level:
 if run_second_level:
     threshold = 'None' # None
     for task in tasks:
-        contrast_maps = glob(path.join(second_level_dir, task, '*maps', '*.nii.gz'))
+        contrast_maps = sorted(glob(path.join(second_level_dir, task, '*maps', '*.nii.gz')))
         for map_file in contrast_maps:
-            if save:
-                output = map_file.replace('.nii.gz', '_threshold-%s.pdf' % threshold)
-            else:
-                output = None
             contrast_name = map_file[map_file.index('contrast')+9:].rstrip('.nii.gz')
-            if threshold is None:
-                z_map = map_file
-            elif threshold == 'FDR':
-                z_map, threshold = map_threshold(map_file, level=.05, height_control='fdr')
-            plotting.plot_stat_map(z_map, title='%s: %s' % (task, contrast_name),
-                                  output_file=output)
+            # plot
+            f = plot_map(map_file, title=contrast_name)
+            if save:
+                output = map_file.replace('.nii.gz', '_plots.pdf')
+                f.savefig(output)
 

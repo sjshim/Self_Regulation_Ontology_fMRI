@@ -25,25 +25,31 @@ def plot_contrast(subjinfo, contrast, simple_plot=True, **kwargs):
     plot_map(z_map, title=contrast_title, simple_plot=simple_plot, **kwargs)
     return f
 
-def plot_map(contrast_map, title=None, simple_plot=True, **kwargs):
-    if simple_plot:
-        default_args = {'threshold': norm.isf(0.001), 
-                    'display_mode': 'ortho'}
-        default_args.update(**kwargs)
-        f = plotting.plot_glass_brain(contrast_map, colorbar=True, 
-                              title=title,
-                              plot_abs=False, **default_args)
-    else:
-        default_args = {'threshold': norm.isf(0.001),
-                        'cut_coords': 5,
-                       'black_bg': True}
-        default_args.update(**kwargs)
-        f, axes = plt.subplots(3, 1, figsize=(12,12))
-        plotting.plot_stat_map(contrast_map, display_mode='x', 
-                               title=title, axes=axes[0], **default_args)
-        plotting.plot_stat_map(contrast_map, display_mode='y', axes=axes[1], **default_args)                
-        plotting.plot_stat_map(contrast_map, display_mode='z', axes=axes[2], **default_args)
-        plt.subplots_adjust(hspace=0)
+def plot_map(contrast_map, title=None, glass_kwargs=None, stat_kwargs=None):
+    if glass_kwargs is None:
+        glass_kwargs = {}
+    if stat_kwargs is None:
+        stat_kwargs = {}
+    # set up plot
+    f, axes = plt.subplots(4, 1, figsize=(12,12))
+    # plot glass brain
+    glass_args = {'threshold': norm.isf(0.001), 
+                 'display_mode': 'ortho'}
+    glass_args.update(**glass_kwargs)
+    f = plotting.plot_glass_brain(contrast_map, colorbar=True, 
+                              title=title, axes=axes[0],
+                              plot_abs=False, **glass_args)
+    # plot more indepth stats brain
+    stat_args = {'threshold': norm.isf(0.001),
+                 'cut_coords': 5,
+                 'black_bg': True}
+    stat_args.update(**stat_kwargs)
+    
+    plotting.plot_stat_map(contrast_map, display_mode='x', 
+                           axes=axes[1], **stat_args)
+    plotting.plot_stat_map(contrast_map, display_mode='y', axes=axes[2], **stat_args)                
+    plotting.plot_stat_map(contrast_map, display_mode='z', axes=axes[3], **stat_args)
+    plt.subplots_adjust(hspace=0)
     return f
 
 def plot_design_timeseries(subjinfo, begin=0, end=-1):
