@@ -117,7 +117,7 @@ for task in tasks:
     # run second level
     verboseprint('*** Running model. %s first level files found' % N)
     second_level_model = SecondLevelModel(mask=mask_loc, smoothing_fwhm=6).fit(
-        first_level_models[:10], design_matrix=design_matrix)
+        first_level_models, design_matrix=design_matrix)
     makedirs(path.join(second_level_dir, task), exist_ok=True)
     f = open(path.join(second_level_dir, task, 'secondlevel_%s_%s.pkl' % (rt_flag, beta_flag)), 'wb')
     pickle.dump(second_level_model, f)
@@ -140,6 +140,7 @@ for task in tasks:
 # In[ ]:
 
 
+"""
 rt_flag, beta_flag = get_flags(regress_rt, beta_series)
 for task in tasks:
     verboseprint('Running 2nd level for %s' % task)
@@ -164,4 +165,5 @@ for task in tasks:
         # save
         contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
         contrast_map.to_filename(contrast_file)
+"""
 
