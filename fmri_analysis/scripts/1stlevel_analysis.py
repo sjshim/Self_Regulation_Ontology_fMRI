@@ -35,6 +35,7 @@ from utils.firstlevel_utils import get_first_level_objs, make_first_level_obj, s
 parser = argparse.ArgumentParser(description='First Level Entrypoint script')
 parser.add_argument('-data_dir', default='/data')
 parser.add_argument('-derivatives_dir', default=None)
+parser.add_argument('-fmriprep_dir', default=None)
 parser.add_argument('-working_dir', default=None)
 parser.add_argument('--subject_ids', nargs="+")
 parser.add_argument('--tasks', nargs="+", help="Choose from ANT, CCTHot, discountFix,                                     DPX, motorSelectiveStop, stopSignal,                                     stroop, surveyMedley, twoByTwo, WATT3")
@@ -56,6 +57,7 @@ else:
     args.n_procs=1
     args.derivatives_dir = '/mnt/OAK/data/uh2/BIDS_data/derivatives/'
     args.data_dir = '/mnt/OAK/data/uh2/BIDS_data/'
+    args.fmriprep_dir = '/mnt/OAK/data/uh2/BIDS_data/derivatives/fmriprep/fmriprep_old'
 
 
 # In[ ]:
@@ -75,7 +77,10 @@ else:
 
 # Set Paths
 derivatives_dir = args.derivatives_dir
-fmriprep_dir = join(derivatives_dir, 'fmriprep', 'fmriprep')
+if args.fmriprep_dir is None:
+    fmriprep_dir = join(derivatives_dir, 'fmriprep', 'fmriprep')
+else:
+    fmriprep_dir = args.fmriprep_dir
 data_dir = args.data_dir
 first_level_dir = join(derivatives_dir,'1stlevel')
 if args.working_dir is None:

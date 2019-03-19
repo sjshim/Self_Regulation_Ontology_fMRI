@@ -81,7 +81,7 @@ plot_design_heatmap(subjinfo)
 
 if run_first_level:
     for task in tasks:
-        contrast_maps = glob(path.join(first_level_dir, '*', task, '*maps*', '*.nii.gz'))
+        contrast_maps = glob(path.join(first_level_dir, '*s358*', task, '*maps*', '*.nii.gz'))
         for map_file in contrast_maps:
             contrast_name = map_file[map_file.index('contrast')+9:].rstrip('.nii.gz')
             f = plot_map(map_file, title=contrast_name)
@@ -96,7 +96,6 @@ if run_first_level:
 
 
 if run_second_level:
-    threshold = 'None' # None
     for task in tasks:
         contrast_maps = sorted(glob(path.join(second_level_dir, task, '*maps', '*.nii.gz')))
         for map_file in contrast_maps:

@@ -35,6 +35,8 @@ def create_design(events, confounds, task, TR, beta=True, regress_rt=False):
     n_scans = int(confounds.shape[0])
     design = make_first_level_design_matrix(np.arange(n_scans)*TR,
                                paradigm,
+                               hrf_model='spm',
+                               period_cut=80,
                                drift_model='cosine',
                                add_regs=confounds.values,
                                add_reg_names=list(confounds.columns))
