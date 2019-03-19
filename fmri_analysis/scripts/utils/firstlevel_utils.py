@@ -41,8 +41,6 @@ def create_design(events, confounds, task, TR, beta=True, regress_rt=False):
     # add temporal derivative to task columns
     task_cols = [i for i in paradigm.trial_type.unique() if i != 'junk']
     temp_deriv(design, task_cols)
-    # scale
-    design = design.apply(scale)
     return design
 
 def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR, 
