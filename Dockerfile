@@ -25,7 +25,7 @@ RUN apt-get update && \
 # Installing Neurodebian packages (FSL, AFNI, git)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-                    fsl-core=5.0.9-4~nd16.04+1 \
+                    fsl-core=5.0.9-5~nd16.04+1 \
                     fsl-mni152-templates=5.0.7-2 \
                     afni=16.2.07~dfsg.1-5~nd16.04+1 \
                     convert3d
