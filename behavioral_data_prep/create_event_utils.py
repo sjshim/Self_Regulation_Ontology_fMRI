@@ -121,7 +121,7 @@ def create_CCT_event(df):
     events_df.loc[ITI_trials, 'onset'] += 750
     events_df.loc[ITI_trials, 'duration'] = events_df.loc[ITI_trials, 'stim_duration']-750
     # add motor onsets
-    events_df.insert(0,'movement_onset',get_movement_times(df))
+    events_df.insert(2,'movement_onset',get_movement_times(df))
     # process RT
     process_rt(events_df)
     # convert milliseconds to seconds
@@ -140,6 +140,15 @@ def create_discountFix_event(df, duration=None):
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
    
+    #additional parametric regressors: 
+    #subjective value
+    worker_id = df.worker_id.unique()[0]
+    discount_rate = calc_discount_fixed_DV(df)[0].get(worker_id).get('hyp_discount_rate_glm').get('value')
+    larger_value =  events_df.large_amount/(1+discount_rate*events_df.later_delay)
+    events_df.insert(0, 'subjective_choice_value', [larger_value[i] if events_df['trial_type'][i]=='larger_later' else 20 for i in events_df.index])   
+    #inverse_delay
+    events_df.insert(0, 'inverse_delay', 1/events_df.later_delay)
+    
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.choice
     if duration is None:
@@ -154,14 +163,6 @@ def create_discountFix_event(df, duration=None):
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset','duration']]/=1000
 
-    #additional parametric regressors: 
-    #subjective value
-    worker_id = df.worker_id.unique()[0]
-    discount_rate = calc_discount_fixed_DV(df)[0].get(worker_id).get('hyp_discount_rate_glm').get('value')
-    larger_value =  events_df.large_amount/(1+discount_rate*events_df.later_delay)
-    events_df.insert(0, 'subjective_choice_value', [larger_value[i] if events_df['trial_type'][i]=='larger_later' else 20 for i in events_df.index])   
-    #inverse_delay
-    events_df.insert(0, 'inverse_delay', 1/events_df.later_delay)
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
@@ -184,7 +185,7 @@ def create_DPX_event(df, duration=None):
     onsets = get_trial_times(df)-CPI 
     events_df.insert(0,'onset',onsets)
     # add motor onsets
-    events_df.insert(0,'movement_onset',get_movement_times(df))
+    events_df.insert(2,'movement_onset',get_movement_times(df))
     # process RT
     process_rt(events_df)
     # convert milliseconds to seconds
@@ -327,7 +328,7 @@ def create_survey_event(df, duration=None):
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # add motor onsets
-    events_df.insert(0,'movement_onset',get_movement_times(df))
+    events_df.insert(2,'movement_onset',get_movement_times(df))
     # process RT
     process_rt(events_df)
     # convert milliseconds to seconds
@@ -353,7 +354,7 @@ def create_twobytwo_event(df, duration=None):
     # duration
     events_df.insert(0,'onset',get_trial_times(df)-df.CTI)
     # add motor onsets
-    events_df.insert(0,'movement_onset',get_movement_times(df))
+    events_df.insert(2,'movement_onset',get_movement_times(df))
     # process RT
     process_rt(events_df)
     # convert milliseconds to seconds
@@ -386,6 +387,7 @@ def create_WATT_event(df, duration):
     events_df.insert(1,'planning',0)
     events_df.loc[planning_moves,'planning'] = 1
     # ** Durations **
+    events_df.insert(0, 'duration', 0)
     # add durations for planning
     events_df.loc[planning_moves,'duration'] = duration['planning_time']
     # add durations for planning
@@ -399,7 +401,7 @@ def create_WATT_event(df, duration):
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # add motor onsets
-    events_df.insert(0,'movement_onset',get_movement_times(df))
+    events_df.insert(2,'movement_onset',get_movement_times(df))
     # process RT
     process_rt(events_df)
     # convert milliseconds to seconds
