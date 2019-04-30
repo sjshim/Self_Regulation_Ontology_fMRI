@@ -55,9 +55,9 @@ else:
     args.subject_ids = ['s358']
     args.rt=True
     args.n_procs=1
-    args.derivatives_dir = '/mnt/OAK/data/uh2/BIDS_data/derivatives/'
-    args.data_dir = '/mnt/OAK/data/uh2/BIDS_data/'
-    args.fmriprep_dir = '/mnt/OAK/data/uh2/BIDS_data/derivatives/fmriprep/fmriprep_old'
+    args.derivatives_dir = '/data/derivatives/'
+    args.data_dir = '/data'
+    args.fmriprep_dir = '/data/derivatives/fmriprep/fmriprep'
 
 
 # In[ ]:

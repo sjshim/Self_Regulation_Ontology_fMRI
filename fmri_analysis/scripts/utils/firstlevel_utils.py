@@ -171,8 +171,8 @@ def process_confounds(confounds_file):
     """
     confounds_df = pd.read_csv(confounds_file, sep = '\t', 
                                na_values=['n/a']).fillna(0)
-    excessive_movement = (confounds_df.FramewiseDisplacement>.5) & \
-                            (confounds_df.stdDVARS>1.2)
+    excessive_movement = (confounds_df.framewise_displacement>.5) & \
+                            (confounds_df.std_dvars>1.2)
     excessive_movement_TRs = excessive_movement[excessive_movement].index
     excessive_movement_regressors = np.zeros([confounds_df.shape[0], 
                                    np.sum(excessive_movement)])
@@ -181,16 +181,16 @@ def process_confounds(confounds_file):
     excessive_movement_regressor_names = ['rejectTR_%d' % TR for TR in 
                                           excessive_movement_TRs]
     # get movement regressors
-    movement_regressor_names = ['X','Y','Z','RotX','RotY','RotZ']
+    movement_regressor_names = ['trans_x','trans_y','trans_z','rot_x','rot_y','rot_z']
     movement_regressors = confounds_df.loc[:,movement_regressor_names]
-    movement_regressor_names += ['Xtd','Ytd','Ztd','RotXtd','RotYtd','RotZtd']
+    movement_regressor_names += [i+'td' for i in movement_regressor_names]
     movement_regressors = np.hstack((movement_regressors, np.gradient(movement_regressors,axis=0)))
     # add square
     movement_regressor_names += [i+'_sq' for i in movement_regressor_names]
     movement_regressors = np.hstack((movement_regressors, movement_regressors**2))
     
     # add additional relevant regressors
-    add_regressor_names = ['FramewiseDisplacement'] 
+    add_regressor_names = ['framewise_displacement'] 
     #add_regressor_names += [i for i in confounds_df.columns if 'aCompCor' in i]
     additional_regressors = confounds_df.loc[:,add_regressor_names].values
     regressors = np.hstack((movement_regressors,
@@ -218,13 +218,13 @@ def get_func_file(fmriprep_dir, subject_id, task):
     func_file = glob(path.join(fmriprep_dir,
                           'sub-%s' % subject_id,
                           '*', 'func',
-                          '*%s*MNI*preproc.nii.gz' % task))
+                          '*%s*MNI*preproc_bold.nii.gz' % task))
     
     # get mask_file
     mask_file = glob(path.join(fmriprep_dir,
                           'sub-%s' % subject_id,
                           '*', 'func',
-                          '*%s*MNI*brainmask.nii.gz' % task))
+                          '*%s*MNI*brain_mask.nii.gz' % task))
     if not func_file or not mask_file:
         return None, None
     return func_file[0], mask_file[0]
@@ -238,7 +238,7 @@ def get_confounds(fmriprep_dir, subject_id, task):
     confounds_file = glob(path.join(fmriprep_dir,
                                'sub-%s' % subject_id,
                                '*', 'func',
-                               '*%s*confounds.tsv' % task))[0]
+                               '*%s*confounds_regressors.tsv' % task))[0]
     regressors, regressor_names = process_confounds(confounds_file)
     confounds = pd.DataFrame(regressors, columns=regressor_names)
     return confounds
