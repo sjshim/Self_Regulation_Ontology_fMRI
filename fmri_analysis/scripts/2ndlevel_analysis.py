@@ -44,7 +44,7 @@ if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
 else:
     args = parser.parse_args([])
-    args.derivatives_dir = '/mnt/OAK/data/uh2/BIDS_data/derivatives/'
+    args.derivatives_dir = '/data/derivatives/'
     args.tasks = ['stroop']
     args.rt=True
     args.n_perms = 10

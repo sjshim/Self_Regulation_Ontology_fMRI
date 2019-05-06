@@ -101,7 +101,7 @@ def load_first_level_objs(task, first_level_dir, regress_rt=False, beta=False):
 def get_first_level_maps(subject_id, task, first_level_dir, contrast, regress_rt=False, beta=False):
     rt_flag, beta_flag = get_flags(regress_rt, beta)
     files = path.join(first_level_dir, subject_id, task, 'maps_%s_%s/contrast-%s.nii.gz' % (rt_flag, beta_flag, contrast))
-    return glob(files)    
+    return sorted(glob(files))
 
 # ********************************************************
 # helper classes 
