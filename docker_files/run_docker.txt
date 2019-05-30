@@ -3,7 +3,7 @@ data_loc=$HOME/tmp/fmri/data/
 output=$HOME/tmp/fmri/output
 docker run --rm  \
 --mount type=bind,src=$scripts_loc,dst=/scripts \
---mount type=bind,src=$data_loc,dst=/data,readonly \
+--mount type=bind,src=$data_loc,dst=/data \
 --mount type=bind,src=$output,dst=/output \
 -ti fmri_env \
 python task_analysis.py /output /Data --participant s358 --tasks stopSignal 
