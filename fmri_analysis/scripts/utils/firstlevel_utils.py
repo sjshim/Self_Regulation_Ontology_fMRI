@@ -25,7 +25,7 @@ def temp_deriv(dataframe, columns=None):
         insert_loc = dataframe.columns.get_loc(i)
         dataframe.insert(insert_loc+1, i+'_TD', col)   
 
-def create_design(events, confounds, task, TR, beta=True, regress_rt=False):
+def create_design(events, confounds, task, TR, beta=False, regress_rt=False):
     if beta:
         EV_dict = get_beta_series(events, regress_rt=regress_rt)
     else:

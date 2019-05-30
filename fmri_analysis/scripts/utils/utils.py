@@ -17,6 +17,17 @@ def get_flags(regress_rt=False, beta=False):
     return rt_flag, beta_flag
 
 def get_contrasts(task, regress_rt=True):
+    """ 
+    Gets a list of contrasts given a task
+    
+    Returned list is a set of tuples, where the first element is the name
+    of the contrast, and the second element is the contrast definition
+    
+    Args:
+        task: (str) defines the task
+        regress_rt: (bool) whether to include rt as a regressor 
+    
+    """
     if task == 'ANT':
         contrasts = [('spatial_congruent', 'spatial_congruent'),
                     ('spatial_incongruent', 'spatial_incongruent'),
