@@ -6,8 +6,12 @@ from utils import get_survey_items_order
 # helper functions
 # *********************************
 def get_drop_columns(df, columns=None, use_default=True):
-    default_cols = ['correct_response', 'exp_stage', 
-                    'feedback_duration', 'possible_responses', 
+    """
+    defines columns to drop when converting from _clean to _event
+    files each event file.
+    """
+    default_cols = ['correct_response', 'exp_stage',
+                    'feedback_duration', 'possible_responses',
                     'stim_duration', 'text', 'time_elapsed',
                    'timing_post_trial', 'trial_num']
     drop_columns = []
@@ -17,15 +21,19 @@ def get_drop_columns(df, columns=None, use_default=True):
         drop_columns = set(default_cols) | set(drop_columns)
     drop_columns = set(df.columns) & set(drop_columns)
     return drop_columns
-    
+
 def get_junk_trials(df):
+    """
+    junk trials are defined here as trials with responses faster than
+    50 ms, or incorrect trials
+    """
     junk = pd.Series(False, df.index)
     if 'correct' in df.columns:
-        junk = np.logical_or(junk,np.logical_not(df.correct))
+             junk = np.logical_or(junk,np.logical_not(df.correct))
     if 'rt' in df.columns:
-        junk = np.logical_or(junk,df.rt < 50)
+            junk = np.logical_or(junk,df.rt < 50)
     return junk
-    
+
 def get_movement_times(df):
     """
     time elapsed is evaluated at the end of a trial, so we have to subtract
@@ -46,11 +54,16 @@ def get_trial_times(df):
     return trial_time
 
 def process_rt(events_df):
-    events_df.rt.replace({-1: np.nan}, inplace=True)
-    events_df.rename(columns={'rt': 'response_time'}, inplace=True)
+    """changes -1 rts (javascript no response) to nan, changes column from rt -> response_time """
+    events_df.rt.replace({-1: np.nan}, inplace=True) #replaces no response rts with nan
+    events_df.rename(columns={'rt': 'response_time'}, inplace=True) 
 
-    
+
 def create_events(df, exp_id, duration=None):
+    """
+    defines what function to reference to create each task-specific event file 
+    takes in a dataframe from processed data, and exp_id and a duration
+    """ 
     events_df = None
     lookup = {'attention_network_task': create_ANT_event,
               'columbia_card_task_fmri': create_CCT_event,
@@ -61,7 +74,8 @@ def create_events(df, exp_id, duration=None):
               'stroop': create_stroop_event,
               'survey_medley': create_survey_event,
               'twobytwo': create_twobytwo_event,
-              'ward_and_allport': create_WATT_event}
+              'ward_and_allport': create_WATT_event,
+              'manipulation_task': create_manipulation_event}
     fun = lookup.get(exp_id)
     if fun is not None:
         if exp_id != 'columbia_card_task_fmri':
@@ -75,7 +89,7 @@ def row_match(df,row_list):
     for i in range(len(row_list)):
         bool_list = bool_list & (df.iloc[:,i] == row_list[i])
     return bool_list[bool_list].index
-        
+
 # *********************************
 # Functions to create event files
 # *********************************
@@ -91,7 +105,7 @@ def create_ANT_event(df, duration=None):
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
         events_df.insert(0,'duration',duration)
-    # time elapsed is at the end of the trial, so have to remove the block 
+    # time elapsed is at the end of the trial, so have to remove the block
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # process RT
@@ -103,9 +117,9 @@ def create_ANT_event(df, duration=None):
     return events_df
 
 def create_CCT_event(df):
-    columns_to_drop = get_drop_columns(df, columns = ['cards_left', 
+    columns_to_drop = get_drop_columns(df, columns = ['cards_left',
                                                       'clicked_on_loss_card',
-                                                      'round_points', 
+                                                      'round_points',
                                                       'which_round'])
 
     events_df = df[df['time_elapsed']>0]
@@ -113,7 +127,7 @@ def create_CCT_event(df):
     events_df.loc[:,'junk'] = get_junk_trials(df)
     # reorganize and rename columns in line with BIDs specifications
     events_df.insert(0, 'duration', events_df.block_duration)
-    # time elapsed is at the end of the trial, so have to remove the block 
+    # time elapsed is at the end of the trial, so have to remove the block
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # change onset of ITI columns to reflect the fact that the stimulus changes 750 ms after blcok starts
@@ -139,23 +153,23 @@ def create_discountFix_event(df, duration=None):
     events_df = df[df['time_elapsed']>0]
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
-   
-    #additional parametric regressors: 
+
+    #additional parametric regressors:
     #subjective value
     worker_id = df.worker_id.unique()[0]
     discount_rate = calc_discount_fixed_DV(df)[0].get(worker_id).get('hyp_discount_rate_glm').get('value')
     larger_value =  events_df.large_amount/(1+discount_rate*events_df.later_delay)
-    events_df.insert(0, 'subjective_choice_value', [larger_value[i] if events_df['trial_type'][i]=='larger_later' else 20 for i in events_df.index])   
+    events_df.insert(0, 'subjective_choice_value', [larger_value[i] if events_df['trial_type'][i]=='larger_later' else 20 for i in events_df.index])
     #inverse_delay
     events_df.insert(0, 'inverse_delay', 1/events_df.later_delay)
-    
+
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.choice
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
         events_df.insert(0,'duration',duration)
-    # time elapsed is at the end of the trial, so have to remove the block 
+    # time elapsed is at the end of the trial, so have to remove the block
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # process RT
@@ -166,7 +180,7 @@ def create_discountFix_event(df, duration=None):
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
-    
+
 def create_DPX_event(df, duration=None):
     columns_to_drop = get_drop_columns(df)
     events_df = df[df['time_elapsed']>0]
@@ -180,9 +194,9 @@ def create_DPX_event(df, duration=None):
         events_df.insert(0,'duration',events_df.stim_duration+CPI)
     else:
         events_df.insert(0,'duration',duration+CPI)
-    # time elapsed is at the end of the trial, so have to remove the block 
+    # time elapsed is at the end of the trial, so have to remove the block
     # duration. We also want the trial
-    onsets = get_trial_times(df)-CPI 
+    onsets = get_trial_times(df)-CPI
     events_df.insert(0,'onset',onsets)
     # add motor onsets
     events_df.insert(2,'movement_onset',get_movement_times(df))
@@ -192,6 +206,85 @@ def create_DPX_event(df, duration=None):
     events_df.loc[:,['response_time','onset',
                      'duration','movement_onset']]/=1000
     # drop unnecessary columns
+    events_df = events_df.drop(columns_to_drop, axis=1)
+    return events_df
+
+def create_manipulation_event(df, duration=None):
+    #this events file is different than the others and requires more processing to line information up 
+   
+    columns_to_drop = get_drop_columns(df, columns = ['possible_responses',
+                                                      'text', 'key_press'])    
+    events_df = df[df['time_elapsed']>0]
+    #make junk trials - doesn't work for events w/ no rt 
+    # events_df.loc[:,'junk'] = get_junk_trials(df)
+    events_df.loc[:,'junk'] = np.logical_and(df.rt < 50, df.rt > 1)
+
+    events_df = events_df.drop('trial_type', axis = 1)
+    events_df.insert(0, 'duration', events_df.block_duration)
+    
+    #transform key press from JS key numbers to actual ratings, and no response to NaN
+    events_df.loc[(events_df['key_press'] == 66), 'response'] = 1
+    events_df.loc[(events_df['key_press'] == 89), 'response'] = 2
+    events_df.loc[(events_df['key_press'] == 71), 'response'] = 3
+    events_df.loc[(events_df['key_press'] == 82), 'response'] = 4
+    events_df.loc[(events_df['key_press'] == 77), 'response'] = 5
+    
+ 
+    #create trial_type column 
+    events_df['trial_type'] = events_df['stim_type']
+    
+    #creates response trials of interest - BED sample 
+    events_df.loc[(events_df['trial_type']=='food') & (events_df['which_cue'] == 'NOW'), 'trial_type'] = 'present_valence'
+    events_df.loc[(events_df['trial_type']=='food') & (events_df['which_cue'] == 'LATER'), 'trial_type'] = 'future_valence'
+    
+    #creates response trials of interest - smoking sample 
+    events_df.loc[(events_df['trial_type']=='smoking') & (events_df['which_cue'] == 'NOW'), 'trial_type'] = 'present_valence'
+    events_df.loc[(events_df['trial_type']=='smoking') & (events_df['which_cue'] == 'LATER'), 'trial_type'] = 'future_valence'
+
+    # var of interest for btoh 
+
+    events_df.loc[(events_df['trial_type']=='neutral') & (events_df['which_cue'] == 'LATER'), 'trial_type'] = 'future_neutral'
+    events_df.loc[(events_df['trial_type']=='neutral') & (events_df['which_cue'] == 'NOW'), 'trial_type'] = 'present_neutral'
+  
+    #shifts to match onset time column
+    events_df['which_cue'] = events_df['which_cue'].shift(-2)
+    events_df['stim_type'] = events_df['stim_type'].shift(-1)
+    
+    #populate cue events 
+    events_df.loc[(events_df['trial_id']=="cue") & (events_df['which_cue'] == 'NOW'), 'trial_type'] = 'cue_present'
+    events_df.loc[(events_df['trial_id']=="cue") & (events_df['which_cue'] == 'LATER'), 'trial_type'] = 'cue_future'
+    
+    #ceate probe events 
+    events_df.loc[(events_df['trial_id'] == "probe") & (events_df['stim_type'] == 'neutral'), 'trial_type'] = 'neutral_probe'
+    events_df.loc[(events_df['trial_id'] == "probe") & (events_df['stim_type'] == 'food'), 'trial_type'] = 'valence_probe'
+    events_df.loc[(events_df['trial_id'] == "probe") & (events_df['stim_type'] == 'smoking'), 'trial_type'] = 'valence_probe'
+
+    #and change null trial events to no_stim
+    events_df.loc[(events_df['trial_type'] == 'null'), 'trial_type'] = 'no_stim'
+    events_df.loc[(events_df['which_cue'] == 'null'), 'trial_type'] = 'no_stim'
+    events_df.loc[(events_df['stim_type'] == 'null'), 'trial_type'] = 'no_stim'
+
+    #correct junk trials so that cue, probe, and null aren't marked as junk
+   # not_junk = events_df["trial_type"] == 'no_stim' 
+    #events_df.loc[not_junk,'junk'] = False
+
+   
+    
+    ## makes no stim 
+    #null = events_df["trial_type"] == 'no_stim'
+    #events_df.loc[null, 'junk'] = True
+    #null = events_df["trial_type"] == 'no_stim'
+
+
+
+    # time elapsed is at the end of the trial, so have to remove the block
+    # duration
+    events_df.insert(0,'onset',get_trial_times(df))
+    # process RT - drops no response RTs 
+    process_rt(events_df)
+    # convert milliseconds to seconsds
+    events_df.loc[:,['response_time','onset','block_duration', 'duration']]/=1000
+    # drop unnecessary columns defined at top of function
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
 
@@ -214,13 +307,13 @@ def create_motorSelectiveStop_event(df, duration=None):
                                     'SS_trial_type','stopped']]
     condition = pd.Series(index=events_df.index)
     condition[row_match(condition_df, [crit_key,'go',False])] = 'crit_go'
-    condition[row_match(condition_df, 
+    condition[row_match(condition_df,
                         [crit_key,'stop',True])] = 'crit_stop_success'
-    condition[row_match(condition_df, 
+    condition[row_match(condition_df,
                         [crit_key,'stop',False])] = 'crit_stop_failure'
-    condition[row_match(condition_df, 
+    condition[row_match(condition_df,
                         [noncrit_key,'stop',False])] = 'noncrit_signal'
-    condition[row_match(condition_df, 
+    condition[row_match(condition_df,
                         [noncrit_key,'go',False])] = 'noncrit_nosignal'
 
     events_df.loc[:,'trial_type'] = condition
@@ -228,7 +321,7 @@ def create_motorSelectiveStop_event(df, duration=None):
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
         events_df.insert(0,'duration',duration)
-    # time elapsed is at the end of the trial, so have to remove the block 
+    # time elapsed is at the end of the trial, so have to remove the block
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # process RT
@@ -238,7 +331,7 @@ def create_motorSelectiveStop_event(df, duration=None):
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
-    
+
 def create_stopSignal_event(df, duration=None):
     columns_to_drop = get_drop_columns(df, columns = ['condition',
                                                       'SS_duration',
@@ -263,7 +356,7 @@ def create_stopSignal_event(df, duration=None):
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
         events_df.insert(0,'duration',duration)
-    # time elapsed is at the end of the trial, so have to remove the block 
+    # time elapsed is at the end of the trial, so have to remove the block
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # process RT
@@ -273,7 +366,7 @@ def create_stopSignal_event(df, duration=None):
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
- 
+
 def create_stroop_event(df, duration=None):
     columns_to_drop = get_drop_columns(df)
     events_df = df[df['time_elapsed']>0]
@@ -285,7 +378,7 @@ def create_stroop_event(df, duration=None):
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
         events_df.insert(0,'duration',duration)
-    # time elapsed is at the end of the trial, so have to remove the block 
+    # time elapsed is at the end of the trial, so have to remove the block
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # process RT
@@ -297,7 +390,7 @@ def create_stroop_event(df, duration=None):
     return events_df
 
 def create_survey_event(df, duration=None):
-    columns_to_drop = get_drop_columns(df, 
+    columns_to_drop = get_drop_columns(df,
                                        use_default=False,
                                        columns = ['block_duration',
                                                   'key_press',
@@ -324,7 +417,7 @@ def create_survey_event(df, duration=None):
         events_df.insert(0,'duration',events_df.stim_duration)
     else:#
         events_df.insert(0,'duration',duration)
-    # time elapsed is at the end of the trial, so have to remove the block 
+    # time elapsed is at the end of the trial, so have to remove the block
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # add motor onsets
@@ -350,7 +443,7 @@ def create_twobytwo_event(df, duration=None):
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
         events_df.insert(0,'duration',duration)
-    # time elapsed is at the end of the trial, so have to remove the block 
+    # time elapsed is at the end of the trial, so have to remove the block
     # duration
     events_df.insert(0,'onset',get_trial_times(df)-df.CTI)
     # add motor onsets
@@ -372,7 +465,7 @@ def create_WATT_event(df, duration):
                                                       'num_moves_made',
                                                       'problem_time',
                                                       'start_state'])
-    
+
     events_df = df[df['exp_stage']=='test']
     # add junk regressor
     events_df.loc[:,'junk'] = False
@@ -381,7 +474,7 @@ def create_WATT_event(df, duration):
                                   'and num_moves_made==1').index
     other_moves = events_df.query('not (trial_id == "to_hand"' +
                                   'and num_moves_made==1)' +
-                                  ' and trial_id != "feedback"').index   
+                                  ' and trial_id != "feedback"').index
     feedback = events_df.query('trial_id == "feedback"').index
     # add planning indicator
     events_df.insert(1,'planning',0)
@@ -392,12 +485,12 @@ def create_WATT_event(df, duration):
     events_df.loc[planning_moves,'duration'] = duration['planning_time']
     # add durations for planning
     events_df.loc[other_moves,'duration'] = duration['move_time']
-    
+
     # add durations for feedback
     events_df.loc[feedback, 'duration'] = events_df.loc[feedback, 'block_duration']
-    
+
     # ** Onsets **
-    # time elapsed is at the end of the trial, so have to remove the block 
+    # time elapsed is at the end of the trial, so have to remove the block
     # duration
     events_df.insert(0,'onset',get_trial_times(df))
     # add motor onsets
@@ -410,4 +503,3 @@ def create_WATT_event(df, duration):
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
-
