@@ -64,6 +64,7 @@ for subj_file in glob('../behavioral_data/raw/*/*'):
         if exp_id == 'rest': 
             df = df.replace(to_replace='scanner_wait', value = 'fmri_trigger_wait', regex=True)
         # set time_elapsed in reference to the last trigger of internal calibration
+        print(filey, exp_id)
         start_time = df.query('trial_id == "fmri_trigger_wait"').iloc[-1]['time_elapsed'] 
         df.time_elapsed-=start_time 
         
