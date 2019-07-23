@@ -8,13 +8,13 @@ import pandas as pd
 # early. Those 14 TRs of data therefore need to be thrown out, which is
 # accomplished by setting the "0" of the scan 14 TRs later
 def get_timing_correction(filey, TR=680, n_TRs=14):
-    problematic_files = ['s568_MotorStop.csv', 's568_Stroop.csv', 
+    problematic_files = ['s568_MotorStop.csv', 's568_Stroop.csv',
                          's568_SurveyMedley.csv', 's568_DPX.csv',
                          's568_Discount.csv',
-                         's556_MotorStop.csv', 's556_Stroop.csv', 
+                         's556_MotorStop.csv', 's556_Stroop.csv',
                          's556_SurveyMedley.csv', 's556_DPX.csv',
                          's556_Discount.csv',
-                         's561_WATT.csv', 's561_ANT.csv', 
+                         's561_WATT.csv', 's561_ANT.csv',
                          's561_TwoByTwo.csv', 's561_CCT.csv',
                          's561_StopSignal.csv',]
     tr_correction = TR * n_TRs
@@ -33,8 +33,14 @@ def get_name_map():
             'stroop': 'stroop',
             'survey_medley': 'surveyMedley',
             'twobytwo': 'twoByTwo',
-            'ward_and_allport': 'WATT3'}
-    return name_map
+            'ward_and_allport': 'WATT3',
+            'manipulation_task': 'manipulationTask',
+            'pre_rating': 'preRating',
+            'rest': 'rest',
+                #for the manipulation tasks that have this for the exp_id
+            'cue_control_food': 'manipulationTask'}
+    
+    return name_map  
 
 
 def get_event_files(subj):
@@ -45,7 +51,7 @@ def get_event_files(subj):
         exp_id = path.basename(subj_file).split('_')[1]
         event_files[exp_id] = df
     return event_files
-        
+
 def get_processed_files(subj):
     file_dir = path.dirname(__file__)
     processed_files = {}
@@ -56,31 +62,34 @@ def get_processed_files(subj):
     return processed_files
 
 def get_median_rts(task_dfs):
+    """function that calculates median RT"""
     task_50th_rts = {task: df.rt[df.rt>0].quantile(.5) for task,df in task_dfs.items()}
     # special cases handled below
     # ** twoByTwo **
-    median_cue_length = task_dfs['twobytwo'].CTI.quantile(.5)
-    task_50th_rts['twobytwo'] += median_cue_length
-    
+    if (len(task_dfs["twobytwo"])>0):
+        print("two by two loop working")
+        median_cue_length = task_dfs['twobytwo'].CTI.quantile(.5)
+        task_50th_rts['twobytwo'] += median_cue_length
+    if (len(task_dfs["ward_and_allport"])>0):
     # ** WATT3 **
-    WATT_df = task_dfs['ward_and_allport'].query('exp_stage == "test"')
+        WATT_df = task_dfs['ward_and_allport'].query('exp_stage == "test"')
     # get the first move times (plan times)
-    plan_times = WATT_df.query('trial_id == "to_hand" and num_moves_made==1').rt
+        plan_times = WATT_df.query('trial_id == "to_hand" and num_moves_made==1').rt
     # get other move times
-    move_times = WATT_df.query('not (trial_id == "to_hand" and num_moves_made==1)')
+        move_times = WATT_df.query('not (trial_id == "to_hand" and num_moves_made==1)')
     # drop feedback
-    move_times = move_times.query('trial_id != "feedback"').rt
-    task_50th_rts['ward_and_allport'] = {'planning_time': plan_times.quantile(.5),
+        move_times = move_times.query('trial_id != "feedback"').rt
+        task_50th_rts['ward_and_allport'] = {'planning_time': plan_times.quantile(.5),
                                          'move_time': move_times.quantile(.5)}
     return task_50th_rts
 
 def get_survey_items_order():
-    
-    """Function which returns dictionary with ordering id (Q01-Q40) assigned to each question. 
+
+    """Function which returns dictionary with ordering id (Q01-Q40) assigned to each question.
     This dictionary can be further used to map all quesion to their unique (template) order, therefore, to obtain the same order of beta vales for each person
     Author: Karolina Finc
     """
-    
+
     grit_items = [
         'New ideas and projects sometimes distract me from previous ones.',
         'Setbacks don\'t discourage me.',
@@ -129,13 +138,13 @@ def get_survey_items_order():
         'When I am really excited, I tend not to think of the consequences of my actions.',
         'I tend to act without thinking when I am really excited.'
     ]
-    
+
     impulse_venture_items = [
         'Do you welcome new and exciting experiences and sensations even if they are a little frightening and unconventional?',
         'Do you sometimes like doing things that are a bit frightening?',
         'Would you enjoy the sensation of skiing very fast down a high mountain slope?'
     ]
-    
+
     item_text = grit_items + brief_items + future_time_items + upps_items + impulse_venture_items
     item_id = ['Q%s' % str(i+1).zfill(2) for i in range(len(item_text))]
     item_id_map = dict(zip(item_text, item_id))
