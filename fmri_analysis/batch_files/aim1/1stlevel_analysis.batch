@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH --job-name={task}-1stlevel{rt_flag}
+#SBATCH --output=.out/{task}-1stlevel{rt_flag}.out
+#SBATCH --error=.err/{task}-1stlevel{rt_flag}.err
+#SBATCH --time=48:00:00
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=ieisenbe@stanford.edu
+#SBATCH --cpus-per-task=16
+#SBATCH --ntasks-per-node=1
+#SBATCH -p russpold
+export PYTHONPATH=""
+# set up paths
+# scratch is automatically mounted
+img=`sed '2q;d' singularity_config.txt`
+base_singularity=`sed '4q;d' singularity_config.txt`
+singularity_loc=${base_singularity}/$img
+derivatives_loc=`sed '6q;d' singularity_config.txt`
+data_loc=`sed '8q;d' singularity_config.txt`
+scripts_loc=../../scripts
+scratch_loc=/scratch/users/ieisenbe
+# run singularity, scratch is automatically mounted
+singularity exec -B ${scripts_loc}:/scripts  ${singularity_loc} \
+    python /scripts/1stlevel_analysis.py -derivatives_dir ${derivatives_loc} -data_dir ${data_loc} -working_dir $scratch_loc --tasks {task} {rt_flag} --overwrite
