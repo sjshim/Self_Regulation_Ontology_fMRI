@@ -22,5 +22,5 @@ scratch_loc=/scratch/users/ieisenbe
 singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
     python /scripts/Visualizations.py -derivatives_dir ${derivatives_loc} --skip_first --save
 
-singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-    python /scripts/Visualizations.py -derivatives_dir ${derivatives_loc} --skip_second --save
+#singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+#    python /scripts/Visualizations.py -derivatives_dir ${derivatives_loc} --skip_second --save

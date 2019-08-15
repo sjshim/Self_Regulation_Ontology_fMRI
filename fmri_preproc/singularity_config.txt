@@ -1,7 +1,7 @@
 # location of MRIQC image
 /share/PI/russpold/singularity_images/poldracklab_mriqc_0.14.2-2018-08-21-070e53b20a43.img
 # location of fmriprep image
-/share/PI/russpold/singularity_images/poldracklab_fmriprep_1.3.1-2019-03-06-9db26dbbab52.simg
+/share/PI/russpold/singularity_images/poldracklab_fmriprep_4dsbref-2019-04-11-75fadfaa06f7.simg
 # location of fmri data
 /oak/stanford/groups/russpold/data/uh2/BIDS_data
 # location of fmri analysis output

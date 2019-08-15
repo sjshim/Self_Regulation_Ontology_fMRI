@@ -23,7 +23,7 @@ do
                 if [[  -d ${data_path}/sub-${sid}/ses-${session} ]]; then
                     num_epi=$(ls ${data_path}/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
                     if [[ -d ${out_path}/fmriprep/fmriprep/sub-${sid}/ses-${session} ]]; then
-                        num_preproc=$(ls ${out_path}/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc.nii.gz | wc -l)
+                        num_preproc=$(ls ${out_path}/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc_bold.nii.gz | wc -l)
                         echo fmriprep session ${session} run
                         if [ $num_epi -ne $num_preproc ]; then
                             echo Number of task scans \($num_epi\) does not equal number of preprocessed scans \($num_preproc\)
@@ -46,7 +46,7 @@ do
         else
             if [[ $check_fmriprep -eq 1 ]]; then
                 echo "**Running fmriprep on $sid**"
-                echo singularity run ${fmriprep_path} ${data_path} ${out_path}/fmriprep participant --participant_label ${sid} -w $SCRATCH --fs-license-file ~/docs/fs-license.txt --output-space template T1w fsaverage --mem_mb 40000 --nthreads 10 >> preproc_task_list.sh
+                echo singularity run ${fmriprep_path} ${data_path} ${out_path}/fmriprep participant --participant_label ${sid} -w $LOCAL_SCRATCH --fs-license-file ~/docs/fs-license.txt --output-space template T1w fsaverage --template-resampling-grid 2mm --mem_mb 40000 --nthreads 10 --omp-nthread 8 >> preproc_task_list.sh
                 (( subjects_run+=1 ))
             elif [[ $check_fmriprep -eq -1 ]]; then
                 (( no_freesurfer+=1 ))

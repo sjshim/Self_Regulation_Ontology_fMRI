@@ -1,5 +1,5 @@
 # sro_prep singularity image
-fmri_env-2019-02-18-a479a7ca5187.simg
+fmri_env-2019-04-30-b291cb4f3d87.simg
 # location of singularity images
 /oak/stanford/groups/russpold/users/ieisenbe/uh2/fmri_analysis/singularity_images
 # derivatives folder

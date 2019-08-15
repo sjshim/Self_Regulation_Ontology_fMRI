@@ -56,7 +56,7 @@ do
             if [[  -d ${data_path}/sub-${sid}/ses-${session} ]]; then
                 num_epi=$(ls ${data_path}/sub-${sid}/ses-${session}/func/*task*bold.nii.gz | wc -l)
                 if [[ -d ${out_path}/fmriprep/fmriprep/sub-${sid}/ses-${session} ]]; then
-                    num_preproc=$(ls ${out_path}/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc.nii.gz | wc -l)
+                    num_preproc=$(ls ${out_path}/fmriprep/fmriprep/sub-${sid}/ses-${session}/func/*MNI*preproc_bold.nii.gz | wc -l)
                     echo fmriprep session ${session} run
                     if [ $num_epi -ne $num_preproc ]; then
                         echo Number of task scans \($num_epi\) does not equal number of preprocessed scans \($num_preproc\)
