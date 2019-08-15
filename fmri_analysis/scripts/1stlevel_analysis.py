@@ -1,9 +1,9 @@
-
+#!/usr/bin/env python
 # coding: utf-8
 
 # ### Imports
 
-# In[ ]:
+# In[1]:
 
 
 import argparse
@@ -29,7 +29,7 @@ from utils.firstlevel_utils import get_first_level_objs, make_first_level_obj, s
 # - conversion command:
 #   - jupyter nbconvert --to script --execute 1stlevel_analysis.ipynb
 
-# In[ ]:
+# In[2]:
 
 
 parser = argparse.ArgumentParser(description='First Level Entrypoint script')
@@ -60,7 +60,7 @@ else:
     args.fmriprep_dir = '/data/derivatives/fmriprep/fmriprep'
 
 
-# In[ ]:
+# In[3]:
 
 
 if not args.quiet:
@@ -72,7 +72,7 @@ else:
 
 # ### Initial Setup
 
-# In[ ]:
+# In[4]:
 
 
 # Set Paths
@@ -111,7 +111,7 @@ n_procs = args.n_procs
 TR = .68
 
 
-# In[ ]:
+# In[5]:
 
 
 # print
@@ -125,7 +125,7 @@ verboseprint('*'*79)
 
 # ### Run analysis
 
-# In[ ]:
+# In[6]:
 
 
 to_run = []
@@ -145,7 +145,7 @@ for subject_id in subjects:
 
 # ### Run model fit
 
-# In[ ]:
+# In[7]:
 
 
 for subjinfo in to_run:
