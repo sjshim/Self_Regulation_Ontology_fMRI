@@ -212,70 +212,60 @@ def create_DPX_event(df, duration=None):
 def create_manipulation_event(df, duration=None):
     #this events file is different than the others and requires more processing to line information up 
    
-    columns_to_drop = get_drop_columns(df, columns = ['possible_responses',
-                                                      'text', 'key_press'])    
+    columns_to_drop = get_drop_columns(df, columns =['possible_responses', 'text', 'key_press', 'junk_tmp'])
+    #cut off end trials at end of scan response & trials before scan starts
+    #finds last instance of response == nan
+    end_time = df[~np.isnan(df['response'])].iloc[-1] 
+    end_time = end_time['time_elapsed']
     events_df = df[df['time_elapsed']>0]
-    #make junk trials - doesn't work for events w/ no rt 
-    # events_df.loc[:,'junk'] = get_junk_trials(df)
-    events_df.loc[:,'junk'] = np.logical_and(df.rt < 50, df.rt > 1)
-
+    #sets events_df to only when time_elapsed 
+    events_df = events_df[events_df['time_elapsed'] <= end_time]
+                                             
     events_df = events_df.drop('trial_type', axis = 1)
     events_df.insert(0, 'duration', events_df.block_duration)
     
-    #transform key press from JS key numbers to actual ratings, and no response to NaN
+    #transform key press from JS key numbers to actual ratings
     events_df.loc[(events_df['key_press'] == 66), 'response'] = 1
     events_df.loc[(events_df['key_press'] == 89), 'response'] = 2
     events_df.loc[(events_df['key_press'] == 71), 'response'] = 3
     events_df.loc[(events_df['key_press'] == 82), 'response'] = 4
     events_df.loc[(events_df['key_press'] == 77), 'response'] = 5
     
- 
-    #create trial_type column 
+    #fixes stim_type to be condition agnostic 
+    events_df.stim_type = events_df.stim_type.replace('smoking', 'valence') 
+    events_df.stim_type = events_df.stim_type.replace('food', 'valence')
+    
     events_df['trial_type'] = events_df['stim_type']
-    
-    #creates response trials of interest - BED sample 
-    events_df.loc[(events_df['trial_type']=='food') & (events_df['which_cue'] == 'NOW'), 'trial_type'] = 'present_valence'
-    events_df.loc[(events_df['trial_type']=='food') & (events_df['which_cue'] == 'LATER'), 'trial_type'] = 'future_valence'
-    
-    #creates response trials of interest - smoking sample 
-    events_df.loc[(events_df['trial_type']=='smoking') & (events_df['which_cue'] == 'NOW'), 'trial_type'] = 'present_valence'
-    events_df.loc[(events_df['trial_type']=='smoking') & (events_df['which_cue'] == 'LATER'), 'trial_type'] = 'future_valence'
-
-    # var of interest for btoh 
-
+    #creates response trials of interest 
+    events_df.loc[(events_df['trial_type']=='valence') & (events_df['which_cue'] == 'NOW'), 'trial_type'] = 'present_valence'
+    events_df.loc[(events_df['trial_type']=='valence') & (events_df['which_cue'] == 'LATER'), 'trial_type'] = 'future_valence'
     events_df.loc[(events_df['trial_type']=='neutral') & (events_df['which_cue'] == 'LATER'), 'trial_type'] = 'future_neutral'
     events_df.loc[(events_df['trial_type']=='neutral') & (events_df['which_cue'] == 'NOW'), 'trial_type'] = 'present_neutral'
   
-    #shifts to match onset time column
+    #shifts to match stim with onset time column
     events_df['which_cue'] = events_df['which_cue'].shift(-2)
     events_df['stim_type'] = events_df['stim_type'].shift(-1)
     
-    #populate cue events 
-    events_df.loc[(events_df['trial_id']=="cue") & (events_df['which_cue'] == 'NOW'), 'trial_type'] = 'cue_present'
-    events_df.loc[(events_df['trial_id']=="cue") & (events_df['which_cue'] == 'LATER'), 'trial_type'] = 'cue_future'
+    #populate cue events in 'trial_type'
+    events_df.loc[(events_df['trial_id']=='cue') & (events_df['which_cue'] == 'NOW'), 'trial_type'] = 'cue_present'
+    events_df.loc[(events_df['trial_id']=='cue') & (events_df['which_cue'] == 'LATER'), 'trial_type'] = 'cue_future'
     
-    #ceate probe events 
-    events_df.loc[(events_df['trial_id'] == "probe") & (events_df['stim_type'] == 'neutral'), 'trial_type'] = 'neutral_probe'
-    events_df.loc[(events_df['trial_id'] == "probe") & (events_df['stim_type'] == 'food'), 'trial_type'] = 'valence_probe'
-    events_df.loc[(events_df['trial_id'] == "probe") & (events_df['stim_type'] == 'smoking'), 'trial_type'] = 'valence_probe'
+    #ceate probe events for 'trial_type'
+    events_df.loc[(events_df['trial_id'] == 'probe') & (events_df['stim_type'] == 'neutral'), 'trial_type'] = 'neutral_probe'
+    events_df.loc[(events_df['trial_id'] == 'probe') & (events_df['stim_type'] == 'valence'), 'trial_type'] = 'valence_probe'
 
     #and change null trial events to no_stim
-    events_df.loc[(events_df['trial_type'] == 'null'), 'trial_type'] = 'no_stim'
-    events_df.loc[(events_df['which_cue'] == 'null'), 'trial_type'] = 'no_stim'
-    events_df.loc[(events_df['stim_type'] == 'null'), 'trial_type'] = 'no_stim'
+    events_df.loc[(pd.isnull(events_df['trial_type'])), 'trial_type'] = 'no_stim'
 
-    #correct junk trials so that cue, probe, and null aren't marked as junk
-   # not_junk = events_df["trial_type"] == 'no_stim' 
-    #events_df.loc[not_junk,'junk'] = False
-
-   
-    
-    ## makes no stim 
-    #null = events_df["trial_type"] == 'no_stim'
-    #events_df.loc[null, 'junk'] = True
-    #null = events_df["trial_type"] == 'no_stim'
-
-
+    #make junk trials specific to manip 
+    events_df.loc[:,'junk'] = np.logical_and(df.rt < 50, df.rt > 1)
+    #creates junk for no response trials 
+    events_df.loc[:, 'junk'] = np.logical_and(pd.isnull(events_df['response']), np.logical_and(events_df['trial_id'] == 'current_rating', events_df['trial_type'] != 'no_stim' ))
+    #creates junk for cue and probe corresponding to no-response trials 
+    events_df['junk_tmp'] = events_df['response'].shift(-1)
+    events_df.loc[np.logical_and(pd.isnull(events_df['junk_tmp']), np.logical_and(events_df['trial_id'] == 'probe', events_df['trial_type'] != 'no_stim' )), 'junk'] = 'True'
+    events_df['junk_tmp'] = events_df['response'].shift(-2)
+    events_df.loc[np.logical_and(pd.isnull(events_df['junk_tmp']), np.logical_and(events_df['trial_id'] == 'cue', events_df['trial_type'] != 'no_stim' )), 'junk'] = 'True'
 
     # time elapsed is at the end of the trial, so have to remove the block
     # duration
