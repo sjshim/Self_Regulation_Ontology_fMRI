@@ -8,7 +8,7 @@ __pycache__
 .err/
 crash*
 behavioral_data
-fmri_experiments/temp_tasklist.j son
+fmri_experiments/temp_tasklist.json
 fmri_analysis/data_settings.txt
 fmri_analysis/output
 fmri_analysis/Data/sub*

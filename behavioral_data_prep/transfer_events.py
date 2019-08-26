@@ -14,8 +14,8 @@ def move_EV(subj, task, fmri_dir):
     subj = subj.replace('sub-','')
     # get event file
     ev_file = glob(join(events_dir,'*%s*%s*' % (subj, task)))[0]
-    task_fmri_files = glob(join(fmri_dir, '*%s*' % subj,'*', 
-                                'func','*%s*bold*' % task))
+    task_fmri_files = glob(join(fmri_dir, '*%s*' % subj,
+                                'func','*%s*bold*' % task)) # add * to account for ses-dir 
     task_fmri_dir = dirname(task_fmri_files[0])
     base_name = basename(task_fmri_files[0]).split('_bold')[0]
     new_events_file = join(task_fmri_dir, base_name+'_events.tsv')
@@ -25,14 +25,14 @@ def move_EV(subj, task, fmri_dir):
 def move_EVs(fmri_dir, tasks, overwrite=True, verbose=False):
     created_files = []
     total_transfers = {t:0 for t in tasks}
-    for subj_file in sorted(glob(join(fmri_dir,'sub-s???'))):
+    for subj_file in sorted(glob(join(fmri_dir,'sub-*'))):
         subj = basename(subj_file)
         if verbose: print('Transferring subject %s' % subj)
         for task in tasks:
-            bold_files = glob(join(subj_file,'*', 'func', '*task-%s*bold.nii.gz' % task))
+            bold_files = glob(join(subj_file, 'func', '*task-%s*bold.nii.gz' % task)) # add * to account for ses-dir 
             assert len(bold_files) <= 1, "%s bold files found for %s_%s" % (len(bold_files), subj, task)
             if len(bold_files) == 1:
-                event_files = glob(join(subj_file,'*', 'func', '*%s*events.tsv' % task))
+                event_files = glob(join(subj_file, 'func', '*%s*events.tsv' % task))
                 if overwrite==True or len(event_files)==0:
                     try:
                         name = move_EV(subj, task, fmri_dir)
@@ -61,9 +61,7 @@ if __name__ == "__main__":
     if args.tasks:
         task_list = args.tasks
     else:
-      task_list = ['ANT', 'CCTHot', 'discountFix',
-                   'DPX', 'motorSelectiveStop',
-                   'stopSignal', 'stroop', 'surveyMedley',
-                   'twoByTwo', 'WATT3']
+      task_list = [ 'motorSelectiveStop',
+                   'stopSignal', 'discountFix', 'manipulationTask']
     
     move_EVs(data_dir, task_list, overwrite_event, verbose=verbose)
