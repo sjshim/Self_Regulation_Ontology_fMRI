@@ -2,6 +2,7 @@ from glob import glob
 from nilearn import image
 from nipype.caching import Memory
 from nipype.interfaces import fsl
+import os 
 from os import path, remove
 import shutil
 from utils.utils import get_flags
