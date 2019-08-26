@@ -67,6 +67,12 @@ def get_contrasts(task, regress_rt=True):
                      ('noncrit_signal-noncrit_nosignal', 'noncrit_signal-noncrit_nosignal'),
                      ('crit_stop_success-noncrit_signal', 'crit_stop_success-noncrit_signal'),
                      ('crit_stop_failure-noncrit_signal', 'crit_stop_failure-noncrit_signal')]
+    elif task == 'manipulationTask':  #add non-parametric regressors 
+        contrasts =  [('cue', 'cue'),
+                     ('probe', 'probe'),
+                     ('rating', 'rating')]
+                     #('cue_x_probe','cue*probe'),
+                     #('cue_x_probe_x_rating','cue*probe*rating')]
     elif task == 'stroop':
         contrasts = [('congruent', 'congruent'),
                      ('incongruent', 'incongruent'),
