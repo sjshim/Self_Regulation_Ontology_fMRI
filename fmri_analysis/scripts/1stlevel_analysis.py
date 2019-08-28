@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[1]:
+# In[ ]:
 
 
 import argparse
@@ -44,6 +44,7 @@ parser.add_argument('--beta', action='store_true')
 parser.add_argument('--n_procs', default=16, type=int)
 parser.add_argument('--overwrite', action='store_true')
 parser.add_argument('--quiet', '-q', action='store_true')
+parser.add_argument('--a_comp_cor', action='store_true')
 
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
@@ -54,6 +55,7 @@ else:
                   'stroop', 'twoByTwo', 'WATT3']
     args.subject_ids = ['s358']
     args.rt=True
+    args.a_comp_cor=True
     args.n_procs=1
     args.derivatives_dir = '/data/derivatives/'
     args.data_dir = '/data'
@@ -99,7 +101,7 @@ else:
 
 # list of subject identifiers
 if not args.subject_ids:
-    subjects = sorted([i[-4:] for i in glob(os.path.join(args.data_dir, '*')) if 'sub-' in i])
+    subjects = sorted([i.split("-")[-1] for i in glob(os.path.join(args.data_dir, '*')) if 'sub-' in i])
 else:
     subjects = args.subject_ids
     
@@ -109,12 +111,15 @@ beta_series = args.beta
 n_procs = args.n_procs
 # TR of functional images
 TR = .68
+acompcor=True
 
 
 # In[5]:
 
 
 # print
+subjects = ["5064"]
+tasks = ["manipulationTask"]
 verboseprint('*'*79)
 verboseprint('Tasks: %s\n, Subjects: %s\n, derivatives_dir: %s\n, data_dir: %s' % 
      (tasks, subjects, derivatives_dir, data_dir))
@@ -128,6 +133,7 @@ verboseprint('*'*79)
 # In[6]:
 
 
+a_comp_cor = True
 to_run = []
 for subject_id in subjects:
     for task in tasks:
@@ -138,7 +144,7 @@ for subject_id in subjects:
                 warnings.filterwarnings("ignore",category=DeprecationWarning)
                 warnings.filterwarnings("ignore",category=UserWarning)
                 subjinfo = make_first_level_obj(subject_id, task, fmriprep_dir, 
-                                                data_dir, TR, regress_rt=regress_rt)
+                                                data_dir, TR, regress_rt=regress_rt, a_comp_cor=a_comp_cor)
             if subjinfo is not None:
                 to_run.append(subjinfo)
 

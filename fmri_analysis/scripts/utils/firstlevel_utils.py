@@ -51,7 +51,7 @@ def create_design(events, confounds, task, TR, beta=True, regress_rt=False):
     return design
 
 def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR, 
-                        regress_rt=False, beta=False):
+                        regress_rt=False, beta=False, a_comp_cor=True):
     """
     retrieves and passes func_file, mask_file, events, confounds, design, and contrasts to FirstLevel 
     class and returns subjinfo object, prints error if no func or mask file
@@ -177,7 +177,7 @@ class FirstLevel():
 # ********************************************************
 # Process Functions
 # ******************************************************** 
-def process_confounds(confounds_file):
+def process_confounds(confounds_file, a_comp_cor=True):
     """
     scrubbing for TASK
     remove TRs where FD>.5, stdDVARS (that relates to DVARS>.5)
@@ -207,7 +207,8 @@ def process_confounds(confounds_file):
     
     # add additional relevant regressors
     add_regressor_names = ['framewise_displacement'] 
-    #add_regressor_names += [i for i in confounds_df.columns if 'aCompCor' in i]
+    if a_comp_cor: 
+        add_regressor_names += [i for i in confounds_df.columns if 'a_comp_cor' in i]
     additional_regressors = confounds_df.loc[:,add_regressor_names].values
     regressors = np.hstack((movement_regressors,
                             additional_regressors,
