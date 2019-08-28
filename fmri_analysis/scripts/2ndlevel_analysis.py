@@ -1,8 +1,7 @@
-#!/usr/bin/env python
+
 # coding: utf-8
 
 # In[ ]:
-
 
 import argparse
 from glob import glob
@@ -30,7 +29,6 @@ from utils.utils import get_contrasts, get_flags
 
 # In[ ]:
 
-
 parser = argparse.ArgumentParser(description='2nd level Entrypoint Script.')
 parser.add_argument('-derivatives_dir', default=None)
 parser.add_argument('--tasks', nargs="+", help="Choose from ANT, CCTHot, discountFix,                                     DPX, motorSelectiveStop, stopSignal,                                     stroop, surveyMedley, twoByTwo, WATT3")
@@ -52,7 +50,6 @@ else:
 
 # In[ ]:
 
-
 if not args.quiet:
     def verboseprint(*args, **kwargs):
         print(*args, **kwargs)
@@ -64,11 +61,10 @@ else:
 
 # In[ ]:
 
-
 # set paths
 first_level_dir = path.join(args.derivatives_dir, '1stlevel')
 second_level_dir = path.join(args.derivatives_dir,'2ndlevel')
-fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep', 'fmriprep')
+fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep', 'fmriprep', 'fmriprep')
 
 # set tasks
 if args.tasks is not None:
@@ -89,8 +85,8 @@ n_perms = args.n_perms
 
 # In[ ]:
 
-
 mask_threshold = .95
+print(fmriprep_dir)
 mask_loc = path.join(second_level_dir, 'group_mask_thresh-%s.nii.gz' % str(mask_threshold))
 if path.exists(mask_loc) == False or args.rerun:
     verboseprint('Making group mask')
@@ -102,7 +98,6 @@ if path.exists(mask_loc) == False or args.rerun:
 # ### Create second level objects
 
 # In[ ]:
-
 
 rt_flag, beta_flag = get_flags(regress_rt, beta_series)
 for task in tasks:
@@ -142,7 +137,6 @@ for task in tasks:
 
 
 # In[ ]:
-
 
 """
 # Using nistats method of first level objects. Not conducive for randomise.

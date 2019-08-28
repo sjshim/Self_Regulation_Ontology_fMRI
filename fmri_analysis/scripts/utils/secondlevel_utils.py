@@ -2,6 +2,7 @@ from glob import glob
 from nilearn import image
 from nipype.caching import Memory
 from nipype.interfaces import fsl
+import os 
 from os import path, remove
 import shutil
 from utils.utils import get_flags
@@ -9,15 +10,9 @@ from utils.utils import get_flags
 def create_group_mask(fmriprep_dir, threshold=.8, verbose=True):
     if verbose:
         print('Creating Group mask...')
-        
-    if os.path.exists(path.join(fmriprep_dir,'sub-*',
-                            'func','*MNI152NLin2009cAsym*brain_mask.nii.gz')):
-        brainmasks = glob(path.join(fmriprep_dir,'sub-*',
-                            'func','*MNI152NLin2009cAsym*brain_mask.nii.gz'))
-    else: 
-        brainmasks = glob(path.join(fmriprep_dir,'sub-*', '*',
-                            'func','*MNI152NLin2009cAsym*brain_mask.nii.gz'))
-        
+    brainmasks = glob(path.join(fmriprep_dir,'sub-*',
+                               'func','*MNI152NLin2009cAsym*brain_mask.nii.gz'))     
+    print(brainmasks)
     mean_mask = image.mean_img(brainmasks)
     group_mask = image.math_img("a>=%s" % str(threshold), a=mean_mask)
     return group_mask
