@@ -56,13 +56,13 @@ for subj_file in glob('../behavioral_data/raw/*/*'):
             exp_id = df.iloc[-2].exp_id 
         else:
             exp_id = '_'.join(os.path.basename(subj_file).split('_')[1:]).rstrip('.csv')
-        if exp_id == 'manipulationTask': #fixes formatting for manip 
+        if (exp_id == 'manipulationTask') | (exp_id == 'cue_control_food'): #fixes formatting for manip 
             exp_id = 'manipulation_task'
-        #fixes difference in manipulationTask scanner input 
-            df = df.replace(to_replace='scanner_wait', value = 'fmri_trigger_wait', regex=True)
+            
         #fixes difference in rest scanner input 
-        if exp_id == 'rest': 
+        if (exp_id == 'rest') | (exp_id == 'uh2_video') | (exp_id == 'manipulation_task'): 
             df = df.replace(to_replace='scanner_wait', value = 'fmri_trigger_wait', regex=True)
+            
         # set time_elapsed in reference to the last trigger of internal calibration
         print(filey, exp_id)
         start_time = df.query('trial_id == "fmri_trigger_wait"').iloc[-1]['time_elapsed'] 
@@ -102,20 +102,20 @@ if verbose: print("Saving Group Data")
 # save group behavior
 for task,df in task_dfs.items():
     df.to_csv('../behavioral_data/processed/group_data/%s.csv' % task, index=False)
-# get 90th percentile reaction time for events files:
+# get 50th percentile reaction time for events files:
 task_50th_rts = get_median_rts(task_dfs)
-#print(task_50th_rts)
+print(task_50th_rts)
 
 if verbose: print("Creating Event Files")
 # calculate event files
-for subj_file in glob('../behavioral_data/raw/*/*'):
+for subj_file in glob('../behavioral_data/raw/*/*.csv'):
     filey = os.path.basename(subj_file)
     cleaned_file_name = '_cleaned.'.join(filey.split('.'))
     event_file_name = '_events.'.join(filey.split('.')).replace('csv','tsv')
     cleaned_file_path = os.path.join('../behavioral_data/processed', cleaned_file_name)
     events_file_path = os.path.join('../behavioral_data/event_files', event_file_name)
 
-  # get cleaned file
+  # get & save cleaned file
     df = pd.read_csv(cleaned_file_path)
     exp_id = df.experiment_exp_id.unique()[0]
     task_rt = task_50th_rts[exp_id]

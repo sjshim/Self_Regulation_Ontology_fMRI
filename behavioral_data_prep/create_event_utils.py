@@ -8,7 +8,8 @@ from utils import get_survey_items_order
 def get_drop_columns(df, columns=None, use_default=True):
     """
     defines columns to drop when converting from _clean to _event
-    files each event file.
+    files each event file. Generates a list of columns to drop,
+    constrains it to columns already in the dataframe.
     """
     default_cols = ['correct_response', 'exp_stage',
                     'feedback_duration', 'possible_responses',
@@ -18,7 +19,9 @@ def get_drop_columns(df, columns=None, use_default=True):
     if columns is not None:
         drop_columns = columns
     if use_default == True:
+        #if true, drop columns come from argument and from default (inclusive or)
         drop_columns = set(default_cols) | set(drop_columns)
+     #drop columns only included if they appear in the dataframe   
     drop_columns = set(df.columns) & set(drop_columns)
     return drop_columns
 
@@ -57,6 +60,12 @@ def process_rt(events_df):
     """changes -1 rts (javascript no response) to nan, changes column from rt -> response_time """
     events_df.rt.replace({-1: np.nan}, inplace=True) #replaces no response rts with nan
     events_df.rename(columns={'rt': 'response_time'}, inplace=True) 
+    
+def row_match(df,row_list):
+    bool_list = pd.Series(True,index=df.index)
+    for i in range(len(row_list)):
+        bool_list = bool_list & (df.iloc[:,i] == row_list[i])
+    return bool_list[bool_list].index    
 
 
 def create_events(df, exp_id, duration=None):
@@ -84,11 +93,7 @@ def create_events(df, exp_id, duration=None):
             events_df = fun(df)
     return events_df
 
-def row_match(df,row_list):
-    bool_list = pd.Series(True,index=df.index)
-    for i in range(len(row_list)):
-        bool_list = bool_list & (df.iloc[:,i] == row_list[i])
-    return bool_list[bool_list].index
+
 
 # *********************************
 # Functions to create event files
@@ -154,14 +159,7 @@ def create_discountFix_event(df, duration=None):
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
 
-    #additional parametric regressors:
-    #subjective value
-    worker_id = df.worker_id.unique()[0]
-    discount_rate = calc_discount_fixed_DV(df)[0].get(worker_id).get('hyp_discount_rate_glm').get('value')
-    larger_value =  events_df.large_amount/(1+discount_rate*events_df.later_delay)
-    events_df.insert(0, 'subjective_choice_value', [larger_value[i] if events_df['trial_type'][i]=='larger_later' else 20 for i in events_df.index])
-    #inverse_delay
-    events_df.insert(0, 'inverse_delay', 1/events_df.later_delay)
+
 
     # reorganize and rename columns in line with BIDs specifications
     events_df.loc[:,'trial_type'] = events_df.choice
@@ -176,6 +174,19 @@ def create_discountFix_event(df, duration=None):
     process_rt(events_df)
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset','duration']]/=1000
+    
+    
+    #additional parametric regressors:
+    #subjective value
+    worker_id = df.worker_id.unique()[0]
+    discount_rate = calc_discount_fixed_DV(df)[0].get(worker_id).get('hyp_discount_rate_glm').get('value')
+    larger_value =  events_df.large_amount/(1+discount_rate*events_df.later_delay)
+    subjective_choice_value = [larger_value[i] if events_df['trial_type'][i]=='larger_later' else 20 for i in events_df.index]
+    events_df.insert(0, 'subjective_choice_value', subjective_choice_value - np.mean(subjective_choice_value)) #insert demeaned subjective choice value
+    
+    #inverse_delay
+    inverse_delay = 1/events_df.later_delay
+    events_df.insert(0, 'inverse_delay', inverse_delay - np.mean(inverse_delay)) #insert demeaned inverse delay
 
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
@@ -323,10 +334,7 @@ def create_motorSelectiveStop_event(df, duration=None):
     return events_df
 
 def create_stopSignal_event(df, duration=None):
-    columns_to_drop = get_drop_columns(df, columns = ['condition',
-                                                      'SS_duration',
-                                                      'SS_stimulus',
-                                                      'SS_trial_type'])
+
     events_df = df[df['time_elapsed']>0]
     # add junk regressor
     events_df.loc[:,'junk'] = get_junk_trials(df)
@@ -342,18 +350,23 @@ def create_stopSignal_event(df, duration=None):
     events_df.loc[SS_success_trials,'condition'] = 'stop_success'
     events_df.loc[SS_fail_trials,'condition'] = 'stop_failure'
     events_df.loc[:,'trial_type'] = events_df.condition
+    # duration    
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
         events_df.insert(0,'duration',duration)
     # time elapsed is at the end of the trial, so have to remove the block
-    # duration
+
     events_df.insert(0,'onset',get_trial_times(df))
     # process RT
     process_rt(events_df)
     # convert milliseconds to seconds
     events_df.loc[:,['response_time','onset','duration']]/=1000
-    # drop unnecessary columns
+    # get and drop unnecessary columns
+    columns_to_drop = get_drop_columns(events_df, columns = ['condition',
+                                                      'SS_duration',
+                                                      'SS_stimulus',
+                                                      'SS_trial_type'])    
     events_df = events_df.drop(columns_to_drop, axis=1)
     return events_df
 

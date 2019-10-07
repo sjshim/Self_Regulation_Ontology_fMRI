@@ -37,7 +37,8 @@ def get_name_map():
             'manipulation_task': 'manipulationTask',
             'pre_rating': 'preRating',
             'rest': 'rest',
-                #for the manipulation tasks that have this for the exp_id
+            'uh2_video': 'rest',    
+                #for the manipulation tasks that have 'cue_control_food' for the exp_id
             'cue_control_food': 'manipulationTask'}
     
     return name_map  
