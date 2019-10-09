@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[1]:
+# In[ ]:
 
 
 import argparse
@@ -29,7 +29,7 @@ from utils.firstlevel_utils import get_first_level_objs, make_first_level_obj, s
 # - conversion command:
 #   - jupyter nbconvert --to script --execute 1stlevel_analysis.ipynb
 
-# In[2]:
+# In[ ]:
 
 
 parser = argparse.ArgumentParser(description='First Level Entrypoint script')
@@ -65,7 +65,7 @@ else:
     args.fmriprep_dir = '/data/derivatives/fmriprep/fmriprep'
 
 
-# In[3]:
+# In[ ]:
 
 
 if not args.quiet:
@@ -79,7 +79,7 @@ else:
 # 
 # Organize paths and set parameters based on arguments
 
-# In[4]:
+# In[ ]:
 
 
 # Set Paths
@@ -121,7 +121,7 @@ n_procs = args.n_procs
 TR = .68
 
 
-# In[5]:
+# In[ ]:
 
 
 # print
@@ -138,7 +138,7 @@ verboseprint('*'*79)
 # gather the files for each task within each subject
 # 
 
-# In[6]:
+# In[ ]:
 
 
 to_run = []
@@ -160,7 +160,7 @@ for subject_id in subjects:
 # 
 # generate the glm and fit the timeseries data to it
 
-# In[7]:
+# In[ ]:
 
 
 for subjinfo in to_run:
@@ -177,20 +177,8 @@ for subjinfo in to_run:
                            n_jobs=1
                           )
     out = fmri_glm.fit(subjinfo.func, design_matrices=subjinfo.design)
-    design_matrix = fmri_glm.design_matrices_[0]
     
     subjinfo.fit_model = out
-    
-    # run contrasts
-    verboseprint('** computing contrasts')
-    for name, contrast in subjinfo.contrasts:
-        z_map = subjinfo.fit_model.compute_contrast(contrast, output_type='z_score')
-        subjinfo.maps[name+'_zscore'] = z_map
-    
-    verboseprint('** saving')
-    save_first_level_obj(subjinfo, first_level_dir, True)
-    subjinfo.export_design(first_level_dir)
-    subjinfo.export_events(first_level_dir)
 
 
 # In[ ]:

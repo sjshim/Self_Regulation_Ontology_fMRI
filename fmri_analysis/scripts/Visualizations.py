@@ -69,6 +69,18 @@ subjinfo = pickle.load(open(files[0], 'rb'))
 # In[ ]:
 
 
+# display the glm to make sure its not wonky - useful for doublechecking, not necessary #
+#    from nistats.reporting import plot_design_matrix
+#    import matplotlib.pyplot as plt
+#    fig, (ax1) = plt.subplots(figsize=(20, 10), nrows=1, ncols=1)
+#    ax1.set_title(subjinfo)
+#    plot_design_matrix(design_matrix, ax=ax1)
+####
+
+
+# In[ ]:
+
+
 plot_design(subjinfo)
 plot_design_timeseries(subjinfo, 0, 100)
 plot_design_heatmap(subjinfo)

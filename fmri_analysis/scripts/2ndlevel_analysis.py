@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 import argparse
@@ -28,7 +28,7 @@ from utils.utils import get_contrasts, get_flags
 # - conversion command:
 #   - jupyter nbconvert --to script --execute 2ndlevel_analysis.ipynb
 
-# In[2]:
+# In[ ]:
 
 
 parser = argparse.ArgumentParser(description='2nd level Entrypoint Script.')
@@ -50,7 +50,7 @@ else:
     args.n_perms = 10
 
 
-# In[3]:
+# In[ ]:
 
 
 if not args.quiet:
@@ -64,7 +64,7 @@ else:
 # 
 # Organize paths and set parameters based on arguments
 
-# In[4]:
+# In[ ]:
 
 
 # set paths
@@ -89,7 +89,7 @@ n_perms = args.n_perms
 
 # ### Create Mask
 
-# In[5]:
+# In[ ]:
 
 
 mask_threshold = .95
@@ -104,7 +104,7 @@ if path.exists(mask_loc) == False or args.rerun:
 # ### Create second level objects
 # Gather first level models and create second level model
 
-# In[6]:
+# In[ ]:
 
 
 rt_flag, beta_flag = get_flags(regress_rt, beta_series)
@@ -144,7 +144,7 @@ for task in tasks:
     verboseprint('Done with %s' % task)
 
 
-# In[7]:
+# In[ ]:
 
 
 """
