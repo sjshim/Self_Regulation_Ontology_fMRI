@@ -29,7 +29,7 @@ from utils.firstlevel_utils import get_first_level_objs, make_first_level_obj, s
 # - conversion command:
 #   - jupyter nbconvert --to script --execute 1stlevel_analysis.ipynb
 
-# In[2]:
+# In[ ]:
 
 
 parser = argparse.ArgumentParser(description='First Level Entrypoint script')
@@ -50,10 +50,15 @@ if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
 else:
     args = parser.parse_args([])
-    args.tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 
+    args.tasks = ['discountFix', 'manipulationTask', #aim 2 tasks
+                  'motorSelectiveStop', 'stopSignal']
+    '''
+     args.tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', #aim 1 tasks
                   'motorSelectiveStop', 'stopSignal', 
                   'stroop', 'twoByTwo', 'WATT3']
-    args.subject_ids = ['s358']
+    '''
+   
+    args.subject_ids = ['3010']
     args.rt=True
     args.a_comp_cor=True
     args.n_procs=1
@@ -62,7 +67,7 @@ else:
     args.fmriprep_dir = '/data/derivatives/fmriprep/fmriprep'
 
 
-# In[3]:
+# In[ ]:
 
 a_comp_cor = False
 if not args.quiet:
@@ -73,8 +78,10 @@ else:
 
 
 # ### Initial Setup
+# 
+# Organize paths and set parameters based on arguments
 
-# In[4]:
+# In[ ]:
 
 
 # Set Paths
@@ -94,10 +101,13 @@ else:
 if args.tasks is not None:
     tasks = args.tasks
 else:
-    tasks = ['ANT', 'CCTHot', 'discountFix',
-            'DPX', 'motorSelectiveStop',
-            'stopSignal', 'stroop',
-            'twoByTwo', 'WATT3']
+    tasks = ['discountFix', 'manipulationTask', 
+                  'motorSelectiveStop', 'stopSignal']
+    '''
+     args.tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 
+                  'motorSelectiveStop', 'stopSignal', 
+                  'stroop', 'twoByTwo', 'WATT3']
+    '''
 
 # list of subject identifiers
 if not args.subject_ids:
@@ -113,7 +123,7 @@ n_procs = args.n_procs
 TR = .68
 
 
-# In[5]:
+# In[ ]:
 
 
 # print
@@ -126,8 +136,11 @@ verboseprint('*'*79)
 # # Set up Nodes
 
 # ### Run analysis
+# 
+# gather the files for each task within each subject
+# 
 
-# In[6]:
+# In[ ]:
 
 
 to_run = []
@@ -146,8 +159,10 @@ for subject_id in subjects:
 
 
 # ### Run model fit
+# 
+# generate the glm and fit the timeseries data to it
 
-# In[7]:
+# In[ ]:
 
 
 for subjinfo in to_run:
@@ -164,16 +179,12 @@ for subjinfo in to_run:
                            n_jobs=1
                           )
     out = fmri_glm.fit(subjinfo.func, design_matrices=subjinfo.design)
+    
     subjinfo.fit_model = out
-    """
-    # run contrasts
-    verboseprint('** computing contrasts')
-    for name, contrast in subjinfo.contrasts:
-        z_map = subjinfo.fit_model.compute_contrast(contrast, output_type='z_score')
-        subjinfo.maps[name+'_zscore'] = z_map
-    """
-    verboseprint('** saving')
-    save_first_level_obj(subjinfo, first_level_dir, True)
-    subjinfo.export_design(first_level_dir)
-    subjinfo.export_events(first_level_dir)
+
+
+# In[ ]:
+
+
+
 
