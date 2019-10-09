@@ -1,13 +1,13 @@
 #!/bin/bash
 #SBATCH --job-name={task}-1stlevel{rt_flag}
-#SBATCH --output=.out/{task}-1stlevel{rt_flag}.out
-#SBATCH --error=.err/{task}-1stlevel{rt_flag}.err
+#SBATCH --output=.out/{task}-1stlevel{rt_flag}-%J.out
+#SBATCH --error=.err/{task}-1stlevel{rt_flag}-%J.err
 #SBATCH --time=48:00:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=mphagen@stanford.edu
 #SBATCH --cpus-per-task=16
 #SBATCH --ntasks-per-node=1
-#SBATCH -p russpold hns
+#SBATCH -p russpold, hns, normal
 export PYTHONPATH=""
 # set up paths
 # scratch is automatically mounted
@@ -23,3 +23,4 @@ scratch_loc=/scratch/users/mphagen
 # run singularity, scratch is automatically mounted
 singularity exec -B ${scripts_loc}:/scripts  ${singularity_loc} \
     python /scripts/1stlevel_analysis.py -derivatives_dir ${derivatives_loc} -data_dir ${data_loc} -fmriprep_dir ${fmriprep_dir}  -working_dir $scratch_loc --tasks {task} {rt_flag} --overwrite
+

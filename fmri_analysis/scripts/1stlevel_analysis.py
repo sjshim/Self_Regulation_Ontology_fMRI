@@ -44,6 +44,7 @@ parser.add_argument('--beta', action='store_true')
 parser.add_argument('--n_procs', default=16, type=int)
 parser.add_argument('--overwrite', action='store_true')
 parser.add_argument('--quiet', '-q', action='store_true')
+parser.add_argument('--a_comp_cor', action='store_true')
 
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
@@ -59,6 +60,7 @@ else:
    
     args.subject_ids = ['3010']
     args.rt=True
+    args.a_comp_cor=True
     args.n_procs=1
     args.derivatives_dir = '/data/derivatives/'
     args.data_dir = '/data'
@@ -67,7 +69,7 @@ else:
 
 # In[ ]:
 
-
+a_comp_cor = False
 if not args.quiet:
     def verboseprint(*args, **kwargs):
         print(*args, **kwargs)
@@ -89,7 +91,7 @@ if args.fmriprep_dir is None:
 else:
     fmriprep_dir = args.fmriprep_dir
 data_dir = args.data_dir
-first_level_dir = join(derivatives_dir,'1stlevel')
+first_level_dir = join(derivatives_dir,'1stlevel_no_motion')
 if args.working_dir is None:
     working_dir = join(derivatives_dir, '1stlevel_workingdir')
 else:
@@ -151,7 +153,7 @@ for subject_id in subjects:
                 warnings.filterwarnings("ignore",category=DeprecationWarning)
                 warnings.filterwarnings("ignore",category=UserWarning)
                 subjinfo = make_first_level_obj(subject_id, task, fmriprep_dir, 
-                                                data_dir, TR, regress_rt=regress_rt)
+                                                data_dir, TR, regress_rt=regress_rt, a_comp_cor=a_comp_cor)
             if subjinfo is not None:
                 to_run.append(subjinfo)
 
