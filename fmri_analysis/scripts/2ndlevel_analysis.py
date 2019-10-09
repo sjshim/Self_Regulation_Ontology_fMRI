@@ -1,7 +1,8 @@
-
+#!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
+
 
 import argparse
 from glob import glob
@@ -27,7 +28,8 @@ from utils.utils import get_contrasts, get_flags
 # - conversion command:
 #   - jupyter nbconvert --to script --execute 2ndlevel_analysis.ipynb
 
-# In[ ]:
+# In[2]:
+
 
 parser = argparse.ArgumentParser(description='2nd level Entrypoint Script.')
 parser.add_argument('-derivatives_dir', default=None)
@@ -48,7 +50,8 @@ else:
     args.n_perms = 10
 
 
-# In[ ]:
+# In[3]:
+
 
 if not args.quiet:
     def verboseprint(*args, **kwargs):
@@ -58,13 +61,16 @@ else:
 
 
 # ### Setup
+# 
+# Organize paths and set parameters based on arguments
 
-# In[ ]:
+# In[4]:
+
 
 # set paths
 first_level_dir = path.join(args.derivatives_dir, '1stlevel')
 second_level_dir = path.join(args.derivatives_dir,'2ndlevel')
-fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep', 'fmriprep', 'fmriprep')
+fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep', 'fmriprep')
 
 # set tasks
 if args.tasks is not None:
@@ -83,10 +89,10 @@ n_perms = args.n_perms
 
 # ### Create Mask
 
-# In[ ]:
+# In[5]:
+
 
 mask_threshold = .95
-print(fmriprep_dir)
 mask_loc = path.join(second_level_dir, 'group_mask_thresh-%s.nii.gz' % str(mask_threshold))
 if path.exists(mask_loc) == False or args.rerun:
     verboseprint('Making group mask')
@@ -96,8 +102,10 @@ if path.exists(mask_loc) == False or args.rerun:
 
 
 # ### Create second level objects
+# Gather first level models and create second level model
 
-# In[ ]:
+# In[6]:
+
 
 rt_flag, beta_flag = get_flags(regress_rt, beta_series)
 for task in tasks:
@@ -136,7 +144,8 @@ for task in tasks:
     verboseprint('Done with %s' % task)
 
 
-# In[ ]:
+# In[7]:
+
 
 """
 # Using nistats method of first level objects. Not conducive for randomise.
