@@ -1,4 +1,0 @@
-git+https://github.com/IanEisenberg/expfactory-analysis
-nipype
-nistats
-seaborn

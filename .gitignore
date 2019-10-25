@@ -18,3 +18,4 @@ nilearn_cache*
 nilearn_data*
 nipype_mem*
 .spyproject
+dockerfile_old
