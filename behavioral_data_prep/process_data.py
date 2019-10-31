@@ -104,7 +104,6 @@ for task,df in task_dfs.items():
     df.to_csv('../behavioral_data/processed/group_data/%s.csv' % task, index=False)
 # get 50th percentile reaction time for events files:
 task_50th_rts = get_median_rts(task_dfs)
-print(task_50th_rts)
 
 if verbose: print("Creating Event Files")
 # calculate event files

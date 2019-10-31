@@ -91,7 +91,7 @@ if args.fmriprep_dir is None:
 else:
     fmriprep_dir = args.fmriprep_dir
 data_dir = args.data_dir
-first_level_dir = join(derivatives_dir,'1stlevel_no_motion')
+first_level_dir = join(derivatives_dir,'1stlevel')
 if args.working_dir is None:
     working_dir = join(derivatives_dir, '1stlevel_workingdir')
 else:
@@ -182,7 +182,10 @@ for subjinfo in to_run:
     
     subjinfo.fit_model = out
 
-
+    verboseprint('** saving')
+    save_first_level_obj(subjinfo, first_level_dir, True)
+    subjinfo.export_design(first_level_dir)
+    subjinfo.export_events(first_level_dir)
 # In[ ]:
 
 
