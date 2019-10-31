@@ -1,8 +1,7 @@
-
+#!/usr/bin/env python
 # coding: utf-8
 
 # In[ ]:
-
 
 import argparse
 from glob import glob
@@ -13,7 +12,6 @@ from nilearn.decomposition import CanICA
 
 
 # In[ ]:
-
 
 parser = argparse.ArgumentParser(description='First Level Inspection Entrypoint script')
 parser.add_argument('-derivatives_dir', default=None)
@@ -29,7 +27,6 @@ else:
 
 
 # In[ ]:
-
 
 fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep', 'fmriprep')
 first_level_dir = path.join(args.derivatives_dir,'1stlevel')
@@ -47,7 +44,6 @@ n_comps = 20
 # # Run Canonical ICA
 
 # In[ ]:
-
 
 for task in tasks:
     func_filenames = glob(path.join(fmriprep_dir, '*', '*', 'func', '*%s*MNI*preproc.nii.gz' % task))

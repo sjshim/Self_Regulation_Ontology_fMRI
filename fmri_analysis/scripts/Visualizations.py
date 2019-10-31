@@ -1,8 +1,7 @@
-#!/usr/bin/env python
+
 # coding: utf-8
 
 # In[ ]:
-
 
 import argparse
 from glob import glob
@@ -20,7 +19,6 @@ from utils.firstlevel_plot_utils import (plot_design, plot_design_timeseries,
 
 # In[ ]:
 
-
 parser = argparse.ArgumentParser(description='2nd level Entrypoint Script.')
 parser.add_argument('-derivatives_dir', default=None)
 parser.add_argument('--skip_first', action='store_true')
@@ -36,11 +34,10 @@ else:
     args.tasks = ['stroop']
     args.rt=True
     args.save=True
-    get_ipython().run_line_magic('matplotlib', 'inline')
+    get_ipython().magic(u'matplotlib inline')
 
 
 # In[ ]:
-
 
 # set paths
 first_level_dir = path.join(args.derivatives_dir, '1stlevel')
@@ -59,11 +56,23 @@ run_second_level = not args.skip_second
 
 # In[ ]:
 
-
 # load design
 subject_id, task = 's592', 'stroop'
 files = get_first_level_objs(subject_id, task, first_level_dir, regress_rt=False)
 subjinfo = pickle.load(open(files[0], 'rb'))
+
+
+# In[ ]:
+
+
+
+# display the glm to make sure its not wonky - useful for doublechecking, not necessary #
+#    from nistats.reporting import plot_design_matrix
+#    import matplotlib.pyplot as plt
+#    fig, (ax1) = plt.subplots(figsize=(20, 10), nrows=1, ncols=1)
+#    ax1.set_title(subjinfo)
+#    plot_design_matrix(design_matrix, ax=ax1)
+####
 
 
 # In[ ]:
@@ -77,7 +86,6 @@ plot_design_heatmap(subjinfo)
 # # First Level Visualization
 
 # In[ ]:
-
 
 if run_first_level:
     for task in tasks:
@@ -93,7 +101,6 @@ if run_first_level:
 # # Second Level Visualization
 
 # In[ ]:
-
 
 if run_second_level:
     for task in tasks:

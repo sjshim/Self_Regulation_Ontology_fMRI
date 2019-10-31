@@ -61,6 +61,8 @@ else:
 
 
 # ### Setup
+# 
+# Organize paths and set parameters based on arguments
 
 # In[ ]:
 
@@ -100,6 +102,7 @@ if path.exists(mask_loc) == False or args.rerun:
 
 
 # ### Create second level objects
+# Gather first level models and create second level model
 
 # In[ ]:
 

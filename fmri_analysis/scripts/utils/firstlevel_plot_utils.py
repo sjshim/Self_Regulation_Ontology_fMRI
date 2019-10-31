@@ -22,8 +22,7 @@ def plot_contrast(subjinfo, contrast, simple_plot=True, **kwargs):
     else:
         contrast_title = contrast
         z_map = subjinfo.fit_model.compute_contrast(contrast)
-    plot_map(z_map, title=contrast_title, simple_plot=simple_plot, **kwargs)
-    return f
+    plot_map(z_map, title=contrast_title, **kwargs)
 
 def plot_map(contrast_map, title=None, glass_kwargs=None, stat_kwargs=None):
     if glass_kwargs is None:
@@ -53,7 +52,7 @@ def plot_map(contrast_map, title=None, glass_kwargs=None, stat_kwargs=None):
     return f
 
 def plot_design_timeseries(subjinfo, begin=0, end=-1):
-    X_loc = subjinfo.design.columns.get_loc('X')
+    X_loc = subjinfo.design.columns.get_loc('trans_x')
     subset = subjinfo.design.loc[:, subjinfo.design.columns[:X_loc]]
     subset = subset.drop(columns=subset.filter(regex='_TD').columns)
     for i, col in enumerate(subset.columns):
@@ -67,7 +66,7 @@ def plot_design_timeseries(subjinfo, begin=0, end=-1):
         txt.set_path_effects([PathEffects.withStroke(linewidth=8, foreground='w')])
 
 def plot_design_heatmap(subjinfo):
-    X_loc = subjinfo.design.columns.get_loc('X')
+    X_loc = subjinfo.design.columns.get_loc('trans_x')
     subset = subjinfo.design.loc[:, subjinfo.design.columns[:X_loc]]
     plt.figure(figsize=(14,14))
     sns.heatmap(subset.corr(), square=True, annot=True, annot_kws={'fontsize': 16})

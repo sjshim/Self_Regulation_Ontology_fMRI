@@ -2,6 +2,7 @@ from collections import namedtuple
 from glob import glob
 from nistats.design_matrix import make_first_level_design_matrix
 import numpy as np
+import os
 from os import makedirs, path
 import pandas as pd
 import patsy
@@ -11,6 +12,7 @@ from sklearn.preprocessing import scale
 import warnings
 from utils.events_utils import get_beta_series, parse_EVs
 from utils.utils import get_contrasts, get_flags
+import pdb
 
 # ********************************************************
 # helper functions 
@@ -25,7 +27,10 @@ def temp_deriv(dataframe, columns=None):
         insert_loc = dataframe.columns.get_loc(i)
         dataframe.insert(insert_loc+1, i+'_TD', col)   
 
-def create_design(events, confounds, task, TR, beta=False, regress_rt=False):
+def create_design(events, confounds, task, TR, beta=True, regress_rt=False):
+    """
+    takes event file and confounds, and creates EV_dict, which is passed to make_first_level_design to create a the design matrix. 
+    """
     if beta:
         EV_dict = get_beta_series(events, regress_rt=regress_rt)
     else:
@@ -46,7 +51,11 @@ def create_design(events, confounds, task, TR, beta=False, regress_rt=False):
     return design
 
 def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR, 
-                        regress_rt=False, beta=False):
+                        regress_rt=False, beta=False, a_comp_cor=True):
+    """
+    retrieves and passes func_file, mask_file, events, confounds, design, and contrasts to FirstLevel 
+    class and returns subjinfo object, prints error if no func or mask file
+    """
     func_file, mask_file = get_func_file(fmriprep_dir, subject_id, task)
     if func_file is None or mask_file is None:
         print("Missing MRI files for %s: %s" % (subject_id, task))
@@ -59,11 +68,16 @@ def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR,
     design = create_design(events, confounds, task, TR, beta=beta, regress_rt=regress_rt)
     contrasts = get_contrasts(task, regress_rt)
     subjinfo = FirstLevel(func_file, mask_file, events, design, contrasts, '%s_%s' % (subject_id, task))
+
     subjinfo.model_settings['beta'] = beta
     subjinfo.model_settings['regress_rt'] = regress_rt
     return subjinfo
 
 def save_first_level_obj(subjinfo, output_dir, save_maps=False):
+    """
+    Gets or Creates a directory for saving the first level analyses,
+    will also save contrast maps if flagged to do so.
+    """
     subj, task = subjinfo.ID.split('_')
     directory = path.join(output_dir, subj, task)
     flags = subjinfo.get_flags()
@@ -84,6 +98,8 @@ def save_first_level_obj(subjinfo, output_dir, save_maps=False):
                 warnings.warn('Contrast: %s failed for %s, %s' % (name, subj, task))
                 
 def get_first_level_objs(subject_id, task, first_level_dir, regress_rt=False, beta=False):
+    """ gets and returns filepath to first level objects if they exist"""
+
     rt_flag, beta_flag = get_flags(regress_rt, beta)
     files = path.join(first_level_dir, subject_id, task, 'firstlevel*%s_%s*pkl' % (rt_flag, beta_flag))
     return glob(files)    
@@ -101,7 +117,7 @@ def load_first_level_objs(task, first_level_dir, regress_rt=False, beta=False):
 def get_first_level_maps(subject_id, task, first_level_dir, contrast, regress_rt=False, beta=False):
     rt_flag, beta_flag = get_flags(regress_rt, beta)
     files = path.join(first_level_dir, subject_id, task, 'maps_%s_%s/contrast-%s.nii.gz' % (rt_flag, beta_flag, contrast))
-    return sorted(glob(files))
+    return sorted(glob(files))  
 
 # ********************************************************
 # helper classes 
@@ -161,7 +177,7 @@ class FirstLevel():
 # ********************************************************
 # Process Functions
 # ******************************************************** 
-def process_confounds(confounds_file):
+def process_confounds(confounds_file, a_comp_cor=True):
     """
     scrubbing for TASK
     remove TRs where FD>.5, stdDVARS (that relates to DVARS>.5)
@@ -191,7 +207,8 @@ def process_confounds(confounds_file):
     
     # add additional relevant regressors
     add_regressor_names = ['framewise_displacement'] 
-    #add_regressor_names += [i for i in confounds_df.columns if 'aCompCor' in i]
+    if a_comp_cor: 
+        add_regressor_names += [i for i in confounds_df.columns if 'a_comp_cor' in i]
     additional_regressors = confounds_df.loc[:,add_regressor_names].values
     regressors = np.hstack((movement_regressors,
                             additional_regressors,
@@ -211,20 +228,42 @@ def process_physio(cardiac_file, resp_file):
 # ******************************************************** 
 
 def get_func_file(fmriprep_dir, subject_id, task):
+    
+    """ 
+    gets the preproc func and mask files files from fmriprep dir, and returns
+    """
     # strip "sub" from beginning of subject_id if provided
     subject_id = subject_id.replace('sub-','')
     
-    # get mask_file
-    func_file = glob(path.join(fmriprep_dir,
+    #check if there's a session folder 
+    if os.path.exists(path.join(fmriprep_dir,
                           'sub-%s' % subject_id,
-                          '*', 'func',
-                          '*%s*MNI*preproc_bold.nii.gz' % task))
+                          'func')):  
     
-    # get mask_file
-    mask_file = glob(path.join(fmriprep_dir,
+    #returns func_file 
+        func_file = glob(path.join(fmriprep_dir,
+                          'sub-%s' % subject_id,
+                          'func', '*%s*MNI*preproc_bold.nii.gz' % task))
+    else: 
+        func_file = glob(path.join(fmriprep_dir,
+                          'sub-%s' % subject_id,
+                          '*', 'func', '*%s*MNI*preproc_bold.nii.gz' % task))
+        
+    #check if there's a session folder 
+    if os.path.exists(path.join(fmriprep_dir,
+                          'sub-%s' % subject_id,
+                          'func')): 
+    #return mask file             
+        mask_file = glob(path.join(fmriprep_dir,
+                          'sub-%s' % subject_id,
+                          'func',
+                          '*%s*MNI*brain_mask.nii.gz' % task))
+    else: 
+         mask_file = glob(path.join(fmriprep_dir,
                           'sub-%s' % subject_id,
                           '*', 'func',
                           '*%s*MNI*brain_mask.nii.gz' % task))
+    
     if not func_file or not mask_file:
         return None, None
     return func_file[0], mask_file[0]
@@ -235,10 +274,22 @@ def get_confounds(fmriprep_dir, subject_id, task):
     
     ## Get the Confounds File (output of fmriprep)
     # Read the TSV file and convert to pandas dataframe
-    confounds_file = glob(path.join(fmriprep_dir,
+    
+    #check if there's a session folder 
+    if os.path.exists(path.join(fmriprep_dir,
                                'sub-%s' % subject_id,
-                               '*', 'func',
+                               'func')):
+    #gets confounds_file       
+        confounds_file = glob(path.join(fmriprep_dir,
+                               'sub-%s' % subject_id,
+                                'func',
                                '*%s*confounds_regressors.tsv' % task))[0]
+    else: 
+        confounds_file = glob(path.join(fmriprep_dir,
+                               'sub-%s' % subject_id,
+                                '*', 'func',
+                               '*%s*confounds_regressors.tsv' % task))[0]
+        
     regressors, regressor_names = process_confounds(confounds_file)
     confounds = pd.DataFrame(regressors, columns=regressor_names)
     return confounds
@@ -246,11 +297,23 @@ def get_confounds(fmriprep_dir, subject_id, task):
 def get_events(data_dir, subject_id, task):
     ## Get the Events File if it exists
     # Read the TSV file and convert to pandas dataframe
+    
+    #check if there's a ses-* folder 
     try:
-        event_file = glob(path.join(data_dir,
+        if os.path.exists(path.join(data_dir,
                                'sub-%s' % subject_id,
-                               '*', 'func',
-                               '*%s*events.tsv' % task))[0]   
+                                'func')): 
+            
+   # returns event_file 
+            event_file = glob(path.join(data_dir,
+                               'sub-%s' % subject_id,
+                                'func',
+                               '*%s*events.tsv' % task))[0]  
+        else: 
+             event_file = glob(path.join(data_dir,
+                               'sub-%s' % subject_id,
+                                '*', 'func',
+                               '*%s*events.tsv' % task))[0]
         events_df = pd.read_csv(event_file,sep = '\t')
         return events_df
     except IndexError:

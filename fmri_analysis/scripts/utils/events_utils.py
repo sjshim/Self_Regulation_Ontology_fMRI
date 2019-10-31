@@ -3,11 +3,13 @@ some util functions
 """
 import numpy as np
 import pandas as pd
+import pdb
 
 # ********************************************************
 # helper_functions
 # ********************************************************  
-def normalize_rt(events_df, groupby=None):        
+def normalize_rt(events_df, groupby=None):  
+    """demeans RT by condition"""
     if groupby is None:
         rt = events_df.response_time
         events_df.loc[:,'response_time'] = rt - rt[rt>0].mean()
@@ -26,18 +28,16 @@ def get_ev_vars(output_dict, events_df, condition_spec, col=None,
     
     Args:
         events_df: events file to parse
-        condition_spec: string specfying condition name, or list of tuples of the fomr
-            (subset_key, name) where subset_key are one or more groups in col. If a list,
-            col must be specified. 
+        condition_spec: string specfying condition name, or list of tuples of the form (subset_key, name) where subset_key are one or more groups in col. If a list, col must be specified. 
         col: the column to be subset by the keys in conditions
-        amplitude: either an int or string. If int, sets a constant amplitude. If
-            string, amplitude is set to that column
+        amplitude: either an int or string. If int, sets a constant amplitude. If string, ... 
         duration: either an int or string. If int, sets a constant duration. If
             string, duration is set to that column
         subset: pandas query string to subset the data before use
         onset_column: the column of timing to be used for onsets
     
     """
+    
     required_keys =  set(['amplitudes','conditions','durations','onsets'])
     assert set(output_dict.keys()) == required_keys
     amplitudes = output_dict['amplitudes']
@@ -48,7 +48,7 @@ def get_ev_vars(output_dict, events_df, condition_spec, col=None,
     # if subset is specified as a string, use to query
     if subset is not None:
         events_df = events_df.query(subset)
-    # if amplitudes or durations were passed as a series, subset and conver tto list
+    # if amplitudes or durations were passed as a series, subset and convert to list
     if type(duration) == pd.core.series.Series:
         duration = duration[events_df.index].tolist()
     if type(amplitude) == pd.core.series.Series:
@@ -94,9 +94,8 @@ def get_ev_vars(output_dict, events_df, condition_spec, col=None,
             durations.append(duration)
     # ensure that each column added is all numeric
     for attr in [durations, amplitudes, onsets]:
-        assert np.issubdtype(np.array(attr[-1]).dtype, np.number)   
+        assert np.issubdtype(np.array(attr[-1]).dtype, np.number) 
         assert pd.isnull(attr[-1]).sum() == 0
-    
 
 # specific task functions
 def get_ANT_EVs(events_df, regress_rt=True):
@@ -271,6 +270,82 @@ def get_DPX_EVs(events_df, regress_rt=True):
                 subset='junk==False')
     return output_dict
 
+def get_manipulation_EVs(events_df, regress_rt=True): 
+    output_dict = { 'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+                  }
+    #"demean" cue regressor 
+    
+    get_ev_vars(output_dict, events_df, 
+               condition_spec = [('cue', 'np_cue')],
+               col = 'trial_id',
+               duration = 'duration',
+               subset='trial_type!="no_stim" and junk==False')
+        
+    cue_count = events_df['which_cue'].value_counts()    
+    #replace strings with parametric regressors adusted for frequency of trial type 
+    events_df.which_cue = events_df.which_cue.replace('LATER', (cue_count['NOW'])/(cue_count['LATER'])) 
+    events_df.which_cue = events_df.which_cue.replace('NOW', -1) 
+    
+    # cue regressor 
+    get_ev_vars(output_dict, events_df, 
+               condition_spec = [('cue', 'cue')],
+               col = 'trial_id',
+               duration = 'duration',
+               amplitude = 'which_cue',
+               subset='trial_type!="no_stim" and junk==False')
+    #demean probe regressor 
+
+    get_ev_vars(output_dict, events_df, 
+                condition_spec = [('probe', 'np_probe')],
+                col = 'trial_id',
+               duration = 'duration',
+               subset='trial_type!="no_stim" and junk==False')
+    
+    probe_ratio = events_df['stim_type'].value_counts()
+    events_df.stim_type = events_df.stim_type.replace('neutral', -(probe_ratio['valence'])/(probe_ratio['neutral']))
+    events_df.stim_type = events_df.stim_type.replace('valence', 1)
+    
+    get_ev_vars(output_dict, events_df, 
+                condition_spec = [('probe', 'probe')],
+                col = 'trial_id',
+               duration = 'duration',
+               amplitude = 'stim_type', 
+               subset='trial_type!="no_stim" and junk==False')
+    
+    #calculate the mean response for this participant
+    response_mean = np.nanmean(events_df['response'])
+    #demean and replace 
+    events_df.response = events_df.response - response_mean 
+    #rename column 
+    events_df = events_df.replace({'current_rating': 'rating'})
+    get_ev_vars(output_dict, events_df, 
+              condition_spec = [('rating', 'rating')], 
+               col = 'trial_id',
+               duration = 'response_time',
+               amplitude = 'response', 
+               subset='junk==False and trial_type!="no_stim" and trial_id=="rating"')
+
+    # nuisance regressors
+    get_ev_vars(output_dict, events_df, 
+                condition_spec=[(True, 'junk')], 
+                col='junk', 
+                duration='duration')
+
+    if regress_rt == True:
+        events_df["mean_rt"] = np.mean(events_df.response_time)
+        normalize_rt(events_df)
+        get_ev_vars(output_dict, events_df, 
+                condition_spec='response_time', 
+                duration= "mean_rt", 
+                amplitude='response_time', #demeaned rt after running normalize_rt
+                subset='junk==False and trial_type!="no_stim" and trial_id=="rating"') #the only trials that will have responses 
+        
+    return output_dict
+   
+
 def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
     output_dict = {
             'conditions': [],
@@ -286,6 +361,7 @@ def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
                             ('noncrit_nosignal', 'noncrit_nosignal')],
                 col='trial_type', 
                 duration='duration')
+    
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
@@ -310,7 +386,7 @@ def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
                 duration='duration',
                 subset='junk==False')
     return output_dict
-
+    
 def get_stopSignal_EVs(events_df, regress_rt=True):
     output_dict = {
             'conditions': [],
@@ -574,6 +650,8 @@ def parse_EVs(events_df, task, regress_rt=True):
         EV_dict = get_discountFix_EVs(events_df, regress_rt)
     elif task == "DPX":
         EV_dict = get_DPX_EVs(events_df, regress_rt)
+    elif task == 'manipulationTask': 
+        EV_dict = get_manipulation_EVs(events_df, regress_rt)
     elif task == "motorSelectiveStop": 
         EV_dict = get_motorSelectiveStop_EVs(events_df)
     elif task == 'surveyMedley':
