@@ -50,7 +50,7 @@ jupyter_core=4.5.0=py_0
 jupyterlab=1.1.4=py_0
 jupyterlab_server=1.0.6=py_0
 kiwisolver=1.1.0=py37hc9558a2_0
-libarchive=3.4.0=hb0c0d93_1
+libarchive=3.3.3=hb44662c_1005
 libblas=3.8.0=14_openblas
 libcblas=3.8.0=14_openblas
 libedit=3.1.20181209=hc058e9b_0
@@ -150,4 +150,4 @@ yaml=0.1.7=had09818_2
 zeromq=4.3.2=he1b5a44_2
 zipp=0.6.0=py_0
 zlib=1.2.11=h7b6447c_3
-zstd=1.4.3=h3b9ef0a_0
+zstd=1.4.0=h3b9ef0a_0

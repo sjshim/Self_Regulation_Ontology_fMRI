@@ -61,8 +61,8 @@ ENV PATH=/usr/local/miniconda/bin:$PATH \
 
 
 # Installing precomputed python packages --if problems occur, look here first for dependency issues
-COPY docker_files/requirements.txt requirements.txt
-RUN conda install -y -c conda-forge --file requirements.txt; sync &&  \
+ADD docker_files/conda_requirements.txt conda_requirements.txt
+RUN conda install -y -c conda-forge --file conda_requirements.txt; sync &&  \
     conda build purge-all && sync 
 
 # Precaching fonts, set 'Agg' as default backend for matplotlib
