@@ -35,7 +35,6 @@ def move_EVs(data_dir, tasks, overwrite=True, verbose=False):
                 event_files = glob(join(subj_file, 'func', '*%s*events.tsv' % task))
                 if overwrite==True or len(event_files)==0:
                     try:
-			print(subj)
                         name = move_EV(subj, task, data_dir)
                         created_files.append(name)
                         total_transfers[task] += 1

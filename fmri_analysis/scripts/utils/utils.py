@@ -2,7 +2,6 @@
 some util functions
 """
 from collections import defaultdict
-from glob import glob
 import numpy as np
 from os.path import join, sep
 import pandas as pd
@@ -104,7 +103,6 @@ def get_contrasts(task, regress_rt=True):
     if regress_rt:
         contrasts.append(('RT','response_time'))
     return contrasts
-
 
 def load_atlas(atlas_path, atlas_label_path=None):
     out = {}

@@ -53,12 +53,12 @@ else:
     args.tasks = ['discountFix', 'manipulationTask', #aim 2 tasks
                   'motorSelectiveStop', 'stopSignal']
     '''
-     args.tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', #aim 1 tasks
+     args.tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', #aim 1 tasks #aim 1 tasks
                   'motorSelectiveStop', 'stopSignal', 
                   'stroop', 'twoByTwo', 'WATT3']
     '''
    
-    args.subject_ids = ['3010']
+    # args.subject_ids = ['3010']
     args.rt=True
     args.a_comp_cor=True
     args.n_procs=1
@@ -104,7 +104,7 @@ else:
     tasks = ['discountFix', 'manipulationTask', 
                   'motorSelectiveStop', 'stopSignal']
     '''
-     args.tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 
+    tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 
                   'motorSelectiveStop', 'stopSignal', 
                   'stroop', 'twoByTwo', 'WATT3']
     '''
