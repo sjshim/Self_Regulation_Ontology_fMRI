@@ -58,7 +58,7 @@ else:
                   'stroop', 'twoByTwo', 'WATT3']
     '''
    
-    args.subject_ids = ['3010']
+    #args.subject_ids = ['3010']
     args.rt=True
     args.a_comp_cor=True
     args.n_procs=1
@@ -120,15 +120,12 @@ beta_series = args.beta
 n_procs = args.n_procs
 # TR of functional images
 TR = .68
-acompcor=True
 
 
 # In[ ]:
 
 
-# print
-subjects = ["5064"]
-tasks = ["manipulationTask"]
+#print
 verboseprint('*'*79)
 verboseprint('Tasks: %s\n, Subjects: %s\n, derivatives_dir: %s\n, data_dir: %s' % 
      (tasks, subjects, derivatives_dir, data_dir))
@@ -145,7 +142,6 @@ verboseprint('*'*79)
 # In[ ]:
 
 
-a_comp_cor = True
 to_run = []
 for subject_id in subjects:
     for task in tasks:
