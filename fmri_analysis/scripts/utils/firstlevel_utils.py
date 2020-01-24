@@ -75,7 +75,8 @@ def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR,
 
 def save_first_level_obj(subjinfo, output_dir, save_maps=False):
     """
-    comment to-do
+    Gets or Creates a directory for saving the first level analyses,
+    will also save contrast maps if flagged to do so.
     """
     subj, task = subjinfo.ID.split('_')
     directory = path.join(output_dir, subj, task)
@@ -89,7 +90,6 @@ def save_first_level_obj(subjinfo, output_dir, save_maps=False):
         maps_dir = path.join(directory, 'maps_%s' % flags)
         makedirs(maps_dir, exist_ok=True)
         for name, contrast in subjinfo.contrasts:
-            print(name, contrast)
             try:
                 contrast_map = subjinfo.fit_model.compute_contrast(contrast)
                 contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
