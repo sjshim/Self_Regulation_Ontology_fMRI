@@ -69,11 +69,6 @@ else:
 
 # In[ ]:
 
-
-<<<<<<< HEAD
-=======
-
->>>>>>> parent of d0b55fb... a_comp_cor addition
 if not args.quiet:
     def verboseprint(*args, **kwargs):
         print(*args, **kwargs)
