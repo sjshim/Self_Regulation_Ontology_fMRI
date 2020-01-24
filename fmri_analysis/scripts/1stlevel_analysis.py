@@ -47,8 +47,6 @@ parser.add_argument('--quiet', '-q', action='store_true')
 parser.add_argument('--design_matrix', '-dm', action='store_true')
 parser.add_argument('--a_comp_cor', action='store_true')
 
-
-
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
 else:
