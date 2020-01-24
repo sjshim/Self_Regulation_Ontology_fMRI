@@ -68,7 +68,7 @@ def row_match(df,row_list):
     return bool_list[bool_list].index    
 
 
-def create_events(df, exp_id, duration=None):
+def create_events(df, exp_id, aim, duration=None):
     """
     defines what function to reference to create each task-specific event file 
     takes in a dataframe from processed data, and exp_id and a duration
@@ -88,9 +88,9 @@ def create_events(df, exp_id, duration=None):
     fun = lookup.get(exp_id)
     if fun is not None:
         if exp_id != 'columbia_card_task_fmri':
-            events_df = fun(df, duration=duration)
+            events_df = fun(df, aim, duration=duration)
         else:
-            events_df = fun(df)
+            events_df = fun(df, aim)
     return events_df
 
 
@@ -99,7 +99,7 @@ def create_events(df, exp_id, duration=None):
 # Functions to create event files
 # *********************************
 
-def create_ANT_event(df, duration=None):
+def create_ANT_event(df, aim, duration=None):
     columns_to_drop = get_drop_columns(df)
     events_df = df[df['time_elapsed']>0]
     # add junk regressor
@@ -119,9 +119,15 @@ def create_ANT_event(df, duration=None):
     events_df.loc[:,['response_time','onset','duration']]/=1000
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
+    
+    mean_rts = pd.read_csv('../behavioral_data/%s/processed/group_data/task_mean_rts.csv' % aim)
+    if 'attention_network_task' in mean_rts.columns:
+        group_RT = np.mean(mean_rts['attention_network_task'])/1000
+        events_df.insert(0,'group_RT', group_RT)
+    
     return events_df
 
-def create_CCT_event(df):
+def create_CCT_event(df, aim):
     columns_to_drop = get_drop_columns(df, columns = ['cards_left',
                                                       'clicked_on_loss_card',
                                                       'round_points',
@@ -151,9 +157,14 @@ def create_CCT_event(df):
                                     .apply(lambda x: int(not x))
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
+    
+    mean_rts = pd.read_csv('../behavioral_data/%s/processed/group_data/task_mean_rts.csv' % aim)
+    if 'columbia_card_task_fmri' in mean_rts.columns:
+        group_RT = np.mean(mean_rts['columbia_card_task_fmri'])/1000
+        events_df.insert(0,'group_RT', group_RT)
     return events_df
 
-def create_discountFix_event(df, duration=None):
+def create_discountFix_event(df, aim, duration=None):
     columns_to_drop = get_drop_columns(df)
     events_df = df[df['time_elapsed']>0]
     # add junk regressor
@@ -190,9 +201,15 @@ def create_discountFix_event(df, duration=None):
 
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
+    
+    mean_rts = pd.read_csv('../behavioral_data/%s/processed/group_data/task_mean_rts.csv' % aim)
+    if 'discount_fixed' in mean_rts.columns:
+        group_RT = np.mean(mean_rts['discount_fixed'])/1000
+        events_df.insert(0,'group_RT', group_RT)
+    
     return events_df
 
-def create_DPX_event(df, duration=None):
+def create_DPX_event(df, aim, duration=None):
     columns_to_drop = get_drop_columns(df)
     events_df = df[df['time_elapsed']>0]
     # add junk regressor
@@ -218,9 +235,15 @@ def create_DPX_event(df, duration=None):
                      'duration','movement_onset']]/=1000
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
+    
+    mean_rts = pd.read_csv('../behavioral_data/%s/processed/group_data/task_mean_rts.csv' % aim)
+    if 'dot_pattern_expectancy' in mean_rts.columns:
+        group_RT = np.mean(mean_rts['dot_pattern_expectancy'])/1000
+        events_df.insert(0,'group_RT', group_RT)
+        
     return events_df
 
-def create_manipulation_event(df, duration=None):
+def create_manipulation_event(df, aim, duration=None):
     #this events file is different than the others and requires more processing to line information up 
    
     columns_to_drop = get_drop_columns(df, columns =['possible_responses', 'text', 'key_press', 'junk_tmp'])
@@ -287,9 +310,15 @@ def create_manipulation_event(df, duration=None):
     events_df.loc[:,['response_time','onset','block_duration', 'duration']]/=1000
     # drop unnecessary columns defined at top of function
     events_df = events_df.drop(columns_to_drop, axis=1)
+    
+    mean_rts = pd.read_csv('../behavioral_data/%s/processed/group_data/task_mean_rts.csv' % aim)
+    if 'manipulation_task' in mean_rts.columns:
+        group_RT = np.mean(mean_rts['manipulation_task'])/1000
+        events_df.insert(0,'group_RT', group_RT)
+        
     return events_df
 
-def create_motorSelectiveStop_event(df, duration=None):
+def create_motorSelectiveStop_event(df, aim, duration=None):
     columns_to_drop = get_drop_columns(df, columns = ['condition',
                                                       'SS_duration',
                                                       'SS_stimulus',
@@ -331,9 +360,15 @@ def create_motorSelectiveStop_event(df, duration=None):
     events_df.loc[:,['response_time','onset','duration']]/=1000
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
+    
+    mean_rts = pd.read_csv('../behavioral_data/%s/processed/group_data/task_mean_rts.csv' %aim)
+    if 'motor_selective_stop_signal' in mean_rts.columns:
+        group_RT = np.mean(mean_rts['motor_selective_stop_signal'])/1000
+        events_df.insert(0,'group_RT', group_RT)
+        
     return events_df
 
-def create_stopSignal_event(df, duration=None):
+def create_stopSignal_event(df, aim, duration=None):
 
     events_df = df[df['time_elapsed']>0]
     # add junk regressor
@@ -368,9 +403,14 @@ def create_stopSignal_event(df, duration=None):
                                                       'SS_stimulus',
                                                       'SS_trial_type'])    
     events_df = events_df.drop(columns_to_drop, axis=1)
+    
+    mean_rts = pd.read_csv('../behavioral_data/%s/processed/group_data/task_mean_rts.csv' % aim)
+    if 'stop_signal' in mean_rts.columns:
+        group_RT = np.mean(mean_rts['stop_signal'])/1000
+        events_df.insert(0,'group_RT', group_RT)
     return events_df
 
-def create_stroop_event(df, duration=None):
+def create_stroop_event(df, aim, duration=None):
     columns_to_drop = get_drop_columns(df)
     events_df = df[df['time_elapsed']>0]
     # add junk regressor
@@ -390,9 +430,15 @@ def create_stroop_event(df, duration=None):
     events_df.loc[:,['response_time','onset','duration']]/=1000
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
+    
+    mean_rts = pd.read_csv('../behavioral_data/%s/processed/group_data/task_mean_rts.csv' % aim)
+    if 'stroop' in mean_rts.columns:
+        group_RT = np.mean(mean_rts['stroop'])/1000
+        events_df.insert(0,'group_RT', group_RT)
+        
     return events_df
 
-def create_survey_event(df, duration=None):
+def create_survey_event(df, aim, duration=None):
     columns_to_drop = get_drop_columns(df,
                                        use_default=False,
                                        columns = ['block_duration',
@@ -432,9 +478,15 @@ def create_survey_event(df, duration=None):
                      'movement_onset']]/=1000
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
+    
+    mean_rts = pd.read_csv('../behavioral_data/%s/processed/group_data/task_mean_rts.csv' % aim)
+    if 'survey_medley' in mean_rts.columns:
+        group_RT = np.mean(mean_rts['survey_medley'])/1000
+        events_df.insert(0,'group_RT', group_RT)
+        
     return events_df
 
-def create_twobytwo_event(df, duration=None):
+def create_twobytwo_event(df,aim, duration=None):
     columns_to_drop = get_drop_columns(df)
     events_df = df[df['time_elapsed']>0]
     # add junk regressor
@@ -458,9 +510,15 @@ def create_twobytwo_event(df, duration=None):
                      'duration','movement_onset']]/=1000
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
+    
+    mean_rts = pd.read_csv('../behavioral_data/%s/processed/group_data/task_mean_rts.csv' % aim)
+    if 'twobytwo' in mean_rts.columns:
+        group_RT = np.mean(mean_rts['twobytwo'])/1000
+        events_df.insert(0,'group_RT', group_RT)
+        
     return events_df
 
-def create_WATT_event(df, duration):
+def create_WATT_event(df,aim, duration):
     columns_to_drop = get_drop_columns(df, columns = ['correct',
                                                       'current_position',
                                                       'goal_state',
@@ -505,4 +563,10 @@ def create_WATT_event(df, duration):
                      'response_time','movement_onset']]/=1000
     # drop unnecessary columns
     events_df = events_df.drop(columns_to_drop, axis=1)
+    
+    mean_rts = pd.read_csv('../behavioral_data/%s/processed/group_data/task_mean_rts.csv' % aim)
+    if 'ward_and_allport' in mean_rts.columns:
+        group_RT = np.mean(mean_rts['ward_and_allport'])/1000
+        events_df.insert(0,'group_RT', group_RT)
+        
     return events_df

@@ -109,23 +109,23 @@ def get_ANT_EVs(events_df, regress_rt=True):
                             zip(events_df.cue, events_df.flanker_type)]
     # cue type
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('spatial_congruent', 'spatial_congruent'),
-                                ('spatial_incongruent', 'spatial_incongruent'),
-                                ('double_congruent', 'double_congruent'),
-                                ('double_incongruent', 'double_incongruent')],
+                condition_spec=[('spatial_congruent', 'OLD_spatial_congruent'),
+                                ('spatial_incongruent', 'OLD_spatial_incongruent'),
+                                ('double_congruent', 'OLD_double_congruent'),
+                                ('double_incongruent', 'OLD_double_incongruent')],
                 col='trial_type',
                 duration='duration',
                 subset='junk==False')
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[(True, 'junk')], 
+                condition_spec=[(True, 'OLD_junk')], 
                 col='junk', 
                 duration='duration')
     if regress_rt == True:
         normalize_rt(events_df)
         get_ev_vars(output_dict, events_df, 
                 condition_spec='response_time', 
-                duration='duration', 
+                duration='group_RT', 
                 amplitude='response_time',
                 subset='junk==False')
     else:
@@ -137,8 +137,16 @@ def get_ANT_EVs(events_df, regress_rt=True):
                                 ('double_incongruent', 'double_incongruent_RT')],
                 col='trial_type',
                 amplitude='response_time',
-                duration='duration',
+                duration='group_RT',
                 subset='junk==False')
+        
+    #Task>baseline regressor    
+    get_ev_vars(output_dict, events_df, 
+            condition_spec='task',
+            col='trial_type',
+            duration='duration', 
+            subset='junk==False')
+    
     return output_dict
 
 
@@ -149,53 +157,182 @@ def get_CCTHot_EVs(events_df, regress_rt):
             'durations': [],
             'amplitudes': []
             }
-    # task
-    get_ev_vars(output_dict, events_df,
-                condition_spec='task',
-                duration='block_duration',
-                subset='junk==False and trial_id=="stim"')
-    # ITI
-    get_ev_vars(output_dict, events_df,
-                condition_spec='ITI',
-                duration='block_duration',
-                subset='junk==False and trial_id=="ITI"')
-    # add main parametric regressors: EV and risk
-    get_ev_vars(output_dict, events_df, 
-                condition_spec='EV', 
-                duration='block_duration', 
-                amplitude='EV',
-                subset='junk==False and trial_id=="stim"')
-    get_ev_vars(output_dict, events_df, 
-                condition_spec='risk',
-                duration='block_duration', 
-                amplitude='risk',
-                subset='junk==False and trial_id=="stim"')
-    # other regressors
-    get_ev_vars(output_dict, events_df, 
-                condition_spec='num_click_in_round', 
-                duration='block_duration', 
-                amplitude='num_click_in_round',
-                subset='junk==False and trial_id=="stim"')
-    
-    # set the onset of the feedback at the time of the response - not the time of the trial beginning
-    get_ev_vars(output_dict, events_df, 
-                condition_spec=[(1,'reward'), (0,'punishment')], 
-                duration=0,
-                onset_column='movement_onset',
-                col='feedback',
-                subset='junk==False and trial_id=="stim"')
+#     #task
+#     get_ev_vars(output_dict, events_df,
+#                 condition_spec='OLD_task',
+#                 duration='block_duration',
+#                 subset='junk==False and trial_id=="stim"') 
+#     #add main parametric regressors: EV and risk
+#     get_ev_vars(output_dict, events_df, 
+#                 condition_spec='OLD_EV', 
+#                 duration='block_duration', 
+#                 amplitude='EV',
+#                 subset='junk==False and trial_id=="stim"')
+#     get_ev_vars(output_dict, events_df, 
+#                 condition_spec='OLD_risk',
+#                 duration='block_duration', 
+#                 amplitude='risk',
+#                 subset='junk==False and trial_id=="stim"')
+#     #other regressors
+#     get_ev_vars(output_dict, events_df, 
+#                 condition_spec='OLD_num_click_in_round', 
+#                 duration='block_duration', 
+#                 amplitude='num_click_in_round',
+#                 subset='junk==False and trial_id=="stim"')
+
+#     # set the onset of the feedback at the time of the response - not the time of the trial beginning
+#     get_ev_vars(output_dict, events_df, 
+#                 condition_spec=[(1,'OLD_reward'), (0,'OLD_punishment')], 
+#                 duration=0,
+#                 onset_column='movement_onset',
+#                 col='feedback',
+#                 subset='junk==False and trial_id=="stim"')
+
+    if regress_rt == True:
+        normalize_rt(events_df)
+        get_ev_vars(output_dict, events_df, 
+                    condition_spec='response_time', 
+                    duration='group_RT', ############# changed in newest modeling
+                    amplitude='response_time',
+                    subset='junk==False')
+        
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec=[(True, 'junk')], 
                 col='junk', 
                 duration='duration')
-    if regress_rt == True:
-        normalize_rt(events_df)
-        get_ev_vars(output_dict, events_df, 
-                    condition_spec='response_time', 
-                    duration='duration', 
-                    amplitude='response_time',
-                    subset='junk==False')
+
+
+    ####################################################################################
+    #################### ADDED IN NEWEST MODELING ######################################
+    ####################################################################################
+    #build up trial regressor
+    counter = 0
+    round_grouping = []
+    end_round_idx = events_df.index[events_df.total_cards.notnull()]
+    for i in range(len(events_df.trial_id)):
+        if i in end_round_idx:
+            round_grouping.append(counter)
+            counter+=1
+        else:
+            round_grouping.append(counter)
+    events_df.insert(0, "round_grouping", round_grouping, True)
+
+    round_start_idx = [0] + [x+1 for x in end_round_idx]
+
+    task_on = [False for i in range(len(events_df.trial_id))]
+    for idx in round_start_idx[:-1]:
+        task_on[idx] = True
+
+    events_df.insert(0, "round_on", task_on, True)
+
+    round_dur = np.zeros(len(events_df.trial_id))
+    for group_num in range(len(events_df.round_grouping.unique())):
+        for idx in events_df.index[events_df.round_grouping==group_num].values:
+            round_dur[idx] = np.sum(events_df.duration[events_df.round_grouping==np.float(group_num)])
+    events_df.insert(0, "round_duration", round_dur, True)
+
+    #add full trial length regressor
+    get_ev_vars(output_dict, events_df, 
+            condition_spec='trial', 
+            duration='round_duration',
+            amplitude=1,
+            subset="junk==False and round_on==True")
+
+    #build up loss regressor
+    loss_idx = events_df.index[(events_df.total_cards.notnull()) & (events_df.action=='draw_card')]
+    lost_bool = [False for i in range(len(events_df.trial_id))]
+    for idx in loss_idx:
+        lost_bool[idx] = True
+    events_df.insert(0, "lost_bool", lost_bool, True)
+
+    #add loss event regressor
+    get_ev_vars(output_dict, events_df, 
+        condition_spec='loss_event',
+        duration=1,
+        amplitude=1,
+        subset="junk==False and lost_bool==True")
+
+    #button press regressor
+    events_df['button_onset'] = events_df.onset+events_df.duration
+
+    get_ev_vars(output_dict, events_df, 
+        condition_spec='button_press',
+        onset_column='button_onset',
+        duration=1,
+        amplitude=1,
+        subset="junk==False")
+
+    #positive_draw regressor
+    get_ev_vars(output_dict, events_df, 
+        condition_spec='positive_draw',
+        onset_column='button_onset',
+        duration=1,
+        amplitude='EV',
+        subset="junk==False and action=='draw_card' and feedback==1")
+
+    #create trial-long gain and feedback regressors
+    #gain
+    mean_gain = np.mean(events_df[events_df.round_on==True].gain_amount.values) #demeaned based on gain for each trial, not each card
+    demeaned_gain = [i - mean_gain for i in events_df.gain_amount.values]
+    events_df.insert(0, "demeaned_gain", demeaned_gain, True)
+
+    get_ev_vars(output_dict, events_df, 
+        condition_spec='trial_gain',
+    #     onset_column='onset',
+        duration="round_duration",
+        amplitude='demeaned_gain',
+        subset="junk==False and round_on==True")
+
+    #loss
+    mean_loss = np.mean(events_df[events_df.round_on==True].loss_amount.values) #demeaned based on loss for each trial, not each card
+    demeaned_loss = [i - mean_loss for i in events_df.loss_amount.values]
+    events_df.insert(0, "demeaned_loss", demeaned_loss, True)
+
+    get_ev_vars(output_dict, events_df, 
+        condition_spec='trial_loss',
+    #     onset_column='onset',
+        duration="round_duration",
+        amplitude='demeaned_loss',
+        subset="junk==False and round_on==True")
+
+
+    #build up loss value and feedback regressors
+    roundsums=[]
+    for group_num in events_df.round_grouping.unique():
+        chunk = events_df[events_df.round_grouping==group_num].reset_index()
+        roundsum = 0
+        for i in range(len(chunk.feedback)):
+            if chunk.feedback[i]==1:
+                roundsum += chunk.demeaned_gain[i]
+            elif chunk.feedback[i]==0:
+                roundsum += chunk.demeaned_loss[i]
+        roundsums.append(roundsum)
+
+    feedback_values = events_df.demeaned_gain.to_numpy().copy()
+    loss_indices = events_df.index[events_df.feedback==0] #get losses
+    for loss_idx in loss_indices:
+        round_idx = events_df.round_grouping[loss_idx]
+        feedback_values[loss_idx] = roundsums[round_idx]
+
+    events_df.insert(0, "feedback_values", feedback_values, True)
+
+    #create loss regressor
+    get_ev_vars(output_dict, events_df, 
+        condition_spec='loss',
+        onset_column='button_onset',
+        duration=1, 
+        amplitude='feedback_values',
+        subset="junk==False and action=='draw_card' and feedback==0")
+
+    #create feedback regressor
+    get_ev_vars(output_dict, events_df, 
+        condition_spec='feedback',
+        onset_column='button_onset',
+        duration=1,
+        amplitude='feedback_values',
+        subset="junk==False and action=='draw_card'")
+    
     return output_dict
 
 def get_discountFix_EVs(events_df, regress_rt=True):
@@ -228,9 +365,32 @@ def get_discountFix_EVs(events_df, regress_rt=True):
         normalize_rt(events_df)
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
-                    duration='duration', 
+                    duration='group_RT', 
                     amplitude='response_time',
                     subset='junk==False')
+        
+    ####################################################################################
+    #################### ADDED IN NEWEST MODELING ######################################
+    ####################################################################################
+    #trial regressor for task > baseline
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='trial', 
+                duration='duration', 
+                amplitude=1,
+                subset='junk==False')
+    #choice regressor
+    choices = [-1] * len(events_df.trial_type)
+    larger_indices = events_df.index[events_df.trial_type=='larger_later'].tolist()
+    for idx in larger_indices:
+        choices[idx] = 1
+    events_df.insert(0, 'choice_contrast', choices, True)
+    
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='choice', 
+                duration='duration', 
+                amplitude='choice_contrast',
+                subset='junk==False')   
+    
     return output_dict
 
 def get_DPX_EVs(events_df, regress_rt=True):
@@ -254,7 +414,7 @@ def get_DPX_EVs(events_df, regress_rt=True):
         normalize_rt(events_df)
         get_ev_vars(output_dict, events_df, 
                 condition_spec='response_time', 
-                duration='duration', 
+                duration='group_RT', 
                 amplitude='response_time',
                 subset='junk==False')
     else:
@@ -266,26 +426,43 @@ def get_DPX_EVs(events_df, regress_rt=True):
                                 ('BY', 'BY_RT')],
                 col='condition',
                 amplitude='response_time',
-                duration='duration',
+                duration='group_RT',
                 subset='junk==False')
+        
+    ####################################################################################
+    #################### ADDED IN NEWEST MODELING ######################################
+    ####################################################################################
+    #trial regressor for task > baseline
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='trial', 
+                duration='duration', 
+                amplitude=1,
+                subset='junk==False')
+    
     return output_dict
 
 def get_manipulation_EVs(events_df, regress_rt=True): 
-    output_dict = { 'conditions': [],
+    output_dict = {
+            'conditions': [],
             'onsets': [],
             'durations': [],
             'amplitudes': []
-                  }
-    #"demean" cue regressor 
-    
-    get_ev_vars(output_dict, events_df, 
-               condition_spec = [('cue', 'np_cue')],
+            }
+      
+    get_ev_vars(output_dict, events_df,
+               condition_spec = [('cue', 'trial')],
                col = 'trial_id',
-               duration = 'duration',
+               duration = 10,
                subset='trial_type!="no_stim" and junk==False')
-        
-    cue_count = events_df['which_cue'].value_counts()    
+    
+    # nuisance regressors
+    get_ev_vars(output_dict, events_df, 
+                condition_spec=[(True, 'junk')], 
+                col='junk', 
+                duration='duration')
+           
     #replace strings with parametric regressors adusted for frequency of trial type 
+    cue_count = events_df['which_cue'].value_counts()    
     events_df.which_cue = events_df.which_cue.replace('LATER', (cue_count['NOW'])/(cue_count['LATER'])) 
     events_df.which_cue = events_df.which_cue.replace('NOW', -1) 
     
@@ -296,14 +473,29 @@ def get_manipulation_EVs(events_df, regress_rt=True):
                duration = 'duration',
                amplitude = 'which_cue',
                subset='trial_type!="no_stim" and junk==False')
-    #demean probe regressor 
-
-    get_ev_vars(output_dict, events_df, 
-                condition_spec = [('probe', 'np_probe')],
-                col = 'trial_id',
-               duration = 'duration',
-               subset='trial_type!="no_stim" and junk==False')
     
+    #demean response rating
+    response_mean = np.nanmean(events_df['response'])
+    response_mean
+    events_df['demeaned_response'] = events_df.response - response_mean
+    
+    get_ev_vars(output_dict, events_df, 
+           condition_spec = 'rating',
+           duration = 'duration',
+           amplitude = 'demeaned_response',
+           subset='trial_type!="no_stim" and junk==False and trial_id=="current_rating"')
+    
+    #demean RT
+    events_df["demeaned_rt"] =  events_df.response_time - np.nanmean(events_df.response_time)
+    
+    get_ev_vars(output_dict, events_df, 
+       condition_spec = 'response_time',
+       duration = 'group_RT',
+       amplitude = 'demeaned_rt',
+       subset='trial_type!="no_stim" and junk==False and trial_id=="current_rating"')
+               
+    
+    #demean probe regressor 
     probe_ratio = events_df['stim_type'].value_counts()
     events_df.stim_type = events_df.stim_type.replace('neutral', -(probe_ratio['valence'])/(probe_ratio['neutral']))
     events_df.stim_type = events_df.stim_type.replace('valence', 1)
@@ -314,34 +506,6 @@ def get_manipulation_EVs(events_df, regress_rt=True):
                duration = 'duration',
                amplitude = 'stim_type', 
                subset='trial_type!="no_stim" and junk==False')
-    
-    #calculate the mean response for this participant
-    response_mean = np.nanmean(events_df['response'])
-    #demean and replace 
-    events_df.response = events_df.response - response_mean 
-    #rename column 
-    events_df = events_df.replace({'current_rating': 'rating'})
-    get_ev_vars(output_dict, events_df, 
-              condition_spec = [('rating', 'rating')], 
-               col = 'trial_id',
-               duration = 'response_time',
-               amplitude = 'response', 
-               subset='junk==False and trial_type!="no_stim" and trial_id=="rating"')
-
-    # nuisance regressors
-    get_ev_vars(output_dict, events_df, 
-                condition_spec=[(True, 'junk')], 
-                col='junk', 
-                duration='duration')
-
-    if regress_rt == True:
-        events_df["mean_rt"] = np.mean(events_df.response_time)
-        normalize_rt(events_df)
-        get_ev_vars(output_dict, events_df, 
-                condition_spec='response_time', 
-                duration= "mean_rt", 
-                amplitude='response_time', #demeaned rt after running normalize_rt
-                subset='junk==False and trial_type!="no_stim" and trial_id=="rating"') #the only trials that will have responses 
         
     return output_dict
    
@@ -371,7 +535,7 @@ def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
         normalize_rt(events_df)
         get_ev_vars(output_dict, events_df, 
                 condition_spec='response_time', 
-                duration='duration', 
+                duration='group_RT', 
                 amplitude='response_time',
                 subset='junk==False and trial_type!="crit_stop_success"')
     else:
@@ -383,8 +547,19 @@ def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
                             ('noncrit_nosignal', 'noncrit_nosignal_RT')],
                 col='trial_type',
                 amplitude='response_time',
-                duration='duration',
+                duration='group_RT',
                 subset='junk==False')
+        
+    ####################################################################################
+    #################### ADDED IN NEWEST MODELING ######################################
+    ####################################################################################
+    #trial regressor for task > baseline
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='trial', 
+                duration='duration', 
+                amplitude=1,
+                subset='junk==False')
+    
     return output_dict
     
 def get_stopSignal_EVs(events_df, regress_rt=True):
@@ -407,21 +582,31 @@ def get_stopSignal_EVs(events_df, regress_rt=True):
                 condition_spec=[(True, 'junk')], 
                 col='junk', 
                 duration='duration')
-    if regress_rt == True:
-        normalize_rt(events_df)
-        get_ev_vars(output_dict, events_df, 
-                condition_spec='response_time', 
+#     if regress_rt == True: ######MODIFED - stopSignal rt are normalized by trial_type
+#         normalize_rt(events_df)
+#         get_ev_vars(output_dict, events_df, 
+#                 condition_spec='response_time', 
+#                 duration='group_RT', 
+#                 amplitude='response_time',
+#                 subset='junk==False and trial_type!="stop_success"')
+#     else:
+    normalize_rt(events_df, 'trial_type') ########  - stopSignal rt are normalized by trial_type
+    get_ev_vars(output_dict, events_df, 
+            condition_spec=[('go','go_RT'), 
+                        ('stop_failure', 'stop_failure_RT')],
+            col='trial_type',
+            amplitude='response_time',
+            duration='group_RT',
+            subset='junk==False')
+
+    ####################################################################################
+    #################### ADDED IN NEWEST MODELING ######################################
+    ####################################################################################
+    #trial regressor for task > baseline
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='trial', 
                 duration='duration', 
-                amplitude='response_time',
-                subset='junk==False and trial_type!="stop_success"')
-    else:
-        normalize_rt(events_df, 'trial_type')
-        get_ev_vars(output_dict, events_df, 
-                condition_spec=[('go','go_RT'), 
-                            ('stop_failure', 'stop_failure_RT')],
-                col='trial_type',
-                amplitude='response_time',
-                duration='duration',
+                amplitude=1,
                 subset='junk==False')
     return output_dict
 
@@ -450,7 +635,7 @@ def get_stroop_EVs(events_df, regress_rt=True):
         normalize_rt(events_df)
         get_ev_vars(output_dict, events_df, 
                 condition_spec='response_time', 
-                duration='duration', 
+                duration='group_RT', 
                 amplitude='response_time',
                 subset='junk==False')
     else:
@@ -460,8 +645,19 @@ def get_stroop_EVs(events_df, regress_rt=True):
                                ('congruent', 'congruent_RT')],
                 col='condition',
                 amplitude='response_time',
-                duration='duration',
+                duration='group_RT',
                 subset='junk==False')
+        
+    ####################################################################################
+    #################### ADDED IN NEWEST MODELING ######################################
+    ####################################################################################
+    #trial regressor for task > baseline
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='trial', 
+                duration='duration', 
+                amplitude=1,
+                subset='junk==False')
+    
     return output_dict
 
 def get_surveyMedley_EVs(events_df, regress_rt=True):
@@ -485,9 +681,20 @@ def get_surveyMedley_EVs(events_df, regress_rt=True):
     if regress_rt == True:
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
-                    duration='duration', 
+                    duration='group_RT', 
                     amplitude='response_time',
                     subset='junk==False')
+        
+    ####################################################################################
+    #################### ADDED IN NEWEST MODELING ######################################
+    ####################################################################################
+    #trial regressor for task > baseline
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='trial', 
+                duration='duration', 
+                amplitude=1,
+                subset='junk==False')
+    
     return output_dict
 
     
@@ -526,7 +733,7 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
         normalize_rt(events_df)
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
-                    duration='duration', 
+                    duration='group_RT', 
                     amplitude='response_time',
                     subset='junk==False')
     else:
@@ -542,7 +749,7 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
                                     ('task_stay_cue_switch', 'task_stay_cue_switch_100_RT'),
                                    ('cue_stay', 'cue_stay_100_RT')],
                     col='trial_type',
-                    duration='duration', 
+                    duration='group_RT', 
                     amplitude='response_time',
                     subset='CTI==100 and junk==False')
         get_ev_vars(output_dict, events_df, 
@@ -550,9 +757,20 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
                                     ('task_stay_cue_switch', 'task_stay_cue_switch_900_RT'),
                                    ('cue_stay', 'cue_stay_900_RT')],
                     col='trial_type',
-                    duration='duration', 
+                    duration='group_RT', 
                     amplitude='response_time',
                     subset='CTI==900 and junk==False')
+
+    ####################################################################################
+    #################### ADDED IN NEWEST MODELING ######################################
+    ####################################################################################
+    #trial regressor for task > baseline
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='trial', 
+                duration='duration', 
+                amplitude=1,
+                subset='junk==False')   
+
     return output_dict
 
 def get_WATT3_EVs(events_df, regress_rt=True):
@@ -562,36 +780,110 @@ def get_WATT3_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
+    output_dict = {
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
+
+    ####################################################################################
+    ######################### Modified IN NEWEST MODELING ##############################
+    ####################################################################################
+    
+    events_df.block_duration = events_df.block_duration/1000
+    
     # planning conditions
+#     get_ev_vars(output_dict, events_df, 
+#                 condition_spec=[('PA_with_intermediate','plan_PA_with'),
+#                                 ('PA_without_intermediate','plan_PA_without')],
+#                 col='condition', 
+#                 duration='duration', 
+#                 subset="planning==1")
+
+    #planning event
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('PA_with_intermediate','plan_PA_with'),
-                                ('PA_without_intermediate','plan_PA_without')],
-                col='condition', 
-                duration='duration', 
+                condition_spec='planning_event',
+                duration='block_duration', 
                 subset="planning==1")
+    #parametric planning event
+    events_df.condition = events_df.condition.replace('PA_without_intermediate', 1)
+    events_df.condition = events_df.condition.replace('PA_with_intermediate', -1)
+    get_ev_vars(output_dict, events_df, 
+            condition_spec='planning_parametric',
+            duration='block_duration', 
+            amplitude='condition',
+            subset="planning==1")
+
     # nuisance regressors
+    #movement
     get_ev_vars(output_dict, events_df, 
                 condition_spec='movement', 
+                duration=1,
                 onset_column='movement_onset')
+    #parametric movement
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='movement_parametric', 
+                duration=1,
+                amplitude='condition',
+                onset_column='movement_onset')
+    
+    #feedback
     get_ev_vars(output_dict, events_df, 
                 condition_spec='feedback', 
-                duration='duration',
+                duration='block_duration',
+                subset="trial_id=='feedback'")
+    #parametric feedback
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='feedback_parametric', 
+                duration='block_duration',
+                amplitude='condition',
                 subset="trial_id=='feedback'")
     
     if regress_rt == True:
         normalize_rt(events_df)
         get_ev_vars(output_dict, events_df, 
                 condition_spec='response_time', 
-                duration='duration', 
+                duration='group_RT', ##changed in newest modeling
                 amplitude='response_time',
                 subset="trial_id != 'feedback'")
     else:
         normalize_rt(events_df, 'planning')
         get_ev_vars(output_dict, events_df, 
                     condition_spec='response_time', 
-                    duration='duration', 
+                    duration='group_RT', ##changed in newest modeling
                     amplitude='response_time',
                     subset="trial_id != 'feedback'")
+        
+
+    #trial regressor for task > baseline
+    #build up trial regressor
+    counter = 0
+    round_grouping = []
+    end_round_idx = events_df.index[events_df.trial_id=='feedback']
+    for i in range(len(events_df.trial_id)):
+        if i in end_round_idx:
+            round_grouping.append(counter)
+            counter+=1
+        else:
+            round_grouping.append(counter)
+    events_df.insert(0, "round_grouping", round_grouping, True)
+    
+    round_start_idx = [0] + [x+1 for x in end_round_idx]
+    
+    round_dur = np.zeros(len(events_df.trial_id))
+    for group_num in range(len(events_df.round_grouping.unique())):
+        for idx in events_df.index[events_df.round_grouping==group_num].values:
+            round_dur[idx] = np.sum(events_df.block_duration[events_df.round_grouping==np.float(group_num)][:-1])
+    events_df.insert(0, "round_duration", round_dur, True)
+    
+    #add full trial length regressor
+    get_ev_vars(output_dict, events_df, 
+            condition_spec='trial', 
+            duration='round_duration',
+            amplitude=1,
+            subset="junk==False and planning==1") 
+    
     return output_dict
 
 def get_base_EVs(events_df):

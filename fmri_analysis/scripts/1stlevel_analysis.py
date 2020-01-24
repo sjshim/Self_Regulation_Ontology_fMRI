@@ -3,7 +3,7 @@
 
 # ### Imports
 
-# In[ ]:
+# In[1]:
 
 
 import argparse
@@ -29,7 +29,7 @@ from utils.firstlevel_utils import get_first_level_objs, make_first_level_obj, s
 # - conversion command:
 #   - jupyter nbconvert --to script --execute 1stlevel_analysis.ipynb
 
-# In[ ]:
+# In[2]:
 
 
 parser = argparse.ArgumentParser(description='First Level Entrypoint script')
@@ -44,7 +44,7 @@ parser.add_argument('--beta', action='store_true')
 parser.add_argument('--n_procs', default=16, type=int)
 parser.add_argument('--overwrite', action='store_true')
 parser.add_argument('--quiet', '-q', action='store_true')
-parser.add_argument('--a_comp_cor', action='store_true')
+parser.add_argument('--design_matrix', '-dm', action='store_true')
 
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
@@ -52,22 +52,28 @@ else:
     args = parser.parse_args([])
     args.tasks = ['discountFix', 'manipulationTask', #aim 2 tasks
                   'motorSelectiveStop', 'stopSignal']
-    '''
-     args.tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', #aim 1 tasks
-                  'motorSelectiveStop', 'stopSignal', 
-                  'stroop', 'twoByTwo', 'WATT3']
-    '''
+    
+    # args.tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', #aim 1 tasks
+    #               'motorSelectiveStop', 'stopSignal', 
+    #               'stroop', 'twoByTwo', 'WATT3']
+    
    
     #args.subject_ids = ['3010']
+<<<<<<< HEAD
     args.rt=True
     args.a_comp_cor=True
+=======
+    args.rt=True #NORMALIZE RT
+>>>>>>> henry_upstream/master
     args.n_procs=1
     args.derivatives_dir = '/data/derivatives/'
     args.data_dir = '/data'
     args.fmriprep_dir = '/data/derivatives/fmriprep/fmriprep'
+    args.design_matrix=True #False
 
 
-# In[ ]:
+# In[3]:
+
 
 if not args.quiet:
     def verboseprint(*args, **kwargs):
@@ -80,7 +86,7 @@ else:
 # 
 # Organize paths and set parameters based on arguments
 
-# In[ ]:
+# In[4]:
 
 
 # Set Paths
@@ -102,11 +108,11 @@ if args.tasks is not None:
 else:
     tasks = ['discountFix', 'manipulationTask', 
                   'motorSelectiveStop', 'stopSignal']
-    '''
-     args.tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 
-                  'motorSelectiveStop', 'stopSignal', 
-                  'stroop', 'twoByTwo', 'WATT3']
-    '''
+    
+    # tasks = ['ANT', 'CCTHot', 'discountFix', 'DPX', 
+    #               'motorSelectiveStop', 'stopSignal', 
+    #               'stroop', 'twoByTwo', 'WATT3']
+    
 
 # list of subject identifiers
 if not args.subject_ids:
@@ -122,7 +128,7 @@ n_procs = args.n_procs
 TR = .68
 
 
-# In[ ]:
+# In[5]:
 
 
 #print
@@ -139,7 +145,7 @@ verboseprint('*'*79)
 # gather the files for each task within each subject
 # 
 
-# In[ ]:
+# In[6]:
 
 
 to_run = []
@@ -152,7 +158,7 @@ for subject_id in subjects:
                 warnings.filterwarnings("ignore",category=DeprecationWarning)
                 warnings.filterwarnings("ignore",category=UserWarning)
                 subjinfo = make_first_level_obj(subject_id, task, fmriprep_dir, 
-                                                data_dir, TR, regress_rt=regress_rt, a_comp_cor=a_comp_cor)
+                                                data_dir, TR, regress_rt=regress_rt)
             if subjinfo is not None:
                 to_run.append(subjinfo)
 
@@ -161,7 +167,7 @@ for subject_id in subjects:
 # 
 # generate the glm and fit the timeseries data to it
 
-# In[ ]:
+# In[7]:
 
 
 for subjinfo in to_run:
@@ -177,14 +183,22 @@ for subjinfo in to_run:
                            period_cut=80,
                            n_jobs=1
                           )
-    out = fmri_glm.fit(subjinfo.func, design_matrices=subjinfo.design)
     
-    subjinfo.fit_model = out
+    if args.design_matrix:
+        verboseprint('** saving')
+        save_first_level_obj(subjinfo, first_level_dir, False)
+        subjinfo.export_design(first_level_dir)
+        subjinfo.export_events(first_level_dir)
+    else:
+        out = fmri_glm.fit(subjinfo.func, design_matrices=subjinfo.design)
+        subjinfo.fit_model = out
 
-    verboseprint('** saving')
-    save_first_level_obj(subjinfo, first_level_dir, True)
-    subjinfo.export_design(first_level_dir)
-    subjinfo.export_events(first_level_dir)
+        verboseprint('** saving')
+        save_first_level_obj(subjinfo, first_level_dir, True)
+        subjinfo.export_design(first_level_dir)
+        subjinfo.export_events(first_level_dir)
+
+
 # In[ ]:
 
 
