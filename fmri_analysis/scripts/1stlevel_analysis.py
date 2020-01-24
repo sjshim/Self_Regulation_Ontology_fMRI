@@ -45,6 +45,9 @@ parser.add_argument('--n_procs', default=16, type=int)
 parser.add_argument('--overwrite', action='store_true')
 parser.add_argument('--quiet', '-q', action='store_true')
 parser.add_argument('--design_matrix', '-dm', action='store_true')
+parser.add_argument('--a_comp_cor', action='store_true')
+
+
 
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
@@ -59,7 +62,8 @@ else:
     
    
     #args.subject_ids = ['3010']
-    args.rt=True #NORMALIZE RT
+    args.rt=True
+    args.a_comp_cor=True
     args.n_procs=1
     args.derivatives_dir = '/data/derivatives/'
     args.data_dir = '/data'
@@ -126,7 +130,7 @@ TR = .68
 # In[5]:
 
 
-# print
+#print
 verboseprint('*'*79)
 verboseprint('Tasks: %s\n, Subjects: %s\n, derivatives_dir: %s\n, data_dir: %s' % 
      (tasks, subjects, derivatives_dir, data_dir))
@@ -153,7 +157,7 @@ for subject_id in subjects:
                 warnings.filterwarnings("ignore",category=DeprecationWarning)
                 warnings.filterwarnings("ignore",category=UserWarning)
                 subjinfo = make_first_level_obj(subject_id, task, fmriprep_dir, 
-                                                data_dir, TR, regress_rt=regress_rt)
+                                                data_dir, TR, regress_rt=regress_rt, a_comp_cor=a_comp_cor)
             if subjinfo is not None:
                 to_run.append(subjinfo)
 
