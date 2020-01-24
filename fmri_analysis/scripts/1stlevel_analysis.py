@@ -60,7 +60,6 @@ else:
     
    
     #args.subject_ids = ['3010']
-
     args.rt=True
     args.a_comp_cor=True
     args.n_procs=1
