@@ -1,6 +1,7 @@
 from glob import glob
 from os import path
 import pandas as pd
+import numpy as np
 
 # function to correct processing of a few problematic files
 # need to change time_elapsed to reflect the fact that fmri triggers were
@@ -61,6 +62,31 @@ def get_processed_files(subj):
         exp_id = path.basename(subj_file).split('_')[1]
         processed_files[exp_id] = df
     return processed_files
+
+def participant_means(df):
+    return [np.mean(df.rt[(df.worker_id==subj) & (df.rt>0)]) for subj in df.worker_id.unique()]
+
+def get_mean_rts(task_dfs):
+    """function that calculates median RT"""
+    task_mean_rts = {task: participant_means(df) for task,df in task_dfs.items()}
+#     # special cases handled below
+#     # ** twoByTwo **
+#     if (len(task_dfs["twobytwo"])>0):
+#         print("two by two loop working")
+#         median_cue_length = task_dfs['twobytwo'].CTI.quantile(.5)
+#         task_50th_rts['twobytwo'] += median_cue_length
+#     if (len(task_dfs["ward_and_allport"])>0):
+#     # ** WATT3 **
+#         WATT_df = task_dfs['ward_and_allport'].query('exp_stage == "test"')
+#     # get the first move times (plan times)
+#         plan_times = WATT_df.query('trial_id == "to_hand" and num_moves_made==1').rt
+#     # get other move times
+#         move_times = WATT_df.query('not (trial_id == "to_hand" and num_moves_made==1)')
+#     # drop feedback
+#         move_times = move_times.query('trial_id != "feedback"').rt
+#         task_50th_rts['ward_and_allport'] = {'planning_time': plan_times.quantile(.5),
+#                                          'move_time': move_times.quantile(.5)}
+    return task_mean_rts
 
 def get_median_rts(task_dfs):
     """function that calculates median RT"""
