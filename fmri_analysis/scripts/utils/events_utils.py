@@ -196,11 +196,7 @@ def get_CCTHot_EVs(events_df, regress_rt):
                     amplitude='response_time',
                     subset='junk==False')
         
-    # nuisance regressors
-    get_ev_vars(output_dict, events_df, 
-                condition_spec=[(True, 'junk')], 
-                col='junk', 
-                duration='duration')
+
 
 
     ####################################################################################
@@ -234,7 +230,7 @@ def get_CCTHot_EVs(events_df, regress_rt):
 
     #add full trial length regressor
     get_ev_vars(output_dict, events_df, 
-            condition_spec='trial', 
+            condition_spec='task', 
             duration='round_duration',
             amplitude=1,
             subset="junk==False and round_on==True")
@@ -304,34 +300,41 @@ def get_CCTHot_EVs(events_df, regress_rt):
         roundsum = 0
         for i in range(len(chunk.feedback)):
             if chunk.feedback[i]==1:
-                roundsum += chunk.demeaned_gain[i]
+                roundsum += chunk.gain_amount[i]
             elif chunk.feedback[i]==0:
-                roundsum += chunk.demeaned_loss[i]
+                roundsum += chunk.loss_amount[i]
         roundsums.append(roundsum)
 
-    feedback_values = events_df.demeaned_gain.to_numpy().copy()
+    feedback_values = events_df.gain_amount.to_numpy().copy()
     loss_indices = events_df.index[events_df.feedback==0] #get losses
     for loss_idx in loss_indices:
         round_idx = events_df.round_grouping[loss_idx]
         feedback_values[loss_idx] = roundsums[round_idx]
 
     events_df.insert(0, "feedback_values", feedback_values, True)
-
-    #create loss regressor
-    get_ev_vars(output_dict, events_df, 
-        condition_spec='loss',
-        onset_column='button_onset',
-        duration=1, 
-        amplitude='feedback_values',
-        subset="junk==False and action=='draw_card' and feedback==0")
+    events_df.insert(0, "demeaned_feedback_values", feedback_values-np.mean(feedback_values), True)
 
     #create feedback regressor
     get_ev_vars(output_dict, events_df, 
         condition_spec='feedback',
         onset_column='button_onset',
         duration=1,
-        amplitude='feedback_values',
+        amplitude='demeaned_feedback_values',
         subset="junk==False and action=='draw_card'")
+    
+    demeaned_loss_array = np.zeros(len(events_df.feedback_values))
+    demeaned_losses = events_df.feedback_values[loss_indices].copy() - np.mean(events_df.feedback_values[loss_indices])
+    for idx in loss_indices:
+        demeaned_loss_array[idx] = demeaned_losses[idx]
+    events_df.insert(0, "demeaned_trial-cumulative_loss_values", demeaned_loss_array, True)
+    
+    #create loss regressor
+    get_ev_vars(output_dict, events_df, 
+        condition_spec='loss',
+        onset_column='button_onset',
+        duration=1, 
+        amplitude='demeaned_trial-cumulative_loss_values',
+        subset="junk==False and action=='draw_card' and feedback==0")
     
     return output_dict
 
@@ -374,7 +377,7 @@ def get_discountFix_EVs(events_df, regress_rt=True):
     ####################################################################################
     #trial regressor for task > baseline
     get_ev_vars(output_dict, events_df, 
-                condition_spec='trial', 
+                condition_spec='task', 
                 duration='duration', 
                 amplitude=1,
                 subset='junk==False')
@@ -434,7 +437,7 @@ def get_DPX_EVs(events_df, regress_rt=True):
     ####################################################################################
     #trial regressor for task > baseline
     get_ev_vars(output_dict, events_df, 
-                condition_spec='trial', 
+                condition_spec='task', 
                 duration='duration', 
                 amplitude=1,
                 subset='junk==False')
@@ -450,7 +453,7 @@ def get_manipulation_EVs(events_df, regress_rt=True):
             }
       
     get_ev_vars(output_dict, events_df,
-               condition_spec = [('cue', 'trial')],
+               condition_spec = [('cue', 'task')],
                col = 'trial_id',
                duration = 10,
                subset='trial_type!="no_stim" and junk==False')
@@ -555,7 +558,7 @@ def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
     ####################################################################################
     #trial regressor for task > baseline
     get_ev_vars(output_dict, events_df, 
-                condition_spec='trial', 
+                condition_spec='task', 
                 duration='duration', 
                 amplitude=1,
                 subset='junk==False')
@@ -604,7 +607,7 @@ def get_stopSignal_EVs(events_df, regress_rt=True):
     ####################################################################################
     #trial regressor for task > baseline
     get_ev_vars(output_dict, events_df, 
-                condition_spec='trial', 
+                condition_spec='task', 
                 duration='duration', 
                 amplitude=1,
                 subset='junk==False')
@@ -653,7 +656,7 @@ def get_stroop_EVs(events_df, regress_rt=True):
     ####################################################################################
     #trial regressor for task > baseline
     get_ev_vars(output_dict, events_df, 
-                condition_spec='trial', 
+                condition_spec='task', 
                 duration='duration', 
                 amplitude=1,
                 subset='junk==False')
@@ -690,7 +693,7 @@ def get_surveyMedley_EVs(events_df, regress_rt=True):
     ####################################################################################
     #trial regressor for task > baseline
     get_ev_vars(output_dict, events_df, 
-                condition_spec='trial', 
+                condition_spec='task', 
                 duration='duration', 
                 amplitude=1,
                 subset='junk==False')
@@ -766,7 +769,7 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
     ####################################################################################
     #trial regressor for task > baseline
     get_ev_vars(output_dict, events_df, 
-                condition_spec='trial', 
+                condition_spec='task', 
                 duration='duration', 
                 amplitude=1,
                 subset='junk==False')   
@@ -879,28 +882,28 @@ def get_WATT3_EVs(events_df, regress_rt=True):
     
     #add full trial length regressor
     get_ev_vars(output_dict, events_df, 
-            condition_spec='trial', 
+            condition_spec='task', 
             duration='round_duration',
             amplitude=1,
             subset="junk==False and planning==1") 
     
     return output_dict
 
-def get_base_EVs(events_df):
-    output_dict = {
-        'conditions': [],
-        'onsets': [],
-        'durations': [],
-        'amplitudes': []
-        }
-    get_ev_vars(output_dict, events_df, 
-                condition_spec='trial',
-                duration='duration')
-    get_ev_vars(output_dict, events_df, 
-                condition_spec=[(True, 'junk')], 
-                col='junk', 
-                duration='duration')   
-    return output_dict
+# def get_base_EVs(events_df):
+#     output_dict = {
+#         'conditions': [],
+#         'onsets': [],
+#         'durations': [],
+#         'amplitudes': []
+#         }
+#     get_ev_vars(output_dict, events_df, 
+#                 condition_spec='trial',
+#                 duration='duration')
+#     get_ev_vars(output_dict, events_df, 
+#                 condition_spec=[(True, 'junk')], 
+#                 col='junk', 
+#                 duration='duration')   
+#     return output_dict
 
 def get_beta_series(events_df, regress_rt=True):
     output_dict = {

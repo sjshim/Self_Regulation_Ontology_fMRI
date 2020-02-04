@@ -1,7 +1,7 @@
 # sro_prep singularity image
-fmri_env-2019-04-30-b291cb4f3d87.simg
+fmri_env-2019-11-06-a89ae73c9ac3.simg
 # location of singularity images
-/oak/stanford/groups/russpold/data/uh2/singularity_images
+/home/groups/russpold/uh2_analysis/Self_Regulation_Ontology_fMRI/singularity_images
 # derivatives folder
 /oak/stanford/groups/russpold/data/uh2/aim2/BIDS_scans/derivatives
 # data folder

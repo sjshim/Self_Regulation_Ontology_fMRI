@@ -208,7 +208,7 @@ def process_confounds(confounds_file, a_comp_cor=True):
     # add additional relevant regressors
     add_regressor_names = ['framewise_displacement'] 
     if a_comp_cor: 
-        add_regressor_names += [i for i in confounds_df.columns if 'a_comp_cor' in i]
+        add_regressor_names += [i for i in confounds_df.columns if 'a_comp_cor' in i][:8]
     additional_regressors = confounds_df.loc[:,add_regressor_names].values
     regressors = np.hstack((movement_regressors,
                             additional_regressors,
@@ -244,10 +244,24 @@ def get_func_file(fmriprep_dir, subject_id, task):
         func_file = glob(path.join(fmriprep_dir,
                           'sub-%s' % subject_id,
                           'func', '*%s*MNI*preproc_bold.nii.gz' % task))
+        print(fmriprep_dir)
+        print(subject_id)
+        print(path.join(fmriprep_dir,
+                          'sub-%s' % subject_id,
+                          '*', 'func', '*%s*MNI*preproc_bold.nii.gz' % task))
+        if func_file:
+            print(func_file)
     else: 
         func_file = glob(path.join(fmriprep_dir,
                           'sub-%s' % subject_id,
                           '*', 'func', '*%s*MNI*preproc_bold.nii.gz' % task))
+        print(fmriprep_dir)
+        print(subject_id)
+        print(path.join(fmriprep_dir,
+                          'sub-%s' % subject_id,
+                          '*', 'func', '*%s*MNI*preproc_bold.nii.gz' % task))
+        if func_file:
+            print(func_file)
         
     #check if there's a session folder 
     if os.path.exists(path.join(fmriprep_dir,

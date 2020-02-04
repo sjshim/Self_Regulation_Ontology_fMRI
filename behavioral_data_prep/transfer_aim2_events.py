@@ -10,7 +10,7 @@ import shutil
 
 def move_EV(subj, task, fmri_dir):
     file_dir = path.dirname(__file__)
-    events_dir = join(file_dir, '../behavioral_data/event_files')
+    events_dir = join(file_dir, '../behavioral_data/aim2/event_files')
     subj = subj.replace('sub-','')
     # get event file
     ev_file = glob(join(events_dir,'%s_%s*' % (subj, task)))[0]

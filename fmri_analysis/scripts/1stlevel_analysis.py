@@ -123,7 +123,7 @@ beta_series = args.beta
 n_procs = args.n_procs
 # TR of functional images
 TR = .68
-
+a_comp_cor=args.a_comp_cor
 
 # In[5]:
 
