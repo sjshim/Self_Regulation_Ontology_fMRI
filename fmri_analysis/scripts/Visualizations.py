@@ -96,20 +96,25 @@ if plot_designs:
                 subjinfo = pickle.load(f)
                 f.close()
 		
-                #plot_design(subjinfo)
-                #plt.gcf()
-                #plt.savefig('%s/figs/%s_%s_design_fig' % (first_level_dir, sub, task))
-                #plt.close()
+                plot_design(subjinfo)
+                plt.gcf()
+                plt.savefig('%s/figs/%s_%s_design_fig' % (first_level_dir, sub, task))
+                plt.close()
+
+                plot_design_timeseries(subjinfo)
+                plt.gcf()
+                plt.savefig('%s/figs/%s_%s__design_timeseries' % (first_level_dir, sub, task))
+                plt.close()
 		
                 plot_design_timeseries(subjinfo, 0, 100)
-                plt.show()
+                plt.gcf()
                 plt.savefig('%s/figs/%s_%s__design_timeseries_trunc' % (first_level_dir, sub, task))
                 plt.close()
 		
-                #plot_design_heatmap(subjinfo)
-                #plt.show()
-                #plt.savefig('%s/figs/%s_%s_heatmap' % (first_level_dir, sub, task), bbox_inches="tight")
-                #plt.close()
+                plot_design_heatmap(subjinfo)
+                plt.gcf()
+                plt.savefig('%s/figs/%s_%s_heatmap' % (first_level_dir, sub, task), bbox_inches="tight")
+                plt.close()
 		
             except:
                 print('task not found')
