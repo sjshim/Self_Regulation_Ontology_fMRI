@@ -932,6 +932,17 @@ def get_WATT3_EVs(events_df, regress_rt=True):
             round_dur[idx] = np.sum(events_df.block_duration[events_df.round_grouping==np.float(group_num)][:-1])
     events_df.insert(0, "round_duration", round_dur, True)
     
+    new_df = pd.DataFrame(np.zeros((1,len(events_df.columns))),columns=events_df.columns)
+    new_df.trial_id='practice'
+    new_df.duration = events_df.onset[0]
+    events_df = pd.concat([new_df, events_df]).reset_index(drop = True)
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='practice',
+                col='trial_id',
+                amplitude=1,
+                duration='duration',
+                subset="trial_id=='practice'")
+    
 #     #add full trial length regressor - FOUND TO BE REDUNDANT
 #     get_ev_vars(output_dict, events_df, 
 #             condition_spec='task', 
