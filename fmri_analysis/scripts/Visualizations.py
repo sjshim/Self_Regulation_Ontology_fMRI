@@ -36,7 +36,10 @@ else:
     args = parser.parse_args([])
     args.derivatives_dir = '/mnt/OAK/data/uh2/BIDS_data/derivatives/'
     args.data_dir = '/mnt/OAK/data/uh2/BIDS_data/'
-    args.tasks = ['stroop']
+    args.tasks = ['ANT', 'CCTHot', 'discountFix',
+        'DPX', 'motorSelectiveStop',
+        'stopSignal', 'stroop',
+        'twoByTwo', 'WATT3']
     # args.rt=True
     args.save=True
     get_ipython().magic(u'matplotlib inline')
@@ -46,6 +49,7 @@ else:
 
 # set paths
 first_level_dir = path.join(args.derivatives_dir, '1stlevel')
+print(first_level_dir)
 second_level_dir = path.join(args.derivatives_dir,'2ndlevel')
 fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep', 'fmriprep')
 tasks = args.tasks
