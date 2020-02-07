@@ -387,10 +387,7 @@ def get_discountFix_EVs(events_df, regress_rt=True):
 #                 amplitude='subjective_choice_value',
 #                 subset='junk==False')
     # nuisance regressors
-    get_ev_vars(output_dict, events_df, 
-                condition_spec=[(True, 'junk')],
-                col='junk', 
-                duration='duration')
+
     if regress_rt == True:
         normalize_rt(events_df)
         get_ev_vars(output_dict, events_df, 
@@ -420,6 +417,11 @@ def get_discountFix_EVs(events_df, regress_rt=True):
                 duration='duration', 
                 amplitude='choice_contrast',
                 subset='junk==False')   
+
+    get_ev_vars(output_dict, events_df, 
+                condition_spec=[(True, 'junk')],
+                col='junk', 
+                duration='duration')
     
     return output_dict
 
