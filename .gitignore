@@ -23,4 +23,6 @@ dockerfile_old
 behavioral_data_prep/Untitled.ipynb
 docker_path.txt
 fmri_analysis/scripts/Untitled.ipynb
+*Untitled*.ipynb
+*/*Untitled*.ipynb
 */*/*Untitled*.ipynb

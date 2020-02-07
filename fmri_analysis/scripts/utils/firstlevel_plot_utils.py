@@ -60,10 +60,11 @@ def plot_design_timeseries(subjinfo, begin=0, end=-1):
     X_loc = subjinfo.design.columns.get_loc('trans_x')
     subset = subjinfo.design.loc[:, subjinfo.design.columns[:X_loc]]
     subset = subset.drop(columns=subset.filter(regex='_TD').columns)
+    vis_df = pd.DataFrame(columns=subset.columns)
     for i, col in enumerate(subset.columns):
-        subset.loc[:, col] = normalize(subset.loc[:, col].values) + i*3
+        vis_df.loc[:, col] = normalize(subset.iloc[begin:end,subset.columns==col].values.flatten()) + i*3
     color_palette = sns.color_palette("colorblind", subset.shape[1])[::-1]
-    ax = subset.iloc[begin:end].plot(figsize=(12,10), colormap=ListedColormap(color_palette))
+    ax = vis_df.plot(figsize=(12,10), colormap=ListedColormap(color_palette))
     xlim = ax.get_xlim()
     end = xlim[-1] + (xlim[-1]-xlim[0])*.025
     for i, col in enumerate(subset.columns):
