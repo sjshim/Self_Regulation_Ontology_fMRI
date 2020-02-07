@@ -109,16 +109,16 @@ def get_ANT_EVs(events_df, regress_rt=True):
                             zip(events_df.cue, events_df.flanker_type)]
     # cue type
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[('spatial_congruent', 'OLD_spatial_congruent'),
-                                ('spatial_incongruent', 'OLD_spatial_incongruent'),
-                                ('double_congruent', 'OLD_double_congruent'),
-                                ('double_incongruent', 'OLD_double_incongruent')],
+                condition_spec=[('spatial_congruent', 'spatial_congruent'),
+                                ('spatial_incongruent', 'spatial_incongruent'),
+                                ('double_congruent', 'double_congruent'),
+                                ('double_incongruent', 'double_incongruent')],
                 col='trial_type',
                 duration='duration',
                 subset='junk==False')
     # nuisance regressors
     get_ev_vars(output_dict, events_df, 
-                condition_spec=[(True, 'OLD_junk')], 
+                condition_spec=[(True, 'junk')], 
                 col='junk', 
                 duration='duration')
     if regress_rt == True:
@@ -824,7 +824,7 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                 condition_spec='movement', 
                 duration=1,
                 onset_column='movement_onset')
-    #parametric movement
+    #parametric movement ########## Look into this
     get_ev_vars(output_dict, events_df, 
                 condition_spec='movement_parametric', 
                 duration=1,
