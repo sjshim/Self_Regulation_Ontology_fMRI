@@ -244,20 +244,10 @@ def get_func_file(fmriprep_dir, subject_id, task):
         func_file = glob(path.join(fmriprep_dir,
                           'sub-%s' % subject_id,
                           'func', '*%s*MNI*preproc_bold.nii.gz' % task))
-        print(fmriprep_dir)
-        print(subject_id)
-        print(path.join(fmriprep_dir,
-                          'sub-%s' % subject_id,
-                          '*', 'func', '*%s*MNI*preproc_bold.nii.gz' % task))
         if func_file:
             print(func_file)
     else: 
         func_file = glob(path.join(fmriprep_dir,
-                          'sub-%s' % subject_id,
-                          '*', 'func', '*%s*MNI*preproc_bold.nii.gz' % task))
-        print(fmriprep_dir)
-        print(subject_id)
-        print(path.join(fmriprep_dir,
                           'sub-%s' % subject_id,
                           '*', 'func', '*%s*MNI*preproc_bold.nii.gz' % task))
         if func_file:

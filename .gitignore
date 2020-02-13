@@ -26,3 +26,5 @@ fmri_analysis/scripts/Untitled.ipynb
 *Untitled*.ipynb
 */*Untitled*.ipynb
 */*/*Untitled*.ipynb
+*.err*
+*.out*

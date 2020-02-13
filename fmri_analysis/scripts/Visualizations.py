@@ -96,10 +96,11 @@ if plot_designs:
             print(sub, task)
             try:
                 files = get_first_level_objs(sub, task, first_level_dir, regress_rt=True, beta = False)[0]
+                print(files)
                 f = open(files, 'rb')
                 subjinfo = pickle.load(f)
                 f.close()
-		
+
                 plot_design(subjinfo)
                 plt.gcf()
                 plt.savefig('%s/figs/%s_%s_design_fig' % (first_level_dir, sub, task))
@@ -109,19 +110,27 @@ if plot_designs:
                 plt.gcf()
                 plt.savefig('%s/figs/%s_%s__design_timeseries' % (first_level_dir, sub, task))
                 plt.close()
-		
-                plot_design_timeseries(subjinfo, 0, 100)
-                plt.gcf()
-                plt.savefig('%s/figs/%s_%s__design_timeseries_trunc' % (first_level_dir, sub, task))
-                plt.close()
-		
+
+                if task=='WATT3':
+                    plot_design_timeseries(subjinfo, 0, 200)
+                    plt.gcf()
+                    plt.savefig('%s/figs/%s_%s__design_timeseries_trunc' % (first_level_dir, sub, task))
+                    plt.close()
+                else:
+                    plot_design_timeseries(subjinfo, 0, 100)
+                    plt.gcf()
+                    plt.savefig('%s/figs/%s_%s__design_timeseries_trunc' % (first_level_dir, sub, task))
+                    plt.close()                
+
+
+        
                 plot_design_heatmap(subjinfo)
                 plt.gcf()
                 plt.savefig('%s/figs/%s_%s_heatmap' % (first_level_dir, sub, task), bbox_inches="tight")
                 plt.close()
-		
             except:
                 print('task not found')
+
         
 
 

@@ -3,7 +3,7 @@
 #SBATCH --output=.out/{task}-1stlevel{rt_flag}-%J.out
 #SBATCH --error=.err/{task}-1stlevel{rt_flag}-%J.err
 #SBATCH --time=48:00:00
-#SBATCH --mail-type=ALL
+#SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
 #SBATCH --cpus-per-task=16
 #SBATCH --ntasks-per-node=1
@@ -16,7 +16,7 @@ base_singularity=`sed '4q;d' singularity_config.txt`
 singularity_loc=${base_singularity}/$img
 derivatives_loc=`sed '6q;d' singularity_config.txt`
 data_loc=`sed '8q;d' singularity_config.txt`
-fmriprep_dir=${OAK}/data/uh2/aim2/BIDS_scans/derivatives/fmriprep_ignoresbref #aim2 has too using ignore_sbref at the moment
+fmriprep_dir=${OAK}/data/uh2/aim2/BIDS_scans/derivatives/fmriprep #aim2 has too using ignore_sbref at the moment
 scripts_loc=../../scripts
 scratch_loc=$SCRATCH
 #subject_ids= 5064 

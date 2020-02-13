@@ -2,6 +2,7 @@ from matplotlib.colors import ListedColormap
 import matplotlib.patheffects as PathEffects
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from scipy.stats import norm
 import seaborn as sns
 from nilearn import image, plotting

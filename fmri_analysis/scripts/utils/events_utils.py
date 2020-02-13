@@ -118,6 +118,8 @@ def get_ANT_EVs(events_df, regress_rt=True):
     events_df['congruency_parametric'] = -1
     events_df.loc[events_df.flanker_type=='incongruent', 'congruency_parametric'] = 1
 
+    events_df['cue_congruency_interaction'] = events_df.cue_parametric.values * events_df.congruency_parametric.values
+
     get_ev_vars(output_dict, events_df, 
             condition_spec='cue_parametric', 
             duration='duration', 
@@ -128,6 +130,12 @@ def get_ANT_EVs(events_df, regress_rt=True):
             condition_spec='congruency_parametric', 
             duration='duration', 
             amplitude='congruency_parametric',
+            subset='junk==False')
+
+    get_ev_vars(output_dict, events_df, 
+            condition_spec='interaction', 
+            duration='duration', 
+            amplitude='cue_congruency_interaction',
             subset='junk==False')
     
     #Task>baseline regressor    
@@ -571,6 +579,7 @@ def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
     # create 1 RT regressor for all go trials, 1 for stop failures
     events_df['simplified_trial_type'] = 'go'
     events_df.loc[events_df.trial_type=='crit_stop_failure', 'simplified_trial_type'] = 'crit_stop_failure'
+    events_df.loc[events_df.trial_type=='crit_stop_success', 'simplified_trial_type'] = 'crit_stop_success'
 
     normalize_rt(events_df, 'simplified_trial_type')
     get_ev_vars(output_dict, events_df, 
@@ -579,7 +588,7 @@ def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
             col='simplified_trial_type',
             amplitude='response_time',
             duration='group_RT',
-            subset='junk==False')
+            subset='junk==False and stopped==False')
 
 #### OLD RT REGRESSORS
 #     if regress_rt == True:
@@ -862,40 +871,43 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                 condition_spec='planning_event',
                 duration='block_duration', 
                 subset="planning==1")
-    #parametric planning event
+    #parametric planning event - TOO COLINEAR WITH OTHER PARAMETRIC REGRESSORS
     events_df.condition = events_df.condition.replace('PA_without_intermediate', -1)
     events_df.condition = events_df.condition.replace('PA_with_intermediate', 1)
-    get_ev_vars(output_dict, events_df, 
-            condition_spec='planning_parametric',
-            duration='block_duration', 
-            amplitude='condition',
-            subset="planning==1")
+#     get_ev_vars(output_dict, events_df, 
+#             condition_spec='planning_parametric',
+#             duration='block_duration', 
+#             amplitude='condition',
+#             subset="planning==1")
 
     # nuisance regressors
     #movement
     get_ev_vars(output_dict, events_df, 
-                condition_spec='movement', 
+                condition_spec='button_press', 
                 duration=1,
-                onset_column='movement_onset')
+                amplitude=1,
+                onset_column='movement_onset',
+                subset="trial_id!='feedback'")
     
-    #parametric movement ########## Look into this
-    get_ev_vars(output_dict, events_df, 
-                condition_spec='movement_parametric', 
-                duration=1,
-                amplitude='condition',
-                onset_column='movement_onset')
+    #parametric movement - TOO COLINEAR WITH OTHER PARAMETRIC REGRESSORS
+#     get_ev_vars(output_dict, events_df, 
+#                 condition_spec='button_press_parametric', 
+#                 duration=1,
+#                 amplitude='condition',
+#                 onset_column='movement_onset',
+#                 subset="trial_id!='feedback'")
     
     #feedback
     get_ev_vars(output_dict, events_df, 
                 condition_spec='feedback', 
                 duration='block_duration',
                 subset="trial_id=='feedback'")
-    #parametric feedback
-    get_ev_vars(output_dict, events_df, 
-                condition_spec='feedback_parametric', 
-                duration='block_duration',
-                amplitude='condition',
-                subset="trial_id=='feedback'")
+#     #parametric feedback - TOO COLINEAR WITH OTHER PARAMETRIC REGRESSORS
+#     get_ev_vars(output_dict, events_df, 
+#                 condition_spec='feedback_parametric', 
+#                 duration='block_duration',
+#                 amplitude='condition',
+#                 subset="trial_id=='feedback'")
     
     if regress_rt == True:
         normalize_rt(events_df)
@@ -934,6 +946,13 @@ def get_WATT3_EVs(events_df, regress_rt=True):
             round_dur[idx] = np.sum(events_df.block_duration[events_df.round_grouping==np.float(group_num)][:-1])
     events_df.insert(0, "round_duration", round_dur, True)
     
+    #add full trial length parametric regressor - FOUND TO BE REDUNDANT
+    get_ev_vars(output_dict, events_df, 
+            condition_spec='trial_parametric', 
+            duration='round_duration',
+            amplitude='condition',
+            subset="junk==False and planning==1") 
+    
     new_df = pd.DataFrame(np.zeros((1,len(events_df.columns))),columns=events_df.columns)
     new_df.trial_id='practice'
     new_df.duration = events_df.onset[0]
@@ -944,13 +963,6 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                 amplitude=1,
                 duration='duration',
                 subset="trial_id=='practice'")
-    
-#     #add full trial length regressor - FOUND TO BE REDUNDANT
-#     get_ev_vars(output_dict, events_df, 
-#             condition_spec='task', 
-#             duration='round_duration',
-#             amplitude=1,
-#             subset="junk==False and planning==1") 
     
     return output_dict
 
