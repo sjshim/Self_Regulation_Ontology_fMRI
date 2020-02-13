@@ -70,7 +70,7 @@ else:
 # set paths
 first_level_dir = path.join(args.derivatives_dir, '1stlevel')
 second_level_dir = path.join(args.derivatives_dir,'2ndlevel')
-fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep', 'fmriprep')
+fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep')
 
 # set tasks
 if args.tasks is not None:
