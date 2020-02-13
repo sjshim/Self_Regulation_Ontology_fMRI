@@ -10,8 +10,14 @@ from utils.utils import get_flags
 def create_group_mask(fmriprep_dir, threshold=.8, verbose=True):
     if verbose:
         print('Creating Group mask...')
-    brainmasks = glob(path.join(fmriprep_dir,'sub-*',
-                               'func','*MNI152NLin2009cAsym*brain_mask.nii.gz'))     
+    #check if there's a session folder 
+    if len(glob(path.join(fmriprep_dir,'sub-*','func','*MNI152NLin2009cAsym*brain_mask.nii.gz'))):
+        brainmasks = glob(path.join(fmriprep_dir,'sub-*',
+                            'func','*MNI152NLin2009cAsym*brain_mask.nii.gz'))
+    else:
+        brainmasks = glob(path.join(fmriprep_dir,'sub-*', '*',
+                            'func','*MNI152NLin2009cAsym*brain_mask.nii.gz'))
+                      
     mean_mask = image.mean_img(brainmasks)
     group_mask = image.math_img("a>=%s" % str(threshold), a=mean_mask)
     return group_mask
