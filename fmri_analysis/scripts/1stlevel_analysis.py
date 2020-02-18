@@ -65,7 +65,7 @@ else:
     args.n_procs=1
     args.derivatives_dir = '/data/derivatives/'
     args.data_dir = '/data'
-    args.fmriprep_dir = '/data/derivatives/fmriprep/fmriprep'
+    args.fmriprep_dir = '/data/derivatives/fmriprep/'
     args.design_matrix=True #False
 
 
