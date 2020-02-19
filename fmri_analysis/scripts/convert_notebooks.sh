@@ -9,3 +9,6 @@ jupyter nbconvert --to script --execute 1stlevel_inspection.ipynb
 
 nbstripout Visualizations.ipynb
 jupyter nbconvert --to script --execute Visualizations.ipynb
+
+nbstripout timeseries_parcellation.ipynb
+jupyter nbconvert --to script --execute timeseries_parcellation.ipynb

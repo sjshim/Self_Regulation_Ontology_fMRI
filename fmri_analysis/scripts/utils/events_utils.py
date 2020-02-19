@@ -119,6 +119,11 @@ def get_ANT_EVs(events_df, regress_rt=True):
     events_df.loc[events_df.flanker_type=='incongruent', 'congruency_parametric'] = 1
 
     events_df['cue_congruency_interaction'] = events_df.cue_parametric.values * events_df.congruency_parametric.values
+    
+    #demean parametric regressors
+    events_df.cue_parametric = events_df.cue_parametric.copy() - np.mean(events_df.cue_parametric)
+    events_df.congruency_parametric = events_df.congruency_parametric.copy() - np.mean(events_df.congruency_parametric)
+    events_df.cue_congruency_interaction = events_df.cue_congruency_interaction.copy() - np.mean(events_df.cue_congruency_interaction)
 
     get_ev_vars(output_dict, events_df, 
             condition_spec='cue_parametric', 
@@ -159,17 +164,17 @@ def get_ANT_EVs(events_df, regress_rt=True):
                 duration='group_RT', 
                 amplitude='response_time',
                 subset='junk==False')
-    else:
-        normalize_rt(events_df, 'trial_type')
-        get_ev_vars(output_dict, events_df, 
-                condition_spec=[('spatial_congruent', 'spatial_congruent_RT'),
-                                ('spatial_incongruent', 'spatial_incongruent_RT'),
-                                ('double_congruent', 'double_congruent_RT'),
-                                ('double_incongruent', 'double_incongruent_RT')],
-                col='trial_type',
-                amplitude='response_time',
-                duration='group_RT',
-                subset='junk==False')
+#     else:
+#         normalize_rt(events_df, 'trial_type')
+#         get_ev_vars(output_dict, events_df, 
+#                 condition_spec=[('spatial_congruent', 'spatial_congruent_RT'),
+#                                 ('spatial_incongruent', 'spatial_incongruent_RT'),
+#                                 ('double_congruent', 'double_congruent_RT'),
+#                                 ('double_incongruent', 'double_incongruent_RT')],
+#                 col='trial_type',
+#                 amplitude='response_time',
+#                 duration='group_RT',
+#                 subset='junk==False')
         
 #     # cue type - OLD METHOD, REDUNDANT w/ TRIAL+PARAMETRIC REGRESSORS
 #     get_ev_vars(output_dict, events_df, 
@@ -179,7 +184,8 @@ def get_ANT_EVs(events_df, regress_rt=True):
 #                                 ('double_incongruent', 'double_incongruent')],
 #                 col='trial_type',
 #                 duration='duration',
-#                 subset='junk==False')
+# #                 subset='junk==False')
+
     
     return output_dict
 
@@ -414,16 +420,21 @@ def get_discountFix_EVs(events_df, regress_rt=True):
                 amplitude=1,
                 subset='junk==False')
     #choice regressor
-    choices = [-1] * len(events_df.trial_type)
-    larger_indices = events_df.index[events_df.trial_type=='larger_later'].tolist()
-    for idx in larger_indices:
-        choices[idx] = 1
-    events_df.insert(0, 'choice_contrast', choices, True)
+    events_df['choice_parametric'] = -1
+    events_df.loc[events_df.trial_type=='larger_later', 'choice_parametric'] = 1
+    events_df.choice_parametric = events_df.choice_parametric - np.mean(events_df.choice_parametric)
+    
+#     #OLD METHOD FOR BUILDING CHOICE PARAMETRIC REGRESSOR
+#     choices = [-1] * len(events_df.trial_type)
+#     larger_indices = events_df.index[events_df.trial_type=='larger_later'].tolist()
+#     for idx in larger_indices:
+#         choices[idx] = 1
+#     events_df.insert(0, 'choice_contrast', choices, True)
     
     get_ev_vars(output_dict, events_df, 
                 condition_spec='choice', 
                 duration='duration', 
-                amplitude='choice_contrast',
+                amplitude='choice_parametric',
                 subset='junk==False')   
 
     get_ev_vars(output_dict, events_df, 
@@ -460,17 +471,17 @@ def get_DPX_EVs(events_df, regress_rt=True):
                 duration='group_RT', 
                 amplitude='response_time',
                 subset='junk==False')
-    else:
-        normalize_rt(events_df, 'condition')
-        get_ev_vars(output_dict, events_df, 
-                condition_spec=[('AX', 'AX_RT'),
-                                ('AY', 'AY_RT'),
-                                ('BX', 'BX_RT'),
-                                ('BY', 'BY_RT')],
-                col='condition',
-                amplitude='response_time',
-                duration='group_RT',
-                subset='junk==False')
+#     else:
+#         normalize_rt(events_df, 'condition')
+#         get_ev_vars(output_dict, events_df, 
+#                 condition_spec=[('AX', 'AX_RT'),
+#                                 ('AY', 'AY_RT'),
+#                                 ('BX', 'BX_RT'),
+#                                 ('BY', 'BY_RT')],
+#                 col='condition',
+#                 amplitude='response_time',
+#                 duration='group_RT',
+#                 subset='junk==False')
         
 
     #trial regressor for task > baseline - FOUND TO BE REDUNDANT
@@ -503,9 +514,10 @@ def get_manipulation_EVs(events_df, regress_rt=True):
                 duration='duration')
            
     #replace strings with parametric regressors adusted for frequency of trial type 
-    cue_count = events_df['which_cue'].value_counts()    
-    events_df.which_cue = events_df.which_cue.replace('LATER', (cue_count['NOW'])/(cue_count['LATER'])) 
+#     cue_count = events_df['which_cue'].value_counts()    
+    events_df.which_cue = events_df.which_cue.replace('LATER', 1) 
     events_df.which_cue = events_df.which_cue.replace('NOW', -1) 
+    events_df.which_cue = events_df.which_cue - np.mean(events_df.which_cue)
     
     # cue regressor 
     get_ev_vars(output_dict, events_df, 
@@ -526,20 +538,24 @@ def get_manipulation_EVs(events_df, regress_rt=True):
            amplitude = 'demeaned_response',
            subset='trial_type!="no_stim" and junk==False and trial_id=="current_rating"')
     
-    #demean RT
-    events_df["demeaned_rt"] =  events_df.response_time - np.nanmean(events_df.response_time)
-    
-    get_ev_vars(output_dict, events_df, 
-       condition_spec = 'response_time',
-       duration = 'group_RT',
-       amplitude = 'demeaned_rt',
-       subset='trial_type!="no_stim" and junk==False and trial_id=="current_rating"')
+    if regress_rt == True:
+        #demean RT
+        events_df["demeaned_rt"] =  events_df.response_time - np.nanmean(events_df.response_time)
+
+        get_ev_vars(output_dict, events_df, 
+           condition_spec = 'response_time',
+           duration = 'group_RT',
+           amplitude = 'demeaned_rt',
+           subset='trial_type!="no_stim" and junk==False and trial_id=="current_rating"')
                
     
     #demean probe regressor 
-    probe_ratio = events_df['stim_type'].value_counts()
-    events_df.stim_type = events_df.stim_type.replace('neutral', -(probe_ratio['valence'])/(probe_ratio['neutral']))
+#     probe_ratio = events_df['stim_type'].value_counts()
+#     events_df.stim_type = events_df.stim_type.replace('neutral', -(probe_ratio['valence'])/(probe_ratio['neutral']))
+#     events_df.stim_type = events_df.stim_type.replace('valence', 1)
+    events_df.stim_type = events_df.stim_type.replace('neutral', -1)
     events_df.stim_type = events_df.stim_type.replace('valence', 1)
+    events_df.stim_type = events_df.stim_type - np.mean(events_df.stim_type)
     
     get_ev_vars(output_dict, events_df, 
                 condition_spec = [('probe', 'probe')],
@@ -580,15 +596,16 @@ def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
     events_df['simplified_trial_type'] = 'go'
     events_df.loc[events_df.trial_type=='crit_stop_failure', 'simplified_trial_type'] = 'crit_stop_failure'
     events_df.loc[events_df.trial_type=='crit_stop_success', 'simplified_trial_type'] = 'crit_stop_success'
-
-    normalize_rt(events_df, 'simplified_trial_type')
-    get_ev_vars(output_dict, events_df, 
-            condition_spec=[('go','go_RT'), 
-                        ('crit_stop_failure', 'crit_stop_failure_RT')],
-            col='simplified_trial_type',
-            amplitude='response_time',
-            duration='group_RT',
-            subset='junk==False and stopped==False')
+    
+    if regress_rt == True:
+        normalize_rt(events_df, 'simplified_trial_type')
+        get_ev_vars(output_dict, events_df, 
+                condition_spec=[('go','go_RT'), 
+                            ('crit_stop_failure', 'crit_stop_failure_RT')],
+                col='simplified_trial_type',
+                amplitude='response_time',
+                duration='group_RT',
+                subset='junk==False and stopped==False')
 
 #### OLD RT REGRESSORS
 #     if regress_rt == True:
@@ -651,14 +668,16 @@ def get_stopSignal_EVs(events_df, regress_rt=True):
 #                 amplitude='response_time',
 #                 subset='junk==False and trial_type!="stop_success"')
 #     else:
-    normalize_rt(events_df, 'trial_type') ########  - stopSignal rt are normalized by trial_type
-    get_ev_vars(output_dict, events_df, 
-            condition_spec=[('go','go_RT'), 
-                        ('stop_failure', 'stop_failure_RT')],
-            col='trial_type',
-            amplitude='response_time',
-            duration='group_RT',
-            subset='junk==False')
+
+    if regress_rt == True:
+        normalize_rt(events_df, 'trial_type') ########  - stopSignal rt are normalized by trial_type
+        get_ev_vars(output_dict, events_df, 
+                condition_spec=[('go','go_RT'), 
+                            ('stop_failure', 'stop_failure_RT')],
+                col='trial_type',
+                amplitude='response_time',
+                duration='group_RT',
+                subset='junk==False')
 
 
 #     #trial regressor for task > baseline - FOUND TO BE REDUNDANT
@@ -691,6 +710,7 @@ def get_stroop_EVs(events_df, regress_rt=True):
     #parametric congruency regressor
     events_df['congruency_parametric'] = -1
     events_df.loc[events_df.trial_type=='incongruent', 'congruency_parametric'] = 1
+    events_df.congruency_parametric = events_df.congruency_parametric - np.mean(events_df.congruency_parametric)
     
     get_ev_vars(output_dict, events_df, 
         condition_spec='congruency_parametric', 
@@ -710,15 +730,15 @@ def get_stroop_EVs(events_df, regress_rt=True):
                 duration='group_RT', 
                 amplitude='response_time',
                 subset='junk==False')
-    else:
-        normalize_rt(events_df, 'condition')
-        get_ev_vars(output_dict, events_df, 
-                condition_spec=[('incongruent', 'incongruent_RT'),
-                               ('congruent', 'congruent_RT')],
-                col='condition',
-                amplitude='response_time',
-                duration='group_RT',
-                subset='junk==False')
+#     else:
+#         normalize_rt(events_df, 'condition')
+#         get_ev_vars(output_dict, events_df, 
+#                 condition_spec=[('incongruent', 'incongruent_RT'),
+#                                ('congruent', 'congruent_RT')],
+#                 col='condition',
+#                 amplitude='response_time',
+#                 duration='group_RT',
+#                 subset='junk==False')
         
 
     #trial regressor for task > baseline
@@ -809,30 +829,30 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
                     duration='group_RT', 
                     amplitude='response_time',
                     subset='junk==False')
-    else:
-        # normalize RT separately for each condition and CTI
-        subset_100 = events_df.query('CTI == 100')
-        subset_900 = events_df.query('CTI == 900')
-        normalize_rt(subset_100, 'trial_type')
-        normalize_rt(subset_900, 'trial_type')
-        events_df.loc[subset_100.index, 'response_time'] = subset_100.response_time
-        events_df.loc[subset_900.index, 'response_time'] = subset_900.response_time
-        get_ev_vars(output_dict, events_df, 
-                    condition_spec=[('task_switch', 'task_switch_100_RT'),
-                                    ('task_stay_cue_switch', 'task_stay_cue_switch_100_RT'),
-                                   ('cue_stay', 'cue_stay_100_RT')],
-                    col='trial_type',
-                    duration='group_RT', 
-                    amplitude='response_time',
-                    subset='CTI==100 and junk==False')
-        get_ev_vars(output_dict, events_df, 
-                    condition_spec=[('task_switch', 'task_switch_900_RT'),
-                                    ('task_stay_cue_switch', 'task_stay_cue_switch_900_RT'),
-                                   ('cue_stay', 'cue_stay_900_RT')],
-                    col='trial_type',
-                    duration='group_RT', 
-                    amplitude='response_time',
-                    subset='CTI==900 and junk==False')
+#     else:
+#         # normalize RT separately for each condition and CTI
+#         subset_100 = events_df.query('CTI == 100')
+#         subset_900 = events_df.query('CTI == 900')
+#         normalize_rt(subset_100, 'trial_type')
+#         normalize_rt(subset_900, 'trial_type')
+#         events_df.loc[subset_100.index, 'response_time'] = subset_100.response_time
+#         events_df.loc[subset_900.index, 'response_time'] = subset_900.response_time
+#         get_ev_vars(output_dict, events_df, 
+#                     condition_spec=[('task_switch', 'task_switch_100_RT'),
+#                                     ('task_stay_cue_switch', 'task_stay_cue_switch_100_RT'),
+#                                    ('cue_stay', 'cue_stay_100_RT')],
+#                     col='trial_type',
+#                     duration='group_RT', 
+#                     amplitude='response_time',
+#                     subset='CTI==100 and junk==False')
+#         get_ev_vars(output_dict, events_df, 
+#                     condition_spec=[('task_switch', 'task_switch_900_RT'),
+#                                     ('task_stay_cue_switch', 'task_stay_cue_switch_900_RT'),
+#                                    ('cue_stay', 'cue_stay_900_RT')],
+#                     col='trial_type',
+#                     duration='group_RT', 
+#                     amplitude='response_time',
+#                     subset='CTI==900 and junk==False')
 
 
 #     #trial regressor for task > baseline - FOUND TO BE REDUNDANT
@@ -874,6 +894,7 @@ def get_WATT3_EVs(events_df, regress_rt=True):
     #parametric planning event - TOO COLINEAR WITH OTHER PARAMETRIC REGRESSORS
     events_df.condition = events_df.condition.replace('PA_without_intermediate', -1)
     events_df.condition = events_df.condition.replace('PA_with_intermediate', 1)
+    events_df.condition = events_df.condition - np.mean(events_df.condition)
 #     get_ev_vars(output_dict, events_df, 
 #             condition_spec='planning_parametric',
 #             duration='block_duration', 
@@ -916,13 +937,13 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                 duration='group_RT', ##changed in newest modeling
                 amplitude='response_time',
                 subset="trial_id != 'feedback'")
-    else:
-        normalize_rt(events_df, 'planning')
-        get_ev_vars(output_dict, events_df, 
-                    condition_spec='response_time', 
-                    duration='group_RT', ##changed in newest modeling
-                    amplitude='response_time',
-                    subset="trial_id != 'feedback'")
+#     else:
+#         normalize_rt(events_df, 'planning')
+#         get_ev_vars(output_dict, events_df, 
+#                     condition_spec='response_time', 
+#                     duration='group_RT', ##changed in newest modeling
+#                     amplitude='response_time',
+#                     subset="trial_id != 'feedback'")
         
 
     #trial regressor for task > baseline
@@ -946,7 +967,15 @@ def get_WATT3_EVs(events_df, regress_rt=True):
             round_dur[idx] = np.sum(events_df.block_duration[events_df.round_grouping==np.float(group_num)][:-1])
     events_df.insert(0, "round_duration", round_dur, True)
     
-    #add full trial length parametric regressor - FOUND TO BE REDUNDANT
+    
+    #add full trial length regressor
+    get_ev_vars(output_dict, events_df, 
+            condition_spec='trial_parametric', 
+            duration='round_duration',
+            amplitude=1,
+            subset="junk==False and planning==1") 
+    
+    #add full trial length parametric regressor
     get_ev_vars(output_dict, events_df, 
             condition_spec='trial_parametric', 
             duration='round_duration',
