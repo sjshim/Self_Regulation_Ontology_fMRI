@@ -312,13 +312,15 @@ def get_events(data_dir, subject_id, task):
             event_file = glob(path.join(data_dir,
                                'sub-%s' % subject_id,
                                 'func',
-                               '*%s*events.tsv' % task))[0]  
+                               'sub-*%s*events.tsv' % task))[0]  
         else: 
              event_file = glob(path.join(data_dir,
                                'sub-%s' % subject_id,
                                 '*', 'func',
-                               '*%s*events.tsv' % task))[0]
+                               'sub-*%s*events.tsv' % task))[0]
+        print(event_file)
         events_df = pd.read_csv(event_file,sep = '\t')
+        print(events_df)
         return events_df
     except IndexError:
         return None

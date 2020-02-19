@@ -66,7 +66,7 @@ else:
     args.derivatives_dir = '/data/derivatives/'
     args.data_dir = '/data'
     args.fmriprep_dir = '/data/derivatives/fmriprep/fmriprep'
-    args.design_matrix=True #False
+    args.design_matrix=False
 
 
 # In[3]:
@@ -181,6 +181,7 @@ for subjinfo in to_run:
                            n_jobs=1
                           )
     
+    print(args.design_matrix)
     if args.design_matrix:
         verboseprint('** saving')
         save_first_level_obj(subjinfo, first_level_dir, False)

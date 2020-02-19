@@ -15,7 +15,6 @@ img=`sed '2q;d' singularity_config.txt`
 base_singularity=`sed '4q;d' singularity_config.txt`
 singularity_loc=${base_singularity}/$img
 derivatives_loc=`sed '6q;d' singularity_config.txt`
-# aim2_derivatives_loc=`sed '6q;d' ../aim2/singularity_config.txt`
 scripts_loc=../../scripts
 
 # run singularity, scratch is automatically mounted
