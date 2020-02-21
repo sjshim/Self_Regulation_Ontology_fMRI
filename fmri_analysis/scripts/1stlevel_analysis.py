@@ -155,7 +155,7 @@ for subject_id in subjects:
                 warnings.filterwarnings("ignore",category=DeprecationWarning)
                 warnings.filterwarnings("ignore",category=UserWarning)
                 subjinfo = make_first_level_obj(subject_id, task, fmriprep_dir, 
-                                                data_dir, TR, regress_rt=regress_rt, a_comp_cor=a_comp_cor)
+                                                data_dir, first_level_dir, TR, regress_rt=regress_rt, a_comp_cor=a_comp_cor)
             if subjinfo is not None:
                 to_run.append(subjinfo)
 
