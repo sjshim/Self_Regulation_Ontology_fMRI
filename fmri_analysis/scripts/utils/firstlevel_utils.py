@@ -54,7 +54,7 @@ def save_new_EVs(events, subjinfo, output_dir, beta=True, regress_rt=False):
 
     out_event_df = out_event_df.sort_values(by=['onsets', 'conditions']) #organize by onset, then name
     
-    out_event_df.to_csv(filename) #save new EVs
+    out_event_df.to_csv(filename, index=False) #save new EVs
     
 
 def create_design(events, confounds, task, TR, subject_id, beta=True, regress_rt=False):
