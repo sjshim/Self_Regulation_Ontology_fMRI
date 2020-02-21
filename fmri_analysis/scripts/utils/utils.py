@@ -108,6 +108,7 @@ def get_contrasts(task, regress_rt=True):
                 contrasts.append((trial+'_'+CSI, trial+'_'+CSI))
     elif task == 'WATT3': #all regressors save RT
         contrasts = [('button_press', 'button_press'),
+                    ('trial','trial'),
                     ('trial_parametric','trial_parametric'), #for PCA
                     ('practice','practice'),
                     ('planning_event', 'planning_event'),

@@ -970,7 +970,7 @@ def get_WATT3_EVs(events_df, regress_rt=True):
     
     #add full trial length regressor
     get_ev_vars(output_dict, events_df, 
-            condition_spec='trial_parametric', 
+            condition_spec='trial', 
             duration='round_duration',
             amplitude=1,
             subset="junk==False and planning==1") 
