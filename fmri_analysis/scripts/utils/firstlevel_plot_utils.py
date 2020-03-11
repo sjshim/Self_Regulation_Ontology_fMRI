@@ -1,6 +1,8 @@
 from matplotlib.colors import ListedColormap
 import matplotlib.patheffects as PathEffects
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from scipy.stats import norm
 import seaborn as sns
 from nilearn import image, plotting
@@ -51,26 +53,31 @@ def plot_map(contrast_map, title=None, glass_kwargs=None, stat_kwargs=None):
     plt.subplots_adjust(hspace=0)
     return f
 
+def normalize(array):
+    normed = (array-np.min(array)) / (np.max(array)-np.min(array))
+    return ((normed*2) - 1)
+
 def plot_design_timeseries(subjinfo, begin=0, end=-1):
     X_loc = subjinfo.design.columns.get_loc('trans_x')
     subset = subjinfo.design.loc[:, subjinfo.design.columns[:X_loc]]
     subset = subset.drop(columns=subset.filter(regex='_TD').columns)
+    vis_df = pd.DataFrame(columns=subset.columns)
     for i, col in enumerate(subset.columns):
-        subset.loc[:, col] += i*3
-    color_palette = sns.color_palette("cubehelix", subset.shape[1])[::-1]
-    ax = subset.iloc[begin:end].plot(figsize=(12,10), colormap=ListedColormap(color_palette))
+        vis_df.loc[:, col] = normalize(subset.iloc[begin:end,subset.columns==col].values.flatten()) + i*3
+    color_palette = sns.color_palette("colorblind", subset.shape[1])[::-1]
+    ax = vis_df.plot(figsize=(12,10), colormap=ListedColormap(color_palette))
     xlim = ax.get_xlim()
     end = xlim[-1] + (xlim[-1]-xlim[0])*.025
     for i, col in enumerate(subset.columns):
         txt = ax.text(end, i*3, col, color=color_palette[i], fontsize=20)
         txt.set_path_effects([PathEffects.withStroke(linewidth=8, foreground='w')])
+    ax.get_legend().remove()
 
 def plot_design_heatmap(subjinfo):
     X_loc = subjinfo.design.columns.get_loc('trans_x')
     subset = subjinfo.design.loc[:, subjinfo.design.columns[:X_loc]]
     plt.figure(figsize=(14,14))
-    sns.heatmap(subset.corr(), square=True, annot=True, annot_kws={'fontsize': 16})
-        
+    sns.heatmap(subset.corr(), vmin = -1, vmax = 1, square=True, annot=True, annot_kws={'fontsize': 10}, center=0, cmap=sns.diverging_palette(240, 10, as_cmap=True))        
 def plot_average_maps(subjects, contrast_keys=None, **kwargs):
     if contrast_keys is None:
         map_keys = subjects[0].maps.keys()

@@ -2,6 +2,9 @@ from glob import glob
 from os import path
 import pandas as pd
 import numpy as np
+#for WATT min_moves calculator
+import copy 
+import msgpack
 
 # function to correct processing of a few problematic files
 # need to change time_elapsed to reflect the fact that fmri triggers were
@@ -177,3 +180,45 @@ def get_survey_items_order():
     item_id_map = dict(zip(item_text, item_id))
 
     return item_id_map
+
+
+# FUNCTIONS TO CALCULATE THE MINIMUM # OF WATT MOVES
+def grab_block(state, idx, goal, hand, num_moves, visited_states):
+    block_idx = np.max(np.nonzero(state[idx]))
+    hand = [state[idx][block_idx]] #put top block in hand
+    state[idx][block_idx] = 0 #change block's place to empty
+    if state in visited_states: #if this move doesn't progress, skip it
+        return np.inf
+    else:
+        visited_states.append(state)
+        return solve_WATT(state, goal, hand, num_moves, visited_states)
+    
+def place_block(state, idx, goal, hand, num_moves, visited_states):
+    #find topmost empty spot on the rod
+    block_locs = np.array(np.nonzero(state[idx]))
+    if block_locs.size==0:
+        block_idx = 0
+    else:
+        block_idx = np.max(block_locs) + 1
+        
+    state[idx][block_idx] = hand[0] #place block from hand onto rod
+    hand = [] #empty hand
+    if state in visited_states: #if this move doesn't progress, skip it
+        return np.inf
+    else:
+        visited_states.append(state)
+        num_moves += 1 #update the number of moves
+        if num_moves > 16: #if the algo has gone too deeply down a rabbit hole, abort
+            return np.inf
+        else:
+            return solve_WATT(state, goal, hand, num_moves, visited_states)
+
+
+def solve_WATT(state, goal, hand, num_moves, visited_states):
+    if state==goal:
+        return num_moves
+    else:
+        if len(hand)==0:
+            return np.nanmin([grab_block(copy.deepcopy(state), idx, goal, copy.deepcopy(hand), num_moves, msgpack.unpackb(msgpack.packb(visited_states))) for idx in range(len(state)) if np.array(np.nonzero(state[idx])).size!=0]) #grab blocks from all possible columns that aren't empty
+        elif len(hand)==1:
+            return np.nanmin([place_block(copy.deepcopy(state), idx, goal, copy.deepcopy(hand), num_moves, msgpack.unpackb(msgpack.packb(visited_states))) for idx in range(len(state)) if np.array(np.nonzero(state[idx])).size!=np.array(state[idx]).size]) #place block on all columns that aren't full

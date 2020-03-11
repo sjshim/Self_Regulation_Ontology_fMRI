@@ -28,44 +28,53 @@ def get_contrasts(task, regress_rt=True):
     
     """
     if task == 'ANT':
-        contrasts = [('spatial_congruent', 'spatial_congruent'),
-                    ('spatial_incongruent', 'spatial_incongruent'),
-                    ('double_congruent', 'double_congruent'),
-                    ('double_incongruent', 'double_incongruent'),
-                    ('spatial', 'spatial_congruent + spatial_incongruent'),
-                    ('double', 'double_congruent + double_incongruent'),
-                    ('congruent', 'spatial_congruent + double_congruent'),
-                    ('incongruent', 'spatial_incongruent + double_incongruent'),
-                    ('orienting_network', '(spatial_congruent + spatial_incongruent) - (double_congruent+double_incongruent)'),
-                    ('conflict_network', '(spatial_incongruent + double_incongruent) -(spatial_congruent + double_congruent)')]
-    elif task == 'CCTHot':
+        contrasts = [('cue_parametric', 'cue_parametric'), #use for PCA
+                    ('congruency_parametric', 'congruency_parametric'), #use for PCA
+                    ('interaction', 'interaction'),
+                    ('task', 'task')]
+        # contrasts = [('spatial_congruent', 'spatial_congruent'),
+        #             ('spatial_incongruent', 'spatial_incongruent'),
+        #             ('double_congruent', 'double_congruent'),
+        #             ('double_incongruent', 'double_incongruent'),
+        #             ('spatial', 'spatial_congruent + spatial_incongruent'),
+        #             ('double', 'double_congruent + double_incongruent'),
+        #             ('congruent', 'spatial_congruent + double_congruent'),
+        #             ('incongruent', 'spatial_incongruent + double_incongruent'),
+        #             ('orienting_network', '(spatial_congruent + spatial_incongruent) - (double_congruent+double_incongruent)'),
+        #             ('conflict_network', '(spatial_incongruent + double_incongruent) -(spatial_congruent + double_congruent)')]
+    elif task == 'CCTHot': #regressor over baseline (excluding RT)
         contrasts = [('task', 'task'),
-                    ('EV', 'EV'),
-                    ('risk', 'risk'),
-                    ('reward', 'reward'),
-                    ('punishment', 'punishment')]
+                    ('trial_loss', 'trial_loss'),
+                    ('trial_gain', 'trial_gain'),
+                    ('positive_draw', 'positive_draw'), #for PCA
+                    ('loss_event', 'loss_event'),
+                    ('loss', 'loss'), #for PCA
+                    ('button_press', 'button_press')]
     elif task == 'discountFix':
-        contrasts = [('subjective_choice_value', 'subjective_choice_value')]
+        contrasts = [('task', 'task'),
+                    ('choice', 'choice')] #for PCA
     elif task == 'DPX':
         contrasts = [('AX', 'AX'),
                      ('BX', 'BX'),
                      ('AY', 'AY'),
                      ('BY', 'BY'),
-                     ('AY-BY', 'AY-BY'),
-                     ('BX-BY', 'BX-BY')]
+                     ('task', 'AX + BX + AY + BY'),
+                     ('AY-BY', 'AY-BY'), #for PCA
+                     ('BX-BY', 'BX-BY')] #for PCA
     elif task == 'motorSelectiveStop':
         contrasts = [('crit_go', 'crit_go'),
                      ('crit_stop_success', 'crit_stop_success'),
                      ('crit_stop_failure', 'crit_stop_failure'),
                      ('noncrit_signal', 'noncrit_signal'),
                      ('noncrit_nosignal', 'noncrit_nosignal'),
-                     ('crit_stop_success-crit_go', 'crit_stop_success-crit_go'),
-                     ('crit_stop_failure-crit_go', 'crit_stop_failure-crit_go'),
+                     ('crit_stop_success-crit_go', 'crit_stop_success-crit_go'), #for PCA
+                     ('crit_stop_failure-crit_go', 'crit_stop_failure-crit_go'), #for PCA
                      ('crit_stop_success-crit_stop_failure', 'crit_stop_success-crit_stop_failure'),
                      ('crit_go-noncrit_nosignal', 'crit_go-noncrit_nosignal'),
                      ('noncrit_signal-noncrit_nosignal', 'noncrit_signal-noncrit_nosignal'),
                      ('crit_stop_success-noncrit_signal', 'crit_stop_success-noncrit_signal'),
-                     ('crit_stop_failure-noncrit_signal', 'crit_stop_failure-noncrit_signal')]
+                     ('crit_stop_failure-noncrit_signal', 'crit_stop_failure-noncrit_signal'),
+                     ('task', 'crit_go + crit_stop_success + crit_stop_failure + noncrit_signal + noncrit_nosignal')]
     elif task == 'manipulationTask':  #add non-parametric regressors 
         contrasts =  [('cue', 'cue'),
                      ('probe', 'probe'),
@@ -73,33 +82,38 @@ def get_contrasts(task, regress_rt=True):
                      #('cue_x_probe','cue*probe'),
                      #('cue_x_probe_x_rating','cue*probe*rating')]
     elif task == 'stroop':
-        contrasts = [('congruent', 'congruent'),
-                     ('incongruent', 'incongruent'),
-                    ('stroop', 'incongruent-congruent')]
+        contrasts = [('congruency', 'congruency_parametric'), #for PCA
+                     ('task', 'task')]
+                    # ('stroop', 'incongruent-congruent')]
     elif task == 'stopSignal':
         contrasts = [('go', 'go'),
                      ('stop_success', 'stop_success'),
                      ('stop_failure', 'stop_failure'),
-                     ('stop_success-go', 'stop_success-go'),
-                     ('stop_failure-go', 'stop_failure-go'),
+                     ('stop_success-go', 'stop_success-go'), #for PCA
+                     ('stop_failure-go', 'stop_failure-go'), #for PCA
                      ('stop_success-stop_failure', 'stop_success-stop_failure'),
-                     ('stop_failure-stop_success', 'stop_failure-stop_success')]
+                     ('stop_failure-stop_success', 'stop_failure-stop_success'),
+                     ('task', 'go + stop_failure + stop_success')]
     elif task == 'twoByTwo':
         contrasts = [('task_switch_cost_900', 'task_switch_900-task_stay_cue_switch_900'),
                      ('cue_switch_cost_900', 'task_stay_cue_switch_900-cue_stay_900'),
                      ('task_switch_cost_100', 'task_switch_100-task_stay_cue_switch_100'),
                      ('cue_switch_cost_100', 'task_stay_cue_switch_100-cue_stay_100'),
-                     ('task_switch_cost', '(task_switch_900+task_switch_100)-(task_stay_cue_switch_900+task_stay_cue_switch_100)'),
-                     ('cue_switch_cost', '(task_stay_cue_switch_900+task_stay_cue_switch_100)-(cue_stay_900+cue_stay_100)')]
-        for trial in ['task_switch', 'task_stay_cue_switch', 'cue_stay']:
+                     ('task_switch_cost', '(task_switch_900+task_switch_100)-(task_stay_cue_switch_900+task_stay_cue_switch_100)'), #for PCA
+                     ('cue_switch_cost', '(task_stay_cue_switch_900+task_stay_cue_switch_100)-(cue_stay_900+cue_stay_100)'), #for PCA
+                     ('task', 'task_switch_900 + task_switch_100 + task_stay_cue_switch_900 + task_stay_cue_switch_100 + cue_stay_900 + cue_stay_100')]
+        for trial in ['task_switch', 'task_stay_cue_switch', 'cue_stay']: #add regressor for each trial type
             contrasts.append((trial, '%s_900 + %s_100' % (trial, trial)))
             for CSI in ['100', '900']:
                 contrasts.append((trial+'_'+CSI, trial+'_'+CSI))
-    elif task == 'WATT3':
-        contrasts = [('movement', 'movement'),
-                    ('PA_with_intermediate','PA_with_intermediate'),
-                    ('PA_without_intermediate','PA_without_intermediate'),
-                    ('search_depth', 'PA_with_intermediate-PA_without_intermediate')]
+    elif task == 'WATT3': #all regressors save RT
+        contrasts = [('button_press', 'button_press'),
+                    ('trial','trial'),
+                    ('trial_parametric','trial_parametric'), #for PCA
+                    ('practice','practice'),
+                    ('planning_event', 'planning_event'),
+                    ('feedback','feedback'),
+                    ('button_press', 'button_press')]
     if regress_rt:
         contrasts.append(('RT','response_time'))
     return contrasts

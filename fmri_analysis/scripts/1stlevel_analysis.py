@@ -67,7 +67,7 @@ else:
     args.n_procs=1
     args.derivatives_dir = '/data/derivatives/'
     args.data_dir = '/data'
-    args.fmriprep_dir = '/data/derivatives/fmriprep/fmriprep'
+    args.fmriprep_dir = '/data/derivatives/fmriprep/'
     args.design_matrix=True #False
 
 
@@ -125,7 +125,7 @@ beta_series = args.beta
 n_procs = args.n_procs
 # TR of functional images
 TR = .68
-
+a_comp_cor=args.a_comp_cor
 
 # In[5]:
 
@@ -157,7 +157,7 @@ for subject_id in subjects:
                 warnings.filterwarnings("ignore",category=DeprecationWarning)
                 warnings.filterwarnings("ignore",category=UserWarning)
                 subjinfo = make_first_level_obj(subject_id, task, fmriprep_dir, 
-                                                data_dir, TR, regress_rt=regress_rt, a_comp_cor=a_comp_cor)
+                                                data_dir, first_level_dir, TR, regress_rt=regress_rt, a_comp_cor=a_comp_cor)
             if subjinfo is not None:
                 to_run.append(subjinfo)
 
@@ -183,6 +183,7 @@ for subjinfo in to_run:
                            n_jobs=1
                           )
     
+    print(args.design_matrix)
     if args.design_matrix:
         verboseprint('** saving')
         save_first_level_obj(subjinfo, first_level_dir, False)

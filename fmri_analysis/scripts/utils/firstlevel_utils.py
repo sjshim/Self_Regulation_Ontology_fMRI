@@ -25,9 +25,39 @@ def temp_deriv(dataframe, columns=None):
     td.iloc[0,:] = 0
     for i,col in td.iteritems():
         insert_loc = dataframe.columns.get_loc(i)
-        dataframe.insert(insert_loc+1, i+'_TD', col)   
+        dataframe.insert(insert_loc+1, i+'_TD', col)
 
-def create_design(events, confounds, task, TR, beta=True, regress_rt=False):
+def save_new_EVs(events, subjinfo, output_dir, beta=True, regress_rt=False):
+
+    #get filepath/name
+    subj, task = subjinfo.ID.split('_')
+    directory = path.join(output_dir, subj, task)
+    flags = subjinfo.get_flags()
+    filename = path.join(directory, 'simplified_events_%s.csv' % flags)
+    makedirs(directory, exist_ok=True)
+    
+    #get new events
+    if beta:
+        EV_dict = get_beta_series(events, regress_rt=regress_rt)
+    else:
+        EV_dict = parse_EVs(events, task, regress_rt=regress_rt)
+        
+    event_df = pd.DataFrame.from_dict(EV_dict) #change to dataframe
+
+    s = event_df.iloc[0, :] #convert first regressor into data frame
+    out_event_df = pd.DataFrame.from_dict(dict(zip(s.index, s.values)))
+
+    for ridx in range(1, len(event_df)): #append remaining regressor df's to first regressor's df
+        s = event_df.iloc[ridx, :]
+        tmp_df = pd.DataFrame.from_dict(dict(zip(s.index, s.values)))
+        out_event_df = pd.concat([out_event_df, tmp_df])
+
+    out_event_df = out_event_df.sort_values(by=['onsets', 'conditions']) #organize by onset, then name
+    
+    out_event_df.to_csv(filename, index=False) #save new EVs
+    
+
+def create_design(events, confounds, task, TR, subject_id, beta=True, regress_rt=False):
     """
     takes event file and confounds, and creates EV_dict, which is passed to make_first_level_design to create a the design matrix. 
     """
@@ -35,6 +65,7 @@ def create_design(events, confounds, task, TR, beta=True, regress_rt=False):
         EV_dict = get_beta_series(events, regress_rt=regress_rt)
     else:
         EV_dict = parse_EVs(events, task, regress_rt=regress_rt)
+    
     paradigm = get_paradigm(EV_dict)
     # make design
     n_scans = int(confounds.shape[0])
@@ -50,7 +81,7 @@ def create_design(events, confounds, task, TR, beta=True, regress_rt=False):
     temp_deriv(design, task_cols)
     return design
 
-def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR, 
+def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, output_dir, TR, 
                         regress_rt=False, beta=False, a_comp_cor=True):
     """
     retrieves and passes func_file, mask_file, events, confounds, design, and contrasts to FirstLevel 
@@ -65,12 +96,15 @@ def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, TR,
         print("Missing event files for %s: %s" % (subject_id, task))
         return None
     confounds = get_confounds(fmriprep_dir, subject_id, task)
-    design = create_design(events, confounds, task, TR, beta=beta, regress_rt=regress_rt)
+    design = create_design(events, confounds, task, TR, subject_id, beta=beta, regress_rt=regress_rt)
     contrasts = get_contrasts(task, regress_rt)
     subjinfo = FirstLevel(func_file, mask_file, events, design, contrasts, '%s_%s' % (subject_id, task))
-
     subjinfo.model_settings['beta'] = beta
     subjinfo.model_settings['regress_rt'] = regress_rt
+    
+    events = get_events(data_dir, subject_id, task)
+    save_new_EVs(events, subjinfo, output_dir, beta=beta, regress_rt=regress_rt) #save the events created during design generation
+        
     return subjinfo
 
 def save_first_level_obj(subjinfo, output_dir, save_maps=False):
@@ -208,7 +242,7 @@ def process_confounds(confounds_file, a_comp_cor=True):
     # add additional relevant regressors
     add_regressor_names = ['framewise_displacement'] 
     if a_comp_cor: 
-        add_regressor_names += [i for i in confounds_df.columns if 'a_comp_cor' in i]
+        add_regressor_names += [i for i in confounds_df.columns if 'a_comp_cor' in i][:8]
     additional_regressors = confounds_df.loc[:,add_regressor_names].values
     regressors = np.hstack((movement_regressors,
                             additional_regressors,
@@ -244,10 +278,14 @@ def get_func_file(fmriprep_dir, subject_id, task):
         func_file = glob(path.join(fmriprep_dir,
                           'sub-%s' % subject_id,
                           'func', '*%s*MNI*preproc_bold.nii.gz' % task))
+        if func_file:
+            print(func_file)
     else: 
         func_file = glob(path.join(fmriprep_dir,
                           'sub-%s' % subject_id,
                           '*', 'func', '*%s*MNI*preproc_bold.nii.gz' % task))
+        if func_file:
+            print(func_file)
         
     #check if there's a session folder 
     if os.path.exists(path.join(fmriprep_dir,
@@ -308,13 +346,15 @@ def get_events(data_dir, subject_id, task):
             event_file = glob(path.join(data_dir,
                                'sub-%s' % subject_id,
                                 'func',
-                               '*%s*events.tsv' % task))[0]  
+                               'sub-*%s*events.tsv' % task))[0]  
         else: 
              event_file = glob(path.join(data_dir,
                                'sub-%s' % subject_id,
                                 '*', 'func',
-                               '*%s*events.tsv' % task))[0]
+                               'sub-*%s*events.tsv' % task))[0]
+        print(event_file)
         events_df = pd.read_csv(event_file,sep = '\t')
+        print(events_df)
         return events_df
     except IndexError:
         return None

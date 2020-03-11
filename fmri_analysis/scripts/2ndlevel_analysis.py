@@ -70,7 +70,7 @@ else:
 # set paths
 first_level_dir = path.join(args.derivatives_dir, '1stlevel')
 second_level_dir = path.join(args.derivatives_dir,'2ndlevel')
-fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep', 'fmriprep')
+fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep')
 
 # set tasks
 if args.tasks is not None:
@@ -141,6 +141,39 @@ for task in tasks:
             # write metadata
             with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
                 f.write('Contrast-%s: Randomise run with %s permutations\n' % (contrast, str(n_perms)))
+    ##GROUP CONTRAST MAPS
+    for group in ['BED', 'smoking']:
+        verboseprint('*** Creating %s maps' % group)
+        f = open("%s_subjects.txt" % group,"r") 
+        group_subjects = f.read().split('\n')
+        for name, contrast in task_contrasts:
+            second_level_model = SecondLevelModel(mask=mask_loc, smoothing_fwhm=6)
+            maps = []
+            for curr_subject in group_subjects:
+                maps.append(get_first_level_maps(curr_subject, task, first_level_dir, name, regress_rt, beta_series))
+            N = str(len(maps)).zfill(2)
+            verboseprint('****** %s, %s files found' % (name, N))
+            if len(maps) <= 1:
+                verboseprint('****** No Maps')
+                continue
+            design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept'])
+            second_level_model.fit(maps, design_matrix=design_matrix)
+            contrast_map = second_level_model.compute_contrast()
+            # save
+            contrast_file = path.join(maps_dir, 'contrast-%s-%s.nii.gz' % (name, group))
+            contrast_map.to_filename(contrast_file)
+            # write metadata
+            with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
+                f.write('Contrast-%s-%s: %s maps\n' % (contrast, group, N))
+            # save corrected map
+            if n_perms > 0:
+                verboseprint('*** Running Randomise')
+                randomise(maps, maps_dir, mask_loc, n_perms=n_perms)
+                # write metadata
+                with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
+                    f.write('Contrast-%s-%s: Randomise run with %s permutations\n' % (contrast, group, str(n_perms)))
+
+
     verboseprint('Done with %s' % task)
 
 
