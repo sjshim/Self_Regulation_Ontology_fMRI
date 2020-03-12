@@ -39,6 +39,7 @@ parser.add_argument('--rt', action='store_true')
 parser.add_argument('--beta', action='store_true')
 parser.add_argument('--n_perms', default=1000, type=int)
 parser.add_argument('--quiet', '-q', action='store_true')
+parser.add_argument('-group', default='NONE')
 
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
@@ -85,7 +86,7 @@ else:
 regress_rt = args.rt
 beta_series = args.beta
 n_perms = args.n_perms
-
+group = args.group
 
 # ### Create Mask
 
@@ -116,41 +117,11 @@ for task in tasks:
     task_contrasts = get_contrasts(task, regress_rt)
     maps_dir = path.join(second_level_dir, task, 'secondlevel-%s_%s_maps' % (rt_flag, beta_flag))
     makedirs(maps_dir, exist_ok=True)
-    # run through each contrast
-    for name, contrast in task_contrasts:
-        second_level_model = SecondLevelModel(mask=mask_loc, smoothing_fwhm=6)
-        maps = get_first_level_maps('*', task, first_level_dir, name, regress_rt, beta_series)
-        N = str(len(maps)).zfill(2)
-        verboseprint('****** %s, %s files found' % (name, N))
-        if len(maps) <= 1:
-            verboseprint('****** No Maps')
-            continue
-        design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept'])
-        second_level_model.fit(maps, design_matrix=design_matrix)
-        contrast_map = second_level_model.compute_contrast()
-        # save
-        contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
-        contrast_map.to_filename(contrast_file)
-         # write metadata
-        with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
-            f.write('Contrast-%s: %s maps\n' % (contrast, N))
-        # save corrected map
-        if n_perms > 0:
-            verboseprint('*** Running Randomise')
-            randomise(maps, maps_dir, mask_loc, n_perms=n_perms)
-            # write metadata
-            with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
-                f.write('Contrast-%s: Randomise run with %s permutations\n' % (contrast, str(n_perms)))
-    ##GROUP CONTRAST MAPS
-    for group in ['BED', 'smoking']:
-        verboseprint('*** Creating %s maps' % group)
-        f = open("%s_subjects.txt" % group,"r") 
-        group_subjects = f.read().split('\n')
+    # run through each contrast for all participants
+    if group == 'NONE':
         for name, contrast in task_contrasts:
             second_level_model = SecondLevelModel(mask=mask_loc, smoothing_fwhm=6)
-            maps = []
-            for curr_subject in group_subjects:
-                maps.append(get_first_level_maps(curr_subject, task, first_level_dir, name, regress_rt, beta_series))
+            maps = get_first_level_maps('*', task, first_level_dir, name, regress_rt, beta_series)
             N = str(len(maps)).zfill(2)
             verboseprint('****** %s, %s files found' % (name, N))
             if len(maps) <= 1:
@@ -160,17 +131,51 @@ for task in tasks:
             second_level_model.fit(maps, design_matrix=design_matrix)
             contrast_map = second_level_model.compute_contrast()
             # save
-            contrast_file = path.join(maps_dir, 'contrast-%s-%s.nii.gz' % (name, group))
+            contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
             contrast_map.to_filename(contrast_file)
             # write metadata
             with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
-                f.write('Contrast-%s-%s: %s maps\n' % (contrast, group, N))
+                f.write('Contrast-%s: %s maps\n' % (contrast, N))
             # save corrected map
             if n_perms > 0:
                 verboseprint('*** Running Randomise')
                 randomise(maps, maps_dir, mask_loc, n_perms=n_perms)
                 # write metadata
                 with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
+                    f.write('Contrast-%s: Randomise run with %s permutations\n' % (contrast, str(n_perms)))
+    # run through each contrast within each group
+    else:
+        verboseprint('*** Creating %s maps' % group)
+        f = open("/scripts/%s_subjects.txt" % group,"r") 
+        group_subjects = f.read().split('\n')
+        for name, contrast in task_contrasts:
+            second_level_model = SecondLevelModel(mask=mask_loc, smoothing_fwhm=6)
+            maps = []
+            for curr_subject in group_subjects:
+                curr_map = get_first_level_maps(curr_subject, task, first_level_dir, name, regress_rt, beta_series)
+                if len(curr_map): #if a map is present
+                    # maps.append(curr_map[0])
+                    maps += curr_map
+            N = str(len(maps)).zfill(2)
+            verboseprint('****** %s, %s files found' % (name, N))
+            if len(maps) <= 1:
+                verboseprint('****** No Maps')
+                continue
+            design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept'])
+            second_level_model.fit(maps, design_matrix=design_matrix)
+            contrast_map = second_level_model.compute_contrast()
+            # save
+            contrast_file = path.join(maps_dir, group, 'contrast-%s-%s.nii.gz' % (name, group))
+            contrast_map.to_filename(contrast_file)
+            # write metadata
+            with open(path.join(maps_dir, group, 'metadata.txt'), 'a') as f:
+                f.write('Contrast-%s-%s: %s maps\n' % (contrast, group, N))
+            # save corrected map
+            if n_perms > 0:
+                verboseprint('*** Running Randomise')
+                randomise(maps, path.join(maps_dir, group), mask_loc, n_perms=n_perms, group=group)
+                # write metadata
+                with open(path.join(maps_dir, group, 'metadata.txt'), 'a') as f:
                     f.write('Contrast-%s-%s: Randomise run with %s permutations\n' % (contrast, group, str(n_perms)))
 
 

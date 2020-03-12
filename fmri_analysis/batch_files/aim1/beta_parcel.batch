@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name={task}-timeseries
-#SBATCH --output=.out/{task}-timeseries_%j.out
-#SBATCH --error=.err/{task}-timeseries_%j.err
+#SBATCH --job-name=beta_parcel
+#SBATCH --output=.out/beta_parcel_%j.out
+#SBATCH --error=.err/beta_parcel_%j.err
 #SBATCH --time=5:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
@@ -19,7 +19,7 @@ scripts_loc=../../scripts
 scratch_loc=$SCRATCH
 
 bids_dir=`sed '8q;d' singularity_config.txt`
-parcellation_loc=${scripts_loc}/'Parcels_Combo.nii.gz'
-output_dir=${derivatives_loc}/'1stlevel/timeseries'
+parcellation_loc=../../../fmri_data_prep/'Parcels_Combo.nii.gz'
+output_dir=${derivatives_loc}/'1stlevel/beta_parcellations'
 
-python3 ../../../fmri_data_prep/timeseries_parcellation.py -bids_dir ${bids_dir} -parcellation_loc ${parcellation_loc} -output_dir ${output_dir} --tasks {task}
+python3 ../../../fmri_data_prep/beta_parcellation.py -bids_dir ${bids_dir} -parcellation_loc ${parcellation_loc} -output_dir ${output_dir}

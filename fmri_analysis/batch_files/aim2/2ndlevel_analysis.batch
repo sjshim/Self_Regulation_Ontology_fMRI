@@ -19,9 +19,19 @@ data_loc=`sed '8q;d' singularity_config.txt`
 scripts_loc=../../scripts
 scratch_loc=$SCRATCH
 # run singularity, scratch is automatically mounted
-singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --rt
+if [ "{group}" == "NONE" ]; then
+    singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --rt 
 
-singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task}
+    singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task}
+else
+    singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --rt -group {group}
+
+    singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} -group {group}
+fi
+
+
 

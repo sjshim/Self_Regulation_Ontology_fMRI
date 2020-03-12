@@ -39,7 +39,7 @@ def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
         maps[name] = image.load_img(f)
     return maps
 
-def randomise(maps, output_loc, mask_loc, n_perms=500, fwhm=6):
+def randomise(maps, output_loc, mask_loc, n_perms=500, fwhm=6, group='NONE'):
     contrast_name = maps[0][maps[0].index('contrast')+9:].rstrip('.nii.gz')
     # create 4d image
     concat_images = image.concat_imgs(maps)
@@ -60,8 +60,12 @@ def randomise(maps, output_loc, mask_loc, n_perms=500, fwhm=6):
         var_smooth=10,
         num_perm=n_perms)
     # save results
-    tfile_loc = path.join(output_loc, "contrast-%s_raw_tfile.nii.gz" % contrast_name)
-    tfile_corrected_loc = path.join(output_loc, "contrast-%s_corrected_tfile.nii.gz" % contrast_name)
+    if group == 'NONE':
+        tfile_loc = path.join(output_loc, "contrast-%s_raw_tfile.nii.gz" % contrast_name)
+        tfile_corrected_loc = path.join(output_loc, "contrast-%s_corrected_tfile.nii.gz" % contrast_name)
+    else:
+        tfile_loc = path.join(output_loc, "contrast-%s-%s_raw_tfile.nii.gz" % (contrast_name, group))
+        tfile_corrected_loc = path.join(output_loc, "contrast-%s-%s_corrected_tfile.nii.gz" % (contrast_name, group))
     raw_tfile = randomise_results.outputs.tstat_files[0]
     corrected_tfile = randomise_results.outputs.t_corrected_p_files[0]
     shutil.move(raw_tfile, tfile_loc)
