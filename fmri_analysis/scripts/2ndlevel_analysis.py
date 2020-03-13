@@ -127,7 +127,7 @@ for task in tasks:
             if len(maps) <= 1:
                 verboseprint('****** No Maps')
                 continue
-            design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept'])
+            design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept']) # ADD Age, Sex, RED score? make sure some are of interest and some are nuisance
             second_level_model.fit(maps, design_matrix=design_matrix)
             contrast_map = second_level_model.compute_contrast()
             # save
