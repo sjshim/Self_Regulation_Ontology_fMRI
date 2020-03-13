@@ -165,6 +165,7 @@ for task in tasks:
             second_level_model.fit(maps, design_matrix=design_matrix)
             contrast_map = second_level_model.compute_contrast()
             # save
+            makedirs(path.join(maps_dir, group), exist_ok=True)
             contrast_file = path.join(maps_dir, group, 'contrast-%s-%s.nii.gz' % (name, group))
             contrast_map.to_filename(contrast_file)
             # write metadata
