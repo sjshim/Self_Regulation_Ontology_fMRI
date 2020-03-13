@@ -53,6 +53,27 @@ def plot_map(contrast_map, title=None, glass_kwargs=None, stat_kwargs=None):
     plt.subplots_adjust(hspace=0)
     return f
 
+def plot_task_maps(contrast_maps, title, stat_kwargs=None):
+    
+    if stat_kwargs is None:
+        stat_kwargs = {}
+    # set up plot
+    f, axes = plt.subplots(len(contrast_maps), 1, figsize=(len(contrast_maps)*5,len(contrast_maps)*5))
+    plt.suptitle(title, fontsize=36)
+    
+    # plot indepth stats brain
+    stat_args = {'threshold': 3,
+                 'cut_coords': 8,
+                 'black_bg': True}
+    stat_args.update(**stat_kwargs)
+    
+    #plot a contrast per row
+    for idx, contrast_map in enumerate(contrast_maps):
+        title = contrast_map[contrast_map.index('contrast')+9:].rstrip('.nii.gz') #get contrast name
+        plotting.plot_stat_map(contrast_map, title=title, display_mode='z', axes=axes[idx], **stat_args)
+    plt.subplots_adjust(hspace=0)
+    return f
+
 def normalize(array):
     normed = (array-np.min(array)) / (np.max(array)-np.min(array))
     return ((normed*2) - 1)
