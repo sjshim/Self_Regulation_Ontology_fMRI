@@ -1,0 +1,21 @@
+#!/bin/bash
+#SBATCH --job-name={task}_2ndlevel_visualization
+#SBATCH --output=.out/{task}_2ndlevel_visualization_%j.out
+#SBATCH --error=.err/{task}_2ndlevel_visualization_%j.err
+#SBATCH --time=1:00:00
+#SBATCH --mail-type=END
+#SBATCH --mail-user=poldracklab@stanford.edu
+#SBATCH --cpus-per-task=16
+#SBATCH --ntasks-per-node=1
+export PYTHONPATH=""
+# set up paths
+# scratch is automatically mounted
+img=`sed '2q;d' singularity_config.txt`
+base_singularity=`sed '4q;d' singularity_config.txt`
+singularity_loc=${base_singularity}/$img
+derivatives_loc=`sed '6q;d' singularity_config.txt`
+scripts_loc=../../scripts
+
+# run singularity, scratch is automatically mounted
+singularity exec -B ${scripts_loc}:/scripts  ${singularity_loc} \
+    python /scripts/Visualizations.py --skip_designs --skip_first --save -derivatives_dir ${derivatives_loc} --tasks {task}
