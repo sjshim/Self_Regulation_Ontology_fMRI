@@ -17,7 +17,7 @@ import sys
 from utils.firstlevel_utils import get_first_level_objs
 from utils.firstlevel_plot_utils import (plot_design, plot_design_timeseries, 
                                          plot_design_heatmap, plot_contrast,
-                                        plot_map)
+                                        plot_map, plot_task_maps)
 
 
 # In[ ]:
@@ -165,7 +165,7 @@ if run_first_level:
 #                 f.savefig(output)
 
 if run_second_level:
-    for task in [tasks[0]]:
+    for task in tasks:
         contrast_dirs = sorted(glob(path.join(second_level_dir, task, '*maps')))
         for contrast_dir in contrast_dirs:
             contrast_maps = sorted(glob(path.join(contrast_dir, '*.nii.gz')))
