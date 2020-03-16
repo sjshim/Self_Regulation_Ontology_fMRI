@@ -95,7 +95,7 @@ def make_first_level_obj(subject_id, task, fmriprep_dir, data_dir, output_dir, T
     if events is None:
         print("Missing event files for %s: %s" % (subject_id, task))
         return None
-    confounds = get_confounds(fmriprep_dir, subject_id, task)
+    confounds = get_confounds(fmriprep_dir, subject_id, task, a_comp_cor=a_comp_cor)
     design = create_design(events, confounds, task, TR, subject_id, beta=beta, regress_rt=regress_rt)
     contrasts = get_contrasts(task, regress_rt)
     subjinfo = FirstLevel(func_file, mask_file, events, design, contrasts, '%s_%s' % (subject_id, task))
@@ -306,7 +306,7 @@ def get_func_file(fmriprep_dir, subject_id, task):
         return None, None
     return func_file[0], mask_file[0]
 
-def get_confounds(fmriprep_dir, subject_id, task):
+def get_confounds(fmriprep_dir, subject_id, task, a_comp_cor=True):
     # strip "sub" from beginning of subject_id if provided
     subject_id = subject_id.replace('sub-','')
     
@@ -328,7 +328,7 @@ def get_confounds(fmriprep_dir, subject_id, task):
                                 '*', 'func',
                                '*%s*confounds_regressors.tsv' % task))[0]
         
-    regressors, regressor_names = process_confounds(confounds_file)
+    regressors, regressor_names = process_confounds(confounds_file, a_comp_cor=a_comp_cor)
     confounds = pd.DataFrame(regressors, columns=regressor_names)
     return confounds
     
