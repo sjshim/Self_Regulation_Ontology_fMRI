@@ -352,9 +352,7 @@ def get_events(data_dir, subject_id, task):
                                'sub-%s' % subject_id,
                                 '*', 'func',
                                'sub-*%s*events.tsv' % task))[0]
-        print(event_file)
         events_df = pd.read_csv(event_file,sep = '\t')
-        print(events_df)
         return events_df
     except IndexError:
         return None
