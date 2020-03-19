@@ -7,7 +7,7 @@
 #SBATCH --mail-user=poldracklab@stanford.edu
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=16
-#SBATCH -p russpold
+#SBATCH -p russpold,owners,normal,hns
 #module load system
 # set up paths
 # scratch is automatically mounted
