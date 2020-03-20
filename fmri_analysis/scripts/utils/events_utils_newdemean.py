@@ -87,11 +87,11 @@ def get_ev_vars(output_dict, events_df, condition_spec, col=None,
         conditions.append(condition_spec)
         onsets.append(group_df.loc[:, onset_column].tolist())
         if type(amplitude) in (int, float): #no need to demean a constant
-            amplitudes.append(demean([amplitude]*len(onsets[-1])))
+            amplitudes.append([amplitude]*len(onsets[-1]))
         elif type(amplitude) == str:
             amplitudes.append(demean(group_df.loc[:, amplitude].tolist()))
         elif type(amplitude) == list:
-            amplitudes.append(amplitude)
+            amplitudes.append(demean(amplitude))
         if type(duration) in (int,float):
             durations.append([duration]*len(onsets[-1]))
         elif type(duration) == str:
@@ -282,9 +282,9 @@ def get_CCTHot_EVs(events_df, regress_rt):
         demean_amp=True) #NEW DEMEANING 4/12
 
     #loss
-    mean_loss = np.mean(events_df[events_df.round_on==True].loss_amount.values) #demeaned based on loss for each trial, not each card
-    demeaned_loss = [i - mean_loss for i in events_df.loss_amount.values] #######DROP FOR NEW DEMEANING
-    events_df.insert(0, "demeaned_loss", demeaned_loss, True)
+    # mean_loss = np.mean(events_df[events_df.round_on==True].loss_amount.values) #demeaned based on loss for each trial, not each card
+    # demeaned_loss = [i - mean_loss for i in events_df.loss_amount.values] #######DROP FOR NEW DEMEANING
+    # events_df.insert(0, "demeaned_loss", demeaned_loss, True)
 
     get_ev_vars(output_dict, events_df, 
         condition_spec='trial_loss',

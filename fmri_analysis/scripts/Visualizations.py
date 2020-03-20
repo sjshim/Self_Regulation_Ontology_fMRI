@@ -29,6 +29,7 @@ parser.add_argument('--skip_first', action='store_true')
 parser.add_argument('--skip_second', action='store_true')
 parser.add_argument('--save', action='store_true')
 parser.add_argument('--tasks', nargs="+", help="Choose from ANT, CCTHot, discountFix,                                     DPX, motorSelectiveStop, stopSignal,                                     stroop, surveyMedley, twoByTwo, WATT3")
+parser.add_argument('-group', default='NONE')
 
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
@@ -61,6 +62,8 @@ save = args.save
 plot_designs = not args.skip_designs
 run_first_level = not args.skip_first
 run_second_level = not args.skip_second
+group = args.group
+
 
 
 # # Design Visualization
@@ -170,8 +173,12 @@ if run_second_level:
         print(task)
         contrast_dirs = sorted(glob(path.join(second_level_dir, task, '*maps')))
         for contrast_dir in contrast_dirs:
-            print(contrast_dir)
-            contrast_maps = sorted(glob(path.join(contrast_dir, '*.nii.gz')))
+            if group == 'NONE':
+                out_dir = contrast_dir
+            else:
+                out_dir = path.join(contrast_dir, group)
+            print(out_dir)
+            contrast_maps = sorted(glob(path.join(out_dir, '*.nii.gz')))
             beta_maps = [mapi for mapi in contrast_maps if 'tfile' not in mapi] 
             t_maps = [mapi for mapi in contrast_maps if 'raw_tfile' in mapi] 
             corrected_t_maps = [mapi for mapi in contrast_maps if 'corrected_tfile' in mapi] 
@@ -182,9 +189,9 @@ if run_second_level:
             f_raw_t = plot_task_maps(t_maps, curr_title)
             f_corr_t = plot_task_maps(corrected_t_maps, curr_title)
             if save:
-                output_beta = path.join(contrast_dir, task+'_plots.pdf')
+                output_beta = path.join(out_dir, task+'_plots.pdf')
                 f_beta.savefig(output_beta)
-                output_raw_t = path.join(contrast_dir, task+'_raw_tfile_plots.pdf')
+                output_raw_t = path.join(out_dir, task+'_raw_tfile_plots.pdf')
                 f_beta.savefig(output_raw_t)
-                output_corr_t = path.join(contrast_dir, task+'_corrected_tfile_plots.pdf')
+                output_corr_t = path.join(out_dir, task+'_corrected_tfile_plots.pdf')
                 f_beta.savefig(output_corr_t)  
