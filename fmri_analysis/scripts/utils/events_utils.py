@@ -77,7 +77,7 @@ def get_ev_vars(output_dict, events_df, condition_spec, col=None,
                 if type(amplitude) in (int, float): #no need to demean a constant
                     amplitudes.append([amplitude]*len(onsets[-1]))
                 elif type(amplitude) == str:
-                    amplitudes.append(demean(c_df.loc[:, amplitude].tolist()))
+                    amplitudes.append(demean(c_df.loc[:, amplitude]).tolist())
                 if type(duration) in (int, float):
                     durations.append([duration]*len(onsets[-1]))
                 elif type(duration) == str:
@@ -89,9 +89,9 @@ def get_ev_vars(output_dict, events_df, condition_spec, col=None,
         if type(amplitude) in (int, float): #no need to demean a constant
             amplitudes.append([amplitude]*len(onsets[-1]))
         elif type(amplitude) == str:
-            amplitudes.append(demean(group_df.loc[:, amplitude].tolist()))
+            amplitudes.append(demean(group_df.loc[:, amplitude]).tolist())
         elif type(amplitude) == list:
-            amplitudes.append(demean(amplitude))
+            amplitudes.append(demean(amplitude).tolist())
         if type(duration) in (int,float):
             durations.append([duration]*len(onsets[-1]))
         elif type(duration) == str:
