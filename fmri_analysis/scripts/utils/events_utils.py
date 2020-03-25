@@ -267,6 +267,16 @@ def get_CCTHot_EVs(events_df, regress_rt):
         amplitude='EV',
         subset="junk==False and action=='draw_card' and feedback==1",
         demean_amp=True) ###USING NEW DEMEANING 3+
+    
+    #NEW negative_draw regressor 3.25.20
+    events_df['absolute_loss_amount'] = np.abs(events_df.loss_amount)
+    get_ev_vars(output_dict, events_df, 
+        condition_spec='negative_draw',
+        onset_column='button_onset',
+        duration=1,
+        amplitude='absolute_loss_amount',
+        subset="junk==False and action=='draw_card' and feedback==0",
+        demean_amp=True) ###USING NEW DEMEANING 3+
 
     #create trial-long gain and feedback regressors
     #gain
@@ -289,7 +299,7 @@ def get_CCTHot_EVs(events_df, regress_rt):
     get_ev_vars(output_dict, events_df, 
         condition_spec='trial_loss',
         duration="round_duration",
-        amplitude='loss_amount', #NEW DEMEANING 5/12
+        amplitude='absolute_loss_amount', #changed 3.25.20 so that large loss amounts have higher values and vice versa.
         subset="junk==False and round_on==True",
         demean_amp=True) #NEW DEMEANING 5/12
 
@@ -305,30 +315,35 @@ def get_CCTHot_EVs(events_df, regress_rt):
             elif chunk.feedback[i]==0:
                 roundsum += chunk.loss_amount[i]
         roundsums.append(roundsum)
-
-    feedback_values = events_df.gain_amount.to_numpy().copy()
-    loss_indices = events_df.index[events_df.feedback==0] #get losses
-    for loss_idx in loss_indices:
-        round_idx = events_df.round_grouping[loss_idx]
-        feedback_values[loss_idx] = roundsums[round_idx]
-
-    events_df.insert(0, "feedback_values", feedback_values, True)
+        
     
-    #######DROP FOR NEW DEMEANING#######
-    # demeaned_loss_array = np.zeros(len(events_df.feedback_values))
-    # demeaned_losses = events_df.feedback_values[loss_indices].copy() - np.mean(events_df.feedback_values[loss_indices]) #######DROP FOR NEW DEMEANING
-    # for idx in loss_indices:
-    #     demeaned_loss_array[idx] = demeaned_losses[idx]
-    # events_df.insert(0, "demeaned_trial-cumulative_loss_values", demeaned_loss_array, True)
-    ####################################
-    
-    #create loss regressor
+#OLD LOSS REGRESSOR    
+#     feedback_values = events_df.gain_amount.to_numpy().copy()
+#     loss_indices = events_df.index[events_df.feedback==0] #get losses
+#     for loss_idx in loss_indices:
+#         round_idx = events_df.round_grouping[loss_idx]
+#         feedback_values[loss_idx] = roundsums[round_idx]
+
+#     events_df.insert(0, "feedback_values", feedback_values, True)
+
+#     #create loss regressor
+#     get_ev_vars(output_dict, events_df, 
+#         condition_spec='loss',
+#         onset_column='button_onset',
+#         duration=1, 
+#         amplitude='feedback_values', #NEW DEMEANING 6/12, was 'demeaned_trial-cumulative_loss_values'
+#         subset="junk==False and action=='draw_card' and feedback==0",
+#         demean_amp=True) #NEW DEMEANING 6/12
+
+    #POTENTIAL NEW TRIAL_EARNINGS REGRESSOR - 3.25.20
+    events_df['feedback_values'] = np.nan
+    events_df['feedback_values'].loc[events_df.total_cards==events_df.total_cards] = roundsums #plug in round sums at the end of rounds
     get_ev_vars(output_dict, events_df, 
-        condition_spec='loss',
+        condition_spec='trial_earnings',
         onset_column='button_onset',
         duration=1, 
-        amplitude='feedback_values', #NEW DEMEANING 6/12, was 'demeaned_trial-cumulative_loss_values'
-        subset="junk==False and action=='draw_card' and feedback==0",
+        amplitude='feedback_values',
+        subset="junk==False and total_cards==total_cards", #happens at the end of rounds
         demean_amp=True) #NEW DEMEANING 6/12
     
     return output_dict
