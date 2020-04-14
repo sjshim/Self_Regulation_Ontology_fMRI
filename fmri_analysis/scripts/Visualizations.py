@@ -6,7 +6,7 @@
 import argparse
 from glob import glob
 import os
-from os import path
+from os import makedirs, path
 import pickle
 from nilearn import plotting
 from nistats.thresholding import map_threshold
@@ -92,6 +92,8 @@ group = args.group
 # In[ ]:
 if plot_designs:
     rcParams.update({'figure.autolayout': True})
+    fig_dir = os.path.join(first_level_dir, 'figs')
+    makedirs(fig_dir, exist_ok=True)
     subjects = sorted([i.split("/")[-1] for i in glob(os.path.join(first_level_dir, '*')) if 'fig' not in i])
     print(subjects)
     for sub in subjects: 
@@ -106,30 +108,27 @@ if plot_designs:
 
                 plot_design(subjinfo)
                 plt.gcf()
-                plt.savefig('%s/figs/%s_%s_design_fig' % (first_level_dir, sub, task))
+                plt.savefig(os.path.join(fig_dir, '%s_%s_design_fig' % (sub, task)))
                 plt.close()
 
                 plot_design_timeseries(subjinfo)
                 plt.gcf()
-                plt.savefig('%s/figs/%s_%s__design_timeseries' % (first_level_dir, sub, task))
+                plt.savefig(os.path.join(fig_dir, '%s_%s__design_timeseries' % (sub, task)))
                 plt.close()
 
                 if task=='WATT3':
                     plot_design_timeseries(subjinfo, 0, 200)
-                    plt.gcf()
-                    plt.savefig('%s/figs/%s_%s__design_timeseries_trunc' % (first_level_dir, sub, task))
-                    plt.close()
                 else:
                     plot_design_timeseries(subjinfo, 0, 100)
-                    plt.gcf()
-                    plt.savefig('%s/figs/%s_%s__design_timeseries_trunc' % (first_level_dir, sub, task))
-                    plt.close()                
+                plt.gcf()
+                plt.savefig(os.path.join(fig_dir, '%s_%s__design_timeseries_trunc' % (sub, task)))
+                plt.close()                
 
 
         
                 plot_design_heatmap(subjinfo)
                 plt.gcf()
-                plt.savefig('%s/figs/%s_%s_heatmap' % (first_level_dir, sub, task), bbox_inches="tight")
+                plt.savefig(os.path.join(fig_dir, '%s_%s_heatmap' % (sub, task)), bbox_inches="tight")
                 plt.close()
             except:
                 print('task not found')

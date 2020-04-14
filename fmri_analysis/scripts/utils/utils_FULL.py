@@ -28,10 +28,10 @@ def get_contrasts(task, regress_rt=True):
     
     """
     if task == 'ANT':
-        contrasts = [('task', 'task')]
-            # ('cue_parametric', 'cue_parametric'), #use for PCA
-            #         ('congruency_parametric', 'congruency_parametric'), #use for PCA
-            #         ('interaction', 'interaction')]
+        contrasts = [('cue_parametric', 'cue_parametric'), #use for PCA
+                    ('congruency_parametric', 'congruency_parametric'), #use for PCA
+                    ('interaction', 'interaction'),
+                    ('task', 'task')]
         # contrasts = [('spatial_congruent', 'spatial_congruent'),
         #             ('spatial_incongruent', 'spatial_incongruent'),
         #             ('double_congruent', 'double_congruent'),
@@ -43,13 +43,13 @@ def get_contrasts(task, regress_rt=True):
         #             ('orienting_network', '(spatial_congruent + spatial_incongruent) - (double_congruent+double_incongruent)'),
         #             ('conflict_network', '(spatial_incongruent + double_incongruent) -(spatial_congruent + double_congruent)')]
     elif task == 'CCTHot': #regressor over baseline (excluding RT)
-        contrasts = [('task', 'task')]
-                    # ('trial_loss', 'trial_loss'),
-                    # ('trial_gain', 'trial_gain'),
-                    # ('positive_draw', 'positive_draw'), #for PCA
-                    # ('loss_event', 'loss_event'),
-                    # ('negative_draw', 'negative_draw'), #for PCA
-                    # ('button_press', 'button_press')]
+        contrasts = [('task', 'task'),
+                    ('trial_loss', 'trial_loss'),
+                    ('trial_gain', 'trial_gain'),
+                    ('positive_draw', 'positive_draw'), #for PCA
+                    ('loss_event', 'loss_event'),
+                    ('negative_draw', 'negative_draw'), #for PCA
+                    ('button_press', 'button_press')]
     elif task == 'discountFix':
         contrasts = [('task', 'task'),
                     ('choice', 'choice')] #for PCA
@@ -75,16 +75,15 @@ def get_contrasts(task, regress_rt=True):
                      ('crit_stop_success-noncrit_signal', 'crit_stop_success-noncrit_signal'),
                      ('crit_stop_failure-noncrit_signal', 'crit_stop_failure-noncrit_signal'),
                      ('task', 'crit_go + crit_stop_success + crit_stop_failure + noncrit_signal + noncrit_nosignal')]
-    elif task == 'manipulationTask':  #UPDATE BEFORE RUNNING AIM2 
+    elif task == 'manipulationTask':  #add non-parametric regressors 
         contrasts =  [('cue', 'cue'),
                      ('probe', 'probe'),
                      ('rating', 'rating')]
                      #('cue_x_probe','cue*probe'),
                      #('cue_x_probe_x_rating','cue*probe*rating')]
     elif task == 'stroop':
-        contrasts = [('task', 'task')]
-            # ('congruency', 'congruency_parametric')] #for PCA
-                     
+        contrasts = [('congruency', 'congruency_parametric'), #for PCA
+                     ('task', 'task')]
                     # ('stroop', 'incongruent-congruent')]
     elif task == 'stopSignal':
         contrasts = [('go', 'go'),
@@ -108,13 +107,13 @@ def get_contrasts(task, regress_rt=True):
             for CSI in ['100', '900']:
                 contrasts.append((trial+'_'+CSI, trial+'_'+CSI))
     elif task == 'WATT3': #all regressors save RT
-        contrasts = [('trial','trial')]
-            # ('button_press', 'button_press'),
-            #         ('trial_parametric','trial_parametric'), #for PCA
-            #         ('practice','practice'),
-            #         ('planning_event', 'planning_event'),
-            #         ('feedback','feedback'),
-            #         ('button_press', 'button_press')]
+        contrasts = [('button_press', 'button_press'),
+                    ('trial','trial'),
+                    ('trial_parametric','trial_parametric'), #for PCA
+                    ('practice','practice'),
+                    ('planning_event', 'planning_event'),
+                    ('feedback','feedback'),
+                    ('button_press', 'button_press')]
     if regress_rt:
         if task == 'motorSelectiveStop':
             contrasts.append(('go_RT', 'go_RT'))
