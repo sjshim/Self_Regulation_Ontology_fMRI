@@ -182,7 +182,7 @@ def get_CCTHot_EVs(events_df, regress_rt):
             }
 
     #### ADDED 4.21.20 TO DROP ITI ROWS (present in TACC versions, not old sherlock versions)
-    events_df = events_df[events_df.trial_id != 'ITI']
+    events_df = events_df[events_df.trial_id != 'ITI'].reset_index()
     ####
 
     if regress_rt == True:
