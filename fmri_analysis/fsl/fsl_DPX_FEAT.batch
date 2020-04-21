@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=DPX_FEAT
+#SBATCH --output=.out/DPX_FEAT.out
+#SBATCH --error=.err/DPX_FEAT.err
+#SBATCH --time=10:00:00
+#SBATCH --mail-type=END
+#SBATCH --mail-user=poldracklab@stanford.edu
+#SBATCH --cpus-per-task=8
+#SBATCH --ntasks-per-node=1
+#SBATCH -p russpold
+export PYTHONPATH=""
+
+
+    for i in 'template_DPX_fsl.fsf'; do 
+     sed -e 's/{RELATIVE_BOLD}//sub-s061/ses-2/func/sub-s061_ses-2_task-DPX_run-1_bold/g'       -e 's/{SUBJECT}/s061/g'       -e 's/{SES_BRAIN}/brain1/g'       -e 's/{NTP}/1094/g' template_DPX_fsl.fsf | feat
+    done  
+    
