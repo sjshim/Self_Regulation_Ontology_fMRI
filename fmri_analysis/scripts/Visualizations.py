@@ -28,7 +28,7 @@ parser.add_argument('--skip_designs', action='store_true')
 parser.add_argument('--skip_first', action='store_true')
 parser.add_argument('--skip_second', action='store_true')
 parser.add_argument('--save', action='store_true')
-parser.add_argument('--tasks', nargs="+", help="Choose from ANT, CCTHot, discountFix,                                     DPX, motorSelectiveStop, stopSignal,                                     stroop, surveyMedley, twoByTwo, WATT3")
+parser.add_argument('--tasks', nargs="+", default='ANT, CCTHot, discountFix, DPX, motorSelectiveStop, stopSignal, stroop, surveyMedley, twoByTwo, WATT3'.split(', '), help="Choose from ANT, CCTHot, discountFix, DPX, motorSelectiveStop, stopSignal, stroop, surveyMedley, twoByTwo, WATT3")
 parser.add_argument('-group', default='NONE')
 
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:

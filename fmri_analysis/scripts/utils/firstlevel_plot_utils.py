@@ -54,11 +54,11 @@ def plot_map(contrast_map, title=None, glass_kwargs=None, stat_kwargs=None):
     return f
 
 def plot_task_maps(contrast_maps, title, stat_kwargs=None):
-    
+    print(title, len(contrast_maps))
     if stat_kwargs is None:
         stat_kwargs = {}
     # set up plot
-    f, axes = plt.subplots(len(contrast_maps), 1, figsize=(len(contrast_maps)*5,len(contrast_maps)*5))
+    f, axes = plt.subplots(len(contrast_maps), 1, figsize=(20,len(contrast_maps)*5), squeeze=False)
     plt.suptitle(title, fontsize=36)
     
     n = np.arange(-40, 67, 15)
@@ -72,7 +72,7 @@ def plot_task_maps(contrast_maps, title, stat_kwargs=None):
     for idx, contrast_map in enumerate(contrast_maps):
         title = contrast_map[contrast_map.index('contrast')+9:].rstrip('.nii.gz') #get contrast name
         print(title)
-        plotting.plot_stat_map(contrast_map, title=title, display_mode='z', axes=axes[idx], **stat_args)
+        plotting.plot_stat_map(contrast_map, title=title, display_mode='z', axes=axes[idx][0], **stat_args)
     plt.subplots_adjust(hspace=0)
     return f
 

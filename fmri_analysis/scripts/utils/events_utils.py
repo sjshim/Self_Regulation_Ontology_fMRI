@@ -181,6 +181,10 @@ def get_CCTHot_EVs(events_df, regress_rt):
             'amplitudes': []
             }
 
+    #### ADDED 4.21.20 TO DROP ITI ROWS (present in TACC versions, not old sherlock versions)
+    events_df = events_df[events_df.trial_id != 'ITI']
+    ####
+
     if regress_rt == True:
 #         normalize_rt(events_df)
         get_ev_vars(output_dict, events_df, 
@@ -714,26 +718,26 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                 demean_amp=True)  ###USING NEW DEMEANING 10+
         
 
-    # #trial regressor for task > baseline
-    # #build up trial regressor
-    # counter = 0
-    # round_grouping = []
-    # end_round_idx = events_df.index[events_df.trial_id=='feedback']
-    # for i in range(len(events_df.trial_id)):
-    #     if i in end_round_idx:
-    #         round_grouping.append(counter)
-    #         counter+=1
-    #     else:
-    #         round_grouping.append(counter)
-    # events_df.insert(0, "round_grouping", round_grouping, True)
+    #trial regressor for task > baseline
+    #build up trial regressor
+    counter = 0
+    round_grouping = []
+    end_round_idx = events_df.index[events_df.trial_id=='feedback']
+    for i in range(len(events_df.trial_id)):
+        if i in end_round_idx:
+            round_grouping.append(counter)
+            counter+=1
+        else:
+            round_grouping.append(counter)
+    events_df.insert(0, "round_grouping", round_grouping, True)
     
-    # round_start_idx = [0] + [x+1 for x in end_round_idx]
+    round_start_idx = [0] + [x+1 for x in end_round_idx]
     
-    # round_dur = np.zeros(len(events_df.trial_id))
-    # for group_num in range(len(events_df.round_grouping.unique())):
-    #     for idx in events_df.index[events_df.round_grouping==group_num].values:
-    #         round_dur[idx] = np.sum(events_df.block_duration[events_df.round_grouping==np.float(group_num)][:-1])
-    # events_df.insert(0, "round_duration", round_dur, True)
+    round_dur = np.zeros(len(events_df.trial_id))
+    for group_num in range(len(events_df.round_grouping.unique())):
+        for idx in events_df.index[events_df.round_grouping==group_num].values:
+            round_dur[idx] = np.sum(events_df.block_duration[events_df.round_grouping==np.float(group_num)][:-1])
+    events_df.insert(0, "round_duration", round_dur, True)
     
     
     #add full trial length regressor
