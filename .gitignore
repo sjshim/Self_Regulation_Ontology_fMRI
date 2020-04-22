@@ -28,3 +28,4 @@ fmri_analysis/scripts/Untitled.ipynb
 */*/*Untitled*.ipynb
 *.err*
 *.out*
+fmri_analysis/fsl/tmp_batch/*
