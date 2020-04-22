@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=DPX_{SUBJECT}_FEAT
-#SBATCH --output=.out/DPX_{SUBJECT}_FEAT.out
-#SBATCH --error=.err/DPX_{SUBJECT}_FEAT.err
+#SBATCH --job-name=DPX_s061_FEAT
+#SBATCH --output=.out/DPX_s061_FEAT.out
+#SBATCH --error=.err/DPX_s061_FEAT.err
 #SBATCH --time=2:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
@@ -13,4 +13,4 @@ export PYTHONPATH=""
 fsl_dir="/home/groups/russpold/uh2_analysis/Self_Regulation_Ontology_fMRI/fmri_analysis/fsl"
 tmp_dir=$fsl_dir/"tmp_batch"
 
-feat $tmp_dir/DPX_{SUBJECT}_fsl.fsf
+feat $tmp_dir/DPX_s061_fsl.fsf

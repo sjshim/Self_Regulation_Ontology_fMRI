@@ -1,17 +1,5 @@
-#!/bin/bash
-#SBATCH --job-name=DPX_FEAT
-#SBATCH --output=.out/DPX_FEAT.out
-#SBATCH --error=.err/DPX_FEAT.err
-#SBATCH --time=10:00:00
-#SBATCH --mail-type=END
-#SBATCH --mail-user=poldracklab@stanford.edu
-#SBATCH --cpus-per-task=8
-#SBATCH --ntasks-per-node=1
-#SBATCH -p russpold
-export PYTHONPATH=""
-
 fsl_dir="/home/groups/russpold/uh2_analysis/Self_Regulation_Ontology_fMRI/fmri_analysis/fsl"
-template_dir = $fsl_dir/"templates"
+template_dir=$fsl_dir/"templates"
 tmp_dir=$fsl_dir/"tmp_batch"
 
 
