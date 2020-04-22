@@ -2,7 +2,7 @@
 #SBATCH --job-name=DPX_{SUBJECT}_FEAT
 #SBATCH --output=.out/DPX_{SUBJECT}_FEAT.out
 #SBATCH --error=.err/DPX_{SUBJECT}_FEAT.err
-#SBATCH --time=2:00:00
+#SBATCH --time=10:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
 #SBATCH --cpus-per-task=8
