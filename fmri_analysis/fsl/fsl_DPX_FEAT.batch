@@ -11,7 +11,7 @@
 export PYTHONPATH=""
 
 
-    for i in 'template_DPX_fsl.fsf'; do 
-     sed -e 's/{RELATIVE_BOLD}//sub-s061/ses-2/func/sub-s061_ses-2_task-DPX_run-1_bold/g'       -e 's/{SUBJECT}/s061/g'       -e 's/{SES_BRAIN}/brain1/g'       -e 's/{NTP}/1094/g' template_DPX_fsl.fsf | feat
+    for i in "template_DPX_fsl.fsf"; do 
+        sed -e "s/{RELATIVE_BOLD}//sub-s061/ses-2/func/sub-s061_ses-2_task-DPX_run-1_bold/g"       -e "s/{SUBJECT}/s061/g"       -e "s/{SES_BRAIN}/brain1/g"      -e "s/{NTP}/1094/g" template_DPX_fsl.fsf | feat
     done  
     
