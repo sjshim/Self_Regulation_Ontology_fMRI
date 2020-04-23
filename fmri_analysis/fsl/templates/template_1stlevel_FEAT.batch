@@ -2,7 +2,7 @@
 #SBATCH --job-name={TASK}_{SUBJECT}_FEAT
 #SBATCH --output=.out/{TASK}_{SUBJECT}_FEAT.out
 #SBATCH --error=.err/{TASK}_{SUBJECT}_FEAT.err
-#SBATCH --time=10:00:00
+#SBATCH --time=40:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
 #SBATCH --cpus-per-task=16
