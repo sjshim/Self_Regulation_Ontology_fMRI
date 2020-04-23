@@ -2,10 +2,10 @@
 #SBATCH --job-name=DPX_s061_FEAT
 #SBATCH --output=.out/DPX_s061_FEAT.out
 #SBATCH --error=.err/DPX_s061_FEAT.err
-#SBATCH --time=10:00:00
+#SBATCH --time=80:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=16
 #SBATCH --ntasks-per-node=1
 #SBATCH -p russpold
 export PYTHONPATH=""
