@@ -46,7 +46,7 @@ def get_movement_times(df):
     trial_time = df.time_elapsed - df.block_duration + \
                  df.rt
     return trial_time
-
+    
 def get_trial_times(df):
     """
     time elapsed is evaluated at the end of a trial, so we have to subtract
@@ -345,8 +345,12 @@ def create_motorSelectiveStop_event(df, aim, duration=None):
                         [noncrit_key,'stop',False])] = 'noncrit_signal'
     condition[row_match(condition_df,
                         [noncrit_key,'go',False])] = 'noncrit_nosignal'
-
+    
     events_df.loc[:,'trial_type'] = condition
+    
+     #fix stop success correctness 
+    events_df.loc[events_df['trial_type'] == 'crit_stop_success', ['correct']] = 1
+    
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
     else:
@@ -385,6 +389,8 @@ def create_stopSignal_event(df, aim, duration=None):
     events_df.loc[SS_success_trials,'condition'] = 'stop_success'
     events_df.loc[SS_fail_trials,'condition'] = 'stop_failure'
     events_df.loc[:,'trial_type'] = events_df.condition
+    
+    events_df.loc[events_df['trial_type'] == 'stop_success', ['correct']] = 1
     # duration    
     if duration is None:
         events_df.insert(0,'duration',events_df.stim_duration)
