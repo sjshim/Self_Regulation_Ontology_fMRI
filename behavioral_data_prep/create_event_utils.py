@@ -46,11 +46,7 @@ def get_movement_times(df):
     trial_time = df.time_elapsed - df.block_duration + \
                  df.rt
     return trial_time
-
-def correct_recalc(df): 
-    """fix correct categorization for stop and motor stop"""
     
-
 def get_trial_times(df):
     """
     time elapsed is evaluated at the end of a trial, so we have to subtract
