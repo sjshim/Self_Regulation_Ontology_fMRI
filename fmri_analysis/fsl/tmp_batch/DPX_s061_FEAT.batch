@@ -2,10 +2,10 @@
 #SBATCH --job-name=DPX_s061_FEAT
 #SBATCH --output=.out/DPX_s061_FEAT.out
 #SBATCH --error=.err/DPX_s061_FEAT.err
-#SBATCH --time=10:00:00
+#SBATCH --time=80:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=16
 #SBATCH --ntasks-per-node=1
 #SBATCH -p russpold
 export PYTHONPATH=""
@@ -13,4 +13,7 @@ export PYTHONPATH=""
 fsl_dir="/home/groups/russpold/uh2_analysis/Self_Regulation_Ontology_fMRI/fmri_analysis/fsl"
 tmp_dir=$fsl_dir/"tmp_batch"
 
-feat $tmp_dir/DPX_s061_fsl.fsf
+feat $tmp_dir/DPX_s061_RT-True_fsl.fsf
+
+feat $tmp_dir/DPX_s061_RT-False_fsl.fsf
+
