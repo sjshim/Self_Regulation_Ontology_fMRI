@@ -13,4 +13,7 @@ export PYTHONPATH=""
 fsl_dir="/home/groups/russpold/uh2_analysis/Self_Regulation_Ontology_fMRI/fmri_analysis/fsl"
 tmp_dir=$fsl_dir/"tmp_batch"
 
-feat $tmp_dir/DPX_s061_fsl.fsf
+feat $tmp_dir/DPX_s061_RT-True_fsl.fsf
+
+feat $tmp_dir/DPX_s061_RT-False_fsl.fsf
+
