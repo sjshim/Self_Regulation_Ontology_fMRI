@@ -30,7 +30,7 @@ set fmri(featwatcher_yn) 1
 set fmri(sscleanup_yn) 0
 
 # Output directory
-set fmri(outputdir) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/2ndlevel/DPX/RT-False"
+set fmri(outputdir) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/2ndlevel/DPX/RT-True"
 
 # TR(s)
 set fmri(tr) 3
@@ -266,7 +266,7 @@ set fmri(regstandard_nonlinear_warpres) 10
 set fmri(paradigm_hp) 100
 
 # Number of lower-level copes feeding into higher-level analysis
-set fmri(ncopeinputs) 7
+set fmri(ncopeinputs) 8
 
 # Use lower-level cope 1 for higher-level analysis
 set fmri(copeinput.1) 1
@@ -287,298 +287,301 @@ set fmri(copeinput.5) 1
 set fmri(copeinput.6) 1
 
 # Use lower-level cope 7 for higher-level analysis
-set fmri(copeinput.7) 0
+set fmri(copeinput.7) 1
+
+# Use lower-level cope 8 for higher-level analysis
+set fmri(copeinput.8) 1
 
 # 4D AVW data or FEAT directory (1)
-set feat_files(1) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s061/DPX/RT-False/.feat"
+set feat_files(1) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s061/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (2)
-set feat_files(2) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s130/DPX/RT-False/.feat"
+set feat_files(2) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s130/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (3)
-set feat_files(3) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s172/DPX/RT-False/.feat"
+set feat_files(3) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s172/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (4)
-set feat_files(4) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s192/DPX/RT-False/.feat"
+set feat_files(4) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s192/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (5)
-set feat_files(5) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s234/DPX/RT-False/.feat"
+set feat_files(5) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s234/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (6)
-set feat_files(6) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s251/DPX/RT-False/.feat"
+set feat_files(6) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s251/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (7)
-set feat_files(7) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s358/DPX/RT-False/.feat"
+set feat_files(7) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s358/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (8)
-set feat_files(8) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s373/DPX/RT-False/.feat"
+set feat_files(8) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s373/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (9)
-set feat_files(9) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s445/DPX/RT-False/.feat"
+set feat_files(9) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s445/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (10)
-set feat_files(10) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s465/DPX/RT-False/.feat"
+set feat_files(10) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s465/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (11)
-set feat_files(11) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s483/DPX/RT-False/.feat"
+set feat_files(11) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s483/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (12)
-set feat_files(12) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s491/DPX/RT-False/.feat"
+set feat_files(12) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s491/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (13)
-set feat_files(13) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s495/DPX/RT-False/.feat"
+set feat_files(13) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s495/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (14)
-set feat_files(14) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s497/DPX/RT-False/.feat"
+set feat_files(14) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s497/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (15)
-set feat_files(15) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s499/DPX/RT-False/.feat"
+set feat_files(15) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s499/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (16)
-set feat_files(16) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s518/DPX/RT-False/.feat"
+set feat_files(16) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s518/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (17)
-set feat_files(17) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s519/DPX/RT-False/.feat"
+set feat_files(17) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s519/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (18)
-set feat_files(18) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s524/DPX/RT-False/.feat"
+set feat_files(18) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s524/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (19)
-set feat_files(19) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s525/DPX/RT-False/.feat"
+set feat_files(19) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s525/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (20)
-set feat_files(20) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s526/DPX/RT-False/.feat"
+set feat_files(20) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s526/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (21)
-set feat_files(21) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s541/DPX/RT-False/+.feat"
+set feat_files(21) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s541/DPX/RT-True/+.feat"
 
 # 4D AVW data or FEAT directory (22)
-set feat_files(22) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s546/DPX/RT-False/.feat"
+set feat_files(22) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s546/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (23)
-set feat_files(23) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s548/DPX/RT-False/+.feat"
+set feat_files(23) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s548/DPX/RT-True/+.feat"
 
 # 4D AVW data or FEAT directory (24)
-set feat_files(24) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s549/DPX/RT-False/.feat"
+set feat_files(24) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s549/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (25)
-set feat_files(25) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s553/DPX/RT-False/.feat"
+set feat_files(25) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s553/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (26)
-set feat_files(26) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s554/DPX/RT-False/.feat"
+set feat_files(26) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s554/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (27)
-set feat_files(27) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s555/DPX/RT-False/.feat"
+set feat_files(27) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s555/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (28)
-set feat_files(28) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s556/DPX/RT-False/.feat"
+set feat_files(28) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s556/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (29)
-set feat_files(29) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s557/DPX/RT-False/.feat"
+set feat_files(29) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s557/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (30)
-set feat_files(30) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s558/DPX/RT-False/.feat"
+set feat_files(30) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s558/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (31)
-set feat_files(31) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s561/DPX/RT-False/.feat"
+set feat_files(31) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s561/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (32)
-set feat_files(32) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s567/DPX/RT-False/.feat"
+set feat_files(32) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s567/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (33)
-set feat_files(33) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s568/DPX/RT-False/.feat"
+set feat_files(33) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s568/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (34)
-set feat_files(34) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s570/DPX/RT-False/.feat"
+set feat_files(34) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s570/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (35)
-set feat_files(35) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s572/DPX/RT-False/.feat"
+set feat_files(35) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s572/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (36)
-set feat_files(36) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s573/DPX/RT-False/++.feat"
+set feat_files(36) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s573/DPX/RT-True/++.feat"
 
 # 4D AVW data or FEAT directory (37)
-set feat_files(37) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s574/DPX/RT-False/.feat"
+set feat_files(37) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s574/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (38)
-set feat_files(38) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s577/DPX/RT-False/.feat"
+set feat_files(38) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s577/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (39)
-set feat_files(39) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s579/DPX/RT-False/.feat"
+set feat_files(39) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s579/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (40)
-set feat_files(40) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s582/DPX/RT-False/.feat"
+set feat_files(40) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s582/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (41)
-set feat_files(41) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s583/DPX/RT-False/.feat"
+set feat_files(41) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s583/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (42)
-set feat_files(42) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s584/DPX/RT-False/.feat"
+set feat_files(42) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s584/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (43)
-set feat_files(43) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s585/DPX/RT-False/.feat"
+set feat_files(43) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s585/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (44)
-set feat_files(44) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s586/DPX/RT-False/.feat"
+set feat_files(44) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s586/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (45)
-set feat_files(45) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s587/DPX/RT-False/.feat"
+set feat_files(45) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s587/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (46)
-set feat_files(46) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s588/DPX/RT-False/.feat"
+set feat_files(46) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s588/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (47)
-set feat_files(47) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s589/DPX/RT-False/.feat"
+set feat_files(47) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s589/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (48)
-set feat_files(48) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s590/DPX/RT-False/.feat"
+set feat_files(48) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s590/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (49)
-set feat_files(49) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s591/DPX/RT-False/.feat"
+set feat_files(49) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s591/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (50)
-set feat_files(50) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s592/DPX/RT-False/.feat"
+set feat_files(50) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s592/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (51)
-set feat_files(51) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s593/DPX/RT-False/.feat"
+set feat_files(51) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s593/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (52)
-set feat_files(52) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s594/DPX/RT-False/.feat"
+set feat_files(52) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s594/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (53)
-set feat_files(53) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s595/DPX/RT-False/.feat"
+set feat_files(53) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s595/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (54)
-set feat_files(54) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s596/DPX/RT-False/.feat"
+set feat_files(54) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s596/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (55)
-set feat_files(55) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s597/DPX/RT-False/.feat"
+set feat_files(55) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s597/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (56)
-set feat_files(56) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s598/DPX/RT-False/.feat"
+set feat_files(56) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s598/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (57)
-set feat_files(57) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s601/DPX/RT-False/.feat"
+set feat_files(57) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s601/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (58)
-set feat_files(58) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s602/DPX/RT-False/.feat"
+set feat_files(58) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s602/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (59)
-set feat_files(59) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s605/DPX/RT-False/.feat"
+set feat_files(59) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s605/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (60)
-set feat_files(60) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s606/DPX/RT-False/.feat"
+set feat_files(60) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s606/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (61)
-set feat_files(61) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s607/DPX/RT-False/.feat"
+set feat_files(61) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s607/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (62)
-set feat_files(62) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s608/DPX/RT-False/.feat"
+set feat_files(62) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s608/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (63)
-set feat_files(63) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s609/DPX/RT-False/.feat"
+set feat_files(63) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s609/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (64)
-set feat_files(64) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s610/DPX/RT-False/.feat"
+set feat_files(64) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s610/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (65)
-set feat_files(65) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s611/DPX/RT-False/+.feat"
+set feat_files(65) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s611/DPX/RT-True/+.feat"
 
 # 4D AVW data or FEAT directory (66)
-set feat_files(66) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s612/DPX/RT-False/.feat"
+set feat_files(66) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s612/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (67)
-set feat_files(67) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s613/DPX/RT-False/.feat"
+set feat_files(67) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s613/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (68)
-set feat_files(68) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s614/DPX/RT-False/.feat"
+set feat_files(68) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s614/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (69)
-set feat_files(69) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s615/DPX/RT-False/+.feat"
+set feat_files(69) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s615/DPX/RT-True/+.feat"
 
 # 4D AVW data or FEAT directory (70)
-set feat_files(70) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s616/DPX/RT-False/.feat"
+set feat_files(70) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s616/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (71)
-set feat_files(71) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s617/DPX/RT-False/.feat"
+set feat_files(71) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s617/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (72)
-set feat_files(72) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s618/DPX/RT-False/.feat"
+set feat_files(72) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s618/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (73)
-set feat_files(73) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s619/DPX/RT-False/.feat"
+set feat_files(73) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s619/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (74)
-set feat_files(74) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s621/DPX/RT-False/.feat"
+set feat_files(74) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s621/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (75)
-set feat_files(75) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s622/DPX/RT-False/.feat"
+set feat_files(75) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s622/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (76)
-set feat_files(76) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s623/DPX/RT-False/.feat"
+set feat_files(76) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s623/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (77)
-set feat_files(77) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s624/DPX/RT-False/+.feat"
+set feat_files(77) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s624/DPX/RT-True/+.feat"
 
 # 4D AVW data or FEAT directory (78)
-set feat_files(78) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s626/DPX/RT-False/+.feat"
+set feat_files(78) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s626/DPX/RT-True/+.feat"
 
 # 4D AVW data or FEAT directory (79)
-set feat_files(79) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s627/DPX/RT-False/+.feat"
+set feat_files(79) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s627/DPX/RT-True/+.feat"
 
 # 4D AVW data or FEAT directory (80)
-set feat_files(80) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s628/DPX/RT-False/.feat"
+set feat_files(80) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s628/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (81)
-set feat_files(81) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s629/DPX/RT-False/.feat"
+set feat_files(81) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s629/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (82)
-set feat_files(82) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s631/DPX/RT-False/.feat"
+set feat_files(82) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s631/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (83)
-set feat_files(83) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s633/DPX/RT-False/.feat"
+set feat_files(83) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s633/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (84)
-set feat_files(84) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s634/DPX/RT-False/.feat"
+set feat_files(84) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s634/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (85)
-set feat_files(85) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s635/DPX/RT-False/+.feat"
+set feat_files(85) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s635/DPX/RT-True/+.feat"
 
 # 4D AVW data or FEAT directory (86)
-set feat_files(86) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s636/DPX/RT-False/.feat"
+set feat_files(86) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s636/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (87)
-set feat_files(87) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s637/DPX/RT-False/.feat"
+set feat_files(87) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s637/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (88)
-set feat_files(88) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s638/DPX/RT-False/+.feat"
+set feat_files(88) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s638/DPX/RT-True/+.feat"
 
 # 4D AVW data or FEAT directory (89)
-set feat_files(89) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s641/DPX/RT-False/.feat"
+set feat_files(89) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s641/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (90)
-set feat_files(90) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s642/DPX/RT-False/.feat"
+set feat_files(90) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s642/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (91)
-set feat_files(91) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s643/DPX/RT-False/.feat"
+set feat_files(91) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s643/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (92)
-set feat_files(92) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s644/DPX/RT-False/+.feat"
+set feat_files(92) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s644/DPX/RT-True/+.feat"
 
 # 4D AVW data or FEAT directory (93)
-set feat_files(93) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s645/DPX/RT-False/.feat"
+set feat_files(93) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s645/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (94)
-set feat_files(94) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s647/DPX/RT-False/.feat"
+set feat_files(94) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s647/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (95)
-set feat_files(95) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s648/DPX/RT-False/.feat"
+set feat_files(95) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s648/DPX/RT-True/.feat"
 
 # 4D AVW data or FEAT directory (96)
-set feat_files(96) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s649/DPX/RT-False/+.feat"
+set feat_files(96) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s649/DPX/RT-True/+.feat"
 
 # 4D AVW data or FEAT directory (97)
-set feat_files(97) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s650/DPX/RT-False/+.feat"
+set feat_files(97) "/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fsl/outputs/s650/DPX/RT-True/+.feat"
 
 # Add confound EVs text file
 set fmri(confoundevs) 0
