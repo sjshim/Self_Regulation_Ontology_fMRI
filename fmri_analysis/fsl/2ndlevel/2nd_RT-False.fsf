@@ -159,7 +159,7 @@ set fmri(evs_vox) 0
 
 # Number of contrasts
 set fmri(ncon_orig) 1
-set fmri(ncon_real) 1
+set fmri(ncon_real) 2
 
 # Number of F-tests
 set fmri(nftests_orig) 0
@@ -185,7 +185,7 @@ set fmri(thresh) 3
 set fmri(prob_thresh) 0.05
 
 # Z threshold
-set fmri(z_thresh) 2.7
+set fmri(z_thresh) 3.1
 
 # Z min/max for colour rendering
 # 0 : Use actual Z min/max
@@ -1220,8 +1220,23 @@ set fmri(conname_real.1) "group mean"
 # Real contrast_real vector 1 element 1
 set fmri(con_real1.1) 1
 
+# Display images for contrast_real 2
+set fmri(conpic_real.2) 1
+
+# Title for contrast_real 2
+set fmri(conname_real.2) "neg mean"
+
+# Real contrast_real vector 2 element 1
+set fmri(con_real2.1) -1.0
+
 # Contrast masking - use >0 instead of thresholding?
 set fmri(conmask_zerothresh_yn) 0
+
+# Mask real contrast/F-test 1 with real contrast/F-test 2?
+set fmri(conmask1_2) 0
+
+# Mask real contrast/F-test 2 with real contrast/F-test 1?
+set fmri(conmask2_1) 0
 
 # Do contrast masking at all?
 set fmri(conmask1_1) 0
