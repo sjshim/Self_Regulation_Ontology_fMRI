@@ -201,16 +201,8 @@ def extract_timecourse_from_nii(atlas,
     `nilearn.datasets`-module.
     Parameters
     ----------
-    atlas: sklearn.datasets.base.Bunch  
-        This Bunch should contain at least a `maps`-attribute
-        containing a label (3D) or probabilistic atlas (4D),
-        as well as an `label` attribute, with one label for
-        every ROI in the atlas.
-        The function automatically detects which of the two is
-        provided. It extracts a (weighted) time course per ROI.
-        In the case of the probabilistic atlas, the voxels are
-        weighted by their probability (see also the Mappers in
-        nilearn).
+    atlas: str  
+        Path to 3D atlas image to be passed into NiftiLabelsMasker
     nii: 4D niimg-like object
         This NiftiImage contains the time series that need to
         be extracted using `atlas`
@@ -221,12 +213,6 @@ def extract_timecourse_from_nii(atlas,
         This parameter is passed to nilearn.signal.clean. Please 
         see the related documentation for details.
         shape: (number of scans, number of confounds)
-    atlas_type: str, optional
-        Can be 'labels' or 'probabilistic'. A label atlas
-        should be 3D and contains one unique number per ROI.
-        A Probabilistic atlas contains as many volume as 
-        ROIs.
-        Usually, `atlas_type` can be detected automatically.
     t_r, float, optional
         Repetition time of `nii`. Can be important for
         temporal filtering.
@@ -250,38 +236,22 @@ def extract_timecourse_from_nii(atlas,
     standardize = kwargs.pop('standardize', False)
     detrend = kwargs.pop('detrend', False)
 
-    if atlas_type is None:
-        maps = check_niimg(atlas.maps)
 
-        if len(maps.shape) == 3:
-            atlas_type = 'labels'
-        else:
-            atlas_type = 'prob'
 
-    if atlas_type == 'labels':
-        masker = NiftiLabelsMasker(atlas,
-                                    mask_img=mask,
-                                    standardize=standardize,
-                                    detrend=detrend,
-                                    t_r=t_r,
-                                    low_pass=low_pass,
-                                    high_pass=high_pass,
-                                    *args, **kwargs)
-    else:
-        masker = NiftiMapsMasker(atlas.maps,
-                                    mask_img=mask,
-                                    standardize=standardize,
-                                    detrend=detrend,
-                                    t_r=t_r,
-                                    low_pass=low_pass,
-                                    high_pass=high_pass,
-                                    *args, **kwargs)
+    masker = NiftiLabelsMasker(atlas,
+                               mask_img=mask,
+                               standardize=standardize,
+                               detrend=detrend,
+                               t_r=t_r,
+                               low_pass=low_pass,
+                               high_pass=high_pass,
+                               *args, **kwargs)
+
 
     data = _make_psc(nii)
 
     results = masker.fit_transform(data,
                                    confounds=confounds)
-
 
     if t_r is None:
         t_r = 1
@@ -290,11 +260,13 @@ def extract_timecourse_from_nii(atlas,
                                t_r*data.shape[-1],
                                t_r),
                      name='time')
-
-
-    return pd.DataFrame(results,
-                        index=index,
-                        )
+    try:
+        out_df =  pd.DataFrame(results,
+                            index=index)
+    except ValueError:
+        out_df =  pd.DataFrame(results,
+                            index=index[:-1])        
+    return(out_df)
 
 def get_onsets(events, task_conditions=['task'], scanner_times=None):
     onsets = events.loc[events.conditions.isin(task_conditions), 'onsets'].values
@@ -356,7 +328,7 @@ for idx, func in enumerate(task_funcs):
     
     meta = sourcedata_layout.get_metadata(sub_source)
     confounds= pd.read_csv(sub_dsgn) 
-    evs = pd.read_csv(sub_evs, delimiter='\t')
+    evs = pd.read_csv(sub_evs)
 
     TR = meta['RepetitionTime']
 
