@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name={task}-timelock
-#SBATCH --output=.out/{task}-timelock
-#SBATCH --error=.err/{task}-timelock
+#SBATCH --output=.out/{task}-timelock.out
+#SBATCH --error=.err/{task}-timelock.err
 #SBATCH --time=12:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
@@ -11,4 +11,4 @@
 #SBATCH --exclude=sh02-06n01,sh02-06n02
 export PYTHONPATH=""
 
-python uh2_17network_qc.py --task {task}
+python3 uh2_17network_qc.py --task {task}
