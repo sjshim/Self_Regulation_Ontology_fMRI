@@ -41,7 +41,7 @@ elif task=='twoByTwo':
 elif task=='WATT3':
     task_conditions = ['trial']
 else:
-    task_conditions = ['tasl']
+    task_conditions = ['task']
 
 
 
@@ -163,7 +163,7 @@ BIDS_dir = '/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans'
 deriv_base_path = '/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fmriprep/sub-*/ses-*/func/'
 source_path = path.join(BIDS_dir, 'sub-*/ses-*/func/*%s*bold.nii.gz') #for oringal filepaths for metadata
 prep_path = path.join(deriv_base_path, '*%s*space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz') #for mnispace preprocessed
-evs_path = path.join(BIDS_dir, 'sub-*/ses-*/func/*%s*events.tsv') #for timelocking
+evs_path = path.join(BIDS_dir, 'derivatives/1stlevel/s*/%s/simplified_events_RT-False_beta-False.csv') #for timelocking
 dsgn_path = path.join(BIDS_dir, 'derivatives/1stlevel/s*/%s/design_RT-False_beta-False.csv') #for confounds
 
 
@@ -296,12 +296,12 @@ def extract_timecourse_from_nii(atlas,
                         index=index,
                         )
 
-def get_onsets(events, task_conditions=['Task'], scanner_times=None):
-    onsets = events.loc[events.condition.isin(task_conditions), 'onset'].values
+def get_onsets(events, task_conditions=['task'], scanner_times=None):
+    onsets = events.loc[events.conditions.isin(task_conditions), 'onsets'].values
     #round to nearest scanner time if available
     if scanner_times is not None: 
-#         onsets = [min(scanner_times, key=lambda x:abs(x-i)) for i in onsets] #takes closest value
-        onsets = [scanner_times[scanner_times > i].min() for i in onsets] #takes closest _larger_ value
+        onsets = [min(scanner_times, key=lambda x:abs(x-i)) for i in onsets] #takes closest value
+#         onsets = [scanner_times[scanner_times > i].min() for i in onsets] #takes closest _larger_ value
         
     return(onsets)
 
