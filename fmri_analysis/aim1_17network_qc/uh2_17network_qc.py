@@ -379,7 +379,7 @@ for idx, func in enumerate(task_funcs):
     for jdx, onset in enumerate(onsets):
         #initialize curr_resp
         curr_resp = np.empty((num_trs, num_nets))
-        curr_resp = np.nan
+        curr_resp[:] = np.nan
         #need to do in case curr_df takes trial with less than 20TRs left
         curr_df = tc.loc[onset:onset+(num_trs*TR), :].head(num_trs)
         curr_resp[:len(curr_df), :len(curr_df.columns)] = curr_df.values 
