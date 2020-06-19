@@ -1,8 +1,6 @@
-import nilearn
 import sys 
 import argparse
-
-
+import nilearn
 import pandas as pd
 import numpy as np
 import nibabel as nb
@@ -23,10 +21,10 @@ task = args.task
 
 
 # CONSTANTS
-num_nets = 17
+num_nets = 17 #use yeo 17 network parcellation
 num_trs = 20 #to average over
 
-
+#getting the trial types for a given task
 if task=='DPX':
     task_conditions = ['AX', 'AY', 'BX', 'BY']
 elif task=='motorSelectiveStop':
@@ -44,17 +42,16 @@ else:
     task_conditions = ['task']
 
 
-
-
-
-
+#confounds, modified from:
+# https://github.com/VU-Cog-Sci/nideconv/blob/d7f5c6a71e4cae4159c38b18b72e335a51437493/nideconv/utils/roi.py#L224
 confounds_to_include = ['framewise_displacement', 'a_comp_cor_00',
                         'a_comp_cor_01', 'a_comp_cor_02', 'a_comp_cor_03',
                         'a_comp_cor_04', 'a_comp_cor_05', 'a_comp_cor_06',
                         'a_comp_cor_07', 'trans_x', 'trans_y', 'trans_z',
                         'rot_x', 'rot_y', 'rot_z']
 
-
+# dictionary converting yeo number to network label
+# done in this dumb way to check that ROIs agreed with each other
 label_dict = {1.0: ['central visual', 'central visual', 'central visual', 'central visual'],
  2.0: ['peripheral visual',
   'peripheral visual',
@@ -157,18 +154,20 @@ label_dict = {1.0: ['central visual', 'central visual', 'central visual', 'centr
   'default C'],
  14.0: ['temporal parietal', 'temporal parietal']}
 
+#paths - first line gets path to/downloads yeo parcellations
 yeo = datasets.fetch_atlas_yeo_2011()
 
 BIDS_dir = '/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans'
 deriv_base_path = '/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fmriprep/sub-*/ses-*/func/'
 source_path = path.join(BIDS_dir, 'sub-*/ses-*/func/*%s*bold.nii.gz') #for oringal filepaths for metadata
-prep_path = path.join(deriv_base_path, '*%s*space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz') #for mnispace preprocessed
+prep_path = path.join(deriv_base_path, '*%s*space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz') #MNI-space preprocessed data
 evs_path = path.join(BIDS_dir, 'derivatives/1stlevel/s*/%s/simplified_events_RT-False_beta-False.csv') #for timelocking
 dsgn_path = path.join(BIDS_dir, 'derivatives/1stlevel/s*/%s/design_RT-False_beta-False.csv') #for confounds
 
 
 # HELPERS
-
+# taken from:
+#https://github.com/VU-Cog-Sci/nideconv/blob/d7f5c6a71e4cae4159c38b18b72e335a51437493/nideconv/utils/roi.py#L261
 def _make_psc(data):
     mean_img = image.mean_img(data)
 
@@ -180,6 +179,8 @@ def _make_psc(data):
     return image.math_img('data / denom[..., np.newaxis] * 100 - 100',
                           data=data, denom=denom)
 
+# modified from:
+# https://github.com/VU-Cog-Sci/nideconv/blob/d7f5c6a71e4cae4159c38b18b72e335a51437493/nideconv/utils/roi.py#L8
 def extract_timecourse_from_nii(atlas,
                                 nii,
                                 mask=None,
@@ -236,8 +237,6 @@ def extract_timecourse_from_nii(atlas,
     standardize = kwargs.pop('standardize', False)
     detrend = kwargs.pop('detrend', False)
 
-
-
     masker = NiftiLabelsMasker(atlas,
                                mask_img=mask,
                                standardize=standardize,
@@ -253,14 +252,16 @@ def extract_timecourse_from_nii(atlas,
     results = masker.fit_transform(data,
                                    confounds=confounds)
 
-    if t_r is None:
+    if t_r is None: #hold over from original
         t_r = 1
 
+    #build up index with TR increments
     index = pd.Index(np.arange(0,
                                t_r*data.shape[-1],
                                t_r),
                      name='time')
-    try:
+
+    try: #occassionaly results has one less TR than original data
         out_df =  pd.DataFrame(results,
                             index=index)
     except ValueError:
@@ -280,7 +281,7 @@ def get_onsets(events, task_conditions=['task'], scanner_times=None):
 
 
 # BODY
-sourcedata_layout = BIDSLayout(BIDS_dir)
+sourcedata_layout = BIDSLayout(BIDS_dir) #https://github.com/VU-Cog-Sci/nideconv/blob/master/nideconv/utils/bids.py#L173
 
 task_sources = glob(source_path % task)
 task_funcs = glob(prep_path % task)
@@ -322,15 +323,18 @@ for idx, func in enumerate(task_funcs):
         print('missing something for sub-'+sub_str)
         subject_network_responses[:,:,idx] = meaned_responses
         continue
+
+    #grab sub files
     sub_dsgn = sub_dsgn[0]
     sub_source = sub_source[0]
     sub_evs = sub_evs[0]
     
+    #get sub data
     meta = sourcedata_layout.get_metadata(sub_source)
     confounds= pd.read_csv(sub_dsgn) 
     evs = pd.read_csv(sub_evs)
 
-    TR = meta['RepetitionTime']
+    TR = meta['RepetitionTime'] #0.68s
 
 
 
@@ -352,7 +356,7 @@ for idx, func in enumerate(task_funcs):
         #initialize curr_resp
         curr_resp = np.empty((num_trs, num_nets))
         curr_resp[:] = np.nan
-        #need to do in case curr_df takes trial with less than 20TRs left
+        #need to do in case curr_df is trial with less than 20TRs left
         curr_df = tc.loc[onset:onset+(num_trs*TR), :].head(num_trs)
         curr_resp[:len(curr_df), :len(curr_df.columns)] = curr_df.values 
         # add to timelocked_data 
@@ -361,9 +365,11 @@ for idx, func in enumerate(task_funcs):
     # mean across onsets
     meaned_responses = np.mean(timelocked_data, axis=2)
     
-    #append subj means to get group
+    #append subj means to group
     subject_network_responses[:,:,idx] = meaned_responses
 
+#save group data
 np.save('%s_task_17network_responses_full' % task, subject_network_responses) 
+#get and save group mean
 group_resps = np.nanmean(subject_network_responses, axis=2)
 np.save('%s_task_17network_responses_group' %task, group_resps) 
