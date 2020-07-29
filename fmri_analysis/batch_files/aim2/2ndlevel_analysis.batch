@@ -21,16 +21,16 @@ scratch_loc=$SCRATCH
 # run singularity, scratch is automatically mounted
 if [ "{group}" == "NONE" ]; then
     singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --rt 
+        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --rt --aim aim2
 
     singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task}
+        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --aim aim2
 else
     singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --rt -group {group}
+        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --rt --aim aim2 --group {group}
 
     singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} -group {group}
+        python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --aim aim2 --group {group}
 fi
 
 

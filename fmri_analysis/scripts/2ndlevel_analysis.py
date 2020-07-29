@@ -39,7 +39,8 @@ parser.add_argument('--rt', action='store_true')
 parser.add_argument('--beta', action='store_true')
 parser.add_argument('--n_perms', default=1000, type=int)
 parser.add_argument('--quiet', '-q', action='store_true')
-parser.add_argument('-group', default='NONE')
+parser.add_argument('--aim', default='NONE', help='Choose from aim1, aim2')
+parser.add_argument('--group', default='NONE')
 
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
@@ -107,6 +108,21 @@ if path.exists(mask_loc) == False or args.rerun:
 
 # In[ ]:
 
+# Set up 2ndlevel Regressors - Added by HMJ 7.29.20
+aim1_2ndlevel_confounds_path = '../aim1_2ndlevel_regressors/aim1_2ndlevel_confounds_matrix.csv'
+full_confounds_df = pd.read_csv(aim1_2ndlevel_confounds_path, index_col='index')
+
+def get_2ndlevel_designMatrix_andContrasts(maps, task):
+    design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept'])
+    contrasts = [1]
+    if args.aim=='aim1':
+        subjects = [m.split('1stlevel/')[-1].split('/')[0] for m in maps]
+        design_matrix = full_confounds_df.loc[subjects, ['age', 'sex', task+'_meanFD']].copy()
+        design_matrix.index.rename('subject_label', inplace=True)
+        design_matrix['intercept'] = 1
+        contrasts = [0, 0, 0, 1]
+    return design_matrix, contrasts
+
 
 rt_flag, beta_flag = get_flags(regress_rt, beta_series)
 for task in tasks:
@@ -127,9 +143,10 @@ for task in tasks:
             if len(maps) <= 1:
                 verboseprint('****** No Maps')
                 continue
-            design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept']) # ADD Age, Sex, RED score? make sure some are of interest and some are nuisance
+            # CHANGED TO HANDLE GROUP COVARIATES
+            design_matrix, curr_contrasts = get_2ndlevel_designMatrix_andContrasts(maps, task)
             second_level_model.fit(maps, design_matrix=design_matrix)
-            contrast_map = second_level_model.compute_contrast()
+            contrast_map = second_level_model.compute_contrast(second_level_contrast=curr_contrasts)
             # save
             contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
             contrast_map.to_filename(contrast_file)
@@ -161,9 +178,10 @@ for task in tasks:
             if len(maps) <= 1:
                 verboseprint('****** No Maps')
                 continue
-            design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept'])
+            # CHANGED TO HANDLE GROUP COVARIATES
+            design_matrix, curr_contrasts = get_2ndlevel_designMatrix_andContrasts(maps, task)
             second_level_model.fit(maps, design_matrix=design_matrix)
-            contrast_map = second_level_model.compute_contrast()
+            contrast_map = second_level_model.compute_contrast(second_level_contrast=curr_contrasts)
             # save
             makedirs(path.join(maps_dir, group), exist_ok=True)
             contrast_file = path.join(maps_dir, group, 'contrast-%s-%s.nii.gz' % (name, group))
