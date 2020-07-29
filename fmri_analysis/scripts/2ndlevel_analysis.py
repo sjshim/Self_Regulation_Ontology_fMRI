@@ -123,6 +123,16 @@ def get_2ndlevel_designMatrix_andContrasts(maps, task):
         contrasts = [0, 0, 0, 1]
     return design_matrix, contrasts
 
+def filter_maps_designMatrix(maps, design_matrix):
+    drop_num = design_matrix.isna().any(axis=1).sum()
+    print('dropping ' + str(drop_num) +' due to missing values in design matrix')
+    design_matrix = design_matrix.dropna()
+    if len(design_matrix)!=len(maps):
+        keep_subs = dm.index.tolist()
+        maps = [m for m in maps if m.split('1stlevel/')[-1].split('/')[0] in keep_subs]
+    assert(len(design_matrix)==len(maps))
+    return maps, design_matrix
+
 
 rt_flag, beta_flag = get_flags(regress_rt, beta_series)
 for task in tasks:
@@ -145,6 +155,7 @@ for task in tasks:
                 continue
             # CHANGED TO HANDLE GROUP COVARIATES
             design_matrix, curr_contrasts = get_2ndlevel_designMatrix_andContrasts(maps, task)
+            maps, design_matrix = filter_maps_designMatrix(maps, design_matrix)
             second_level_model.fit(maps, design_matrix=design_matrix)
             contrast_map = second_level_model.compute_contrast(second_level_contrast=curr_contrasts)
             # save
@@ -180,6 +191,7 @@ for task in tasks:
                 continue
             # CHANGED TO HANDLE GROUP COVARIATES
             design_matrix, curr_contrasts = get_2ndlevel_designMatrix_andContrasts(maps, task)
+            maps, design_matrix = filter_maps_designMatrix(maps, design_matrix)
             second_level_model.fit(maps, design_matrix=design_matrix)
             contrast_map = second_level_model.compute_contrast(second_level_contrast=curr_contrasts)
             # save
