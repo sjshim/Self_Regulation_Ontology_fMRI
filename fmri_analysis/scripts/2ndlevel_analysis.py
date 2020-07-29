@@ -109,7 +109,7 @@ if path.exists(mask_loc) == False or args.rerun:
 # In[ ]:
 
 # Set up 2ndlevel Regressors - Added by HMJ 7.29.20
-aim1_2ndlevel_confounds_path = '../aim1_2ndlevel_regressors/aim1_2ndlevel_confounds_matrix.csv'
+aim1_2ndlevel_confounds_path = "/scripts/aim1_2ndlevel_regressors/aim1_2ndlevel_confounds_matrix.csv"
 full_confounds_df = pd.read_csv(aim1_2ndlevel_confounds_path, index_col='index')
 
 def get_2ndlevel_designMatrix_andContrasts(maps, task):
