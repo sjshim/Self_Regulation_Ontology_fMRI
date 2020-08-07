@@ -114,13 +114,22 @@ full_confounds_df = pd.read_csv(aim1_2ndlevel_confounds_path, index_col='index')
 
 def get_2ndlevel_designMatrix_andContrasts(maps, task):
     design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept'])
-    contrasts = [1]
     if args.aim=='aim1':
         subjects = [m.split('1stlevel/')[-1].split('/')[0] for m in maps]
         design_matrix = full_confounds_df.loc[subjects, ['age', 'sex', task+'_meanFD']].copy()
         design_matrix.index.rename('subject_label', inplace=True)
         design_matrix['intercept'] = 1
-        contrasts = [0, 0, 0, 1]
+    if args.aim=='aim1_noFD':
+        subjects = [m.split('1stlevel/')[-1].split('/')[0] for m in maps]
+        design_matrix = full_confounds_df.loc[subjects, ['age', 'sex'].copy()
+        design_matrix.index.rename('subject_label', inplace=True)
+        design_matrix['intercept'] = 1
+    ncols = design_matrix.shape[1]
+    contrasts = np.zeros(ncols)
+    contrasts[-1] = 1
+    contrasts = [int(i) for i in contrasts]
+    print(contrasts)
+    print(design_matrix.head())
     return design_matrix, contrasts
 
 def filter_maps_designMatrix(maps, design_matrix):
@@ -128,7 +137,7 @@ def filter_maps_designMatrix(maps, design_matrix):
     print('dropping ' + str(drop_num) +' due to missing values in design matrix')
     design_matrix = design_matrix.dropna()
     if len(design_matrix)!=len(maps):
-        keep_subs = dm.index.tolist()
+        keep_subs = design_matrix.index.tolist()
         maps = [m for m in maps if m.split('1stlevel/')[-1].split('/')[0] in keep_subs]
     assert(len(design_matrix)==len(maps))
     return maps, design_matrix
