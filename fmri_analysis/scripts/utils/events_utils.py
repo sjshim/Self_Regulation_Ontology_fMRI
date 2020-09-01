@@ -734,7 +734,7 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                 condition_spec='planning_event',
                 duration='block_duration', 
                 subset="planning==1")
-    #parametric planning event - TOO COLINEAR WITH OTHER PARAMETRIC REGRESSORS
+
     events_df.condition = events_df.condition.replace('PA_without_intermediate', -1)
     events_df.condition = events_df.condition.replace('PA_with_intermediate', 1)
 
@@ -747,7 +747,6 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                 onset_column='movement_onset',
                 subset="trial_id!='feedback'")
     
-    
     #feedback
     get_ev_vars(output_dict, events_df, 
                 condition_spec='feedback', 
@@ -755,7 +754,6 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                 subset="trial_id=='feedback'")
     
     if regress_rt == True:
-#         normalize_rt(events_df)
         get_ev_vars(output_dict, events_df, 
                 condition_spec='response_time', 
                 duration='group_RT', 
@@ -766,37 +764,32 @@ def get_WATT3_EVs(events_df, regress_rt=True):
 
     #trial regressor for task > baseline
     #build up trial regressor
-    counter = 0
-    round_grouping = []
     end_round_idx = events_df.index[events_df.trial_id=='feedback']
-    for i in range(len(events_df.trial_id)):
-        if i in end_round_idx:
-            round_grouping.append(counter)
-            counter+=1
-        else:
-            round_grouping.append(counter)
-    events_df.insert(0, "round_grouping", round_grouping, True)
-    
-    round_start_idx = [0] + [x+1 for x in end_round_idx]
-    
-    round_dur = np.zeros(len(events_df.trial_id))
-    for group_num in range(len(events_df.round_grouping.unique())):
-        for idx in events_df.index[events_df.round_grouping==group_num].values:
-            round_dur[idx] = np.sum(events_df.block_duration[events_df.round_grouping==np.float(group_num)][:-1])
-    events_df.insert(0, "round_duration", round_dur, True)
-    
-    
-    #add full trial length regressor
+    start_round_idx = events_df.index[events_df.planning==1]
+    assert len(end_round_idx)==len(start_round_idx)
+
+    trial_durs = []
+    for start_idx, end_idx in zip(start_round_idx, end_round_idx):
+        # Note, this automatically excludes the feedback row
+        trial_durs.append(
+            events_df.iloc[start_idx:end_idx]\
+            ['block_duration'].cumsum().iloc[-1]
+        )
+    # build up trial_duration column
+    events_df['trial_duration'] = np.nan
+    events_df.loc[events_df.planning==1, 'trial_duration'] = trial_durs
+
+    # add full trial length regressor
     get_ev_vars(output_dict, events_df, 
             condition_spec='trial', 
-            duration='round_duration',
+            duration='trial_duration',
             amplitude=1,
             subset="junk==False and planning==1") 
     
-    #add full trial length parametric regressor
+    # add full trial length parametric regressor
     get_ev_vars(output_dict, events_df, 
             condition_spec='trial_parametric', 
-            duration='round_duration',
+            duration='trial_duration',
             amplitude='condition', 
             subset="junk==False and planning==1",
             demean_amp=True) #NEW DEMEANING 11/12
