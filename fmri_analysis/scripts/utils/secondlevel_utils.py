@@ -2,31 +2,38 @@ from glob import glob
 from nilearn import image
 from nipype.caching import Memory
 from nipype.interfaces import fsl
-import os 
 from os import path, remove
 import shutil
 from utils.utils import get_flags
 
+
 def create_group_mask(fmriprep_dir, threshold=.8, verbose=True):
     if verbose:
         print('Creating Group mask...')
-    #check if there's a session folder 
-    if len(glob(path.join(fmriprep_dir,'sub-*','func','*MNI152NLin2009cAsym*brain_mask.nii.gz'))):
-        brainmasks = glob(path.join(fmriprep_dir,'sub-*',
-                            'func','*MNI152NLin2009cAsym*brain_mask.nii.gz'))
+    # check if there's a session folder
+    if len(glob(path.join(fmriprep_dir, 'sub-*', 'func',
+                          '*MNI152NLin2009cAsym*brain_mask.nii.gz'))):
+        brainmasks = glob(path.join(fmriprep_dir,
+                                    'sub-*',
+                                    'func',
+                                    '*MNI152NLin2009cAsym*brain_mask.nii.gz'))
     else:
-        brainmasks = glob(path.join(fmriprep_dir,'sub-*', '*',
-                            'func','*MNI152NLin2009cAsym*brain_mask.nii.gz'))
-                      
+        brainmasks = glob(path.join(fmriprep_dir, 'sub-*', '*', 'func',
+                                    '*MNI152NLin2009cAsym*brain_mask.nii.gz'))
+
     mean_mask = image.mean_img(brainmasks)
     group_mask = image.math_img("a>=%s" % str(threshold), a=mean_mask)
     return group_mask
     if verbose:
         print('Finished creating group mask')
 
+
 def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
     rt_flag, beta_flag = get_flags(regress_rt, beta)
-    maps_dir = path.join(second_level_dir, task, 'secondlevel_RT-%s_beta-%s_N-*_maps' % (rt_flag, beta_flag))
+    maps_dir = path.join(
+        second_level_dir, task,
+        'secondlevel_RT-%s_beta-%s_N-*_maps' % (rt_flag, beta_flag)
+        )
     maps_dirs = glob(maps_dir)
     if len(maps_dirs) > 1:
         maps_dir = sorted(maps_dirs, key=lambda x: x.split('_')[-2])[-1]
@@ -38,6 +45,7 @@ def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
         name = f.split(path.sep)[-1][9:].rstrip('.nii.gz')
         maps[name] = image.load_img(f)
     return maps
+
 
 def randomise(maps, output_loc, mask_loc, n_perms=500, fwhm=6, group='NONE'):
     contrast_name = maps[0][maps[0].index('contrast')+9:].rstrip('.nii.gz')
@@ -61,11 +69,19 @@ def randomise(maps, output_loc, mask_loc, n_perms=500, fwhm=6, group='NONE'):
         num_perm=n_perms)
     # save results
     if group == 'NONE':
-        tfile_loc = path.join(output_loc, "contrast-%s_raw_tfile.nii.gz" % contrast_name)
-        tfile_corrected_loc = path.join(output_loc, "contrast-%s_corrected_tfile.nii.gz" % contrast_name)
+        tfile_loc = path.join(output_loc,
+                              "contrast-%s_raw_tfile.nii.gz" % contrast_name)
+        tfile_corrected_loc = path.join(
+            output_loc,
+            "contrast-%s_corrected_tfile.nii.gz" % contrast_name
+            )
     else:
-        tfile_loc = path.join(output_loc, "contrast-%s-%s_raw_tfile.nii.gz" % (contrast_name, group))
-        tfile_corrected_loc = path.join(output_loc, "contrast-%s-%s_corrected_tfile.nii.gz" % (contrast_name, group))
+        tfile_loc = path.join(
+            output_loc,
+            "contrast-%s-%s_raw_tfile.nii.gz" % (contrast_name, group))
+        tfile_corrected_loc = path.join(
+            output_loc,
+            "contrast-%s-%s_corrected_tfile.nii.gz" % (contrast_name, group))
     raw_tfile = randomise_results.outputs.tstat_files[0]
     corrected_tfile = randomise_results.outputs.t_corrected_p_files[0]
     shutil.move(raw_tfile, tfile_loc)
