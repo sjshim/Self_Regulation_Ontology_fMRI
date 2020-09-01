@@ -6,7 +6,6 @@ import argparse
 from os import makedirs, path
 import pandas as pd
 import numpy as np
-import pickle
 import sys
 
 from nistats.second_level_model import SecondLevelModel
