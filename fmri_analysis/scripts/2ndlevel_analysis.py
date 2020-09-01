@@ -82,7 +82,8 @@ if (not path.exists(mask_loc)) or args.rerun:
 # In[ ]:
 
 
-aim1_2ndlevel_confounds_path = "/scripts/aim1_2ndlevel_regressors/aim1_2ndlevel_confounds_matrix.csv"
+aim1_2ndlevel_confounds_path = "/scripts/aim1_2ndlevel_regressors/" +\
+                               "aim1_2ndlevel_confounds_matrix.csv"
 full_confounds_df = pd.read_csv(aim1_2ndlevel_confounds_path,
                                 index_col='index')
 
@@ -100,7 +101,6 @@ def fit_and_compute_contrast(maps, task, second_level_model):
 
 def get_group_DM_and_contrasts(maps, task):
     design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept'])
-    contrasts = [1]
     if args.aim == 'aim1':
         subjects = [m.split('1stlevel/')[-1].split('/')[0] for m in maps]
         design_matrix = full_confounds_df.loc[subjects,
@@ -108,7 +108,17 @@ def get_group_DM_and_contrasts(maps, task):
                                               ].copy()
         design_matrix.index.rename('subject_label', inplace=True)
         design_matrix['intercept'] = 1
-        contrasts = [0, 0, 0, 1]
+    if args.aim == 'aim1_noFD':
+        subjects = [m.split('1stlevel/')[-1].split('/')[0] for m in maps]
+        design_matrix = full_confounds_df.loc[subjects, ['age', 'sex'].copy()
+        design_matrix.index.rename('subject_label', inplace=True)
+        design_matrix['intercept'] = 1
+    ncols = design_matrix.shape[1]
+    contrasts = np.zeros(ncols)
+    contrasts[-1] = 1
+    contrasts = [int(i) for i in contrasts]
+    print(contrasts)
+    print(design_matrix.head())
     return design_matrix, contrasts
 
 
