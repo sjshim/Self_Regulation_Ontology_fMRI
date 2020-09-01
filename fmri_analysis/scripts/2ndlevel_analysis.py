@@ -8,6 +8,7 @@ import argparse
 from glob import glob
 from os import makedirs, path
 import pandas as pd
+import numpy as np
 import pickle
 import sys
 
@@ -121,7 +122,7 @@ def get_2ndlevel_designMatrix_andContrasts(maps, task):
         design_matrix['intercept'] = 1
     if args.aim=='aim1_noFD':
         subjects = [m.split('1stlevel/')[-1].split('/')[0] for m in maps]
-        design_matrix = full_confounds_df.loc[subjects, ['age', 'sex'].copy()
+        design_matrix = full_confounds_df.loc[subjects, ['age', 'sex']].copy()
         design_matrix.index.rename('subject_label', inplace=True)
         design_matrix['intercept'] = 1
     ncols = design_matrix.shape[1]
