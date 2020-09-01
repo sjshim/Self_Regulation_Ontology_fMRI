@@ -216,7 +216,7 @@ def process_confounds(confounds_file, a_comp_cor=True):
     scrubbing for TASK
     remove TRs where FD>.5, stdDVARS (that relates to DVARS>.5)
     regressors to use
-    ['X','Y','Z','RotX','RotY','RotY','<-firsttemporalderivative','stdDVARs','FD','respiratory','physio','aCompCor0-5']
+    ['X','Y','Z','RotX','RotY','RotY','<-firsttemporalderivative','stdDVARs','FD']
     junk regressor: errors, ommissions, maybe very fast RTs (less than 50 ms)
     """
     confounds_df = pd.read_csv(confounds_file, sep = '\t', 
