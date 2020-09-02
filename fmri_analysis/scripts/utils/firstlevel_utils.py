@@ -89,13 +89,15 @@ def make_first_level_obj(subject_id, task,
                          TR,
                          regress_rt=False,
                          beta=False,
-                         a_comp_cor=True):
+                         a_comp_cor=True,
+                         use_aroma=False):
     """
     retrieves and passes func_file, mask_file, events, confounds, design,
     and contrasts to FirstLevel class and returns subjinfo object,
     prints error if no func or mask file
     """
-    func_file, mask_file = get_func_file(fmriprep_dir, subject_id, task)
+    func_file, mask_file = get_func_file(fmriprep_dir, subject_id, task,
+                                         use_aroma=use_aroma)
     if func_file is None or mask_file is None:
         print("Missing MRI files for %s: %s" % (subject_id, task))
         return None
@@ -104,7 +106,8 @@ def make_first_level_obj(subject_id, task,
         print("Missing event files for %s: %s" % (subject_id, task))
         return None
     confounds = get_confounds(fmriprep_dir, subject_id, task,
-                              a_comp_cor=a_comp_cor)
+                              a_comp_cor=a_comp_cor,
+                              use_aroma=use_aroma)
     design = create_design(events, confounds, task, TR, subject_id,
                            beta=beta, regress_rt=regress_rt)
     contrasts = get_contrasts(task, regress_rt)
@@ -239,7 +242,7 @@ class FirstLevel():
 # ********************************************************
 
 
-def process_confounds(confounds_file, a_comp_cor=True):
+def process_confounds(confounds_file, a_comp_cor=True, use_aroma=False):
     """
     scrubbing for TASK
     remove TRs where FD>.5, stdDVARS (that relates to DVARS>.5)
@@ -258,17 +261,23 @@ def process_confounds(confounds_file, a_comp_cor=True):
         excessive_movement_regressors[TR, i] = 1
     excessive_movement_regressor_names = ['rejectTR_%d' % TR for TR in
                                           excessive_movement_TRs]
-    # get movement regressors
-    movement_regressor_names = ['trans_x', 'trans_y', 'trans_z',
+    if use_aroma:
+        base_regressor_df = confounds_df.filter(regex='csf|white_matter')
+        base_regressor_names = list(base_regressor_df.columns)
+        base_regressors = base_regressor_df.values
+    else:
+        # realignment regressors
+        base_regressor_names = ['trans_x', 'trans_y', 'trans_z',
                                 'rot_x', 'rot_y', 'rot_z']
-    movement_regressors = confounds_df.loc[:, movement_regressor_names]
-    movement_regressor_names += [i+'td' for i in movement_regressor_names]
-    movement_regressors = np.hstack((movement_regressors,
-                                     np.gradient(movement_regressors, axis=0)))
-    # add square
-    movement_regressor_names += [i+'_sq' for i in movement_regressor_names]
-    movement_regressors = np.hstack((movement_regressors,
-                                     movement_regressors**2))
+        base_regressors = confounds_df.loc[:, base_regressor_names]
+        # temporal derivative
+        base_regressor_names += [i+'td' for i in base_regressor_names]
+        base_regressors = np.hstack((base_regressors,
+                                    np.gradient(base_regressors, axis=0)))
+        # add square
+        base_regressor_names += [i+'_sq' for i in base_regressor_names]
+        base_regressors = np.hstack((base_regressors,
+                                    base_regressors**2))
 
     # add additional relevant regressors
     add_regressor_names = ['framewise_displacement']
@@ -276,11 +285,11 @@ def process_confounds(confounds_file, a_comp_cor=True):
         add_regressor_names += [i for i in confounds_df.columns if
                                 'a_comp_cor' in i][:8]
     additional_regressors = confounds_df.loc[:, add_regressor_names].values
-    regressors = np.hstack((movement_regressors,
+    regressors = np.hstack((base_regressors,
                             additional_regressors,
                             excessive_movement_regressors))
     # concatenate regressor names
-    regressor_names = movement_regressor_names +\
+    regressor_names = base_regressor_names +\
         add_regressor_names +\
         excessive_movement_regressor_names
     return regressors, regressor_names
@@ -295,12 +304,17 @@ def process_physio(cardiac_file, resp_file):
 # ********************************************************
 
 
-def get_func_file(fmriprep_dir, subject_id, task):
+def get_func_file(fmriprep_dir, subject_id, task, use_aroma=False):
     """
     gets the preproc func and mask files files from fmriprep dir, and returns
     """
     # strip "sub" from beginning of subject_id if provided
     subject_id = subject_id.replace('sub-', '')
+
+    if use_aroma:
+        func_regex = '*%s*MNI*smoothAROMAnonaggr_bold.nii.gz' % task
+    else:
+        func_regex = '*%s*MNI*preproc_bold.nii.gz' % task
 
     # check if there's a session folder
     if os.path.exists(path.join(fmriprep_dir,
@@ -310,7 +324,7 @@ def get_func_file(fmriprep_dir, subject_id, task):
         func_file = glob(path.join(fmriprep_dir,
                                    'sub-%s' % subject_id,
                                    'func',
-                                   '*%s*MNI*preproc_bold.nii.gz' % task))
+                                   func_regex))
         mask_file = glob(path.join(fmriprep_dir,
                                    'sub-%s' % subject_id,
                                    'func',
@@ -320,7 +334,7 @@ def get_func_file(fmriprep_dir, subject_id, task):
                                    'sub-%s' % subject_id,
                                    '*',
                                    'func',
-                                   '*%s*MNI*preproc_bold.nii.gz' % task))
+                                   func_regex))
         mask_file = glob(path.join(fmriprep_dir,
                                    'sub-%s' % subject_id,
                                    '*', 'func',
@@ -333,7 +347,7 @@ def get_func_file(fmriprep_dir, subject_id, task):
     return func_file[0], mask_file[0]
 
 
-def get_confounds(fmriprep_dir, subject_id, task, a_comp_cor=True):
+def get_confounds(fmriprep_dir, subject_id, task, **process_kwargs):
     # strip "sub" from beginning of subject_id if provided
     subject_id = subject_id.replace('sub-', '')
 
@@ -361,7 +375,7 @@ def get_confounds(fmriprep_dir, subject_id, task, a_comp_cor=True):
                               )[0]
 
     regressors, regressor_names = process_confounds(confounds_file,
-                                                    a_comp_cor=a_comp_cor)
+                                                    **process_kwargs)
     confounds = pd.DataFrame(regressors, columns=regressor_names)
     return confounds
 

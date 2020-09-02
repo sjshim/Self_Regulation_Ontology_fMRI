@@ -32,6 +32,7 @@ parser.add_argument('--overwrite', action='store_true')
 parser.add_argument('--quiet', '-q', action='store_true')
 parser.add_argument('--design_matrix_only', '-dm', action='store_true')
 parser.add_argument('--a_comp_cor', action='store_true')
+parser.add_argument('--use_aroma', action='store_true')
 
 if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
     args = parser.parse_args()
@@ -45,6 +46,7 @@ else:
 
     args.rt = True
     args.a_comp_cor = True
+    args.use_aroma = True
 
     args.n_procs = 1
     args.derivatives_dir = '/data/derivatives/'
@@ -105,6 +107,7 @@ n_procs = args.n_procs
 # TR of functional images
 TR = .68
 a_comp_cor = args.a_comp_cor
+use_aroma = args.use_aroma
 
 # In[5]:
 
@@ -129,7 +132,8 @@ for subject_id in subjects:
                 subjinfo = make_first_level_obj(subject_id, task, fmriprep_dir,
                                                 data_dir, first_level_dir, TR,
                                                 regress_rt=regress_rt,
-                                                a_comp_cor=a_comp_cor)
+                                                a_comp_cor=a_comp_cor,
+                                                use_aroma=use_aroma)
             if subjinfo is not None:
                 to_run.append(subjinfo)
 
