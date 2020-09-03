@@ -20,8 +20,8 @@ scripts_loc=../../scripts
 scratch_loc=$SCRATCH
 # run singularity, scratch is automatically mounted
 singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --rt --aim aim1_noFD
+    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --rt
 
 singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --aim aim1_noFD
+    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task}
 
