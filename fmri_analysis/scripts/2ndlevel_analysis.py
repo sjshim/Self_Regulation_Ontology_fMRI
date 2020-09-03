@@ -150,7 +150,6 @@ for task in tasks:
 
     # run through each contrast for all participants
     if group == 'NONE':
-        verboseprint(task_contrasts)
         for name, contrast in task_contrasts:
             second_level_model = SecondLevelModel(
                 mask=mask_loc,
