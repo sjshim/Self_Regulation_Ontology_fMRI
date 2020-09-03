@@ -75,7 +75,7 @@ group = args.group
 mask_loc = path.join(second_level_dir,
                      'group_mask_thresh-%s.nii.gz' % str(args.mask_thresh))
 if (not path.exists(mask_loc)) or args.rerun:
-    verboseprint('Making group mask')
+    verboseprint('Making group mask at %s' % mask_loc)
     group_mask = create_group_mask(fmriprep_dir, args.mask_thresh)
     makedirs(path.dirname(mask_loc), exist_ok=True)
     group_mask.to_filename(mask_loc)
@@ -150,6 +150,7 @@ for task in tasks:
 
     # run through each contrast for all participants
     if group == 'NONE':
+        verboseprint(task_contrasts)
         for name, contrast in task_contrasts:
             second_level_model = SecondLevelModel(
                 mask=mask_loc,
