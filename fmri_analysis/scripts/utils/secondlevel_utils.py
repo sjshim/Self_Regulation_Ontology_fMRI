@@ -1,10 +1,23 @@
+import shutil
+import nibabel as nb
+import numpy as np
 from glob import glob
+from os import path, remove
 from nilearn import image
 from nipype.caching import Memory
 from nipype.interfaces import fsl
-from os import path, remove
-import shutil
+
 from utils.utils import get_flags
+
+
+def mean_masks(masks):
+    mask = nb.load(masks[0])
+    hdr, aff = mask.header, mask.affine
+    data = np.zeros(mask.shape)
+    for mask in masks:
+        data += nb.load(mask).get_data()
+    data /= len(masks)
+    return nb.Nifti1Image(data, aff, hdr)
 
 
 def create_group_mask(fmriprep_dir, threshold=.8, verbose=True):
@@ -25,7 +38,7 @@ def create_group_mask(fmriprep_dir, threshold=.8, verbose=True):
         print('threshold info:')
         print(threshold)
         print(type(threshold))
-    mean_mask = image.mean_img(brainmasks)
+    mean_mask = mean_masks(brainmasks)
     group_mask = image.math_img("a>=%s" % str(threshold), a=mean_mask)
     return group_mask
     if verbose:
