@@ -22,6 +22,6 @@ scratch_loc=$SCRATCH
 singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
     python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task} --rt
 
-# singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
-#     python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task}
+singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+    python /scripts/2ndlevel_analysis.py -derivatives_dir ${derivatives_loc} --tasks {task}
 
