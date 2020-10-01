@@ -362,7 +362,7 @@ def get_confounds(fmriprep_dir, subject_id, task, **process_kwargs):
         confounds_file = glob(path.join(fmriprep_dir,
                                         'sub-%s' % subject_id,
                                         'func',
-                                        '*%s*confounds_regressors.tsv' % task
+                                        '*%s*confounds_timeseries.tsv' % task
                                         )
                               )[0]
     else:
@@ -370,7 +370,7 @@ def get_confounds(fmriprep_dir, subject_id, task, **process_kwargs):
                                         'sub-%s' % subject_id,
                                         '*',
                                         'func',
-                                        '*%s*confounds_regressors.tsv' % task
+                                        '*%s*confounds_timeseries.tsv' % task
                                         )
                               )[0]
 
