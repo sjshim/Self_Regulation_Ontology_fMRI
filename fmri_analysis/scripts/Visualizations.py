@@ -183,7 +183,7 @@ if run_second_level:
             corrected_t_maps = [mapi for mapi in contrast_maps if 'corrected_tfile' in mapi] 
             RT_flag = 'RT-True' in contrast_dir
             curr_title = task+'_RT-'+str(RT_flag)
-            
+
             f_beta = plot_task_maps(beta_maps, curr_title)
             f_raw_t = plot_task_maps(t_maps, curr_title)
             f_corr_t = plot_task_maps(corrected_t_maps, curr_title)
@@ -194,3 +194,4 @@ if run_second_level:
                 f_beta.savefig(output_raw_t)
                 output_corr_t = path.join(out_dir, task+'_corrected_tfile_plots.pdf')
                 f_beta.savefig(output_corr_t)  
+
