@@ -101,6 +101,7 @@ def plot_design_heatmap(subjinfo):
     subset = subjinfo.design.loc[:, subjinfo.design.columns[:X_loc]]
     plt.figure(figsize=(14,14))
     sns.heatmap(subset.corr(), vmin = -1, vmax = 1, square=True, annot=True, annot_kws={'fontsize': 10}, center=0, cmap=sns.diverging_palette(240, 10, as_cmap=True))        
+
 def plot_average_maps(subjects, contrast_keys=None, **kwargs):
     if contrast_keys is None:
         map_keys = subjects[0].maps.keys()
