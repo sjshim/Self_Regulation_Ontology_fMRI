@@ -189,14 +189,14 @@ if run_second_level:
             f_raw_t_wThresh = plot_task_maps(t_maps, curr_title)
             f_corr_t = plot_task_maps(corrected_t_maps, curr_title, threshold=0)
             if save:
-                output_beta = path.join(out_dir, task+'_plots.pdf')
+                output_beta = path.join(out_dir, task+'_beta_plots.pdf')
                 f_beta.savefig(output_beta)
 
                 output_raw_t = path.join(out_dir, task+'_raw_tfile_plots.pdf')
                 f_raw_t.savefig(output_raw_t)
 
                 output_raw_t_wThresh = path.join(out_dir, task+'_raw_tfile_wThresh_plots.pdf')
-                f_raw_t_wThresh.savefig(output_raw_t)
-                
-                output_corr_t = path.join(out_dir, task+'_corrected_tfile_plots.pdf')
+                f_raw_t_wThresh.savefig(output_raw_t_wThresh)
+
+                output_corr_t = path.join(out_dir, task+'_FWE_corrected_tfile_plots.pdf')
                 f_corr_t.savefig(output_corr_t)
