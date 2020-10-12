@@ -75,8 +75,8 @@ def randomise(maps, output_loc, mask_loc, n_perms=500, fwhm=6, group='NONE'):
     concat_images.to_filename(concat_loc)
     # run randomise
     mem = Memory(base_dir=output_loc)
-    randomise = mem.cache(fsl.Randomise)
-    randomise_results = randomise(
+    fsl_randomise = mem.cache(fsl.Randomise)
+    randomise_results = fsl_randomise(
         in_file=concat_loc,
         mask=mask_loc,
         one_sample_group_mean=True,

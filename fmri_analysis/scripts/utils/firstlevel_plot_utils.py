@@ -53,7 +53,7 @@ def plot_map(contrast_map, title=None, glass_kwargs=None, stat_kwargs=None):
     plt.subplots_adjust(hspace=0)
     return f
 
-def plot_task_maps(contrast_maps, title, stat_kwargs=None):
+def plot_task_maps(contrast_maps, title, threshold=3, stat_kwargs=None):
     print(title, len(contrast_maps))
     if stat_kwargs is None:
         stat_kwargs = {}
@@ -63,7 +63,7 @@ def plot_task_maps(contrast_maps, title, stat_kwargs=None):
     
     n = np.arange(-40, 67, 15)
     # plot indepth stats brain
-    stat_args = {'threshold': 3,
+    stat_args = {'threshold': threshold,
                  'cut_coords': n,
                  'black_bg': True}
     stat_args.update(**stat_kwargs)
@@ -102,7 +102,7 @@ def plot_design_heatmap(subjinfo):
     plt.figure(figsize=(14,14))
     sns.heatmap(subset.corr(), vmin = -1, vmax = 1, square=True, annot=True, annot_kws={'fontsize': 10}, center=0, cmap=sns.diverging_palette(240, 10, as_cmap=True))        
 
-def plot_average_maps(subjects, contrast_keys=None, **kwargs):
+def plot_average_maps(subjects, contrast_keys=None **kwargs):
     if contrast_keys is None:
         map_keys = subjects[0].maps.keys()
     else:
@@ -116,7 +116,7 @@ def plot_average_maps(subjects, contrast_keys=None, **kwargs):
         averages[key] = image.mean_img(maps)
     # plot
     for name, average in averages.items():
-        default_args = {'threshold': norm.isf(0.001), 
+        default_args = {'threshold': norm.isf(0.001),
                         'display_mode': 'ortho'}
         default_args.update(**kwargs)
         plotting.plot_glass_brain(average, colorbar=True, 
