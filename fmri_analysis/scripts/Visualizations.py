@@ -12,6 +12,7 @@ import nibabel as nib
 import numpy as np
 from nilearn import plotting
 from nistats.thresholding import map_threshold
+from nilearn.image import math_img
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import sys
@@ -126,8 +127,6 @@ if plot_designs:
                 plt.gcf()
                 plt.savefig(os.path.join(fig_dir, '%s_%s__design_timeseries_trunc' % (sub, task)))
                 plt.close()                
-
-
         
                 plot_design_heatmap(subjinfo)
                 plt.gcf()
@@ -175,6 +174,20 @@ def transform_p_val_map(map_path):
     return nib.Nifti1Image(neg_log_pvals, img.affine, img.header)
 
 
+def make_mask(img_path):
+    p_img = nib.load(img_path)
+    p_data = p_img.get_fdata()
+    p_data[p_data==0.0] = np.nan
+    return math_img('img < .05',
+                    img=nib.Nifti1Image(p_data, p_img.affine, p_img.header))
+
+
+def mask_img(img_path, mask):
+    img = nib.load(img_path)
+    data = img.get_fdata()
+    data[~mask.get_fdata().astype(bool)] = np.nan
+    return nib.Nifti1Image(data, img.affine, img.header)
+
 if run_second_level:
     print('running!')
     for task in tasks:
@@ -199,16 +212,31 @@ if run_second_level:
 
             transformed_p_maps = [transform_p_val_map(path) for path in corrected_t_maps]
             contrast_titles = [get_contrast_title(path) for path in corrected_t_maps]
-            f_transform_p = plot_task_maps(transformed_p_maps, curr_title, threshold=-np.log10(.05), contrast_titles=contrast_titles)
+            f_transformed_p = plot_task_maps(transformed_p_maps, curr_title, threshold=-np.log10(.05), contrast_titles=contrast_titles)
+            
+            # mask and plot
+            masks = [make_mask(path) for path in corrected_t_maps]
+            masked_beta_images = [mask_img(path, mask) for path, mask in zip(beta_maps, masks)]
+            masked_t_images = [mask_img(path, mask) for path, mask in zip(t_maps, masks)]
+            
+            f_beta_wMask = plot_task_maps(masked_beta_images, curr_title, threshold=0, contrast_titles=contrast_titles)
+            f_raw_t_wMask = plot_task_maps(masked_t_images, curr_title, threshold=0, contrast_titles=contrast_titles)
+            
             if save:
                 output_beta = path.join(out_dir, task+'_beta_plots.pdf')
                 f_beta.savefig(output_beta)
 
+                output_beta_mask = path.join(out_dir, task+'_beta_wMask_plots.pdf')
+                f_beta_wMask.savefig(output_beta_mask)
+                
                 output_raw_t = path.join(out_dir, task+'_raw_tfile_plots.pdf')
                 f_raw_t.savefig(output_raw_t)
 
                 output_raw_t_wThresh = path.join(out_dir, task+'_raw_tfile_wThresh_plots.pdf')
                 f_raw_t_wThresh.savefig(output_raw_t_wThresh)
+                
+                output_raw_t_wMask = path.join(out_dir, task+'_raw_tfile_wMask_plots.pdf')
+                f_raw_t_wMask.savefig(output_raw_t_wMask)
 
                 output_corr_p = path.join(out_dir, task+'_FWE_corrected_negLog10Transformed_pfile_wThresh_plots.pdf')
-                f_transform_p.savefig(output_corr_p)
+                f_transformed_p.savefig(output_corr_p)
