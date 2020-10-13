@@ -8,6 +8,8 @@ from glob import glob
 import os
 from os import makedirs, path
 import pickle
+import nibabel as nib
+import numpy as np
 from nilearn import plotting
 from nistats.thresholding import map_threshold
 import matplotlib.pyplot as plt
@@ -15,9 +17,10 @@ from matplotlib import rcParams
 import sys
 
 from utils.firstlevel_utils import get_first_level_objs
-from utils.firstlevel_plot_utils import (plot_design, plot_design_timeseries, 
+from utils.firstlevel_plot_utils import (plot_design, plot_design_timeseries,
                                          plot_design_heatmap, plot_contrast,
-                                        plot_map, plot_task_maps)
+                                         plot_map, plot_task_maps,
+                                         get_contrast_title)
 
 
 # In[ ]:
@@ -165,6 +168,12 @@ if run_first_level:
 #             if save:
 #                 output = map_file.replace('.nii.gz', '_plots.pdf')
 #                 f.savefig(output)
+def transform_p_val_map(map_path):
+    img = nib.load(map_path)
+    p_vals = img.get_fdata()
+    neg_log_pvals = -np.log10(p_vals)
+    return nib.Nifti1Image(neg_log_pvals, img.affine, img.header)
+
 
 if run_second_level:
     print('running!')
@@ -187,7 +196,10 @@ if run_second_level:
             f_beta = plot_task_maps(beta_maps, curr_title)
             f_raw_t = plot_task_maps(t_maps, curr_title, threshold=0)
             f_raw_t_wThresh = plot_task_maps(t_maps, curr_title)
-            f_corr_t = plot_task_maps(corrected_t_maps, curr_title, threshold=0)
+
+            transformed_p_maps = [transform_p_val_map(path) for path in corrected_t_maps]
+            contrast_titles = [get_contrast_title(path) for path in corrected_t_maps]
+            f_transform_p = plot_task_maps(transformed_p_maps, curr_title, threshold=-np.log10(.05), contrast_titles=contrast_titles)
             if save:
                 output_beta = path.join(out_dir, task+'_beta_plots.pdf')
                 f_beta.savefig(output_beta)
@@ -198,5 +210,5 @@ if run_second_level:
                 output_raw_t_wThresh = path.join(out_dir, task+'_raw_tfile_wThresh_plots.pdf')
                 f_raw_t_wThresh.savefig(output_raw_t_wThresh)
 
-                output_corr_t = path.join(out_dir, task+'_FWE_corrected_tfile_plots.pdf')
-                f_corr_t.savefig(output_corr_t)
+                output_corr_p = path.join(out_dir, task+'_FWE_corrected_negLog10Transformed_pfile_wThresh_plots.pdf')
+                f_transform_p.savefig(output_corr_p)

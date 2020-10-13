@@ -53,29 +53,6 @@ def plot_map(contrast_map, title=None, glass_kwargs=None, stat_kwargs=None):
     plt.subplots_adjust(hspace=0)
     return f
 
-def plot_task_maps(contrast_maps, title, threshold=3, stat_kwargs=None):
-    print(title, len(contrast_maps))
-    if stat_kwargs is None:
-        stat_kwargs = {}
-    # set up plot
-    f, axes = plt.subplots(len(contrast_maps), 1, figsize=(20,len(contrast_maps)*5), squeeze=False)
-    plt.suptitle(title, fontsize=36)
-    
-    n = np.arange(-40, 67, 15)
-    # plot indepth stats brain
-    stat_args = {'threshold': threshold,
-                 'cut_coords': n,
-                 'black_bg': True}
-    stat_args.update(**stat_kwargs)
-    
-    #plot a contrast per row
-    for idx, contrast_map in enumerate(contrast_maps):
-        title = contrast_map[contrast_map.index('contrast')+9:].rstrip('.nii.gz') #get contrast name
-        print(title)
-        plotting.plot_stat_map(contrast_map, title=title, display_mode='z', axes=axes[idx][0], **stat_args)
-    plt.subplots_adjust(hspace=0)
-    return f
-
 def normalize(array):
     normed = (array-np.min(array)) / (np.max(array)-np.min(array))
     return ((normed*2) - 1)
@@ -122,3 +99,36 @@ def plot_average_maps(subjects, contrast_keys=None, **kwargs):
         plotting.plot_glass_brain(average, colorbar=True, 
                               title=name,
                               plot_abs=False, **default_args)
+
+
+# SECOND LEVELS PLOTTING FUNCTIONS
+
+def get_contrast_title(contrast_map):
+    return contrast_map[contrast_map.index('contrast')+9:].replace('.nii.gz', '').replace('_corrected', '').replace('_raw', '').replace('_tfile', '')
+    
+
+def plot_task_maps(contrast_maps, title, threshold=3, contrast_titles=None, stat_kwargs=None):
+    print(title, ': %s contrasts' % len(contrast_maps))
+    if stat_kwargs is None:
+        stat_kwargs = {}
+
+    contrast_titles = contrast_titles if contrast_titles else [get_contrast_title(path) for path in contrast_maps]
+
+    # set up plot
+    f, axes = plt.subplots(len(contrast_maps), 1, figsize=(20,len(contrast_maps)*5), squeeze=False)
+    plt.suptitle(title, fontsize=36)
+
+    n = np.arange(-40, 67, 15)
+    # plot indepth stats brain
+    stat_args = {'threshold': threshold,
+                 'cut_coords': n,
+                 'black_bg': True}
+    stat_args.update(**stat_kwargs)
+
+    # plot a contrast per row
+    for idx, contrast_map in enumerate(contrast_maps):
+        title = contrast_titles[idx]
+        print(title)
+        plotting.plot_stat_map(contrast_map, title=title, display_mode='z', axes=axes[idx][0], **stat_args)
+    plt.subplots_adjust(hspace=0)
+    return f
