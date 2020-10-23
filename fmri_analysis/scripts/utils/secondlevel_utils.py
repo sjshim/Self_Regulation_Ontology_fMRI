@@ -80,7 +80,8 @@ def randomise(maps, output_loc, mask_loc, n_perms=500, fwhm=6, group='NONE'):
         in_file=concat_loc,
         mask=mask_loc,
         one_sample_group_mean=True,
-        tfce=True,
+        tfce=False,
+        c_thresh=3.1,
         vox_p_values=True,
         var_smooth=10,
         num_perm=n_perms)

@@ -241,7 +241,7 @@ class FirstLevel():
 # Process Functions
 # ********************************************************
 
-
+# TODO - change np.gradient (uses forwards and backwards changes) to np.diff (uses only backwards)
 def process_confounds(confounds_file, a_comp_cor=True, use_aroma=False):
     """
     scrubbing for TASK
@@ -252,7 +252,8 @@ def process_confounds(confounds_file, a_comp_cor=True, use_aroma=False):
     """
     confounds_df = pd.read_csv(confounds_file, sep='\t',
                                na_values=['n/a']).fillna(0)
-    excessive_movement = (confounds_df.framewise_displacement > .5) & \
+    # excessive movement regressors
+    excessive_movement = (confounds_df.framewise_displacement > .5) | \
                          (confounds_df.std_dvars > 1.2)
     excessive_movement_TRs = excessive_movement[excessive_movement].index
     excessive_movement_regressors = np.zeros([confounds_df.shape[0],
@@ -261,26 +262,20 @@ def process_confounds(confounds_file, a_comp_cor=True, use_aroma=False):
         excessive_movement_regressors[TR, i] = 1
     excessive_movement_regressor_names = ['rejectTR_%d' % TR for TR in
                                           excessive_movement_TRs]
+
+    # base regressors - csf/white matter if aroma, trans/rot otherwise
     if use_aroma:
-        base_regressor_df = confounds_df.filter(regex='csf|white_matter')
+        base_regressor_df = confounds_df.filter(regex='csf|white_matter').copy()
+        del base_regressor_df['csf_wm']
         base_regressor_names = list(base_regressor_df.columns)
         base_regressors = base_regressor_df.values
     else:
-        # realignment regressors
-        base_regressor_names = ['trans_x', 'trans_y', 'trans_z',
-                                'rot_x', 'rot_y', 'rot_z']
-        base_regressors = confounds_df.loc[:, base_regressor_names]
-        # temporal derivative
-        base_regressor_names += [i+'td' for i in base_regressor_names]
-        base_regressors = np.hstack((base_regressors,
-                                    np.gradient(base_regressors, axis=0)))
-        # add square
-        base_regressor_names += [i+'_sq' for i in base_regressor_names]
-        base_regressors = np.hstack((base_regressors,
-                                    base_regressors**2))
+        base_regressor_df = confounds_df.filter(regex='trans|rot').copy()
+        base_regressor_names = list(base_regressor_df.columns)
+        base_regressors = base_regressor_df.values
 
     # add additional relevant regressors
-    add_regressor_names = ['framewise_displacement']
+    add_regressor_names = []  # ['framewise_displacement']
     if a_comp_cor:
         add_regressor_names += [i for i in confounds_df.columns if
                                 'a_comp_cor' in i][:8]
