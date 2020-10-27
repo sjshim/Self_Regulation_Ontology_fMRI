@@ -78,6 +78,7 @@ def randomise(maps, output_loc, mask_loc, n_perms=500, fwhm=6, group='NONE'):
     fsl_randomise = mem.cache(fsl.Randomise)
     randomise_results = fsl_randomise(
         in_file=concat_loc,
+        demean=False,
         mask=mask_loc,
         one_sample_group_mean=True,
         tfce=False,
