@@ -170,6 +170,8 @@ if run_first_level:
 def transform_p_val_map(map_path):
     img = nib.load(map_path)
     p_vals = img.get_fdata()
+    p_vals[p_vals==0.0] = np.nan
+    p_vals = 1 - p_vals
     neg_log_pvals = -np.log10(p_vals)
     return nib.Nifti1Image(neg_log_pvals, img.affine, img.header)
 
@@ -178,6 +180,7 @@ def make_mask(img_path):
     p_img = nib.load(img_path)
     p_data = p_img.get_fdata()
     p_data[p_data==0.0] = np.nan
+    p_data = 1 - p_data
     return math_img('img < .05',
                     img=nib.Nifti1Image(p_data, p_img.affine, p_img.header))
 
