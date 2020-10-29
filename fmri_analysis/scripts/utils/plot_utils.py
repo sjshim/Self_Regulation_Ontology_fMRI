@@ -53,36 +53,20 @@ def plot_map(contrast_map, title=None, glass_kwargs=None, stat_kwargs=None):
     plt.subplots_adjust(hspace=0)
     return f
 
-def plot_task_maps(contrast_maps, title, stat_kwargs=None):
-    print(title, len(contrast_maps))
-    if stat_kwargs is None:
-        stat_kwargs = {}
-    # set up plot
-    f, axes = plt.subplots(len(contrast_maps), 1, figsize=(20,len(contrast_maps)*5), squeeze=False)
-    plt.suptitle(title, fontsize=36)
-    
-    n = np.arange(-40, 67, 15)
-    # plot indepth stats brain
-    stat_args = {'threshold': 3,
-                 'cut_coords': n,
-                 'black_bg': True}
-    stat_args.update(**stat_kwargs)
-    
-    #plot a contrast per row
-    for idx, contrast_map in enumerate(contrast_maps):
-        title = contrast_map[contrast_map.index('contrast')+9:].rstrip('.nii.gz') #get contrast name
-        print(title)
-        plotting.plot_stat_map(contrast_map, title=title, display_mode='z', axes=axes[idx][0], **stat_args)
-    plt.subplots_adjust(hspace=0)
-    return f
-
 def normalize(array):
     normed = (array-np.min(array)) / (np.max(array)-np.min(array))
     return ((normed*2) - 1)
 
+def get_nuisance_reg_start_loc(subjinfo):
+    try:
+        X_loc = subjinfo.design.columns.get_loc('trans_x')
+    except:
+        X_loc = subjinfo.design.columns.get_loc('csf')
+    return X_loc
+
 def plot_design_timeseries(subjinfo, begin=0, end=-1):
-    X_loc = subjinfo.design.columns.get_loc('trans_x')
-    subset = subjinfo.design.loc[:, subjinfo.design.columns[:X_loc]]
+    nuis_loc = get_nuisance_reg_start_loc(subjinfo)
+    subset = subjinfo.design.loc[:, subjinfo.design.columns[:nuis_loc]]
     subset = subset.drop(columns=subset.filter(regex='_TD').columns)
     vis_df = pd.DataFrame(columns=subset.columns)
     for i, col in enumerate(subset.columns):
@@ -97,10 +81,22 @@ def plot_design_timeseries(subjinfo, begin=0, end=-1):
     ax.get_legend().remove()
 
 def plot_design_heatmap(subjinfo):
-    X_loc = subjinfo.design.columns.get_loc('trans_x')
-    subset = subjinfo.design.loc[:, subjinfo.design.columns[:X_loc]]
+    nuis_loc = get_nuisance_reg_start_loc(subjinfo)
+    subset = subjinfo.design.loc[:, subjinfo.design.columns[:nuis_loc]]
     plt.figure(figsize=(14,14))
-    sns.heatmap(subset.corr(), vmin = -1, vmax = 1, square=True, annot=True, annot_kws={'fontsize': 10}, center=0, cmap=sns.diverging_palette(240, 10, as_cmap=True))        
+    sns.heatmap(subset.corr(), vmin = -1, vmax = 1, square=True, annot=True, annot_kws={'fontsize': 10}, center=0, cmap=sns.diverging_palette(240, 10, as_cmap=True))
+    
+def vif(desmat):
+    vif_est = np.diagonal(np.linalg.inv(np.corrcoef(desmat.T)))
+    return vif_est
+
+def plot_vif(subjinfo):
+    nuis_loc = get_nuisance_reg_start_loc(subjinfo)
+    subset = subjinfo.design.loc[:, subjinfo.design.columns[:nuis_loc]]
+    vif_df = pd.DataFrame(vif(subset.values), index=subset.columns, columns=['VIF']).T
+    plt.figure(figsize=(14,4))
+    sns.heatmap(vif_df, vmin=0, square=False, annot=True, annot_kws={'fontsize': 10}, cmap=sns.diverging_palette(240, 10, as_cmap=True))   
+
 def plot_average_maps(subjects, contrast_keys=None, **kwargs):
     if contrast_keys is None:
         map_keys = subjects[0].maps.keys()
@@ -115,9 +111,42 @@ def plot_average_maps(subjects, contrast_keys=None, **kwargs):
         averages[key] = image.mean_img(maps)
     # plot
     for name, average in averages.items():
-        default_args = {'threshold': norm.isf(0.001), 
+        default_args = {'threshold': norm.isf(0.001),
                         'display_mode': 'ortho'}
         default_args.update(**kwargs)
         plotting.plot_glass_brain(average, colorbar=True, 
                               title=name,
                               plot_abs=False, **default_args)
+
+
+# SECOND LEVELS PLOTTING FUNCTIONS
+
+def get_contrast_title(contrast_map):
+    return contrast_map[contrast_map.index('contrast')+9:].replace('.nii.gz', '').replace('_corrected', '').replace('_raw', '').replace('_tfile', '')
+    
+
+def plot_task_maps(contrast_maps, title, threshold=3, contrast_titles=None, stat_kwargs=None):
+    print(title, ': %s contrasts' % len(contrast_maps))
+    if stat_kwargs is None:
+        stat_kwargs = {}
+
+    contrast_titles = contrast_titles if contrast_titles else [get_contrast_title(path) for path in contrast_maps]
+
+    # set up plot
+    f, axes = plt.subplots(len(contrast_maps), 1, figsize=(20,len(contrast_maps)*5), squeeze=False)
+    plt.suptitle(title, fontsize=36)
+
+    n = np.arange(-40, 67, 15)
+    # plot indepth stats brain
+    stat_args = {'threshold': threshold,
+                 'cut_coords': n,
+                 'black_bg': True}
+    stat_args.update(**stat_kwargs)
+
+    # plot a contrast per row
+    for idx, contrast_map in enumerate(contrast_maps):
+        title = contrast_titles[idx]
+        print(title)
+        plotting.plot_stat_map(contrast_map, title=title, display_mode='z', axes=axes[idx][0], **stat_args)
+    plt.subplots_adjust(hspace=0)
+    return f

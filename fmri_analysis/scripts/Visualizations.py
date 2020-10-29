@@ -18,10 +18,11 @@ from matplotlib import rcParams
 import sys
 
 from utils.firstlevel_utils import get_first_level_objs
-from utils.firstlevel_plot_utils import (plot_design, plot_design_timeseries,
-                                         plot_design_heatmap, plot_contrast,
-                                         plot_map, plot_task_maps,
-                                         get_contrast_title)
+from utils.plot_utils import (plot_design, plot_design_timeseries,
+                              plot_design_heatmap, plot_contrast,
+                              plot_map, plot_task_maps,
+                              get_contrast_title,
+                              plot_vif)
 
 
 # In[ ]:
@@ -131,6 +132,11 @@ if plot_designs:
                 plot_design_heatmap(subjinfo)
                 plt.gcf()
                 plt.savefig(os.path.join(fig_dir, '%s_%s_heatmap' % (sub, task)), bbox_inches="tight")
+                plt.close()
+
+                plot_vif(subjinfo)
+                plt.gcf()
+                plt.savefig(os.path.join(fig_dir, '%s_%s__design_vif' % (sub, task)))
                 plt.close()
             except:
                 print('task not found')
