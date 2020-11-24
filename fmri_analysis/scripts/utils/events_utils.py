@@ -722,78 +722,55 @@ def get_WATT3_EVs(events_df, regress_rt=True):
             'amplitudes': []
             }
 
-    ####################################################################################
-    ######################### Modified IN NEWEST MODELING ##############################
-    ####################################################################################
-    
+    planning_rt = events_df.loc[(events_df.planning==1) & (events_df.junk==False), 'response_time'].mean()
+    acting_rt = events_df.loc[(events_df.planning==0) & (events_df.junk==False) & (events_df.trial_id.isin(['to_hand', 'to_board'])), 'response_time'].mean()
+
     events_df.block_duration = events_df.block_duration/1000
-    
-
-    #planning event
-    get_ev_vars(output_dict, events_df, 
-                condition_spec='planning_event',
-                duration='block_duration', 
-                subset="planning==1")
-
     events_df.condition = events_df.condition.replace('PA_without_intermediate', -1)
     events_df.condition = events_df.condition.replace('PA_with_intermediate', 1)
 
-    # nuisance regressors
-    #movement
+    # Planning regressors
     get_ev_vars(output_dict, events_df, 
-                condition_spec='button_press', 
-                duration=1,
-                amplitude=1,
-                onset_column='movement_onset',
-                subset="trial_id!='feedback'")
-    
-    #feedback
+                condition_spec='planning_event',
+                duration=planning_rt, 
+                subset="(planning==1) and (junk==False)")
+
     get_ev_vars(output_dict, events_df, 
-                condition_spec='feedback', 
-                duration='block_duration',
-                subset="trial_id=='feedback'")
-    
+                condition_spec='planning_parametric',
+                duration=planning_rt, 
+                amplitude='condition',
+                subset="(planning==1) and (junk==False)")
+
+    # Acting regressors
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='acting_event',
+                duration=acting_rt, 
+                subset="(planning==0) and (junk==False)")
+
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='acting_parametric',
+                duration=acting_rt, 
+                amplitude='condition',
+                subset="(planning==0) and (trial_id!='feedback') and (junk==False)")
+
+    # RT regressors
     if regress_rt == True:
         get_ev_vars(output_dict, events_df, 
-                condition_spec='response_time', 
-                duration='group_RT', 
+                condition_spec='planning_RT', 
+                duration=planning_rt, 
                 amplitude='response_time',
-                subset="trial_id != 'feedback'",
-                demean_amp=True)  ###USING NEW DEMEANING 10+
+                subset="(planning==1) and (junk==False)",
+                demean_amp=True)
         
+        get_ev_vars(output_dict, events_df, 
+                condition_spec='acting_RT', 
+                duration=acting_rt, 
+                amplitude='response_time',
+                subset="(planning==0) and (trial_id!='feedback') and (junk==False)",
+                demean_amp=True)
 
-    #trial regressor for task > baseline
-    #build up trial regressor
-    end_round_idx = events_df.index[events_df.trial_id=='feedback']
-    start_round_idx = events_df.index[events_df.planning==1]
-    assert len(end_round_idx)==len(start_round_idx)
-
-    trial_durs = []
-    for start_idx, end_idx in zip(start_round_idx, end_round_idx):
-        # Note, this automatically excludes the feedback row
-        trial_durs.append(
-            events_df.iloc[start_idx:end_idx]\
-            ['block_duration'].cumsum().iloc[-1]
-        )
-    # build up trial_duration column
-    events_df['trial_duration'] = np.nan
-    events_df.loc[events_df.planning==1, 'trial_duration'] = trial_durs
-
-    # add full trial length regressor
-    get_ev_vars(output_dict, events_df, 
-            condition_spec='trial', 
-            duration='trial_duration',
-            amplitude=1,
-            subset="junk==False and planning==1") 
-    
-    # add full trial length parametric regressor
-    get_ev_vars(output_dict, events_df, 
-            condition_spec='trial_parametric', 
-            duration='trial_duration',
-            amplitude='condition', 
-            subset="junk==False and planning==1",
-            demean_amp=True) #NEW DEMEANING 11/12
-    
+    # Nuisance regressors
+    # practice
     new_df = pd.DataFrame(np.zeros((1,len(events_df.columns))),columns=events_df.columns)
     new_df.trial_id='practice'
     new_df.duration = events_df.onset[0]
@@ -804,6 +781,12 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                 amplitude=1,
                 duration='duration',
                 subset="trial_id=='practice'")
+
+    # feedback
+    get_ev_vars(output_dict, events_df, 
+                condition_spec='feedback', 
+                duration='block_duration',
+                subset="trial_id=='feedback'")
     
     return output_dict
 
