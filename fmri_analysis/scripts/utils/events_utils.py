@@ -733,25 +733,25 @@ def get_WATT3_EVs(events_df, regress_rt=True):
     get_ev_vars(output_dict, events_df, 
                 condition_spec='planning_event',
                 duration=planning_rt, 
-                subset="(planning==1) and (junk==False)")
+                subset="planning==1 and junk==False")
 
     get_ev_vars(output_dict, events_df, 
                 condition_spec='planning_parametric',
                 duration=planning_rt, 
                 amplitude='condition',
-                subset="(planning==1) and (junk==False)")
+                subset="planning==1 and junk==False")
 
     # Acting regressors
     get_ev_vars(output_dict, events_df, 
                 condition_spec='acting_event',
                 duration=acting_rt, 
-                subset="(planning==0) and (junk==False)")
+                subset="planning==0 and junk==False")
 
     get_ev_vars(output_dict, events_df, 
                 condition_spec='acting_parametric',
                 duration=acting_rt, 
                 amplitude='condition',
-                subset="(planning==0) and (trial_id!='feedback') and (junk==False)")
+                subset="planning==0 and trial_id!='feedback' and junk==False")
 
     # RT regressors
     if regress_rt == True:
@@ -759,14 +759,14 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                 condition_spec='planning_RT', 
                 duration=planning_rt, 
                 amplitude='response_time',
-                subset="(planning==1) and (junk==False)",
+                subset="planning==1 and junk==False",
                 demean_amp=True)
-        
+
         get_ev_vars(output_dict, events_df, 
                 condition_spec='acting_RT', 
                 duration=acting_rt, 
                 amplitude='response_time',
-                subset="(planning==0) and (trial_id!='feedback') and (junk==False)",
+                subset="planning==0 and trial_id!='feedback' and junk==False",
                 demean_amp=True)
 
     # Nuisance regressors
