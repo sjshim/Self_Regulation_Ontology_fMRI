@@ -4,6 +4,7 @@ some util functions
 import numpy as np
 import pandas as pd
 
+
 # functions to extract fmri events
 def get_ev_vars(output_dict, events_df, condition_spec,
                 col=None, amplitude=1, duration=0,
@@ -623,7 +624,7 @@ def get_WATT3_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
-
+    events_df.junk = events_df.junk.replace({0.0: False, 1.0: True})
     planning_rt = events_df.loc[(events_df.planning == 1) & (events_df.junk == False), 'response_time'].mean()
     acting_rt = events_df.loc[(events_df.planning == 0) & (events_df.junk == False) & (events_df.trial_id.isin(['to_hand', 'to_board'])), 'response_time'].mean()
 
@@ -674,6 +675,10 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                     demean_amp=True)
 
     # Nuisance regressors
+    get_ev_vars(output_dict, events_df,
+                condition_spec=[(True, 'junk')],
+                col='junk',
+                duration='duration')
     # practice
     new_df = pd.DataFrame(np.zeros((1, len(events_df.columns))),
                           columns=events_df.columns)
