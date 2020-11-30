@@ -582,6 +582,10 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
+    means = events_df.loc[events_df.junk==False,
+                          ['response_time', 'CTI']].mean()
+    duration = means['response_time'] + (means['CTI']/1000)
+
     events_df.trial_type = ['cue_'+c if c is not np.nan else 'task_'+t
                             for c, t in zip(events_df.cue_switch,
                                             events_df.task_switch)]
@@ -594,25 +598,25 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
                                 ('task_stay_cue_switch', 'task_stay_cue_switch_900'),
                                 ('cue_stay', 'cue_stay_900')],
                 col='trial_type',
-                duration='duration',
+                duration=duration,
                 subset="CTI==900 and junk==False")
-    get_ev_vars(output_dict, events_df, 
+    get_ev_vars(output_dict, events_df,
                 condition_spec=[('task_switch', 'task_switch_100'),
                                 ('task_stay_cue_switch', 'task_stay_cue_switch_100'),
                                 ('cue_stay', 'cue_stay_100')],
                 col='trial_type',
-                duration='duration',
+                duration=duration,
                 subset="CTI==100 and junk==False")
     # nuisance regressors
     get_ev_vars(output_dict, events_df,
                 condition_spec=[(True, 'junk')],
                 col='junk',
-                duration='duration')
+                duration=duration)
 
     if regress_rt:
         get_ev_vars(output_dict, events_df,
                     condition_spec='response_time',
-                    duration='group_RT',
+                    duration=duration,
                     amplitude='response_time',
                     subset='junk==False',
                     demean_amp=True)
@@ -682,7 +686,7 @@ def get_WATT3_EVs(events_df, regress_rt=True):
     get_ev_vars(output_dict, events_df,
                 condition_spec=[(True, 'junk')],
                 col='junk',
-                duration='duration')
+                duration=1)
     # practice
     new_df = pd.DataFrame(np.zeros((1, len(events_df.columns))),
                           columns=events_df.columns)
