@@ -165,65 +165,43 @@ def get_CCTHot_EVs(events_df, regress_rt):
             'amplitudes': []
             }
 
-    if regress_rt:
-        get_ev_vars(output_dict, events_df,
-                    condition_spec='response_time',
-                    duration='group_RT',
-                    amplitude='response_time',
-                    subset='junk==False',
-                    demean_amp=True)
+    response_time = events_df.loc[events_df.junk == False,
+                                  'response_time'].mean()
 
-    # build up trial regressor
-    counter = 0
-    round_grouping = []
-    end_round_idx = events_df.index[events_df.total_cards.notnull()]
-    for i in range(len(events_df.trial_id)):
-        if i in end_round_idx:
-            round_grouping.append(counter)
-            counter += 1
-        else:
-            round_grouping.append(counter)
-    events_df.insert(0, "round_grouping", round_grouping, True)
+    # Building up trial regressor
+    end_round_idx = events_df.index[events_df.trial_id == 'ITI']
+    # shift by 1 to next trial start, ignoring the last ITI
+    start_round_idx = [0] + [x+1 for x in end_round_idx[:-1]]
+    assert len(end_round_idx) == len(start_round_idx)
+    events_df['trial_start'] = False
+    events_df.loc[start_round_idx, 'trial_start'] = True
 
-    round_start_idx = [0] + [x+1 for x in end_round_idx]
+    trial_durs = []
+    for start_idx, end_idx in zip(start_round_idx, end_round_idx):
+        # Note, this automatically excludes the ITI row
+        trial_durs.append(
+            events_df.iloc[start_idx:end_idx]
+                          ['block_duration'].sum()
+        )
+    events_df['trial_duration'] = np.nan
+    events_df.loc[start_round_idx, 'trial_duration'] = trial_durs
 
-    task_on = [False for i in range(len(events_df.trial_id))]
-    for idx in round_start_idx[:-1]:
-        task_on[idx] = True
-
-    events_df.insert(0, "round_on", task_on, True)
-
-    round_dur = np.zeros(len(events_df.trial_id))
-    for group_num in range(len(events_df.round_grouping.unique())):
-        for idx in events_df.index[events_df.round_grouping == group_num].values:
-            round_dur[idx] = np.sum(events_df.duration[events_df.round_grouping == np.float(group_num)])
-    events_df.insert(0, "round_duration", round_dur, True)
-
-    # add full trial length regressor
+    # trial regressor
     get_ev_vars(output_dict, events_df,
                 condition_spec='task',
-                duration='round_duration',
+                duration='trial_duration',
                 amplitude=1,
-                subset="junk==False and round_on==True")
+                subset="junk==False and trial_start==True")
 
-    # build up loss regressor
-    loss_idx = events_df.index[(events_df.total_cards.notnull()) &
-                               (events_df.action == 'draw_card')]
-    lost_bool = [False for i in range(len(events_df.trial_id))]
-    for idx in loss_idx:
-        lost_bool[idx] = True
-    events_df.insert(0, "lost_bool", lost_bool, True)
-
-    # add loss event regressor
+    # loss event regressor
     get_ev_vars(output_dict, events_df,
                 condition_spec='loss_event',
                 duration=1,
                 amplitude=1,
-                subset="junk==False and lost_bool==True")
+                subset="junk==False and action=='draw_card' and feedback==0")
 
     # button press regressor
-    events_df['button_onset'] = events_df.onset+events_df.duration
-
+    events_df['button_onset'] = events_df.onset+events_df.response_time
     get_ev_vars(output_dict, events_df,
                 condition_spec='button_press',
                 onset_column='button_onset',
@@ -231,6 +209,7 @@ def get_CCTHot_EVs(events_df, regress_rt):
                 amplitude=1,
                 subset="junk==False")
 
+    # PARAMETRIC REGRESSORS
     # positive_draw regressor
     get_ev_vars(output_dict, events_df,
                 condition_spec='positive_draw',
@@ -250,34 +229,31 @@ def get_CCTHot_EVs(events_df, regress_rt):
                 subset="junk==False and action=='draw_card' and feedback==0",
                 demean_amp=True)
 
-    # create trial-long gain and feedback regressors
+    # trial-length gain and loss parametric regressors
     # gain
     get_ev_vars(output_dict, events_df,
                 condition_spec='trial_gain',
-                duration="round_duration",
+                duration="trial_duration",
                 amplitude='gain_amount',
-                subset="junk==False and round_on==True",
+                subset="junk==False and trial_start==True",
                 demean_amp=True)
 
     # loss
     get_ev_vars(output_dict, events_df,
                 condition_spec='trial_loss',
-                duration="round_duration",
+                duration="trial_duration",
                 amplitude='absolute_loss_amount',
-                subset="junk==False and round_on==True",
+                subset="junk==False and trial_start==True",
                 demean_amp=True)
 
-    # build up loss value and feedback regressors
-    roundsums = []
-    for group_num in events_df.round_grouping.unique():
-        chunk = events_df[events_df.round_grouping == group_num].reset_index()
-        roundsum = 0
-        for i in range(len(chunk.feedback)):
-            if chunk.feedback[i] == 1:
-                roundsum += chunk.gain_amount[i]
-            elif chunk.feedback[i] == 0:
-                roundsum += chunk.loss_amount[i]
-        roundsums.append(roundsum)
+    # nuisance regressor(s)
+    if regress_rt:
+        get_ev_vars(output_dict, events_df,
+                    condition_spec='response_time',
+                    duration=response_time,
+                    amplitude='response_time',
+                    subset='junk==False',
+                    demean_amp=True)
 
     return output_dict
 
