@@ -25,6 +25,11 @@ def get_ev_vars(output_dict, events_df, condition_spec,
         onset_column: the column of timing to be used for onsets
 
     """
+    # make sure NaNs or Nones aren't passed
+    for param in [duration, amplitude]:
+        assert param is not None
+        if np.issubdtype(type(param), np.number):
+            assert not np.isnan(param)
 
     required_keys = set(['amplitudes', 'conditions', 'durations', 'onsets'])
     assert set(output_dict.keys()) == required_keys
@@ -60,11 +65,11 @@ def get_ev_vars(output_dict, events_df, condition_spec,
                 c_df = pd.concat(c_dfs)
                 conditions.append(condition_name)
                 onsets.append(c_df.loc[:, onset_column].tolist())
-                if type(amplitude) in (int, float):  # don't demean a constant
+                if np.issubdtype(type(amplitude), np.number):  # don't demean a constant
                     amplitudes.append([amplitude]*len(onsets[-1]))
                 elif type(amplitude) == str:
                     amplitudes.append(demean(c_df.loc[:, amplitude]).tolist())
-                if type(duration) in (int, float):
+                if np.issubdtype(type(duration), np.number):
                     durations.append([duration]*len(onsets[-1]))
                 elif type(duration) == str:
                     durations.append(c_df.loc[:, duration].tolist())
@@ -72,18 +77,19 @@ def get_ev_vars(output_dict, events_df, condition_spec,
         group_df = events_df
         conditions.append(condition_spec)
         onsets.append(group_df.loc[:, onset_column].tolist())
-        if type(amplitude) in (int, float):  # no need to demean a constant
+        if np.issubdtype(type(amplitude), np.number):  # don't to demean a constant
             amplitudes.append([amplitude]*len(onsets[-1]))
         elif type(amplitude) == str:
             amplitudes.append(demean(group_df.loc[:, amplitude]).tolist())
         elif type(amplitude) == list:
             amplitudes.append(demean(amplitude).tolist())
-        if type(duration) in (int, float):
+        if np.issubdtype(type(duration), np.number):
             durations.append([duration]*len(onsets[-1]))
         elif type(duration) == str:
             durations.append(group_df.loc[:, duration].tolist())
         elif type(duration) == list:
             durations.append(duration)
+
     # ensure that each column added is all numeric
     for attr in [durations, amplitudes, onsets]:
         assert np.issubdtype(np.array(attr[-1]).dtype, np.number)
@@ -634,6 +640,7 @@ def get_WATT3_EVs(events_df, regress_rt=True):
     events_df.condition = events_df.condition.replace('PA_with_intermediate',
                                                       1)
 
+    print(events_df.head())
     # Planning regressors
     get_ev_vars(output_dict, events_df,
                 condition_spec='planning_event',
