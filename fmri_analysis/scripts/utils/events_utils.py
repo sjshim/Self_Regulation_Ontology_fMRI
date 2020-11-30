@@ -98,6 +98,10 @@ def get_ANT_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
+
+    response_time = events_df.loc[events_df.junk == False,
+                                  'response_time'].mean()
+
     events_df.trial_type = [c+'_'+f for c, f in
                             zip(events_df.cue, events_df.flanker_type)]
 
@@ -114,21 +118,21 @@ def get_ANT_EVs(events_df, regress_rt=True):
 
     get_ev_vars(output_dict, events_df,
                 condition_spec='cue_parametric',
-                duration='duration',
+                duration=response_time,
                 amplitude='cue_parametric',
                 subset='junk==False',
                 demean_amp=True)
 
     get_ev_vars(output_dict, events_df,
                 condition_spec='congruency_parametric',
-                duration='duration',
+                duration=response_time,
                 amplitude='congruency_parametric',
                 subset='junk==False',
                 demean_amp=True)
 
     get_ev_vars(output_dict, events_df,
                 condition_spec='interaction',
-                duration='duration',
+                duration=response_time,
                 amplitude='cue_congruency_interaction',
                 subset='junk==False',
                 demean_amp=True)
@@ -137,19 +141,19 @@ def get_ANT_EVs(events_df, regress_rt=True):
     get_ev_vars(output_dict, events_df,
                 condition_spec='task',
                 col='trial_type',
-                duration='duration',
+                duration=response_time,
                 subset='junk==False')
 
     # nuisance regressors
     get_ev_vars(output_dict, events_df,
                 condition_spec=[(True, 'junk')],
                 col='junk',
-                duration='duration')
+                duration=response_time)
 
     if regress_rt:
         get_ev_vars(output_dict, events_df,
                     condition_spec='response_time',
-                    duration='group_RT',
+                    duration=response_time,
                     amplitude='response_time',
                     subset='junk==False',
                     demean_amp=True)
@@ -265,19 +269,13 @@ def get_discountFix_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
-    # nuisance regressors
-    if regress_rt:
-        get_ev_vars(output_dict, events_df,
-                    condition_spec='response_time',
-                    duration='group_RT',
-                    amplitude='response_time',
-                    subset='junk==False',
-                    demean_amp=True)
+    response_time = events_df.loc[events_df.junk == False,
+                                  'response_time'].mean()
 
     # trial regressor for task > baseline
     get_ev_vars(output_dict, events_df,
                 condition_spec='task',
-                duration='duration',
+                duration=response_time,
                 amplitude=1,
                 subset='junk==False')
 
@@ -288,15 +286,24 @@ def get_discountFix_EVs(events_df, regress_rt=True):
 
     get_ev_vars(output_dict, events_df,
                 condition_spec='choice',
-                duration='duration',
+                duration=response_time,
                 amplitude='choice_parametric',
                 subset='junk==False',
                 demean_amp=True)
 
+    # nuisance regressors
     get_ev_vars(output_dict, events_df,
                 condition_spec=[(True, 'junk')],
                 col='junk',
-                duration='duration')
+                duration=response_time)
+
+    if regress_rt:
+        get_ev_vars(output_dict, events_df,
+                    condition_spec='response_time',
+                    duration=response_time,
+                    amplitude='response_time',
+                    subset='junk==False',
+                    demean_amp=True)
 
     return output_dict
 
@@ -308,24 +315,28 @@ def get_DPX_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
+    response_time = events_df.loc[events_df.junk == False,
+                                  'response_time'].mean()
+
     get_ev_vars(output_dict, events_df,
                 condition_spec=[('AX', 'AX'),
                                 ('AY', 'AY'),
                                 ('BX', 'BX'),
                                 ('BY', 'BY')],
                 col='condition',
-                duration='duration',
+                duration=response_time,
                 subset='junk==False')
+
     # nuisance regressors
     get_ev_vars(output_dict, events_df,
                 condition_spec=[(True, 'junk')],
                 col='junk',
-                duration='duration')
+                duration=response_time)
 
     if regress_rt:
         get_ev_vars(output_dict, events_df,
                     condition_spec='response_time',
-                    duration='group_RT',
+                    duration=response_time,
                     amplitude='response_time',
                     subset='junk==False',
                     demean_amp=True)
@@ -340,6 +351,8 @@ def get_manipulation_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
+    response_time = events_df.loc[events_df.junk == False,
+                                  'response_time'].mean()
 
     get_ev_vars(output_dict, events_df,
                 condition_spec=[('cue', 'task')],
@@ -351,7 +364,7 @@ def get_manipulation_EVs(events_df, regress_rt=True):
     get_ev_vars(output_dict, events_df,
                 condition_spec=[(True, 'junk')],
                 col='junk',
-                duration='duration')
+                duration=response_time)
 
     events_df.which_cue = events_df.which_cue.replace('LATER', 1)
     events_df.which_cue = events_df.which_cue.replace('NOW', -1)
@@ -359,14 +372,14 @@ def get_manipulation_EVs(events_df, regress_rt=True):
     get_ev_vars(output_dict, events_df,
                 condition_spec=[('cue', 'cue')],
                 col='trial_id',
-                duration='duration',
+                duration=response_time,
                 amplitude='which_cue',
                 subset='trial_type!="no_stim" and junk==False',
                 demean_amp=True)
 
     get_ev_vars(output_dict, events_df,
                 condition_spec='rating',
-                duration='duration',
+                duration=response_time,
                 amplitude='response',
                 subset='trial_type!="no_stim" and junk==False and trial_id=="current_rating"',
                 demean_amp=True)
@@ -374,7 +387,7 @@ def get_manipulation_EVs(events_df, regress_rt=True):
     if regress_rt:
         get_ev_vars(output_dict, events_df,
                     condition_spec='response_time',
-                    duration='group_RT',
+                    duration=response_time,
                     amplitude='response_time',
                     subset='trial_type!="no_stim" and junk==False and trial_id=="current_rating"',
                     demean_amp=True)
@@ -384,7 +397,7 @@ def get_manipulation_EVs(events_df, regress_rt=True):
     get_ev_vars(output_dict, events_df,
                 condition_spec=[('probe', 'probe')],
                 col='trial_id',
-                duration='duration',
+                duration=response_time,
                 amplitude='stim_type',
                 subset='trial_type!="no_stim" and junk==False',
                 demean_amp=True)
@@ -399,37 +412,37 @@ def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
-    get_ev_vars(output_dict, events_df,
-                condition_spec=[('crit_go', 'crit_go'),
-                                ('crit_stop_success', 'crit_stop_success'),
-                                ('crit_stop_failure', 'crit_stop_failure'),
-                                ('noncrit_signal', 'noncrit_signal'),
-                                ('noncrit_nosignal', 'noncrit_nosignal')],
-                col='trial_type',
-                duration='duration')
+
+    for cond in ['crit_go', 'crit_stop_success',
+                 'crit_stop_failure', 'noncrit_signal',
+                 'noncrit_nosignal']:
+        if 'success' in cond:
+            rt = 1
+        else:
+            rt = events_df.loc[(events_df.junk == False) &
+                               (events_df.trial_type == cond),
+                               'response_time'].mean()
+        get_ev_vars(output_dict, events_df,
+                    condition_spec=cond,
+                    duration=rt,
+                    subset="junk == False and trial_type == '%s'" % cond)
+
+        if regress_rt and ('success' not in cond):
+            get_ev_vars(output_dict, events_df,
+                        condition_spec=cond+'_RT',
+                        duration=rt,
+                        amplitude='response_time',
+                        subset="junk == False and trial_type == '%s'" % cond,
+                        demean_amp=True)
 
     # nuisance regressors
+    go_rt = events_df.loc[(events_df.junk == False) &
+                          (events_df.trial_type == 'crit_go'),
+                          'response_time'].mean()
     get_ev_vars(output_dict, events_df,
                 condition_spec=[(True, 'junk')],
                 col='junk',
-                duration='duration')
-
-    # create 1 RT regressor for all go trials, 1 for stop failures
-    events_df['simplified_trial_type'] = 'go'
-    events_df.loc[events_df.trial_type == 'crit_stop_failure',
-                  'simplified_trial_type'] = 'crit_stop_failure'
-    events_df.loc[events_df.trial_type == 'crit_stop_success',
-                  'simplified_trial_type'] = 'crit_stop_success'
-
-    if regress_rt:
-        get_ev_vars(output_dict, events_df,
-                    condition_spec=[('go', 'go_RT'),
-                                    ('crit_stop_failure', 'crit_stop_failure_RT')],
-                    col='simplified_trial_type',
-                    amplitude='response_time',
-                    duration='group_RT',
-                    subset='junk==False and stopped==False',
-                    demean_amp=True)
+                duration=go_rt)
 
     return output_dict
 
@@ -441,29 +454,35 @@ def get_stopSignal_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
-    # task regressor
-    get_ev_vars(output_dict, events_df,
-                condition_spec=[('go', 'go'),
-                                ('stop_success', 'stop_success'),
-                                ('stop_failure', 'stop_failure')],
-                col='trial_type',
-                duration='duration',
-                subset='junk==False')
+
+    for cond in ['go', 'stop_success', 'stop_failure']:
+        if 'success' in cond:
+            rt = 1
+        else:
+            rt = events_df.loc[(events_df.junk == False) &
+                               (events_df.trial_type == cond),
+                               'response_time'].mean()
+        get_ev_vars(output_dict, events_df,
+                    condition_spec=cond,
+                    duration=rt,
+                    subset="junk == False and trial_type == '%s'" % cond)
+
+        if regress_rt and ('success' not in cond):
+            get_ev_vars(output_dict, events_df,
+                        condition_spec=cond+'_RT',
+                        duration=rt,
+                        amplitude='response_time',
+                        subset="junk == False and trial_type == '%s'" % cond,
+                        demean_amp=True)
+
     # nuisance regressors
+    go_rt = events_df.loc[(events_df.junk == False) &
+                          (events_df.trial_type == 'go'),
+                          'response_time'].mean()
     get_ev_vars(output_dict, events_df,
                 condition_spec=[(True, 'junk')],
                 col='junk',
-                duration='duration')
-
-    if regress_rt:
-        get_ev_vars(output_dict, events_df,
-                    condition_spec=[('go', 'go_RT'),
-                                    ('stop_failure', 'stop_failure_RT')],
-                    col='trial_type',
-                    amplitude='response_time',
-                    duration='group_RT',
-                    subset='junk==False',
-                    demean_amp=True)
+                duration=go_rt)
 
     return output_dict
 
@@ -475,6 +494,8 @@ def get_stroop_EVs(events_df, regress_rt=True):
             'durations': [],
             'amplitudes': []
             }
+    response_time = events_df.loc[events_df.junk == False,
+                                  'response_time'].mean()
 
     # parametric congruency regressor
     events_df['congruency_parametric'] = -1
@@ -483,31 +504,31 @@ def get_stroop_EVs(events_df, regress_rt=True):
 
     get_ev_vars(output_dict, events_df,
                 condition_spec='congruency_parametric',
-                duration='duration',
+                duration=response_time,
                 amplitude='congruency_parametric',
                 subset='junk==False',
                 demean_amp=True)
+
+    # trial regressor for task > baseline
+    get_ev_vars(output_dict, events_df,
+                condition_spec='task',
+                duration=response_time,
+                amplitude=1,
+                subset='junk==False')
 
     # nuisance regressors
     get_ev_vars(output_dict, events_df,
                 condition_spec=[(True, 'junk')],
                 col='junk',
-                duration='duration')
+                duration=response_time)
 
     if regress_rt:
         get_ev_vars(output_dict, events_df,
                     condition_spec='response_time',
-                    duration='group_RT',
+                    duration=response_time,
                     amplitude='response_time',
                     subset='junk==False',
                     demean_amp=True)
-
-    # trial regressor for task > baseline
-    get_ev_vars(output_dict, events_df,
-                condition_spec='task',
-                duration='duration',
-                amplitude=1,
-                subset='junk==False')
 
     return output_dict
 
