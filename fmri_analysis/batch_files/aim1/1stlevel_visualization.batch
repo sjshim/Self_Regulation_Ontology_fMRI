@@ -2,7 +2,7 @@
 #SBATCH --job-name={task}_1stlevel_visualization
 #SBATCH --output=.out/{task}_1stlevel_visualization_%j.out
 #SBATCH --error=.err/{task}_1stlevel_visualization_%j.err
-#SBATCH --time=1:00:00
+#SBATCH --time=1:30:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
 #SBATCH --cpus-per-task=16
