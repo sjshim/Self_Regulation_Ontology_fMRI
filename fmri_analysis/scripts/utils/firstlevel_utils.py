@@ -3,6 +3,7 @@ from glob import glob
 from nistats.design_matrix import make_first_level_design_matrix
 import numpy as np
 import os
+import json
 from os import makedirs, path
 import pandas as pd
 import patsy
@@ -52,7 +53,6 @@ def save_new_EVs(events, subjinfo, output_dir, beta=True, regress_rt=False):
         out_event_df = pd.concat([out_event_df, tmp_df])
 
     out_event_df = out_event_df.sort_values(by=['onsets', 'conditions'])
-
     out_event_df.to_csv(filename, index=False)
 
 
@@ -65,7 +65,9 @@ def create_design(events, confounds, task, TR, subject_id,
     if beta:
         EV_dict = get_beta_series(events, regress_rt=regress_rt)
     else:
-        EV_dict = parse_EVs(events, task, regress_rt=regress_rt)
+        EV_dict, meta_dict = parse_EVs(events, task,
+                                       regress_rt=regress_rt,
+                                       return_metadict=True)
 
     paradigm = get_paradigm(EV_dict)
     # make design
@@ -81,7 +83,22 @@ def create_design(events, confounds, task, TR, subject_id,
     # add temporal derivative to task columns
     task_cols = [i for i in paradigm.trial_type.unique() if i != 'junk']
     temp_deriv(design, task_cols)
-    return design
+    return (design, meta_dict)
+
+
+def add_FD_meta(meta_dict, subject_id, task, mriqc_dir):
+    json_files = glob(path.join(mriqc_dir,
+                                '*%s*' % subject_id,
+                                'ses-*/func',
+                                '*%s*_bold.json' % task))
+    assert len(json_files) <= 1
+    if len(json_files) != 0:
+        with open(json_files[0], 'r') as f:
+            mriqc_dict = json.load(f)
+            meta_dict['FD_mean'] = mriqc_dict.get('fd_mean')
+            meta_dict['FD_num'] = mriqc_dict.get('fd_num')
+            meta_dict['FD_perc'] = mriqc_dict.get('fd_perc')
+    return meta_dict
 
 
 def make_first_level_obj(subject_id, task,
@@ -108,11 +125,22 @@ def make_first_level_obj(subject_id, task,
     confounds = get_confounds(fmriprep_dir, subject_id, task,
                               a_comp_cor=a_comp_cor,
                               use_aroma=use_aroma)
-    design = create_design(events, confounds, task, TR, subject_id,
-                           beta=beta, regress_rt=regress_rt)
     contrasts = get_contrasts(task, regress_rt)
+    design, meta_des_dict = create_design(events, confounds, task, TR, subject_id,
+                                          beta=beta, regress_rt=regress_rt)
+    # add on FD info to meta_dict
+    assert fmriprep_dir[-1] != '/'
+    deriv_base = path.dirname(fmriprep_dir)
+    assert 'fmriprep' not in deriv_base
+    meta_dict = add_FD_meta(meta_des_dict,
+                            subject_id,
+                            task,
+                            path.join(deriv_base, 'mriqc'))
+
+    # make subjinfo object
     subjinfo = FirstLevel(func_file, mask_file, events, design, contrasts,
-                          '%s_%s' % (subject_id, task))
+                          '%s_%s' % (subject_id, task),
+                          meta_dict)
     subjinfo.model_settings['beta'] = beta
     subjinfo.model_settings['regress_rt'] = regress_rt
 
@@ -189,7 +217,7 @@ SubjInfo = namedtuple('subjinfo',
 
 
 class FirstLevel():
-    def __init__(self, func, mask, events, design, contrasts, ID):
+    def __init__(self, func, mask, events, design, contrasts, ID, meta):
         self.func = func
         self.mask = mask
         self.events = events
@@ -199,6 +227,7 @@ class FirstLevel():
         # for model
         self.model_settings = {'beta': False, 'regress_rt': False}
         self.fit_model = None
+        self.meta = meta
 
     def get_subjinfo(self):
         return SubjInfo(self.func,
@@ -217,6 +246,13 @@ class FirstLevel():
         flags = self.get_flags()
         self.events.to_csv(path.join(directory, 'events_%s.csv' % flags))
 
+    def export_2ndlvl_meta(self, directory):
+        directory = self._get_export_dir(directory)
+        flags = self.get_flags()
+        with open(path.join(directory, '2ndlevel_meta_%s.json' % flags), 'w') as f:
+            json.dump(self.meta, f)
+
+
     def get_flags(self):
         rt_flag, beta_flag = get_flags(self.model_settings['regress_rt'],
                                        self.model_settings['beta'])
@@ -229,17 +265,17 @@ class FirstLevel():
         return directory
 
     def __str__(self):
-        s = """
+        return """
             ** %s **
                 * Func File: %s
                 * Mask File: %s
                 * Model Settings: %s
             """ % (self.ID, self.func, self.mask, self.model_settings)
-        return s
 
 # ********************************************************
 # Process Functions
 # ********************************************************
+
 
 # TODO - change np.gradient (uses forwards and backwards changes) to np.diff (uses only backwards)
 def process_confounds(confounds_file, a_comp_cor=True, use_aroma=False):
@@ -315,7 +351,6 @@ def get_func_file(fmriprep_dir, subject_id, task, use_aroma=False):
     if os.path.exists(path.join(fmriprep_dir,
                                 'sub-%s' % subject_id,
                                 'func')):
-        # TODO: allow swapping out for AROMA denoised file
         func_file = glob(path.join(fmriprep_dir,
                                    'sub-%s' % subject_id,
                                    'func',

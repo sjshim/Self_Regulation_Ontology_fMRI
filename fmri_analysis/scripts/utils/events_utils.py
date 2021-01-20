@@ -97,17 +97,18 @@ def get_ev_vars(output_dict, events_df, condition_spec,
 
 
 # specific task functions
-def get_ANT_EVs(events_df, regress_rt=True):
+def get_ANT_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
             'durations': [],
             'amplitudes': []
             }
+    meta_dict = {}
 
     response_time = events_df.loc[events_df.junk == False,
                                   'response_time'].mean()
-
+    meta_dict['task_RT'] = response_time
     events_df.trial_type = [c+'_'+f for c, f in
                             zip(events_df.cue, events_df.flanker_type)]
 
@@ -163,21 +164,24 @@ def get_ANT_EVs(events_df, regress_rt=True):
                     amplitude='response_time',
                     subset='junk==False',
                     demean_amp=True)
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
 
-    return output_dict
 
-
-def get_CCTHot_EVs(events_df, regress_rt):
+def get_CCTHot_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
             'durations': [],
             'amplitudes': []
             }
+    meta_dict = {}
 
     response_time = events_df.loc[events_df.junk == False,
                                   'response_time'].mean()
-
+    meta_dict['task_RT'] = response_time
     # Building up trial regressor
     end_round_idx = events_df.index[events_df.trial_id == 'ITI']
     # shift by 1 to next trial start, ignoring the last ITI
@@ -265,19 +269,24 @@ def get_CCTHot_EVs(events_df, regress_rt):
                     subset='junk==False',
                     demean_amp=True)
 
-    return output_dict
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
 
 
-def get_discountFix_EVs(events_df, regress_rt=True):
+def get_discountFix_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
             'durations': [],
             'amplitudes': []
             }
+    meta_dict = {}
+
     response_time = events_df.loc[events_df.junk == False,
                                   'response_time'].mean()
-
+    meta_dict['task_RT'] = response_time
     # trial regressor for task > baseline
     get_ev_vars(output_dict, events_df,
                 condition_spec='task',
@@ -311,18 +320,24 @@ def get_discountFix_EVs(events_df, regress_rt=True):
                     subset='junk==False',
                     demean_amp=True)
 
-    return output_dict
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
 
 
-def get_DPX_EVs(events_df, regress_rt=True):
+def get_DPX_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
             'durations': [],
             'amplitudes': []
             }
+    meta_dict = {}
+
     response_time = events_df.loc[events_df.junk == False,
                                   'response_time'].mean()
+    meta_dict['task_RT'] = response_time
 
     get_ev_vars(output_dict, events_df,
                 condition_spec=[('AX', 'AX'),
@@ -347,19 +362,24 @@ def get_DPX_EVs(events_df, regress_rt=True):
                     subset='junk==False',
                     demean_amp=True)
 
-    return output_dict
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
 
 
-def get_manipulation_EVs(events_df, regress_rt=True):
+def get_manipulation_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
             'durations': [],
             'amplitudes': []
             }
+    meta_dict = {}
+
     response_time = events_df.loc[events_df.junk == False,
                                   'response_time'].mean()
-
+    meta_dict['task_RT'] = response_time
     get_ev_vars(output_dict, events_df,
                 condition_spec=[('cue', 'task')],
                 col='trial_id',
@@ -408,16 +428,20 @@ def get_manipulation_EVs(events_df, regress_rt=True):
                 subset='trial_type!="no_stim" and junk==False',
                 demean_amp=True)
 
-    return output_dict
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
 
 
-def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
+def get_motorSelectiveStop_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
             'durations': [],
             'amplitudes': []
             }
+    meta_dict = {}
 
     for cond in ['crit_go', 'crit_stop_success',
                  'crit_stop_failure', 'noncrit_signal',
@@ -428,6 +452,7 @@ def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
             rt = events_df.loc[(events_df.junk == False) &
                                (events_df.trial_type == cond),
                                'response_time'].mean()
+            meta_dict['%s_RT' % cond] = rt
         get_ev_vars(output_dict, events_df,
                     condition_spec=cond,
                     duration=rt,
@@ -450,16 +475,20 @@ def get_motorSelectiveStop_EVs(events_df, regress_rt=True):
                 col='junk',
                 duration=go_rt)
 
-    return output_dict
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
 
 
-def get_stopSignal_EVs(events_df, regress_rt=True):
+def get_stopSignal_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
             'durations': [],
             'amplitudes': []
             }
+    meta_dict = {}
 
     for cond in ['go', 'stop_success', 'stop_failure']:
         if 'success' in cond:
@@ -468,6 +497,7 @@ def get_stopSignal_EVs(events_df, regress_rt=True):
             rt = events_df.loc[(events_df.junk == False) &
                                (events_df.trial_type == cond),
                                'response_time'].mean()
+            meta_dict['%s_RT' % cond] = rt
         get_ev_vars(output_dict, events_df,
                     condition_spec=cond,
                     duration=rt,
@@ -490,19 +520,24 @@ def get_stopSignal_EVs(events_df, regress_rt=True):
                 col='junk',
                 duration=go_rt)
 
-    return output_dict
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
 
 
-def get_stroop_EVs(events_df, regress_rt=True):
+def get_stroop_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
             'durations': [],
             'amplitudes': []
             }
+    meta_dict = {}
+
     response_time = events_df.loc[events_df.junk == False,
                                   'response_time'].mean()
-
+    meta_dict['task_RT'] = response_time
     # parametric congruency regressor
     events_df['congruency_parametric'] = -1
     events_df.loc[events_df.trial_type == 'incongruent',
@@ -536,16 +571,21 @@ def get_stroop_EVs(events_df, regress_rt=True):
                     subset='junk==False',
                     demean_amp=True)
 
-    return output_dict
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
 
 
-def get_surveyMedley_EVs(events_df, regress_rt=True):
+def get_surveyMedley_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
         'conditions': [],
         'onsets': [],
         'durations': [],
         'amplitudes': []
         }
+    meta_dict = {}
+
     # nuisance regressors
     get_ev_vars(output_dict, events_df,
                 condition_spec='stim_duration',
@@ -572,19 +612,26 @@ def get_surveyMedley_EVs(events_df, regress_rt=True):
                 amplitude=1,
                 subset='junk==False')
 
-    return output_dict
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
 
 
-def get_twoByTwo_EVs(events_df, regress_rt=True):
+def get_twoByTwo_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
             'durations': [],
             'amplitudes': []
             }
+    meta_dict = {}
+
     means = events_df.loc[events_df.junk==False,
                           ['response_time', 'CTI']].mean()
     duration = means['response_time'] + (means['CTI']/1000)
+    meta_dict['task_RT'] = means['response_time']
+    meta_dict['task_RT_w_CTI'] = duration
 
     events_df.trial_type = ['cue_'+c if c is not np.nan else 'task_'+t
                             for c, t in zip(events_df.cue_switch,
@@ -621,19 +668,26 @@ def get_twoByTwo_EVs(events_df, regress_rt=True):
                     subset='junk==False',
                     demean_amp=True)
 
-    return output_dict
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
 
 
-def get_WATT3_EVs(events_df, regress_rt=True):
+def get_WATT3_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
             'durations': [],
             'amplitudes': []
             }
+    meta_dict = {}
+
     events_df.junk = events_df.junk.replace({0.0: False, 1.0: True})
     planning_rt = events_df.loc[(events_df.planning == 1) & (events_df.junk == False), 'response_time'].mean()
     acting_rt = events_df.loc[(events_df.planning == 0) & (events_df.junk == False) & (events_df.trial_id.isin(['to_hand', 'to_board'])), 'response_time'].mean()
+    meta_dict['planning_RT'] = planning_rt
+    meta_dict['acting_RT'] = acting_rt
 
     events_df.block_duration = events_df.block_duration/1000
     events_df.condition = events_df.condition.replace('PA_without_intermediate',
@@ -641,7 +695,6 @@ def get_WATT3_EVs(events_df, regress_rt=True):
     events_df.condition = events_df.condition.replace('PA_with_intermediate',
                                                       1)
 
-    print(events_df.head())
     # Planning regressors
     get_ev_vars(output_dict, events_df,
                 condition_spec='planning_event',
@@ -706,10 +759,14 @@ def get_WATT3_EVs(events_df, regress_rt=True):
                 duration='block_duration',
                 subset="trial_id=='feedback'")
 
-    return output_dict
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
 
 
-def get_beta_series(events_df, regress_rt=True):
+# DEPRECATED
+def get_beta_series(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
         'conditions': [],
         'onsets': [],
@@ -741,30 +798,22 @@ def get_beta_series(events_df, regress_rt=True):
 # (average RT across subjects or block duration)
 # RT as a separate regressor for each onset, constant duration,
 # amplitude as parameteric regressor (function of RT)
-def parse_EVs(events_df, task, regress_rt=True):
-    if task == "ANT":
-        EV_dict = get_ANT_EVs(events_df, regress_rt)
-    elif task == "CCTHot":
-        EV_dict = get_CCTHot_EVs(events_df, regress_rt)
-    elif task == "discountFix":
-        EV_dict = get_discountFix_EVs(events_df, regress_rt)
-    elif task == "DPX":
-        EV_dict = get_DPX_EVs(events_df, regress_rt)
-    elif task == 'manipulationTask':
-        EV_dict = get_manipulation_EVs(events_df, regress_rt)
-    elif task == "motorSelectiveStop":
-        EV_dict = get_motorSelectiveStop_EVs(events_df)
-    elif task == 'surveyMedley':
-        EV_dict = get_surveyMedley_EVs(events_df, regress_rt)
-    elif task == "stopSignal":
-        EV_dict = get_stopSignal_EVs(events_df)
-    elif task == "stroop":
-        EV_dict = get_stroop_EVs(events_df, regress_rt)
-    elif task == "twoByTwo":
-        EV_dict = get_twoByTwo_EVs(events_df, regress_rt)
-    elif task == "WATT3":
-        EV_dict = get_WATT3_EVs(events_df, regress_rt)
-    # covers generic conversion of events_df into trial design file
-    elif task == 'beta':
-        EV_dict = get_beta_series(events_df, regress_rt)
-    return EV_dict
+def parse_EVs(events_df, task, regress_rt=True, return_metadict=False):
+    func_map = {
+        'ANT': get_ANT_EVs,
+        'CCTHot': get_CCTHot_EVs,
+        'discountFix': get_discountFix_EVs,
+        'DPX': get_DPX_EVs,
+        'manipulationTask': get_manipulation_EVs,
+        'motorSelectiveStop': get_motorSelectiveStop_EVs,
+        'surveyMedley': get_surveyMedley_EVs,
+        'stopSignal': get_stopSignal_EVs,
+        'stroop': get_stroop_EVs,
+        'twoByTwo': get_twoByTwo_EVs,
+        'WATT3': get_WATT3_EVs,
+        # DEPRECATED 'beta' covers generic conversion of events_df into trial design file
+        'beta': get_beta_series,
+    }
+    return func_map[task](events_df,
+                          regress_rt=regress_rt,
+                          return_metadict=return_metadict)

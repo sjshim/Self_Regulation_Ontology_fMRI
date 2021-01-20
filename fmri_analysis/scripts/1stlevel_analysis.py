@@ -153,16 +153,11 @@ for subjinfo in to_run:
                                n_jobs=1
                                )
 
-    if args.design_matrix_only:
-        verboseprint('** saving')
-        save_first_level_obj(subjinfo, first_level_dir, False)
-        subjinfo.export_design(first_level_dir)
-        subjinfo.export_events(first_level_dir)
-    else:
+    verboseprint('** saving')
+    save_first_level_obj(subjinfo, first_level_dir, False)
+    subjinfo.export_design(first_level_dir)
+    subjinfo.export_events(first_level_dir)
+    subjinfo.export_2ndlvl_meta(first_level_dir)
+    if not args.design_matrix_only:
         out = fmri_glm.fit(subjinfo.func, design_matrices=subjinfo.design)
         subjinfo.fit_model = out
-
-        verboseprint('** saving')
-        save_first_level_obj(subjinfo, first_level_dir, True)
-        subjinfo.export_design(first_level_dir)
-        subjinfo.export_events(first_level_dir)
