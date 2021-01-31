@@ -89,9 +89,23 @@ full_confounds_df = pd.read_csv(aim1_2ndlevel_confounds_path,
                                 index_col='index')
 
 
-def fit_and_compute_contrast(maps, task, second_level_model):
+def extend_confounds_df(indiv_meta_files):
+    meta_dict = {}
+    for meta_file in indiv_meta_files:
+        sub_id = meta_file.replace(first_level_dir+'/', '').split('/%s' % task)[0]
+        with open(meta_file, 'r') as f:
+            meta_dict[sub_id] = json.load(f)
+    meta_df = pd.DataFrame(meta_dict).T
+
+    extended_confounds_df = pd.concat([meta_df, full_confounds_df], axis=1, sort=True).copy()
+    # substitute in old mriqc if new is not available
+    extended_confounds_df['FD_mean'] =  extended_confounds_df['FD_mean'].combine_first(extended_confounds_df['%s_meanFD' % task])
+    return extended_confounds_df
+
+def fit_and_compute_contrast(maps, task, second_level_model, extended_confounds_df):
     design_matrix, curr_contrasts = get_group_DM_and_contrasts(maps,
-                                                               task)
+                                                               task,
+                                                               extended_confounds_df)
     maps, design_matrix = filter_maps_and_DM(maps, design_matrix)
     second_level_model.fit(maps,
                            design_matrix=design_matrix)
@@ -100,26 +114,23 @@ def fit_and_compute_contrast(maps, task, second_level_model):
     return contrast_map, maps
 
 
-def get_group_DM_and_contrasts(maps, task):
+def get_group_DM_and_contrasts(maps, task, extended_confounds_df):
     design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept'])
-    if args.aim == 'aim1':
+    if 'aim1' in args.aim:
         subjects = [m.split('1stlevel/')[-1].split('/')[0] for m in maps]
-        design_matrix = full_confounds_df.loc[subjects,
-                                              ['age', 'sex', task+'_meanFD']
+        rt_cols = extended_confounds_df.filter(regex='RT').columns
+        dm_cols = ['age', 'sex'] + list(rt_cols) + ['FD_mean']
+        if 'noFD' not in args.aim:
+            dm_cols.append('FD_mean')
+        design_matrix = extended_confounds_df.loc[subjects,
+                                              dm_cols,
                                               ].copy()
-        design_matrix.index.rename('subject_label', inplace=True)
-        design_matrix['intercept'] = 1
-    if args.aim == 'aim1_noFD':
-        subjects = [m.split('1stlevel/')[-1].split('/')[0] for m in maps]
-        design_matrix = full_confounds_df.loc[subjects, ['age', 'sex']].copy()
         design_matrix.index.rename('subject_label', inplace=True)
         design_matrix['intercept'] = 1
     ncols = design_matrix.shape[1]
     contrasts = np.zeros(ncols)
     contrasts[-1] = 1
     contrasts = [int(i) for i in contrasts]
-    print(contrasts)
-    print(design_matrix.head())
     return design_matrix, contrasts
 
 
@@ -148,6 +159,12 @@ for task in tasks:
                          'secondlevel-%s_%s_maps' % (rt_flag, beta_flag))
     makedirs(maps_dir, exist_ok=True)
 
+    indiv_meta_files = get_first_level_metas('*', task,
+                                             first_level_dir,
+                                             regress_rt,
+                                             beta_series)
+    extended_confounds_df = extend_confounds_df(indiv_meta_files)
+
     # run through each contrast for all participants
     if group == 'NONE':
         for name, contrast in task_contrasts:
@@ -168,7 +185,8 @@ for task in tasks:
 
             contrast_map, maps = fit_and_compute_contrast(maps,
                                                           task,
-                                                          second_level_model)
+                                                          second_level_model,
+                                                          extended_confounds_df)
             # save
             contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
             contrast_map.to_filename(contrast_file)

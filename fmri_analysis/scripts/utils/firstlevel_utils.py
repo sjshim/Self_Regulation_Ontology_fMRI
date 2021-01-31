@@ -193,9 +193,8 @@ def load_first_level_objs(task, first_level_dir,
     files = get_first_level_objs('*', task, first_level_dir,
                                  regress_rt=regress_rt, beta=beta)
     for filey in files:
-        f = open(filey, 'rb')
-        subjinfos.append(pickle.load(f))
-        f.close()
+        with open(filey, 'rb') as f:
+            subjinfos.append(pickle.load(f))
     return subjinfos
 
 
@@ -205,6 +204,14 @@ def get_first_level_maps(subject_id, task, first_level_dir, contrast,
     files = path.join(
         first_level_dir, subject_id, task,
         'maps_%s_%s/contrast-%s.nii.gz' % (rt_flag, beta_flag, contrast))
+    return sorted(glob(files))
+
+def get_first_level_metas(subject_id, task, first_level_dir,
+                         regress_rt=False, beta=False):
+    rt_flag, beta_flag = get_flags(regress_rt, beta)
+    files = path.join(
+        first_level_dir, subject_id, task,
+        '2ndlevel_meta_%s_%s.json' % (rt_flag, beta_flag))
     return sorted(glob(files))
 
 # ********************************************************
@@ -251,7 +258,6 @@ class FirstLevel():
         flags = self.get_flags()
         with open(path.join(directory, '2ndlevel_meta_%s.json' % flags), 'w') as f:
             json.dump(self.meta, f)
-
 
     def get_flags(self):
         rt_flag, beta_flag = get_flags(self.model_settings['regress_rt'],
