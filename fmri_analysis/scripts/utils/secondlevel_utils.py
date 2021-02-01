@@ -59,13 +59,13 @@ def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
     map_files = glob(path.join(maps_dir, '*'))
     maps = {}
     for f in map_files:
-        name = f.split(path.sep)[-1][9:].rstrip('.nii.gz')
+        name = f.split(path.sep)[-1][9:].replace('.nii.gz', '')
         maps[name] = image.load_img(f)
     return maps
 
 
 def randomise(maps, output_loc, mask_loc, n_perms=500, fwhm=6, group='NONE'):
-    contrast_name = maps[0][maps[0].index('contrast')+9:].rstrip('.nii.gz')
+    contrast_name = maps[0][maps[0].index('contrast')+9:].replace('.nii.gz', '')
     # create 4d image
     concat_images = image.concat_imgs(maps)
     # smooth_concat_images

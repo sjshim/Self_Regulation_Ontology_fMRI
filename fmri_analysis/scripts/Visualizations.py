@@ -152,7 +152,7 @@ if run_first_level:
     for task in tasks:
         contrast_maps = glob(path.join(first_level_dir, '*', task, '*maps*', '*.nii.gz'))
         for map_file in contrast_maps:
-            contrast_name = map_file[map_file.index('contrast')+9:].rstrip('.nii.gz')
+            contrast_name = map_file[map_file.index('contrast')+9:].replace('.nii.gz', '')
             f = plot_map(map_file, title=contrast_name)
             if save:
                 output = map_file.replace('.nii.gz', '_plots.pdf')
