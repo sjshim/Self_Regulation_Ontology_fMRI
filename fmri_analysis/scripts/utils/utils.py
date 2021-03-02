@@ -37,9 +37,10 @@ def get_contrasts(task, regress_rt=True):
                     ('trial_loss', 'trial_loss'),
                     ('trial_gain', 'trial_gain'),
                     ('positive_draw', 'positive_draw'), #for PCA
-                    ('loss_event', 'loss_event'),
                     ('negative_draw', 'negative_draw'), #for PCA
-                    ('button_press', 'button_press')]
+                    ('gain_press', 'gain_press'),
+                    ('loss_press', 'loss_press'),
+                    ('end_press', 'end_press')]
     elif task == 'discountFix':
         contrasts = [('task', 'task'),
                     ('choice', 'choice')] #for PCA
@@ -111,13 +112,18 @@ def get_contrasts(task, regress_rt=True):
         elif task == 'stopSignal':
             contrasts.append(('go_RT', 'go_RT'))
             contrasts.append(('stop_failure_RT', 'stop_failure_RT'))
+        elif task== 'WATT3':
+            contrasts.append(('planning_RT', 'planning_RT'))
+            contrasts.append(('acting_RT', 'acting_RT'))
+        elif task == 'CCTHot':
+            contrasts.append(('first_RT', 'first_RT'))
+            contrasts.append(('subsequent_RT', 'subsequent_RT'))
         else:         
             contrasts.append(('RT','response_time'))
     return contrasts
 
 def load_atlas(atlas_path, atlas_label_path=None):
-    out = {}
-    out['maps'] = atlas_path
+    out = {'maps': atlas_path}
     if atlas_label_path:
         file_data = np.loadtxt(atlas_label_path, 
                                dtype={'names': ('index', 'label'),

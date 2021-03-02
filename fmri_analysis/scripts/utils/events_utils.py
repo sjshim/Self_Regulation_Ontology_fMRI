@@ -172,16 +172,18 @@ def get_ANT_EVs(events_df, regress_rt=True, return_metadict=False):
 
 def get_CCTHot_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
-            'conditions': [],
-            'onsets': [],
-            'durations': [],
-            'amplitudes': []
-            }
+        'conditions': [],
+        'onsets': [],
+        'durations': [],
+        'amplitudes': []
+    }
     meta_dict = {}
 
-    response_time = events_df.loc[events_df.junk == False,
-                                  'response_time'].mean()
-    meta_dict['task_RT'] = response_time
+    first_rt = events_df.loc[(events_df.junk == False) & (events_df.num_click_in_round == 1), 'response_time'].mean()
+    subsequent_rt = events_df.loc[(events_df.junk == False) & (events_df.num_click_in_round > 1), 'response_time'].mean()
+    meta_dict['first_rt'] = first_rt
+    meta_dict['subsequent_rt'] = subsequent_rt
+
     # Building up trial regressor
     end_round_idx = events_df.index[events_df.trial_id == 'ITI']
     # shift by 1 to next trial start, ignoring the last ITI
@@ -207,21 +209,28 @@ def get_CCTHot_EVs(events_df, regress_rt=True, return_metadict=False):
                 amplitude=1,
                 subset="junk==False and trial_start==True")
 
-    # loss event regressor
+    # button press regressors; match with parametric regressors below
+    events_df['button_onset'] = events_df.onset+events_df.response_time
     get_ev_vars(output_dict, events_df,
-                condition_spec='loss_event',
+                condition_spec='gain_press',
+                onset_column='button_onset',
+                duration=1,
+                amplitude=1,
+                subset="junk==False and action=='draw_card' and feedback==1")
+
+    get_ev_vars(output_dict, events_df,
+                condition_spec='loss_press',
+                onset_column='button_onset',
                 duration=1,
                 amplitude=1,
                 subset="junk==False and action=='draw_card' and feedback==0")
 
-    # button press regressor
-    events_df['button_onset'] = events_df.onset+events_df.response_time
     get_ev_vars(output_dict, events_df,
-                condition_spec='button_press',
+                condition_spec='end_press',
                 onset_column='button_onset',
                 duration=1,
                 amplitude=1,
-                subset="junk==False")
+                subset="junk==False and action=='end_round'")
 
     # PARAMETRIC REGRESSORS
     # positive_draw regressor
@@ -263,10 +272,16 @@ def get_CCTHot_EVs(events_df, regress_rt=True, return_metadict=False):
     # nuisance regressor(s)
     if regress_rt:
         get_ev_vars(output_dict, events_df,
-                    condition_spec='response_time',
-                    duration=response_time,
+                    condition_spec='first_RT',
+                    duration=first_rt,
                     amplitude='response_time',
-                    subset='junk==False',
+                    subset='junk==False and num_click_in_round == 1',
+                    demean_amp=True)
+        get_ev_vars(output_dict, events_df,
+                    condition_spec='subsequent_RT',
+                    duration=subsequent_rt,
+                    amplitude='response_time',
+                    subset='junk==False and num_click_in_round >1',
                     demean_amp=True)
 
     if return_metadict:

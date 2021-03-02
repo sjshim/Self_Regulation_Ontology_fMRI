@@ -87,8 +87,7 @@ def plot_design_heatmap(subjinfo):
     sns.heatmap(subset.corr(), vmin = -1, vmax = 1, square=True, annot=True, annot_kws={'fontsize': 10}, center=0, cmap=sns.diverging_palette(240, 10, as_cmap=True))
     
 def vif(desmat):
-    vif_est = np.diagonal(np.linalg.inv(np.corrcoef(desmat.T)))
-    return vif_est
+    return np.diagonal(np.linalg.inv(np.corrcoef(desmat.T)))
 
 def plot_vif(subjinfo):
     nuis_loc = get_nuisance_reg_start_loc(subjinfo)
@@ -98,10 +97,7 @@ def plot_vif(subjinfo):
     sns.heatmap(vif_df, vmin=0, square=False, annot=True, annot_kws={'fontsize': 10}, cmap=sns.diverging_palette(240, 10, as_cmap=True))   
 
 def plot_average_maps(subjects, contrast_keys=None, **kwargs):
-    if contrast_keys is None:
-        map_keys = subjects[0].maps.keys()
-    else:
-        map_keys = contrast_keys
+    map_keys = subjects[0].maps.keys() if contrast_keys is None else contrast_keys
     averages = {}
     for key in map_keys:
         try:
@@ -130,7 +126,7 @@ def plot_task_maps(contrast_maps, title, threshold=3, contrast_titles=None, stat
     if stat_kwargs is None:
         stat_kwargs = {}
 
-    contrast_titles = contrast_titles if contrast_titles else [get_contrast_title(path) for path in contrast_maps]
+    contrast_titles = contrast_titles if contrast_titles is not None else [get_contrast_title(path) for path in contrast_maps]
 
     # set up plot
     f, axes = plt.subplots(len(contrast_maps), 1, figsize=(20,len(contrast_maps)*5), squeeze=False)
