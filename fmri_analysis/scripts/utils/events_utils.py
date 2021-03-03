@@ -211,26 +211,26 @@ def get_CCTHot_EVs(events_df, regress_rt=True, return_metadict=False):
 
     # button press regressors; match with parametric regressors below
     events_df['button_onset'] = events_df.onset+events_df.response_time
-    get_ev_vars(output_dict, events_df,
-                condition_spec='gain_press',
-                onset_column='button_onset',
-                duration=1,
-                amplitude=1,
-                subset="junk==False and action=='draw_card' and feedback==1")
+    # get_ev_vars(output_dict, events_df,
+    #             condition_spec='gain_press',
+    #             onset_column='button_onset',
+    #             duration=1,
+    #             amplitude=1,
+    #             subset="junk==False and action=='draw_card' and feedback==1")
 
-    get_ev_vars(output_dict, events_df,
-                condition_spec='loss_press',
-                onset_column='button_onset',
-                duration=1,
-                amplitude=1,
-                subset="junk==False and action=='draw_card' and feedback==0")
+    # get_ev_vars(output_dict, events_df,
+    #             condition_spec='loss_press',
+    #             onset_column='button_onset',
+    #             duration=1,
+    #             amplitude=1,
+    #             subset="junk==False and action=='draw_card' and feedback==0")
 
-    get_ev_vars(output_dict, events_df,
-                condition_spec='end_press',
-                onset_column='button_onset',
-                duration=1,
-                amplitude=1,
-                subset="junk==False and action=='end_round'")
+    # get_ev_vars(output_dict, events_df,
+    #             condition_spec='end_press',
+    #             onset_column='button_onset',
+    #             duration=1,
+    #             amplitude=1,
+    #             subset="junk==False and action=='end_round'")
 
     # PARAMETRIC REGRESSORS
     # positive_draw regressor
