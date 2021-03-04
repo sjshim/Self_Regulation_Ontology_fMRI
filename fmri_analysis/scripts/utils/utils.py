@@ -37,10 +37,10 @@ def get_contrasts(task, regress_rt=True):
                     ('trial_loss', 'trial_loss'),
                     ('trial_gain', 'trial_gain'),
                     ('positive_draw', 'positive_draw'), #for PCA
-                    ('negative_draw', 'negative_draw'), #for PCA
-                    ('gain_press', 'gain_press'),
-                    ('loss_press', 'loss_press'),
-                    ('end_press', 'end_press')]
+                    ('negative_draw', 'negative_draw')] #for PCA
+                    # ('gain_press', 'gain_press'),
+                    # ('loss_press', 'loss_press'),
+                    # ('end_press', 'end_press')
     elif task == 'discountFix':
         contrasts = [('task', 'task'),
                     ('choice', 'choice')] #for PCA
