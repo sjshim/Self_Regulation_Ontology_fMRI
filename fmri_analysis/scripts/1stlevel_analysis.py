@@ -154,10 +154,11 @@ for subjinfo in to_run:
                                )
 
     verboseprint('** saving')
-    save_first_level_obj(subjinfo, first_level_dir, False)
-    subjinfo.export_design(first_level_dir)
-    subjinfo.export_events(first_level_dir)
-    subjinfo.export_2ndlvl_meta(first_level_dir)
     if not args.design_matrix_only:
         out = fmri_glm.fit(subjinfo.func, design_matrices=subjinfo.design)
         subjinfo.fit_model = out
+    subjinfo.export_design(first_level_dir)
+    subjinfo.export_events(first_level_dir)
+    subjinfo.export_2ndlvl_meta(first_level_dir)
+    save_first_level_obj(subjinfo, first_level_dir,
+                         save_maps=(not args.design_matrix_only))
