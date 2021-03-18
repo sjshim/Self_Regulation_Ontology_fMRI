@@ -15,82 +15,35 @@ from utils.secondlevel_utils import create_group_mask, randomise
 from utils.utils import get_contrasts, get_flags
 
 # In[ ]:
+def get_args():
+    parser = argparse.ArgumentParser(description='2nd level Entrypoint Script.')
+    parser.add_argument('-derivatives_dir', default=None)
+    parser.add_argument('--tasks', nargs="+", help="Choose from ANT, CCTHot, discountFix, DPX, motorSelectiveStop, stopSignal, stroop, surveyMedley, twoByTwo, WATT3")
+    parser.add_argument('--rerun', action='store_true')
+    parser.add_argument('--rt', action='store_true')
+    parser.add_argument('--beta', action='store_true')
+    parser.add_argument('--n_perms', default=1000, type=int)
+    parser.add_argument('--mask_thresh', default=.95, type=float)
+    parser.add_argument('--smoothing_fwhm', default=6)
+    parser.add_argument('--quiet', '-q', action='store_true')
+    parser.add_argument('--aim', default='NONE', help='Choose from aim1, aim2')
+    parser.add_argument('--group', default='NONE')
 
-parser = argparse.ArgumentParser(description='2nd level Entrypoint Script.')
-parser.add_argument('-derivatives_dir', default=None)
-parser.add_argument('--tasks', nargs="+", help="Choose from ANT, CCTHot, discountFix, DPX, motorSelectiveStop, stopSignal, stroop, surveyMedley, twoByTwo, WATT3")
-parser.add_argument('--rerun', action='store_true')
-parser.add_argument('--rt', action='store_true')
-parser.add_argument('--beta', action='store_true')
-parser.add_argument('--n_perms', default=1000, type=int)
-parser.add_argument('--mask_thresh', default=.95, type=float)
-parser.add_argument('--smoothing_fwhm', default=6)
-parser.add_argument('--quiet', '-q', action='store_true')
-parser.add_argument('--aim', default='NONE', help='Choose from aim1, aim2')
-parser.add_argument('--group', default='NONE')
-
-if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
-    args = parser.parse_args()
-else:
-    args = parser.parse_args([])
-    args.derivatives_dir = '/data/derivatives/'
-    args.tasks = ['stroop']
-    args.rt = True
-    args.n_perms = 10
-
-# In[ ]:
-
-
-if not args.quiet:
-    def verboseprint(*args, **kwargs):
-        print(*args, **kwargs)
-else:
-    def verboseprint(*args, **kwards):  # do-nothing function
-        pass
-
-# In[ ]:
-
-# set paths
-first_level_dir = path.join(args.derivatives_dir, '1stlevel')
-second_level_dir = path.join(args.derivatives_dir, '2ndlevel')
-fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep')
-
-# set tasks
-if args.tasks is not None:
-    tasks = args.tasks
-else:
-    tasks = ['ANT', 'CCTHot', 'discountFix',
-             'DPX', 'motorSelectiveStop',
-             'stopSignal', 'stroop',
-             'twoByTwo', 'WATT3']
-
-# set other variables
-regress_rt = args.rt
-beta_series = args.beta
-n_perms = args.n_perms
-group = args.group
-
-# In[ ]:
-
-# Create Mask
-mask_loc = path.join(second_level_dir,
-                     'group_mask_thresh-%s.nii.gz' % str(args.mask_thresh))
-if (not path.exists(mask_loc)) or args.rerun:
-    verboseprint('Making group mask at %s' % mask_loc)
-    group_mask = create_group_mask(fmriprep_dir, args.mask_thresh)
-    makedirs(path.dirname(mask_loc), exist_ok=True)
-    group_mask.to_filename(mask_loc)
-
-# In[ ]:
-
-
-aim1_2ndlevel_confounds_path = "/scripts/aim1_2ndlevel_regressors/" +\
-                               "aim1_2ndlevel_confounds_matrix.csv"
-full_confounds_df = pd.read_csv(aim1_2ndlevel_confounds_path,
-                                index_col='index')
-
+    if '-derivatives_dir' in sys.argv or '-h' in sys.argv:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args([])
+        args.derivatives_dir = '/data/derivatives/'
+        args.tasks = ['stroop']
+        args.rt = True
+        args.n_perms = 10
+    return args
 
 def extend_confounds_df(indiv_meta_files):
+    aim1_2ndlevel_confounds_path = "/scripts/aim1_2ndlevel_regressors/" +\
+                               "aim1_2ndlevel_confounds_matrix.csv"
+    full_confounds_df = pd.read_csv(aim1_2ndlevel_confounds_path,
+                                index_col='index')
     meta_dict = {}
     for meta_file in indiv_meta_files:
         sub_id = meta_file.replace(first_level_dir+'/', '').split('/%s' % task)[0]
@@ -103,71 +56,108 @@ def extend_confounds_df(indiv_meta_files):
     extended_confounds_df['FD_mean'] =  extended_confounds_df['FD_mean'].combine_first(extended_confounds_df['%s_meanFD' % task])
     return extended_confounds_df
 
-def fit_and_compute_contrast(maps, task, second_level_model, extended_confounds_df):
-    design_matrix, curr_contrasts = get_group_DM_and_contrasts(maps,
-                                                               task,
-                                                               extended_confounds_df)
-    maps, design_matrix = filter_maps_and_DM(maps, design_matrix)
-    second_level_model.fit(maps,
-                           design_matrix=design_matrix)
-    contrast_map = second_level_model.compute_contrast(
-        second_level_contrast=curr_contrasts)
-    return contrast_map, maps
 
-
-def get_group_DM_and_contrasts(maps, task, extended_confounds_df):
-    design_matrix = pd.DataFrame([1] * len(maps), columns=['intercept'])
+def get_2ndlevel_desMat(maps, task, extended_confounds_df):
+    des_mat = pd.DataFrame([1] * len(maps), columns=['intercept'])
     if 'aim1' in args.aim:
         subjects = [m.split('1stlevel/')[-1].split('/')[0] for m in maps]
         rt_cols = extended_confounds_df.filter(regex='RT').columns
-        dm_cols = ['age', 'sex'] + list(rt_cols) + ['FD_mean']
+        dm_cols = ['age', 'sex'] + list(rt_cols)
         if 'noFD' not in args.aim:
             dm_cols.append('FD_mean')
-        design_matrix = extended_confounds_df.loc[subjects,
+        des_mat = extended_confounds_df.loc[subjects,
                                               dm_cols,
                                               ].copy()
-        design_matrix.index.rename('subject_label', inplace=True)
-        design_matrix['intercept'] = 1
-    ncols = design_matrix.shape[1]
-    contrasts = np.zeros(ncols)
-    contrasts[-1] = 1
-    contrasts = [int(i) for i in contrasts]
-    return design_matrix, contrasts
+        des_mat.index.rename('subject_label', inplace=True)
+        des_mat.insert(0, 'intercept', 1)
+    demean_cols = [col for col in des_mat.columns if col!='intercept']
+    for col in demean_cols: #demean to continue capturing mean effect.
+        des_mat[col] = des_mat[col] - des_mat[col].mean()
+    return des_mat
 
-
-def filter_maps_and_DM(maps, design_matrix):
-    drop_num = design_matrix.isna().any(axis=1).sum()
+def filter_maps_and_DM(maps, des_mat):
+    drop_num = des_mat.isna().any(axis=1).sum()
     print('dropping ' +
           str(drop_num) +
           ' due to missing values in design matrix')
-    design_matrix = design_matrix.dropna()
-    if len(design_matrix) != len(maps):
-        keep_subs = design_matrix.index.tolist()
+    des_mat = des_mat.dropna()
+    if len(des_mat) != len(maps):
+        keep_subs = des_mat.index.tolist()
         maps = [m for m in maps if
                 m.split('1stlevel/')[-1].split('/')[0] in keep_subs]
-    assert(len(design_matrix) == len(maps))
-    return maps, design_matrix
+    assert(len(des_mat) == len(maps))
+    return maps, des_mat
 
+def get_2ndlevel_contrasts(des_mat):
+    ncols = des_mat.shape[1]
+    mean_contrast = np.zeros(ncols)
+    mean_contrast[des_mat.loc('intercept')] = 1
+    mean_contrast = [int(i) for i in mean_contrast]
+    contrasts = [('groupMean', mean_contrast)]
+    for rt_col in des_mat.filter(regex='RT').columns:
+        curr_contrast = np.zeros(ncols)
+        curr_contrast[des_mat.loc(rt_col)] = 1
+        curr_contrast = [int(i) for i in curr_contrast]
+        contrasts.append((rt_col, curr_contrast))
+    return contrasts
 
-rt_flag, beta_flag = get_flags(regress_rt, beta_series)
-for task in tasks:
-    verboseprint('Running 2nd level for %s' % task)
+if __name__=='__main__':
+    args = get_args()
 
-    verboseprint('*** Creating maps')
-    task_contrasts = get_contrasts(task, regress_rt)
-    maps_dir = path.join(second_level_dir,
-                         task,
-                         'secondlevel-%s_%s_maps' % (rt_flag, beta_flag))
-    makedirs(maps_dir, exist_ok=True)
+    if not args.quiet:
+        def verboseprint(*args, **kwargs):
+            print(*args, **kwargs)
+    else:
+        def verboseprint(*args, **kwards):  # do-nothing function
+            pass
 
-    indiv_meta_files = get_first_level_metas('*', task,
-                                             first_level_dir,
-                                             regress_rt,
-                                             beta_series)
-    extended_confounds_df = extend_confounds_df(indiv_meta_files)
+    # set paths
+    first_level_dir = path.join(args.derivatives_dir, '1stlevel')
+    second_level_dir = path.join(args.derivatives_dir, '2ndlevel')
+    fmriprep_dir = path.join(args.derivatives_dir, 'fmriprep')
 
-    # run through each contrast for all participants
-    if group == 'NONE':
+    # set tasks
+    if args.tasks is not None:
+        tasks = args.tasks
+    else:
+        tasks = ['ANT', 'CCTHot', 'discountFix',
+                'DPX', 'motorSelectiveStop',
+                'stopSignal', 'stroop',
+                'twoByTwo', 'WATT3']
+
+    # set other variables
+    regress_rt = args.rt
+    beta_series = args.beta
+    n_perms = args.n_perms
+    group = args.group
+
+    # Create Mask
+    mask_loc = path.join(second_level_dir,
+                        'group_mask_thresh-%s.nii.gz' % str(args.mask_thresh))
+    if (not path.exists(mask_loc)) or args.rerun:
+        verboseprint('Making group mask at %s' % mask_loc)
+        group_mask = create_group_mask(fmriprep_dir, args.mask_thresh)
+        makedirs(path.dirname(mask_loc), exist_ok=True)
+        group_mask.to_filename(mask_loc)
+
+    rt_flag, beta_flag = get_flags(regress_rt, beta_series)
+    for task in tasks:
+        verboseprint('Running 2nd level for %s' % task)
+
+        verboseprint('*** Creating maps')
+        task_contrasts = get_contrasts(task, regress_rt)
+        maps_dir = path.join(second_level_dir,
+                            task,
+                            'secondlevel-%s_%s_maps' % (rt_flag, beta_flag))
+        makedirs(maps_dir, exist_ok=True)
+
+        indiv_meta_files = get_first_level_metas('*', task,
+                                                first_level_dir,
+                                                regress_rt,
+                                                beta_series)
+        extended_confounds_df = extend_confounds_df(indiv_meta_files)
+
+        # run through each contrast for all participants
         for name, contrast in task_contrasts:
             second_level_model = SecondLevelModel(
                 mask=mask_loc,
@@ -184,14 +174,22 @@ for task in tasks:
                 verboseprint('****** No Maps')
                 continue
 
-            contrast_map, maps = fit_and_compute_contrast(maps,
-                                                          task,
-                                                          second_level_model,
-                                                          extended_confounds_df)
-            # save
-            contrast_file = path.join(maps_dir, 'contrast-%s.nii.gz' % name)
-            contrast_map.to_filename(contrast_file)
+            # run 2ndlevels
+            des_mat = get_2ndlevel_desMat(maps,
+                                        task,
+                                        extended_confounds_df)
+            maps, des_mat = filter_maps_and_DM(maps, des_mat)
+            second_level_model.fit(maps, design_matrix=des_mat)
+            second_level_contrasts = get_2ndlevel_contrasts(des_mat) # groupMean and RTs
+            for second_name, second_contrast in second_level_contrasts:
+                contrast_map = second_level_model.compute_contrast(
+                    second_level_contrast=second_contrast
+                    )
+                # save
+                contrast_file = path.join(maps_dir, 'contrast-%s_2ndlevel-%s.nii.gz' % (name, second_name))
+                contrast_map.to_filename(contrast_file)
             # write metadata
+            N = str(len(maps)).zfill(2)
             with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
                 f.write('Contrast-%s: %s maps\n' % (contrast, N))
             # save corrected map
@@ -204,53 +202,4 @@ for task in tasks:
                         'Contrast-%s: Randomise run with %s permutations\n' %
                         (contrast, str(n_perms)))
 
-    else:
-        verboseprint('*** Creating %s maps' % group)
-        f = open("/scripts/%s_subjects.txt" % group, "r")
-        group_subjects = f.read().split('\n')
-        for name, contrast in task_contrasts:
-            second_level_model = SecondLevelModel(
-                mask=mask_loc,
-                smoothing_fwhm=args.smoothing_fwhm
-                )
-            maps = []
-            for curr_subject in group_subjects:
-                curr_map = get_first_level_maps(curr_subject, task,
-                                                first_level_dir,
-                                                name,
-                                                regress_rt,
-                                                beta_series)
-                if len(curr_map):
-                    maps += curr_map
-            N = str(len(maps)).zfill(2)
-            verboseprint('****** %s, %s files found' % (name, N))
-            if len(maps) <= 1:
-                verboseprint('****** No Maps')
-                continue
-            contrast_map, maps = fit_and_compute_contrast(maps,
-                                                          task,
-                                                          second_level_model)
-            # save
-            group_dir = path.join(maps_dir, group)
-            makedirs(group_dir, exist_ok=True)
-            contrast_file = path.join(group_dir,
-                                      'contrast-%s-%s.nii.gz' % (name, group))
-            contrast_map.to_filename(contrast_file)
-            # write metadata
-            with open(path.join(group_dir, 'metadata.txt'), 'a') as f:
-                f.write('Contrast-%s-%s: %s maps\n' % (contrast, group, N))
-            # save corrected map
-            if n_perms > 0:
-                verboseprint('*** Running Randomise')
-                randomise(maps, group_dir,
-                          mask_loc,
-                          n_perms=n_perms,
-                          group=group)
-                # write metadata
-                with open(path.join(group_dir, 'metadata.txt'), 'a') as f:
-                    f.write(
-                        'Contrast-%s-%s: Randomise run with %s permutations\n'
-                        %
-                        (contrast, group, str(n_perms)))
-
-    verboseprint('Done with %s' % task)
+        verboseprint('Done with %s' % task)
