@@ -72,7 +72,7 @@ def get_2ndlevel_desMat(maps, task, extended_confounds_df):
         des_mat.insert(0, 'intercept', 1)
     demean_cols = [col for col in des_mat.columns if col!='intercept']
     for col in demean_cols: #demean to continue capturing mean effect.
-        des_mat[col] = des_mat[col] - des_mat[col].mean()
+        des_mat[col] -= des_mat[col].mean()
     return des_mat
 
 def filter_maps_and_DM(maps, des_mat):
