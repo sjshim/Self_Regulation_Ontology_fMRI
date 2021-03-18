@@ -90,8 +90,7 @@ def randomise(maps, output_loc, mask_loc, design_matrix,
     }
     t_counter = 3
     f_counter = 2
-    rt_cols = list(design_matrix.filter(regex='RT').columns)
-    for rt_col in rt_cols:
+    for rt_col in design_matrix.filter(regex='RT').columns:
         des_contrasts += [
             ('%s_pos' % rt_col, 'T', [rt_col],[1]),
             ('%s_neg', 'T', [rt_col],[-1]),
