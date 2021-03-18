@@ -79,7 +79,7 @@ def randomise(maps, output_loc, mask_loc, design_matrix,
     des_contrasts = [
             ('group_mean_pos', 'T',['intercept'], [1]),
             ('group_mean_neg', 'T',['intercept'], [-1]),
-            ('group_mean_F', 'F', [('group_mean_pos', 'T', ['intercept'],[1])]),)
+            ('group_mean_F', 'F', [('group_mean_pos', 'T', ['intercept'],[1])])
         ],
     t_name_map = {
         1: 'groupMeanPos',
