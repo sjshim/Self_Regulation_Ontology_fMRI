@@ -7,9 +7,10 @@ from os import makedirs, path
 import pandas as pd
 import numpy as np
 import sys
+import json
 
 from nistats.second_level_model import SecondLevelModel
-from utils.firstlevel_utils import get_first_level_maps
+from utils.firstlevel_utils import get_first_level_maps, get_first_level_metas
 from utils.secondlevel_utils import create_group_mask, randomise
 from utils.utils import get_contrasts, get_flags
 
