@@ -65,6 +65,7 @@ def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
 
 def randomise(maps, output_loc, mask_loc, des_mat,
               n_perms=1000, fwhm=6, c_thresh=3.1):
+    print(des_mat.head(10))
     contrast_name = maps[0][maps[0].index('contrast')+9:].replace('.nii.gz', '')
     # create 4d image
     concat_images = image.concat_imgs(maps)
@@ -102,6 +103,7 @@ def randomise(maps, output_loc, mask_loc, des_mat,
         t_counter += 1
         f_name_map[f_counter] = '%s' % rt_col
         f_counter += 1
+    print(des_contrasts)
     mult_regress_design = mem.cache(fsl.MultipleRegressDesign)
     mult_res_model_results = mult_regress_design(
         contrasts=des_contrasts,
@@ -126,18 +128,20 @@ def randomise(maps, output_loc, mask_loc, des_mat,
     # save results
     def move_outputs_w_map(output_list, name_map, filetype):
         for filey in output_list:
-            name_idx = int(filey.replace('.nii.gz', '')[-1])
+            name_idxs = re.findall(r'[0-9$,%]+\d*', test_str)
+            assert len(name_idxs)==1  # want to make sure there was only 1 num in the str, the idx
+            name_idx = int(name_idxs[0])
             mapped_name = name_map[name_idx]
             new_file_loc = path.join(
                 output_loc,
                 "contrast-%s_2ndlevel-%s_%s.nii.gz" % (contrast_name, mapped_name, filetype)
             )
             shutil.move(filey, new_file_loc) 
-    move_outputs_w_map(randomise_results.outputs.fstat_files, f_name_map, filetype='raw_fstatfile')
-    move_outputs_w_map(randomise_results.outputs.f_corrected_p_files, f_name_map, filetype='fcorrected_pfile')
-    move_outputs_w_map(randomise_results.outputs.tstat_files, t_name_map, filetype='raw_tstatfile')
-    move_outputs_w_map(randomise_results.outputs.t_corrected_p_files, t_name_map, filetype='tcorrected_pfile')                             
+    # move_outputs_w_map(randomise_results.outputs.fstat_files, f_name_map, filetype='raw_fstatfile')
+    # move_outputs_w_map(randomise_results.outputs.f_corrected_p_files, f_name_map, filetype='fcorrected_pfile')
+    # move_outputs_w_map(randomise_results.outputs.tstat_files, t_name_map, filetype='raw_tstatfile')
+    # move_outputs_w_map(randomise_results.outputs.t_corrected_p_files, t_name_map, filetype='tcorrected_pfile')                             
 
     # remove temporary files
-    remove(concat_loc)
-    shutil.rmtree(path.join(output_loc, 'nipype_mem'))
+    # remove(concat_loc)
+    # shutil.rmtree(path.join(output_loc, 'nipype_mem'))
