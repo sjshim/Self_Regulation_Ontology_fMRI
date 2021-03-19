@@ -63,7 +63,7 @@ def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
     return maps
 
 
-def randomise(maps, output_loc, mask_loc, design_matrix,
+def randomise(maps, output_loc, mask_loc, des_mat,
               n_perms=1000, fwhm=6, c_thresh=3.1):
     contrast_name = maps[0][maps[0].index('contrast')+9:].replace('.nii.gz', '')
     # create 4d image
@@ -90,7 +90,7 @@ def randomise(maps, output_loc, mask_loc, design_matrix,
     }
     t_counter = 3
     f_counter = 2
-    for rt_col in design_matrix.filter(regex='RT').columns:
+    for rt_col in des_mat.filter(regex='RT').columns:
         des_contrasts += [
             ('%s_pos' % rt_col, 'T', [rt_col],[1]),
             ('%s_neg', 'T', [rt_col],[-1]),
@@ -105,7 +105,7 @@ def randomise(maps, output_loc, mask_loc, design_matrix,
     mult_regress_design = mem.cache(fsl.MultipleRegressDesign)
     mult_res_model_results = mult_regress_design(
         contrasts=des_contrasts,
-        regressors=design_matrix.reset_index(drop=True).to_dict('l')
+        regressors=des_mat.reset_index(drop=True).to_dict('l')
     )
     # run randomise    
     fsl_randomise = mem.cache(fsl.Randomise)

@@ -58,18 +58,14 @@ def extend_confounds_df(indiv_meta_files):
 
 
 def get_2ndlevel_desMat(maps, task, extended_confounds_df):
-    des_mat = pd.DataFrame([1] * len(maps), columns=['intercept'])
-    if 'aim1' in args.aim:
-        subjects = [m.split('1stlevel/')[-1].split('/')[0] for m in maps]
-        rt_cols = extended_confounds_df.filter(regex='RT').columns
-        dm_cols = ['age', 'sex'] + list(rt_cols)
-        if 'noFD' not in args.aim:
-            dm_cols.append('FD_mean')
-        des_mat = extended_confounds_df.loc[subjects,
-                                              dm_cols,
-                                              ].copy()
-        des_mat.index.rename('subject_label', inplace=True)
-        des_mat.insert(0, 'intercept', 1)
+    subjects = [m.split('1stlevel/')[-1].split('/')[0] for m in maps]
+    rt_cols = extended_confounds_df.filter(regex='RT').columns
+    dm_cols = ['age', 'sex'] + list(rt_cols) + ['FD_mean']
+    des_mat = extended_confounds_df.loc[subjects,
+                                            dm_cols,
+                                            ].copy()
+    des_mat.index.rename('subject_label', inplace=True)
+    des_mat.insert(0, 'intercept', 1)
     demean_cols = [col for col in des_mat.columns if col!='intercept']
     for col in demean_cols: #demean to continue capturing mean effect.
         des_mat[col] -= des_mat[col].mean()
@@ -195,7 +191,7 @@ if __name__=='__main__':
             # save corrected map
             if n_perms > 0:
                 verboseprint('*** Running Randomise')
-                randomise(maps, maps_dir, mask_loc, n_perms=n_perms)
+                randomise(maps, maps_dir, mask_loc, des_mat, n_perms=n_perms)
                 # write metadata
                 with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
                     f.write(
