@@ -160,9 +160,8 @@ def save_first_level_obj(subjinfo, output_dir, save_maps=False):
     flags = subjinfo.get_flags()
     filename = path.join(directory, 'firstlevel_%s.pkl' % flags)
     makedirs(directory, exist_ok=True)
-    f = open(filename, 'wb')
-    pickle.dump(subjinfo, f)
-    f.close()
+    with open(filename, 'wb') as f:
+        pickle.dump(subjinfo, f)
     if save_maps:
         maps_dir = path.join(directory, 'maps_%s' % flags)
         makedirs(maps_dir, exist_ok=True)
