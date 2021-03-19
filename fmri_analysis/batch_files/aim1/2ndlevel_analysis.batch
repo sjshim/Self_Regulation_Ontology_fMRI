@@ -2,7 +2,7 @@
 #SBATCH --job-name={task}-2ndlevel
 #SBATCH --output=.out/{task}-2ndlevel-%j.out
 #SBATCH --error=.err/{task}-2ndlevel-%j.err
-#SBATCH --time=20:00:00
+#SBATCH --time=48:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
 #SBATCH --ntasks-per-node=1
