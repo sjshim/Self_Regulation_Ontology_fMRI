@@ -91,12 +91,12 @@ def filter_maps_and_DM(maps, des_mat):
 def get_2ndlevel_contrasts(des_mat):
     ncols = des_mat.shape[1]
     mean_contrast = np.zeros(ncols)
-    mean_contrast[des_mat.loc('intercept')] = 1
+    mean_contrast[des_mat.columns.get_loc('intercept')] = 1
     mean_contrast = [int(i) for i in mean_contrast]
     contrasts = [('groupMean', mean_contrast)]
     for rt_col in des_mat.filter(regex='RT').columns:
         curr_contrast = np.zeros(ncols)
-        curr_contrast[des_mat.loc(rt_col)] = 1
+        curr_contrast[des_mat.columns.get_loc(rt_col)] = 1
         curr_contrast = [int(i) for i in curr_contrast]
         contrasts.append((rt_col, curr_contrast))
     return contrasts
