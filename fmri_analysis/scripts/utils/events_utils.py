@@ -181,8 +181,8 @@ def get_CCTHot_EVs(events_df, regress_rt=True, return_metadict=False):
 
     first_rt = events_df.loc[(events_df.junk == False) & (events_df.num_click_in_round == 1), 'response_time'].mean()
     subsequent_rt = events_df.loc[(events_df.junk == False) & (events_df.num_click_in_round > 1), 'response_time'].mean()
-    meta_dict['first_rt'] = first_rt
-    meta_dict['subsequent_rt'] = subsequent_rt
+    meta_dict['first_RT'] = first_rt
+    meta_dict['subsequent_RT'] = subsequent_rt
 
     # Building up trial regressor
     end_round_idx = events_df.index[events_df.trial_id == 'ITI']
@@ -593,13 +593,14 @@ def get_stroop_EVs(events_df, regress_rt=True, return_metadict=False):
 
 
 def get_surveyMedley_EVs(events_df, regress_rt=True, return_metadict=False):
+    # this function needs to be carefully looked over before being revived
     output_dict = {
         'conditions': [],
         'onsets': [],
         'durations': [],
         'amplitudes': []
         }
-    meta_dict = {}
+    meta_dict = {}  # unused currently
 
     # nuisance regressors
     get_ev_vars(output_dict, events_df,
