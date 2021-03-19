@@ -80,7 +80,7 @@ def randomise(maps, output_loc, mask_loc, des_mat,
             ('group_mean_pos', 'T',['intercept'], [1]),
             ('group_mean_neg', 'T',['intercept'], [-1]),
             ('group_mean_F', 'F', [('group_mean_pos', 'T', ['intercept'],[1])])
-        ],
+        ]
     t_name_map = {
         1: 'groupMeanPos',
         2: 'groupMeanNeg',
@@ -93,7 +93,7 @@ def randomise(maps, output_loc, mask_loc, des_mat,
     for rt_col in des_mat.filter(regex='RT').columns:
         des_contrasts += [
             ('%s_pos' % rt_col, 'T', [rt_col],[1]),
-            ('%s_neg', 'T', [rt_col],[-1]),
+            ('%s_neg' % rt_col, 'T', [rt_col],[-1]),
             ('%s_F' % rt_col, 'F', [('%s_pos' % rt_col, 'T', [rt_col],[1])])
         ]
         t_name_map[t_counter] = '%sPos' % rt_col
