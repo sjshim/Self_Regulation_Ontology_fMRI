@@ -10,6 +10,7 @@
 #SBATCH -p russpold,hns,normal
 #SBATCH --exclude=sh02-06n01,sh02-06n02
 export PYTHONPATH=""
+source ~/miniconda3/etc/profile.d/conda.sh 
 conda activate py3-env
 
 derivatives_loc=`sed '6q;d' singularity_config.txt`
