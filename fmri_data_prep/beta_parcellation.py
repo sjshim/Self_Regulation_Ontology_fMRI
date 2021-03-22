@@ -11,19 +11,20 @@ import os
 parser = argparse.ArgumentParser(description='First Level Entrypoint script')
 parser.add_argument('-bids_dir', default='/data')
 parser.add_argument('-parcellation_loc', default='./Parcels_Combo.nii.gz')
-parser.add_argument('-output_dir', default='/data/derivatives/1stlevel/beta_parcellations')
+parser.add_argument('-atlas', default=None)
+parser.add_argument('-output_dir', default='/data/derivatives/parcellations/1stlevel_beta')
 parser.add_argument('--tasks', nargs="+", help="Choose from ANT, CCTHot, discountFix, \
             DPX, motorSelectiveStop, stopSignal, stroop, surveyMedley, twoByTwo, WATT3")
-parser.add_argument('--RT_flag', nargs='+', default=['RT-False'], help='Choose from RT-True, RT-False')
+parser.add_argument('--RT_flag', nargs='+', default=['RT-True', 'RT-False'], help='Choose from RT-True, RT-False')
 
-if '-bids_dir' in sys.argv or '-h' in sys.argv:
+if '-bids_dir' in sys.argv:
     args = parser.parse_args()
 else:
     args = parser.parse_args([])
     oak_mount = '/Users/henrymj/Documents/mounts/OAK'
     args.bids_dir = os.path.join(oak_mount, 'data/uh2/aim1/BIDS_scans')
     args.atlas = 400
-    args.output_dir = os.path.join(args.bids_dir, 'derivatives/1stlevel/beta_parcellations')
+    args.output_dir = os.path.join(args.bids_dir, 'derivatives/parcellations/1stlevel_beta')
 
 
 tasks = ['ANT', 'CCTHot', 'DPX', 'discountFix', 'motorSelectiveStop', 
@@ -56,23 +57,19 @@ masker = NiftiLabelsMasker(labels_img=atlas_path,
                            standardize=True,
                            memory='nilearn_cache',
                            verbose=5)
-subject_dirs = glob(os.path.join(first_level_dir, '*[!.html]')) # get subject dirs
 
 for RT_flag in args.RT_flag:
     curr_output_dir = os.path.join(output_dir, RT_flag)
     os.makedirs(curr_output_dir, exist_ok=True)
-    for task in tasks:
-        for subj in subject_dirs: #loop over paths
-            #try:
-                first_level = glob(os.path.join(subj, task,
-                f'maps_{RT_flag}_beta-False', 'contrast-*.nii.gz'))
-                subid = subj.split('/')[-1].split('-')[-1]
-                print(first_level) 
-                for cont in first_level: 
-                    beta_array = masker.fit_transform([cont])
-                    contrast = cont.split('/')[-1].replace('.nii.gz', '')
-
-                    pd.DataFrame(beta_array).to_csv(os.path.join(curr_output_dir,
-                    f'{subid}_{task}_{contrast}_.csv'))
-        # except:
-        #     print(f'{subj}, {task} failed')
+    for contrast_file in glob(os.path.join(first_level_dir,
+                                           '*',  # sub
+                                           '*',  # task
+                                           f'maps_{RT_flag}_beta-False',
+                                           'contrast-*.nii.gz')
+                                           ):
+        subid = contrast_file.split('1stlevel/')[1].split('/')[0]
+        task = contrast_file.split(subj+'/')[1].split('/')[0]
+        beta_array = masker.fit_transform([contrast_file])
+        contrast = cont.split('/')[-1].replace('.nii.gz', '')
+        pd.DataFrame(beta_array).to_csv(os.path.join(curr_output_dir,
+                f'{subid}_task-{task}_{contrast}_.csv')

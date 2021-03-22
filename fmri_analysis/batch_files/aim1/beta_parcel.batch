@@ -1,25 +1,20 @@
 #!/bin/bash
 #SBATCH --job-name=beta_parcel
-#SBATCH --output=.out/beta_parcel_%j.out
-#SBATCH --error=.err/beta_parcel_%j.err
+#SBATCH --output=.out/beta_parcel.out
+#SBATCH --error=.err/beta_parcel.err
 #SBATCH --time=5:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
 #SBATCH --cpus-per-task=16
 #SBATCH --ntasks-per-node=1
-#SBATCH -p russpold
+#SBATCH -p russpold,hns,normal
+#SBATCH --exclude=sh02-06n01,sh02-06n02
 export PYTHONPATH=""
-# set up paths
-# scratch is automatically mounted
-ml python/3.6.1
+conda activate py3-env
+
 derivatives_loc=`sed '6q;d' singularity_config.txt`
-
-data_loc=`sed '8q;d' singularity_config.txt`
-scripts_loc=../../scripts
-scratch_loc=$SCRATCH
-
 bids_dir=`sed '8q;d' singularity_config.txt`
 parcellation_loc=../../../fmri_data_prep/'Parcels_Combo.nii.gz'
-output_dir=${derivatives_loc}/'1stlevel/beta_parcellations'
+output_dir=${derivatives_loc}/'parcellations/1stlevel_beta'
 
-python3 ../../../fmri_data_prep/beta_parcellation.py -bids_dir ${bids_dir} -parcellation_loc ${parcellation_loc} -output_dir ${output_dir}
+python3 ../../../fmri_data_prep/beta_parcellation.py -bids_dir ${bids_dir} -parcellation_loc ${parcellation_loc} -output_dir ${output_dir} -atlas 400
