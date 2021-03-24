@@ -647,7 +647,7 @@ def get_twoByTwo_EVs(events_df, regress_rt=True, return_metadict=False):
                           ['response_time', 'CTI']].mean()
     duration = means['response_time'] + (means['CTI']/1000)
     meta_dict['task_RT'] = means['response_time']
-    meta_dict['task_RT_w_CTI'] = duration
+    meta_dict['mean_CTI'] = means['CTI']/1000
 
     events_df.trial_type = ['cue_'+c if c is not np.nan else 'task_'+t
                             for c, t in zip(events_df.cue_switch,
