@@ -118,7 +118,7 @@ def plot_average_maps(subjects, contrast_keys=None, **kwargs):
 # SECOND LEVELS PLOTTING FUNCTIONS
 
 def get_contrast_title(contrast_map):
-    return contrast_map[contrast_map.index('contrast')+9:].replace('.nii.gz', '').replace('_corrected', '').replace('_raw', '').replace('_tfile', '')
+    return contrast_map.split('contrast-')[1].split('_2ndlevel-')[0]
     
 
 def plot_task_maps(contrast_maps, title, threshold=3, contrast_titles=None, stat_kwargs=None):
