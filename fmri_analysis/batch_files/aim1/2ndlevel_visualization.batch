@@ -1,13 +1,13 @@
 #!/bin/bash
-#SBATCH --job-name=2nd_vis
-#SBATCH --output=.out/2nd_vis_%j.out
-#SBATCH --error=.err/2nd_vis_%j.err
-#SBATCH --time=4:00:00
+#SBATCH --job-name=2nd_vis_{task}
+#SBATCH --output=.out/2nd_vis_{task}.out
+#SBATCH --error=.err/2nd_vis_{task}.err
+#SBATCH --time=2:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
 #SBATCH --cpus-per-task=16
 #SBATCH --ntasks-per-node=1
-#SBATCH -p russpold,hns
+#SBATCH -p russpold,hns,owners,normal
 export PYTHONPATH=""
 # set up paths
 # scratch is automatically mounted
@@ -19,4 +19,4 @@ scripts_loc=../../scripts
 
 # run singularity, scratch is automatically mounted
 singularity exec -B ${scripts_loc}:/scripts  ${singularity_loc} \
-    python /scripts/Visualizations.py --skip_designs --skip_first --save -derivatives_dir ${derivatives_loc}
+    python /scripts/Visualizations.py --skip_designs --skip_first --save -derivatives_dir ${derivatives_loc} --tasks {task}
