@@ -191,7 +191,9 @@ if __name__=='__main__':
             # save corrected map
             if n_perms > 0:
                 verboseprint('*** Running Randomise')
-                randomise(maps, maps_dir, mask_loc, des_mat, n_perms=n_perms)
+                randomise(maps, maps_dir, mask_loc, des_mat,
+                          fwhm=args.smoothing_fwhm,
+                          n_perms=n_perms)
                 # write metadata
                 with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
                     f.write(
