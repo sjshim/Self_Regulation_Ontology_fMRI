@@ -217,22 +217,31 @@ if run_second_level:
                 curr_title = contrast_title + '_2ndlevel-'+scnd_lvl
                 curr_beta_maps = sorted(mapi for mapi in beta_maps if ('2ndlevel-'+scnd_lvl in mapi))
                 curr_fp_maps = sorted(mapi for mapi in all_maps if (('2ndlevel-'+scnd_lvl in mapi) and ('fcorrected_pfile' in mapi)))
-                curr_fstat_maps = sorted(mapi for mapi in all_maps if (('2ndlevel-'+scnd_lvl in mapi) and ('fstatfile' in mapi)))
-                curr_tp_maps = sorted(mapi for mapi in all_maps if (('2ndlevel-'+scnd_lvl in mapi) and ('Pos_tcorrected_pfile' in mapi)))
-                curr_tstat_maps = sorted(mapi for mapi in all_maps if (('2ndlevel-'+scnd_lvl in mapi) and ('Pos_raw_tstatfile' in mapi)))
                 curr_masked_beta_images = [mask_img(beta_path, make_mask(mask_path)) for beta_path, mask_path in zip(curr_beta_maps, curr_fp_maps)]
-                curr_transformed_p_maps = [transform_p_val_map(path) for path in curr_fp_maps]
+                curr_fstat_maps = sorted(mapi for mapi in all_maps if (('2ndlevel-'+scnd_lvl in mapi) and ('fstatfile' in mapi)))
+                curr_tpPos_maps = sorted(mapi for mapi in all_maps if (('2ndlevel-'+scnd_lvl in mapi) and ('Pos_tcorrected_pfile' in mapi)))
+                curr_tstatPos_maps = sorted(mapi for mapi in all_maps if (('2ndlevel-'+scnd_lvl in mapi) and ('Pos_raw_tstatfile' in mapi)))
+                curr_tpNeg_maps = sorted(mapi for mapi in all_maps if (('2ndlevel-'+scnd_lvl in mapi) and ('Neg_tcorrected_pfile' in mapi)))
+                curr_tstatNeg_maps = sorted(mapi for mapi in all_maps if (('2ndlevel-'+scnd_lvl in mapi) and ('Neg_raw_tstatfile' in mapi)))                
                 contrast_titles = [get_contrast_title(path) for path in curr_beta_maps]
                 # plot and save
-                plot_task_maps(curr_beta_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_rawBeta_plots.pdf'%(task, scnd_lvl)))
-                plot_task_maps(curr_beta_maps, curr_title, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_thresh3Beta_plots.pdf' %(task, scnd_lvl)))
-                plot_task_maps(curr_masked_beta_images, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_fpMaskedBeta_plots.pdf' %(task, scnd_lvl)))
-                plot_task_maps(curr_transformed_p_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_transformedFP_plots.pdf' %(task, scnd_lvl)))
-                plot_task_maps(curr_fp_maps, curr_title, threshold=.9, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_thresh9FP_plots.pdf' %(task, scnd_lvl)))
-                plot_task_maps(curr_fstat_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_rawFstat_plots.pdf' %(task, scnd_lvl)))
-                plot_task_maps(curr_tp_maps, curr_title, threshold=.9, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_PosThresh9TP_plots.pdf' %(task, scnd_lvl)))
-                plot_task_maps(curr_tstat_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_PosRawTstat_plots.pdf' %(task, scnd_lvl)))
-
+                # Betas
+                plot_task_maps(curr_beta_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_Beta-raw_plots.pdf'%(task, scnd_lvl)))
+                plot_task_maps(curr_beta_maps, curr_title, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_Beta-thresh3_plots.pdf' %(task, scnd_lvl)))
+                plot_task_maps(curr_masked_beta_images, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_Beta-fpvalMasked_plots.pdf' %(task, scnd_lvl)))
+                # plot_task_maps(curr_transformed_p_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_transformedFP_plots.pdf' %(task, scnd_lvl)))
+                # F tests
+                plot_task_maps(curr_fp_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_Fpval-raw_plots.pdf' %(task, scnd_lvl)))
+                plot_task_maps(curr_fp_maps, curr_title, threshold=.95, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_Fpval-thresh95_plots.pdf' %(task, scnd_lvl)))
+                plot_task_maps(curr_fstat_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_Fstats-raw_plots.pdf' %(task, scnd_lvl)))
+                # T tests > 0
+                plot_task_maps(curr_tpPos_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_TpvalPos-raw_plots.pdf' %(task, scnd_lvl)))
+                plot_task_maps(curr_tpPos_maps, curr_title, threshold=.95, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_TpvalPos-thresh95_plots.pdf' %(task, scnd_lvl)))
+                plot_task_maps(curr_tstatPos_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_TstatsPos-raw_plots.pdf' %(task, scnd_lvl)))
+                # T tests < 0
+                plot_task_maps(curr_tpNeg_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_TpvalNeg-raw_plots.pdf' %(task, scnd_lvl)))
+                plot_task_maps(curr_tpNeg_maps, curr_title, threshold=.95, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_TpvalNeg-thresh95_plots.pdf' %(task, scnd_lvl)))
+                plot_task_maps(curr_tstatNeg_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, '%s_2ndlevel-%s_TstatsNeg-raw_plots.pdf' %(task, scnd_lvl)))
 # if run_second_level:
 #     print('running!')
 #     for task in tasks:
