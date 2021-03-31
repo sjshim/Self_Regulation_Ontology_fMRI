@@ -121,7 +121,7 @@ def get_contrast_title(contrast_map):
     return contrast_map.split('contrast-')[1].split('_2ndlevel-')[0]
     
 
-def plot_task_maps(contrast_maps, title, threshold=3, contrast_titles=None, stat_kwargs=None):
+def plot_task_maps(contrast_maps, title, threshold=0, contrast_titles=None, stat_kwargs=None):
     print(title, ': %s contrasts' % len(contrast_maps))
     if stat_kwargs is None:
         stat_kwargs = {}
