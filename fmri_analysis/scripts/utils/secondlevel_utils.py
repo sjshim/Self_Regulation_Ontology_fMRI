@@ -132,7 +132,7 @@ def randomise(maps, maps_dir, mask_loc, des_mat,
     mrd_out_dir = path.dirname(mult_res_model_results.outputs.design_con)
     mrd_files = glob(path.join(mrd_out_dir, 'design*')) + glob(path.join(mrd_out_dir, '*.json')) + glob(path.join(mrd_out_dir, '*.txt'))
     rand_out_dir = path.dirname(randomise_results.outputs.f_corrected_p_files[0])
-    rand_files = glob(path.join(rand_out_dir, '*.nii.gz'))
+    rand_files = glob(path.join(rand_out_dir, '*.nii.gz')) + glob(path.join(rand_out_dir, '*.txt'))
     for filey in mrd_files + rand_files:
         filename = filey.split('/')[-1]
         shutil.move(filey, path.join(output_dir, filename)) 
