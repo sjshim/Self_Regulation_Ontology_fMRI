@@ -6,6 +6,8 @@
 import argparse
 from glob import glob
 import os
+import json
+import re
 from os import makedirs, path
 import pickle
 import nibabel as nib
@@ -193,6 +195,8 @@ def mask_img(img_path, mask):
     data[~mask.get_fdata().astype(bool)] = np.nan
     return nib.Nifti1Image(data, img.affine, img.header)
 
+def get_rand_idx(path):
+    return str(re.findall(r'[0-9$,%]+\d*', path)[-1])
 
 if run_second_level:
     print('running!')
@@ -249,6 +253,7 @@ if run_second_level:
                 curr_tstatPos_maps = [ordered_file_dict['tstatPos'][i] for i in curr_idx]
                 curr_tpNeg_maps = [ordered_file_dict['tfce_corrp_tstatNeg'][i] for i in curr_idx]
                 curr_tstatNeg_maps = [ordered_file_dict['tstatNeg'][i] for i in curr_idx]
+                contrast_titles = [get_contrast_title(path) for path in curr_beta_maps]
                 # plot and save
                 # Betas
                 plot_task_maps(curr_beta_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAAPLOTS_2ndlevel-%s_Beta-raw_plots.pdf'%scnd_lvl))
