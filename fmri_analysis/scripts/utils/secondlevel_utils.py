@@ -64,7 +64,7 @@ def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
     return maps
 
 
-def randomise(maps, maps_dir, mask_loc, des_mat,
+def randomise(maps, maps_dir, mask_loc, des_mat, scnd_lvl,
               n_perms=1000, fwhm=6, c_thresh=None):
     contrast_name = maps[0][maps[0].index('contrast')+9:].replace('.nii.gz', '')
     # create 4d image
@@ -77,92 +77,75 @@ def randomise(maps, maps_dir, mask_loc, des_mat,
 
     mem = Memory(base_dir=maps_dir)
     #build up randomise design files
-    des_contrasts = [
-            ('group_mean_pos', 'T',['intercept'], [1]),
-            ('group_mean_neg', 'T',['intercept'], [-1]),
-            ('group_mean_F', 'F', [('group_mean_pos', 'T', ['intercept'],[1])])
-        ]
+    assert scnd_lvl == 'intercept' or scnd_lvl in des_mat.filter(regex='RT').columns
+    if scnd_lvl == 'intercept':
+        des_contrasts = [
+            ('%s_pos' % scnd_lvl, 'T',[scnd_lvl], [1]),
+            ('%s_F' % scnd_lvl, 'F',
+                [('%s_pos' % scnd_lvl, 'T', [scnd_lvl],[1])]
+                )]
+    else:
+        des_contrasts = [
+                ('%s_pos' % scnd_lvl, 'T',[scnd_lvl], [1]),
+                ('%s_neg' % scnd_lvl, 'T',[scnd_lvl], [-1]),
+            ]
     t_name_map = {
-        1: 'groupMeanPos',
-        2: 'groupMeanNeg',
+        1: '%sPos' % scnd_lvl,
+        2: '%sNeg' % scnd_lvl,
     }
     f_name_map = {
-        1: 'groupMean',
+        1: scnd_lvl,
     }
-    t_counter = 3
-    f_counter = 2
-    for rt_col in des_mat.filter(regex='RT').columns:
-        des_contrasts += [
-            ('%s_pos' % rt_col, 'T', [rt_col],[1]),
-            ('%s_neg' % rt_col, 'T', [rt_col],[-1]),
-            ('%s_F' % rt_col, 'F', [('%s_pos' % rt_col, 'T', [rt_col],[1])])
-        ]
-        t_name_map[t_counter] = '%sPos' % rt_col
-        t_counter += 1
-        t_name_map[t_counter] = '%sNeg' % rt_col
-        t_counter += 1
-        f_name_map[f_counter] = '%s' % rt_col
-        f_counter += 1
     mult_regress_design = mem.cache(fsl.MultipleRegressDesign)
     mult_res_model_results = mult_regress_design(
         contrasts=des_contrasts,
         regressors=des_mat.reset_index(drop=True).to_dict('l')
     )
+
     # assume TFCE unless a cluster size is given
     kwargs={'c_thresh': c_thresh} if c_thresh is not None else {'tfce':True}
-
+    
+    # run only f-test for intercept, 2 t-tests for RT contrasts
+    if 'intercept' == scnd_lvl:
+        kwargs={**kwargs,
+            'fcon': mult_res_model_results.outputs.design_fts,
+            'one_sample_group_mean': True,
+            'f_only':True,
+            }
+    else:
+        kwargs={**kwargs,
+            'design_mat': mult_res_model_results.outputs.design_mat,
+            'tcon':mult_res_model_results.outputs.design_con
+            }
     # run randomise    
     fsl_randomise = mem.cache(fsl.Randomise)
     randomise_results = fsl_randomise(
         in_file=concat_loc,
         mask=mask_loc,
-        design_mat=mult_res_model_results.outputs.design_mat,
-        fcon=mult_res_model_results.outputs.design_fts,
-        tcon=mult_res_model_results.outputs.design_con,
         num_perm=n_perms,
         var_smooth=fwhm,
         vox_p_values=False,
         demean=False,
-        one_sample_group_mean=False,
         **kwargs
         )
-    # save results
-    output_dir = path.join(maps_dir, 'contrast-%s_Randomise' % contrast_name)
-    makedirs(output_dir, exist_ok=True)
-    mrd_out_dir = path.dirname(mult_res_model_results.outputs.design_con)
-    mrd_files = glob(path.join(mrd_out_dir, 'design*')) + glob(path.join(mrd_out_dir, '*.json')) + glob(path.join(mrd_out_dir, '*.txt'))
-    rand_out_dir = path.dirname(randomise_results.outputs.f_corrected_p_files[0])
-    rand_files = glob(path.join(rand_out_dir, '*.nii.gz')) + glob(path.join(rand_out_dir, '*.txt'))
-    for filey in mrd_files + rand_files:
-        filename = filey.split('/')[-1]
-        shutil.move(filey, path.join(output_dir, filename)) 
 
-    with open(path.join(output_dir, 'f_name_map.json'), 'w') as f:
-        json.dump(f_name_map, f)
-    with open(path.join(output_dir, 't_name_map.json'), 'w') as f:
-        json.dump(t_name_map, f)
+    # # save results
+    # output_dir = path.join(maps_dir, 'contrast-%s_2ndlevel-%s_Randomise' % (contrast_name, scnd_lvl))
+    # makedirs(output_dir, exist_ok=True)
+    # mrd_out_dir = path.dirname(mult_res_model_results.outputs.design_con)
+    # mrd_files = glob(path.join(mrd_out_dir, 'design*')) + glob(path.join(mrd_out_dir, '*.json')) + glob(path.join(mrd_out_dir, '*.txt'))
+    # rand_out_dir = path.dirname(randomise_results.outputs.f_corrected_p_files[0])
+    # rand_files = glob(path.join(rand_out_dir, '*.nii.gz')) + glob(path.join(rand_out_dir, '*.txt'))
+    # for filey in mrd_files + rand_files:
+    #     filename = filey.split('/')[-1]
+    #     shutil.move(filey, path.join(output_dir, filename)) 
 
-    # remove temporary files
-    remove(concat_loc)
-    shutil.rmtree(path.join(maps_dir, 'nipype_mem'))
-
-
-    # def move_outputs_w_map(output_list, name_map, filetype):
-    #     for filey in output_list:
-    #         name_idxs = re.findall(r'[0-9$,%]+\d*', test_str)
-    #         assert len(name_idxs)==1  # want to make sure there was only 1 num in the str, the idx
-    #         name_idx = int(name_idxs[0])
-    #         mapped_name = name_map[name_idx]
-    #         new_file_loc = path.join(
-    #             maps_dir,
-    #             "contrast-%s_2ndlevel-%s_%s.nii.gz" % (contrast_name, mapped_name, filetype)
-    #         )
-    #         shutil.move(filey, new_file_loc) 
-    # move_outputs_w_map(randomise_results.outputs.fstat_files, f_name_map, filetype='raw_fstatfile')
-    # move_outputs_w_map(randomise_results.outputs.f_corrected_p_files, f_name_map, filetype='fcorrected_pfile')
-    # move_outputs_w_map(randomise_results.outputs.tstat_files, t_name_map, filetype='raw_tstatfile')
-    # move_outputs_w_map(randomise_results.outputs.t_corrected_p_files, t_name_map, filetype='tcorrected_pfile')                             
+    # with open(path.join(output_dir, 'f_name_map.json'), 'w') as f:
+    #     json.dump(f_name_map, f)
+    # with open(path.join(output_dir, 't_name_map.json'), 'w') as f:
+    #     json.dump(t_name_map, f)
 
     # # remove temporary files
     # remove(concat_loc)
     # shutil.rmtree(path.join(maps_dir, 'nipype_mem'))
+    return path.join(maps_dir, 'nipype_mem')

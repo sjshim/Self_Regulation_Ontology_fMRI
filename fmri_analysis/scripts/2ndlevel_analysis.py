@@ -25,6 +25,7 @@ def get_args():
     parser.add_argument('--n_perms', default=1000, type=int)
     parser.add_argument('--mask_thresh', default=.95, type=float)
     parser.add_argument('--smoothing_fwhm', default=6)
+    parser.add_argument('--scnd_lvl', default='NONE')
     parser.add_argument('--quiet', '-q', action='store_true')
     parser.add_argument('--aim', default='NONE', help='Choose from aim1, aim2')
     parser.add_argument('--group', default='NONE')
@@ -35,6 +36,7 @@ def get_args():
         args = parser.parse_args([])
         args.derivatives_dir = '/data/derivatives/'
         args.tasks = ['stroop']
+        args.scnd_lvl = 'intercept'
         args.rt = True
         args.n_perms = 10
     return args
@@ -84,18 +86,12 @@ def filter_maps_and_DM(maps, des_mat):
     assert(len(des_mat) == len(maps))
     return maps, des_mat
 
-def get_2ndlevel_contrasts(des_mat):
+def get_2ndlevel_contrast(des_mat, scnd_lvl):
     ncols = des_mat.shape[1]
-    mean_contrast = np.zeros(ncols)
-    mean_contrast[des_mat.columns.get_loc('intercept')] = 1
-    mean_contrast = [int(i) for i in mean_contrast]
-    contrasts = [('groupMean', mean_contrast)]
-    for rt_col in des_mat.filter(regex='RT').columns:
-        curr_contrast = np.zeros(ncols)
-        curr_contrast[des_mat.columns.get_loc(rt_col)] = 1
-        curr_contrast = [int(i) for i in curr_contrast]
-        contrasts.append((rt_col, curr_contrast))
-    return contrasts
+    contrast = np.zeros(ncols)
+    contrast[des_mat.columns.get_loc(scnd_lvl)] = 1
+    contrast = [int(i) for i in contrast]
+    return contrast
 
 if __name__=='__main__':
     args = get_args()
@@ -176,14 +172,13 @@ if __name__=='__main__':
                                         extended_confounds_df)
             maps, des_mat = filter_maps_and_DM(maps, des_mat)
             second_level_model.fit(maps, design_matrix=des_mat)
-            second_level_contrasts = get_2ndlevel_contrasts(des_mat) # groupMean and RTs
-            for second_name, second_contrast in second_level_contrasts:
-                contrast_map = second_level_model.compute_contrast(
-                    second_level_contrast=second_contrast
-                    )
-                # save
-                contrast_file = path.join(maps_dir, 'contrast-%s_2ndlevel-%s.nii.gz' % (name, second_name))
-                contrast_map.to_filename(contrast_file)
+            second_level_contrast = get_2ndlevel_contrast(des_mat, args.scnd_lvl)
+            contrast_map = second_level_model.compute_contrast(
+                second_level_contrast=second_level_contrast
+                )
+            # save
+            contrast_file = path.join(maps_dir, 'contrast-%s_2ndlevel-%s.nii.gz' % (name, args.scnd_lvl))
+            contrast_map.to_filename(contrast_file)
             # write metadata
             N = str(len(maps)).zfill(2)
             with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
@@ -191,7 +186,7 @@ if __name__=='__main__':
             # save corrected map
             if n_perms > 0:
                 verboseprint('*** Running Randomise')
-                randomise(maps, maps_dir, mask_loc, des_mat,
+                randomise(maps, maps_dir, mask_loc, des_mat, args.scnd_lvl,
                           fwhm=args.smoothing_fwhm,
                           n_perms=n_perms)
                 # write metadata
