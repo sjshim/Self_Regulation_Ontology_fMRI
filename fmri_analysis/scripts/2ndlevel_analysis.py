@@ -22,7 +22,7 @@ def get_args():
     parser.add_argument('--rerun', action='store_true')
     parser.add_argument('--rt', action='store_true')
     parser.add_argument('--beta', action='store_true')
-    parser.add_argument('--n_perms', default=1000, type=int)
+    parser.add_argument('--n_perms', default=10000, type=int)
     parser.add_argument('--mask_thresh', default=.95, type=float)
     parser.add_argument('--smoothing_fwhm', default=6)
     parser.add_argument('--scnd_lvl', default='NONE')

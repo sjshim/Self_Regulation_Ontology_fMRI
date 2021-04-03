@@ -65,7 +65,7 @@ def load_contrast_maps(second_level_dir, task, regress_rt=False, beta=False):
 
 
 def randomise(maps, maps_dir, mask_loc, des_mat, scnd_lvl,
-              n_perms=1000, fwhm=6, c_thresh=None):
+              n_perms=100, fwhm=6, c_thresh=None):
     contrast_name = maps[0][maps[0].index('contrast')+9:].replace('.nii.gz', '')
     # create 4d image
     concat_images = image.concat_imgs(maps)
@@ -129,23 +129,22 @@ def randomise(maps, maps_dir, mask_loc, des_mat, scnd_lvl,
         **kwargs
         )
 
-    # # save results
-    # output_dir = path.join(maps_dir, 'contrast-%s_2ndlevel-%s_Randomise' % (contrast_name, scnd_lvl))
-    # makedirs(output_dir, exist_ok=True)
-    # mrd_out_dir = path.dirname(mult_res_model_results.outputs.design_con)
-    # mrd_files = glob(path.join(mrd_out_dir, 'design*')) + glob(path.join(mrd_out_dir, '*.json')) + glob(path.join(mrd_out_dir, '*.txt'))
-    # rand_out_dir = path.dirname(randomise_results.outputs.f_corrected_p_files[0])
-    # rand_files = glob(path.join(rand_out_dir, '*.nii.gz')) + glob(path.join(rand_out_dir, '*.txt'))
-    # for filey in mrd_files + rand_files:
-    #     filename = filey.split('/')[-1]
-    #     shutil.move(filey, path.join(output_dir, filename)) 
+    # save results
+    output_dir = path.join(maps_dir, 'contrast-%s_2ndlevel-%s_Randomise' % (contrast_name, scnd_lvl))
+    makedirs(output_dir, exist_ok=True)
+    mrd_out_dir = path.dirname(mult_res_model_results.outputs.design_con)
+    mrd_files = glob(path.join(mrd_out_dir, 'design*')) + glob(path.join(mrd_out_dir, '*.json')) + glob(path.join(mrd_out_dir, '*.txt'))
+    rand_out_dir = path.dirname(randomise_results.outputs.f_corrected_p_files[0])
+    rand_files = glob(path.join(rand_out_dir, '*.nii.gz')) + glob(path.join(rand_out_dir, '*.txt'))
+    for filey in mrd_files + rand_files:
+        filename = filey.split('/')[-1]
+        shutil.move(filey, path.join(output_dir, filename)) 
 
-    # with open(path.join(output_dir, 'f_name_map.json'), 'w') as f:
-    #     json.dump(f_name_map, f)
-    # with open(path.join(output_dir, 't_name_map.json'), 'w') as f:
-    #     json.dump(t_name_map, f)
+    with open(path.join(output_dir, 'f_name_map.json'), 'w') as f:
+        json.dump(f_name_map, f)
+    with open(path.join(output_dir, 't_name_map.json'), 'w') as f:
+        json.dump(t_name_map, f)
 
-    # # remove temporary files
-    # remove(concat_loc)
-    # shutil.rmtree(path.join(maps_dir, 'nipype_mem'))
-    return path.join(maps_dir, 'nipype_mem')
+    # remove temporary files
+    remove(concat_loc)
+    shutil.rmtree(path.join(maps_dir, 'nipype_mem'))
