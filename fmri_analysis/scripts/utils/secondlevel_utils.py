@@ -147,4 +147,4 @@ def randomise(maps, maps_dir, mask_loc, des_mat, scnd_lvl,
 
     # remove temporary files
     remove(concat_loc)
-    shutil.rmtree(path.join(maps_dir, 'nipype_mem'))
+    shutil.rmtree(mrd_out_dir)
