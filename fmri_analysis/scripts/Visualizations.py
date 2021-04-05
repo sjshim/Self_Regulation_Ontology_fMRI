@@ -183,14 +183,12 @@ def transform_p_val_map(map_path):
     neg_log_pvals = -np.log10(p_vals)
     return nib.Nifti1Image(neg_log_pvals, img.affine, img.header)
 
-
 def make_mask(img_path):
     return math_img('img > .95',
                     img=nib.load(img_path))
 
-
-def mask_img(img_path, mask):
-    img = nib.load(img_path)
+def mask_img(img, mask):
+    img = nib.load(img) if type(img)==str else img
     data = img.get_fdata()
     data[~mask.get_fdata().astype(bool)] = np.nan
     return nib.Nifti1Image(data, img.affine, img.header)
@@ -203,6 +201,11 @@ def double_mask_img(img_path, mask1, mask2):
 
 def get_rand_idx(path):
     return str(re.findall(r'[0-9$,%]+\d*', path)[-1])
+
+def f_to_t(fpath, bpath):
+    fimg = nib.load(fpath)
+    bimg = nib.load(bpath)
+    return nib.Nifti1Image(np.sqrt(fimg.get_fdata())*np.sign(bimg.get_fdata()), fimg.affine, fimg.header)
 
 if run_second_level:
     print('running!')
@@ -220,50 +223,53 @@ if run_second_level:
                     s.split('2ndlevel-')[-1].replace('.nii.gz', '')
                     for s in beta_maps
                 }
-            )
-            # order the randomise output files to match the order of the beta files
-            ordered_file_dict = {
-                'tstatPos': [],
-                'tfce_corrp_tstatPos': [],
-                'tstatNeg': [],
-                'tfce_corrp_tstatNeg': [],
-            }
-            for beta_map in beta_maps:
-                scnd_lvl = beta_map.split('2ndlevel-')[-1].replace('.nii.gz', '')
-                randomise_dir = beta_map.replace('2ndlevel-%s.nii.gz' % scnd_lvl, 'Randomise')
-
-                with open(path.join(randomise_dir, 't_name_map.json'), 'r') as f:
-                    t_name_map = json.load(f)
-                for key in ordered_file_dict:
-                    direction = 'Pos' if 'Pos' in key else 'Neg'
-                    curr_files = [f for f in glob(path.join(randomise_dir, 'randomise_%s*' % key.replace(direction, ''))) if all(s in t_name_map[get_rand_idx(f)] for s in [scnd_lvl, direction])]
-                    assert len(curr_files)==1
-                    ordered_file_dict[key] += curr_files
-            
+            )            
             # plot each of the second level contrasts separately
             for scnd_lvl in scnd_lvl_contrasts:
-                curr_title = contrast_title + '_2ndlevel-'+scnd_lvl
-                curr_idx = [i for i,f in enumerate(beta_maps) if scnd_lvl in f]
-                
-                curr_beta_maps = [beta_maps[i] for i in curr_idx]
-                curr_tpPos_maps = [ordered_file_dict['tfce_corrp_tstatPos'][i] for i in curr_idx]
-                curr_tstatPos_maps = [ordered_file_dict['tstatPos'][i] for i in curr_idx]
-                curr_tpNeg_maps = [ordered_file_dict['tfce_corrp_tstatNeg'][i] for i in curr_idx]
-                curr_tstatNeg_maps = [ordered_file_dict['tstatNeg'][i] for i in curr_idx]
-                curr_masked_beta_images = [double_mask_img(beta_path, make_mask(mask_path1), make_mask(mask_path2)) for beta_path, mask_path1, mask_path2 in zip(curr_beta_maps, curr_tpPos_maps, curr_tpNeg_maps)]
-                curr_masked_tstat_images = [double_mask_img(tstat_path, make_mask(mask_path1), make_mask(mask_path2)) for tstat_path, mask_path1, mask_path2 in zip(curr_tstatPos_maps, curr_tpPos_maps, curr_tpNeg_maps)]
+                curr_title = contrast_title + '_2ndlevel-'+scnd_lvl                
+                curr_beta_maps = [m for m in beta_maps if scnd_lvl in m]
                 contrast_titles = [get_contrast_title(path) for path in curr_beta_maps]
+                print(scnd_lvl)
+                if 'RT' in scnd_lvl:
+                    pass
+#                     ordered_file_dict = {
+#                         'tstatPos': [],
+#                         'tfce_corrp_tstatPos': [],
+#                         'tstatNeg': [],
+#                         'tfce_corrp_tstatNeg': [],
+#                     }
+#                     for beta_map in curr_beta_maps:
+#                         randomise_dir = beta_map.replace('2ndlevel-%s.nii.gz' % scnd_lvl, 'Randomise')
 
-                # plot and save
-                # Betas
-                plot_task_maps(curr_beta_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_Beta-raw.pdf'%scnd_lvl))
-                plot_task_maps(curr_masked_beta_images, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_Beta-tpvalMasked.pdf' %scnd_lvl))
-                # T tests > 0
-                plot_task_maps(curr_tpPos_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_TpvalPos-raw.pdf' %scnd_lvl))
-                plot_task_maps(curr_tpPos_maps, curr_title, threshold=.95, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_TpvalPos-thresh95.pdf' %scnd_lvl))
-                plot_task_maps(curr_tstatPos_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_TstatsPos-raw.pdf' %scnd_lvl))
-                plot_task_maps(curr_masked_tstat_images, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_Tstats-tpvalMasked.pdf' %scnd_lvl))
-                # T tests < 0
-                plot_task_maps(curr_tpNeg_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_TpvalNeg-raw.pdf' %scnd_lvl))
-                plot_task_maps(curr_tpNeg_maps, curr_title, threshold=.95, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_TpvalNeg-thresh95.pdf' %scnd_lvl))
-                plot_task_maps(curr_tstatNeg_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_TstatsNeg-raw.pdf' %scnd_lvl))
+#                         with open(path.join(randomise_dir, 't_name_map.json'), 'r') as f:
+#                             t_name_map = json.load(f)
+#                         for key in ordered_file_dict:
+#                             direction = 'Pos' if 'Pos' in key else 'Neg'
+#                             curr_files = [f for f in glob(path.join(randomise_dir, 'randomise_%s*' % key.replace(direction, ''))) if all(s in t_name_map[get_rand_idx(f)] for s in [scnd_lvl, direction])]
+#                             assert len(curr_files)==1
+#                             ordered_file_dict[key] += curr_files
+                elif 'intercept' in scnd_lvl:
+                    ordered_file_dict = {
+                        'fstat': [],
+                        'tfce_corrp_fstat': [],
+                    }
+                    for beta_map in curr_beta_maps:
+                        randomise_dir = beta_map.replace('.nii.gz' , '_Randomise')
+                        for key in ordered_file_dict:
+                            curr_files = [f for f in glob(path.join(randomise_dir, 'randomise_%s*.nii.gz' % key))]
+                            assert len(curr_files)==1
+                            ordered_file_dict[key] += curr_files
+                    curr_tstat_maps = [f_to_t(fmap, bmap) for fmap, bmap in zip(ordered_file_dict['fstat'], curr_beta_maps)]
+                    curr_masked_beta_images = [mask_img(bfile, make_mask(pfile)) for bfile, pfile in zip(curr_beta_maps, ordered_file_dict['tfce_corrp_fstat'])]
+                                  
+                    # plot and save
+                    # Betas
+                    plot_task_maps(curr_beta_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_Beta-raw.pdf'%scnd_lvl))
+                    plot_task_maps(curr_masked_beta_images, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_Beta-fpvalMasked.pdf' %scnd_lvl))
+                    # F tests
+                    plot_task_maps(ordered_file_dict['fstat'], curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_Fstats-raw.pdf' %scnd_lvl))
+                    plot_task_maps(ordered_file_dict['tfce_corrp_fstat'], curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_Fpval-raw.pdf' %scnd_lvl))
+                    plot_task_maps(ordered_file_dict['tfce_corrp_fstat'], curr_title, threshold=.95, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_Fpval-thresh95.pdf' %scnd_lvl))
+                    plot_task_maps(curr_tstat_maps, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_TstatsfromFstats-raw.pdf' %scnd_lvl))
+                    curr_masked_tstat_images = [mask_img(timg, make_mask(pfile)) for timg, pfile in zip(curr_tstat_maps, ordered_file_dict['tfce_corrp_fstat'])]
+                    plot_task_maps(curr_masked_tstat_images, curr_title, threshold=0, contrast_titles=contrast_titles).savefig(path.join(out_dir, 'AAPLOTS_2ndlevel-%s_TstatsfromFstats-fpvalMasked.pdf' %scnd_lvl))
