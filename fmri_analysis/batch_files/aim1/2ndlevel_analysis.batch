@@ -2,7 +2,7 @@
 #SBATCH --job-name={task}-2nd-{scnd_lvl}
 #SBATCH --output=.out/{task}-2nd-{scnd_lvl}.out
 #SBATCH --error=.err/{task}-2nd-{scnd_lvl}.err
-#SBATCH --time=72:00:00
+#SBATCH --time=96:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
 #SBATCH --ntasks-per-node=1
