@@ -37,6 +37,8 @@ first_level_dir  = os.path.join(bids_dir,'derivatives', '1stlevel')
 parcellation_filename = args.parcellation_loc
 if args.atlas=='combo':
     atlas_path = './Parcels_Combo.nii.gz'
+elif args.atlas=='SUIT':
+    atlas_path = './SUIT.nii.gz'
 else:  # assuming shaefer atlas for now
     spec_dict = {'atlas': 'Schaefer2018',
                  'desc': f'{args.atlas}Parcels17Networks',
@@ -72,4 +74,4 @@ for RT_flag in args.RT_flag:
         beta_array = masker.fit_transform([contrast_file])
         contrast = contrast_file.split('/')[-1].replace('.nii.gz', '')
         pd.DataFrame(beta_array).to_csv(os.path.join(curr_output_dir,
-                f'{subid}_task-{task}_{contrast}.csv'))
+                f'{subid}_task-{task}_contrast-{contrast}_atlas-{args.atlas}.csv'))
