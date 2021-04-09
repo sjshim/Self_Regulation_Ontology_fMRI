@@ -53,7 +53,7 @@ else:  # assuming shaefer atlas for now
                   atlas=spec_dict['atlas'])
     atlas_path = str(atlas_path)
 
-masker = NiftiLabelsMasker(labels_img=atlas_path, 
+masker = NiftiLabelsMasker(labels_img=os.path.abspath(atlas_path), 
                            standardize=True,
                            memory='nilearn_cache',
                            verbose=5)
