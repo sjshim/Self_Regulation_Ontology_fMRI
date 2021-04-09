@@ -10,7 +10,6 @@ import os
 
 parser = argparse.ArgumentParser(description='First Level Entrypoint script')
 parser.add_argument('-bids_dir', default='/data')
-parser.add_argument('-parcellation_loc', default='./Parcels_Combo.nii.gz')
 parser.add_argument('-atlas', default=None)
 parser.add_argument('-output_dir', default='/data/derivatives/parcellations/1stlevel_beta')
 parser.add_argument('--tasks', nargs="+", help="Choose from ANT, CCTHot, discountFix, \
@@ -34,7 +33,6 @@ output_dir = args.output_dir
 
 first_level_dir  = os.path.join(bids_dir,'derivatives', '1stlevel')   
 
-parcellation_filename = args.parcellation_loc
 if args.atlas=='combo':
     atlas_path = './Parcels_Combo.nii.gz'
 elif args.atlas=='SUIT':
