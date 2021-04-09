@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser(description='First Level Entrypoint script')
 parser.add_argument('-bids_dir', default='/data')
 parser.add_argument('-atlas', default=None)
 parser.add_argument('-output_dir', default='/data/derivatives/parcellations/1stlevel_beta')
+parser.add_argument('-atlas_dir', default='./')
 parser.add_argument('--tasks', nargs="+", help="Choose from ANT, CCTHot, discountFix, \
             DPX, motorSelectiveStop, stopSignal, stroop, surveyMedley, twoByTwo, WATT3")
 parser.add_argument('--RT_flag', nargs='+', default=['RT-True', 'RT-False'], help='Choose from RT-True, RT-False')
@@ -34,9 +35,9 @@ output_dir = args.output_dir
 first_level_dir  = os.path.join(bids_dir,'derivatives', '1stlevel')   
 
 if args.atlas=='combo':
-    atlas_path = './Parcels_Combo.nii.gz'
+    atlas_path = os.path.join(atlas_dir, 'Parcels_Combo.nii.gz')
 elif args.atlas=='SUIT':
-    atlas_path = 'SUIT.nii.gz'
+    atlas_path = os.path.join(atlas_dir, 'SUIT.nii.gz')
 else:  # assuming shaefer atlas for now
     spec_dict = {'atlas': 'Schaefer2018',
                  'desc': f'{args.atlas}Parcels17Networks',

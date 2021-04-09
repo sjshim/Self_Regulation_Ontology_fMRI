@@ -15,7 +15,8 @@ conda activate py3-env
 
 derivatives_loc=`sed '6q;d' singularity_config.txt`
 bids_dir=`sed '8q;d' singularity_config.txt`
+atlas_dir='../../../fmri_data_prep/'
 output_dir=${derivatives_loc}/'parcellations/1stlevel_beta'
 
-python3 ../../../fmri_data_prep/beta_parcellation.py -bids_dir ${bids_dir} -output_dir ${output_dir} -atlas SUIT
+python3 ../../../fmri_data_prep/beta_parcellation.py -bids_dir ${bids_dir} -atlas_dir ${atlas_dir} -output_dir ${output_dir} -atlas SUIT
 # python3 ../../../fmri_data_prep/beta_parcellation.py -bids_dir ${bids_dir} -output_dir ${output_dir} -atlas 400
