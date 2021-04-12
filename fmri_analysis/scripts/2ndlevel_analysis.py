@@ -183,16 +183,23 @@ if __name__=='__main__':
             N = str(len(maps)).zfill(2)
             with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
                 f.write('Contrast-%s: %s maps\n' % (contrast, N))
-            # save corrected map
+            # save corrected maps if need be
             if n_perms > 0:
-                verboseprint('*** Running Randomise')
-                randomise(maps, maps_dir, mask_loc, des_mat, args.scnd_lvl,
-                          fwhm=args.smoothing_fwhm,
-                          n_perms=n_perms)
-                # write metadata
-                with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
-                    f.write(
-                        'Contrast-%s: Randomise run with %s permutations\n' %
-                        (contrast, str(n_perms)))
+                rand_out_dir = path.join(maps_dir, 'contrast-%s_2ndlevel-%s_Randomise' % (name, args.scnd_lvl))
+                if (not path.exists(rand_out_dir)) or args.rerun:
+                    verboseprint('*** Running Randomise')
+                    randomise(maps, maps_dir, mask_loc, des_mat, args.scnd_lvl,
+                            fwhm=args.smoothing_fwhm,
+                            n_perms=n_perms)
+                    # write metadata
+                    with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
+                        f.write(
+                            'Contrast-%s: Randomise run with %s permutations\n' %
+                            (name, str(n_perms)))
+                else:
+                    with open(path.join(maps_dir, 'metadata.txt'), 'a') as f:
+                        f.write(
+                            'Contrast-%s: Randomise results already found, not rerun.\n' %
+                            name)
 
         verboseprint('Done with %s' % task)
