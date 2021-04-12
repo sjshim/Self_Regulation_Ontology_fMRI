@@ -35,9 +35,9 @@ output_dir = args.output_dir
 first_level_dir  = os.path.join(bids_dir,'derivatives', '1stlevel')   
 
 if args.atlas=='combo':
-    atlas_path = os.path.join(atlas_dir, 'Parcels_Combo.nii.gz')
+    atlas_path = os.path.join(args.atlas_dir, 'Parcels_Combo.nii.gz')
 elif args.atlas=='SUIT':
-    atlas_path = os.path.join(atlas_dir, 'SUIT.nii.gz')
+    atlas_path = os.path.join(args.atlas_dir, 'SUIT.nii.gz')
 else:  # assuming shaefer atlas for now
     spec_dict = {'atlas': 'Schaefer2018',
                  'desc': f'{args.atlas}Parcels17Networks',
