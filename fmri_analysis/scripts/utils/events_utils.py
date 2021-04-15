@@ -350,32 +350,33 @@ def get_DPX_EVs(events_df, regress_rt=True, return_metadict=False):
             }
     meta_dict = {}
 
-    response_time = events_df.loc[events_df.junk == False,
+    # task rt used for junk trials
+    task_rt = events_df.loc[events_df.junk == False,
                                   'response_time'].mean()
-    meta_dict['task_RT'] = response_time
 
-    get_ev_vars(output_dict, events_df,
-                condition_spec=[('AX', 'AX'),
-                                ('AY', 'AY'),
-                                ('BX', 'BX'),
-                                ('BY', 'BY')],
-                col='condition',
-                duration=response_time,
-                subset='junk==False')
+    for cond in ['AX', 'AY', 'BX', 'BY']:
+        rt = events_df.loc[(events_df.junk == False) &
+                            (events_df.condition == cond),
+                            'response_time'].mean()
+        meta_dict['%s_RT' % cond] = rt
+        get_ev_vars(output_dict, events_df,
+                    condition_spec=cond,
+                    duration=rt,
+                    subset="junk == False and condition == '%s'" % cond)
+
+        if regress_rt:
+            get_ev_vars(output_dict, events_df,
+                        condition_spec=cond+'_RT',
+                        duration=rt,
+                        amplitude='response_time',
+                        subset="junk == False and condition == '%s'" % cond,
+                        demean_amp=True)
 
     # nuisance regressors
     get_ev_vars(output_dict, events_df,
                 condition_spec=[(True, 'junk')],
                 col='junk',
-                duration=response_time)
-
-    if regress_rt:
-        get_ev_vars(output_dict, events_df,
-                    condition_spec='response_time',
-                    duration=response_time,
-                    amplitude='response_time',
-                    subset='junk==False',
-                    demean_amp=True)
+                duration=task_rt)
 
     if return_metadict:
         return(output_dict, meta_dict)
