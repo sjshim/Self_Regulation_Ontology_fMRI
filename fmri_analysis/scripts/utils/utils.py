@@ -118,6 +118,11 @@ def get_contrasts(task, regress_rt=True):
         elif task == 'CCTHot':
             contrasts.append(('first_RT', 'first_RT'))
             contrasts.append(('subsequent_RT', 'subsequent_RT'))
+        elif task == 'DPX':
+            contrasts.append(('AX_RT', 'AX_RT'))
+            contrasts.append(('AY_RT', 'AY_RT'))
+            contrasts.append(('BX_RT', 'BX_RT'))
+            contrasts.append(('BY_RT', 'BY_RT'))
         else:         
             contrasts.append(('RT','response_time'))
     return contrasts
