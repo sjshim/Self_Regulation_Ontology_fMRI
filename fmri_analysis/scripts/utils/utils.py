@@ -38,9 +38,6 @@ def get_contrasts(task, regress_rt=True):
                     ('trial_gain', 'trial_gain'),
                     ('positive_draw', 'positive_draw'), #for PCA
                     ('negative_draw', 'negative_draw')] #for PCA
-                    # ('gain_press', 'gain_press'),
-                    # ('loss_press', 'loss_press'),
-                    # ('end_press', 'end_press')
     elif task == 'discountFix':
         contrasts = [('task', 'task'),
                     ('choice', 'choice')] #for PCA
@@ -70,12 +67,9 @@ def get_contrasts(task, regress_rt=True):
         contrasts =  [('cue', 'cue'),
                      ('probe', 'probe'),
                      ('rating', 'rating')]
-                     #('cue_x_probe','cue*probe'),
-                     #('cue_x_probe_x_rating','cue*probe*rating')]
     elif task == 'stroop':
         contrasts = [('congruency', 'congruency_parametric'), #for PCA
                      ('task', 'task')]
-                    # ('stroop', 'incongruent-congruent')]
     elif task == 'stopSignal':
         contrasts = [('go', 'go'),
                      ('stop_success', 'stop_success'),
@@ -108,7 +102,9 @@ def get_contrasts(task, regress_rt=True):
                     ('task_parametric', 'planning_parametric + acting_parametric')]
     if regress_rt:
         if task == 'motorSelectiveStop':
-            contrasts.append(('go_RT', 'go_RT'))
+            contrasts.append(('crit_go_RT', 'crit_go_RT'))
+            contrasts.append(('noncrit_signal_RT', 'noncrit_signal_RT'))
+            contrasts.append(('noncrit_nosignal_RT', 'noncrit_signal_RT'))
             contrasts.append(('crit_stop_failure_RT', 'crit_stop_failure_RT'))
         elif task == 'stopSignal':
             contrasts.append(('go_RT', 'go_RT'))
