@@ -98,13 +98,14 @@ def get_contrasts(task, regress_rt=True):
             for CSI in ['100', '900']:
                 contrasts.append((trial+'_'+CSI, trial+'_'+CSI))
     elif task == 'WATT3': #all regressors save RT
-        contrasts = [('button_press', 'button_press'),
-                    ('trial','trial'),
-                    ('trial_parametric','trial_parametric'), #for PCA
-                    ('practice','practice'),
-                    ('planning_event', 'planning_event'),
+        contrasts = [('practice', 'practice'),
+                    ('planning_event','planning_event'),
+                    ('planning_parametric','planning_parametric'), #for PCA
+                    ('acting_event','acting_event'),
+                    ('acting_parametric', 'acting_parametric'),
                     ('feedback','feedback'),
-                    ('button_press', 'button_press')]
+                    ('task', 'planning_event + acting_event'),
+                    ('task_parametric', 'planning_parametric + acting_parametric')]
     if regress_rt:
         if task == 'motorSelectiveStop':
             contrasts.append(('go_RT', 'go_RT'))
