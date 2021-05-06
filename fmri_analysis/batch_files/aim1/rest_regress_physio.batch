@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --job-name=rest_physio
+#SBATCH --output=.out/rest_physio.out
+#SBATCH --error=.err/rest_physio.err
+#SBATCH --time=12:00:00
+#SBATCH --mail-type=END
+#SBATCH --mail-user=poldracklab@stanford.edu
+#SBATCH --cpus-per-task=16
+#SBATCH --ntasks-per-node=1
+#SBATCH -p russpold,hns,owners
+#SBATCH --exclude=sh02-06n01,sh02-06n02
+export PYTHONPATH=""
+source ~/miniconda3/etc/profile.d/conda.sh 
+conda activate py3-env
+
+python3 ../../../fmri_data_prep/aim1_rest_regress_physio.py

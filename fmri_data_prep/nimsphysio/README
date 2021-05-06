@@ -1,0 +1,5 @@
+nimsphysio modified from (here)[https://github.com/cni/nims/blob/d522b348115e5e280f5cdf36b63f0a10696fdd16/nimsproc/nimsphysio.py]
+
+himsdata modified from (here)[https://github.com/cni/nimsdata/blob/master/nimsdata.py]
+
+a minimal package for preprocessing niifti data using GE physio files straight from the scanner.
