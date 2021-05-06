@@ -27,7 +27,7 @@ from nimsphysio.nimsphysio import NIMSPhysio
 
 def get_args():
     parser = argparse.ArgumentParser(description='aim1 rest physio regression')
-    parser.add_argument('-fw_dir', default='/scitran/russpold/uh2/')
+    parser.add_argument('-fw_dir', default='scitran/russpold/uh2/')
     parser.add_argument('-fmriprep_dir', default='/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fmriprep')
     parser.add_argument('-firstlevel_dir', default='/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/1stlevel')
     parser.add_argument('--slice_window', default=.085, help='time in seconds for acquiring a single slice')
@@ -52,7 +52,7 @@ if __name__=='__main__':
         physio_files = sorted(
             glob(
                 os.path.join(
-                    fw_dir,
+                    args.fw_dir,
                     f'{physio_name}/*/task_rest_run_{run}*/*gephysio.zip'
                     )
                 )
@@ -85,3 +85,5 @@ if __name__=='__main__':
                 nib.Nifti1Image(d_corrected, niimg.affine, niimg.header),
                 os.path.join(outdir, outnii_name)
                 )
+    print('the following sessions did not appear to have rest physio:')
+    print('\n'.join(sub_sessions_missing_physio))
