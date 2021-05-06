@@ -52,7 +52,7 @@ if __name__=='__main__':
         physio_files = sorted(
             glob(
                 os.path.join(
-                    fw_dir,
+                    args.fw_dir,
                     f'{physio_name}/*/task_rest_run_{run}*/*gephysio.zip'
                     )
                 )
