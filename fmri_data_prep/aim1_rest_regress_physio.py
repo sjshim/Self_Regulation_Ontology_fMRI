@@ -27,7 +27,7 @@ from nimsphysio.nimsphysio import NIMSPhysio
 
 def get_args():
     parser = argparse.ArgumentParser(description='aim1 rest physio regression')
-    parser.add_argument('-fw_dir', default='scitran/russpold/uh2/')
+    parser.add_argument('-fw_dir', default='/home/groups/russpold/uh2_analysis/Self_Regulation_Ontology_fMRI/fmri_data_prep/scitran/russpold/uh2/')
     parser.add_argument('-fmriprep_dir', default='/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fmriprep')
     parser.add_argument('-firstlevel_dir', default='/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/1stlevel')
     parser.add_argument('--slice_window', default=.085, help='time in seconds for acquiring a single slice')
