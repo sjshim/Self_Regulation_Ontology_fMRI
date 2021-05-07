@@ -29,3 +29,4 @@ fmri_analysis/scripts/Untitled.ipynb
 *.err*
 *.out*
 fmri_analysis/fsl/tmp_batch/*
+fmri_data_prep/scitran/
