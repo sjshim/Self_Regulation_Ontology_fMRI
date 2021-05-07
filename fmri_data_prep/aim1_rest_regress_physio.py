@@ -31,7 +31,7 @@ def get_args():
     parser.add_argument('-fmriprep_dir', default='/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/fmriprep')
     parser.add_argument('-firstlevel_dir', default='/oak/stanford/groups/russpold/data/uh2/aim1/BIDS_scans/derivatives/1stlevel')
     parser.add_argument('--slice_window', default=.085, help='time in seconds for acquiring a single slice')
-    parder.add_argument('--corrected_slice_onset', default=.2975, help='for stc data, the reference onset time')
+    parser.add_argument('--corrected_slice_onset', default=.2975, help='for stc data, the reference onset time')
     return parser.parse_args()
 
 if __name__=='__main__':
