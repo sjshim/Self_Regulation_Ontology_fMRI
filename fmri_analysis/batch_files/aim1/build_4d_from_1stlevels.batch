@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH --job-name=build_4d
+#SBATCH --output=.out/build_4d.out
+#SBATCH --error=.err/build_4d.err
+#SBATCH --time=4:00:00
+#SBATCH --mail-type=END
+#SBATCH --mail-user=poldracklab@stanford.edu
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH -p russpold,normal,hns
+#module load system
+# set up paths
+# scratch is automatically mounted
+img=`sed '2q;d' singularity_config_2ndlevels.txt`
+base_singularity=`sed '4q;d' singularity_config_2ndlevels.txt`
+singularity_loc=${base_singularity}/$img
+derivatives_loc=`sed '6q;d' singularity_config_2ndlevels.txt`
+data_loc=`sed '8q;d' singularity_config.txt`
+scripts_loc=../../scripts
+scratch_loc=$SCRATCH
+
+# run singularity, scratch is automatically mounted
+singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+    python /scripts/build_4d_from_1stlevels.py -derivatives_dir ${derivatives_loc} --rt --aim aim1
+
+singularity exec -B ${scripts_loc}:/scripts ${singularity_loc} \
+    python /scripts/build_4d_from_1stlevels.py -derivatives_dir ${derivatives_loc} --aim aim1
+
