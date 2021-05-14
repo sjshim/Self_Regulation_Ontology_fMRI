@@ -41,7 +41,7 @@ if __name__=='__main__':
     for rest_nii in iglob(
         os.path.join(
             args.fmriprep_dir,
-            'sub-s*/ses-*/func/*_task-rest_run-*_space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz'
+            'sub-s*/ses-*/func/*_task-rest_run-*_space-MNI152NLin6Asym_desc-smoothAROMAnonaggr_bold.nii.gz'
             )
         ):
         sub = rest_nii.split('sub-')[-2].split('/')[0]
@@ -63,7 +63,7 @@ if __name__=='__main__':
         else:
             outdir = os.path.join(args.firstlevel_dir, sub, 'rest', f'ses-{ses}')
             os.makedirs(outdir, exist_ok=True)
-            outnii_name = rest_nii.split('/')[-1].replace('preproc_bold', 'preprocPhsyio_bold')
+            outnii_name = rest_nii.split('/')[-1].replace('bold', 'desc-preprocPhsyio_bold')
 
             niimg = nib.load(rest_nii)
             phys = NIMSPhysio(
