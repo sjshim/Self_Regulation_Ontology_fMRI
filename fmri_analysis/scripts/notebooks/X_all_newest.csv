@@ -1,0 +1,25 @@
+,visual object recognition,visual color recognition,visual pattern recognition,visual shape recognition,visual word recognition,saccade,response selection,response execution,response inhibition,response conflict,resistance to distractor interference,error detection,oddball detection,orienting,selective attention,feature-based attention,proactive control,reactive control,working memory,updating,visual working memory,task switching,cue switching,mathematical reasoning,planning,decision under uncertainty,intertemporal choice,temporal discounting,economic value processing,reward,monetary loss,risk,selective control
+Attention Network Task (task),0,0,0,1,0,1,1,1,0,0.5,0.5,0.02799594,0,0.5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Attention Network Task (cue parametric),0,0,0,0,0,0,0,0,0,0,0,0.00451097,0,-1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Attention Network Task (congruency parametric),0,0,0,0,0,0,0,0,0,1,1,0.01432292,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Columbia Card Task Hot (task),1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,0.8278206,0.1721794,1,0
+Columbia Card Task Hot (positive draw),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,-1,0
+Columbia Card Task Hot (negative draw),0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0
+Discount Fix (task),0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,0,0,0,0
+Discount Fix (choice),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,-1,0,0,0,0,0
+Dot Pattern Expectancy (task),0,1,1,0,0,0,1,1,0,0.4,0,0.06765221,0,0,0,0,0.1,0.1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0
+Dot Pattern Expectancy (AY - BY),0,0,0,0,0,0,0,0,0,1,0,0.06816123,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Dot Pattern Expectancy (BX - BY),0,0,0,0,0,0,0,0,0,1,0,0.02864583,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Motor Selective Stop Signal (task),0,0,0,1,0,0,1,0.9,0.16666667,0,0.2,0.06718095,0.4,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+Motor Selective Stop Signal (critical stop success - critical go),0,0,0,0,0,0,0,-1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+Motor Selective Stop Signal (critical stop failure - critical go),0,0,0,0,0,0,0,0,0.66666667,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+Stroop (task),0,1,0,0,1,0,1,1,0.5,0.5,0,0.06169872,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Stroop (congruency parametric),0,0,0,0,0,0,0,0,1,1,0,0.03245192,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Stop Signal (task),0,0,0,1,0,0,1,0.8,0.33333333,0,0,0.0482243,0.4,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Stop Signal (stop success - go),0,0,0,0,0,0,0,-1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Stop Signal (stop failure - go),0,0,0,0,0,0,0,0,0.66666667,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Two By Two (task),0,1,0,0,1,0,1,1,0,0,0,0.10424312,0,0,0,1,0,0,0,0,0,0.5,0.75,1,0,0,0,0,0,0,0,0,0
+Two By Two (task switch cost),0,0,0,0,0,0,0,0,0,0,0,0.03577064581,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0
+Two By Two (cue switch cost),0,0,0,0,1,0,0,0,0,0,0,0.01629821978,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+Ward & Allport Towers Task (task),1,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Ward & Allport Towers Task (planning parametric),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
