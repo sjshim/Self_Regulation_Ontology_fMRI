@@ -73,7 +73,7 @@ def create_design(events, confounds, task, TR, subject_id,
     # make design
     n_scans = int(confounds.shape[0])
     design = make_first_level_design_matrix(
-        np.arange(n_scans)*TR,
+        np.arange(n_scans)*TR+TR/2,
         paradigm,
         hrf_model='spm',
         period_cut=80,
