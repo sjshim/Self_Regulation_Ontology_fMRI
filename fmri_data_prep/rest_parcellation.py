@@ -53,11 +53,17 @@ masker = NiftiLabelsMasker(labels_img=os.path.abspath(atlas_path),
                            memory='nilearn_cache',
                            verbose=5)
 
+print(first_level_dir)
+print(os.path.join(first_level_dir,
+                   '*',  # sub
+                   'rest',  # task
+                   'ses-*',
+                   '*.nii.gz'))
 
 for rest_file in glob(os.path.join(first_level_dir,
                                         '*',  # sub
                                         'rest',  # task
-                                        'ses-*'
+                                        'ses-*',
                                         '*.nii.gz')
                                         ):
     subid = rest_file.split('1stlevel/')[1].split('/')[0]

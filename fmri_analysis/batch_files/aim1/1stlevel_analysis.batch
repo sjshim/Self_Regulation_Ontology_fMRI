@@ -7,7 +7,7 @@
 #SBATCH --mail-user=poldracklab@stanford.edu
 #SBATCH --cpus-per-task=16
 #SBATCH --ntasks-per-node=1
-#SBATCH -p russpold
+#SBATCH -p russpold,hns,owners
 export PYTHONPATH=""
 # set up paths
 # scratch is automatically mounted

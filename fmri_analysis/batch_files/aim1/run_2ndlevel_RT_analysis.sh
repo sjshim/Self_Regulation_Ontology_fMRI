@@ -1,8 +1,13 @@
 # 2ndlevel RT contrasts, for Jeanette
-for task in ANT DPX discountFix stroop twoByTwo
+for task in ANT discountFix stroop twoByTwo
 do
     sed -e "s/{task}/$task/g" -e "s/{scnd_lvl}/task_RT/g" 2ndlevel_analysis.batch | sbatch
 done
+
+sed -e "s/{task}/DPX/g" -e "s/{scnd_lvl}/AX_RT/g" 2ndlevel_analysis.batch | sbatch
+sed -e "s/{task}/DPX/g" -e "s/{scnd_lvl}/AY_RT/g" 2ndlevel_analysis.batch | sbatch
+sed -e "s/{task}/DPX/g" -e "s/{scnd_lvl}/BX_RT/g" 2ndlevel_analysis.batch | sbatch
+sed -e "s/{task}/DPX/g" -e "s/{scnd_lvl}/BY_RT/g" 2ndlevel_analysis.batch | sbatch
 
 sed -e "s/{task}/CCTHot/g" -e "s/{scnd_lvl}/first_RT/g" 2ndlevel_analysis.batch | sbatch
 sed -e "s/{task}/CCTHot/g" -e "s/{scnd_lvl}/subsequent_RT/g" 2ndlevel_analysis.batch | sbatch

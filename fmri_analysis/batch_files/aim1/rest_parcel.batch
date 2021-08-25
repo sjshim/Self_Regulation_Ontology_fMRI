@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=beta_parcel
-#SBATCH --output=.out/beta_parcel.out
-#SBATCH --error=.err/beta_parcel.err
+#SBATCH --job-name=rest_parcel
+#SBATCH --output=.out/rest_parcel.out
+#SBATCH --error=.err/rest_parcel.err
 #SBATCH --time=6:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=poldracklab@stanford.edu
@@ -16,7 +16,7 @@ conda activate py3-env
 derivatives_loc=`sed '6q;d' singularity_config.txt`
 bids_dir=`sed '8q;d' singularity_config.txt`
 atlas_dir='../../../fmri_data_prep/'
-output_dir=${derivatives_loc}/'parcellations/1stlevel_beta'
+output_dir=${derivatives_loc}/'parcellations/rest'
 
 eval "python3 ../../../fmri_data_prep/rest_parcellation.py -bids_dir ${bids_dir} -atlas_dir ${atlas_dir} -output_dir ${output_dir} -atlas SUIT" &
 eval "python3 ../../../fmri_data_prep/rest_parcellation.py -bids_dir ${bids_dir} -output_dir ${output_dir} -atlas 400" &
