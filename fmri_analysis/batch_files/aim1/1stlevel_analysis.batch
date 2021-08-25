@@ -4,7 +4,7 @@
 #SBATCH --error=.err/{task}-1stlevel{rt_flag}_%j.err
 #SBATCH --time=48:00:00
 #SBATCH --mail-type=END
-#SBATCH --mail-user=poldracklab@stanford.edu
+#SBATCH --mail-user=pbissett@stanford.edu
 #SBATCH --cpus-per-task=16
 #SBATCH --ntasks-per-node=1
 #SBATCH -p russpold
@@ -21,4 +21,4 @@ scripts_loc=../../scripts
 scratch_loc=$SCRATCH
 # run singularity, scratch is automatically mounted
 singularity exec -B ${scripts_loc}:/scripts  ${singularity_loc} \
-    python /scripts/1stlevel_analysis.py -derivatives_dir ${derivatives_loc} -data_dir ${data_loc} -working_dir ${scratch_loc} -fmriprep_dir ${fmriprep_dir} --tasks {task} {rt_flag} --overwrite --a_comp_cor --use_aroma
+    python /scripts/1stlevel_analysis.py -derivatives_dir ${derivatives_loc} -data_dir ${data_loc} -working_dir ${scratch_loc} -fmriprep_dir ${fmriprep_dir} --tasks {task} {rt_flag} --a_comp_cor --use_aroma
