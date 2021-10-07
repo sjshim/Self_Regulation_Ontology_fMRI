@@ -27,28 +27,21 @@ def get_contrasts(task, regress_rt=True):
         regress_rt: (bool) whether to include rt as a regressor 
     
     """
-    if task == 'ANT':
-        contrasts = [('cue_parametric', 'cue_parametric'), #use for PCA
-                    ('congruency_parametric', 'congruency_parametric'), #use for PCA
-                    ('interaction', 'interaction'),
+    contrasts=[]
+    if task == 'flanker':
+        contrasts = [('congruency_parametric', 'congruency_parametric'), #use for PCA
                     ('task', 'task')]
-    elif task == 'CCTHot': #regressor over baseline (excluding RT)
-        contrasts = [('task', 'task'),
-                    ('trial_loss', 'trial_loss'),
-                    ('trial_gain', 'trial_gain'),
-                    ('positive_draw', 'positive_draw'), #for PCA
-                    ('negative_draw', 'negative_draw')] #for PCA
-    elif task == 'discountFix':
-        contrasts = [('task', 'task'),
-                    ('choice', 'choice')] #for PCA
-    elif task == 'DPX':
-        contrasts = [('AX', 'AX'),
-                     ('BX', 'BX'),
-                     ('AY', 'AY'),
-                     ('BY', 'BY'),
-                     ('task', 'AX + BX + AY + BY'),
-                     ('AY-BY', 'AY-BY'), #for PCA
-                     ('BX-BY', 'BX-BY')] #for PCA
+    elif task == 'goNogo':
+        contrasts = [('congruency_parametric', 'congruency_parametric'), #use for PCA
+                    ('task', 'task')]
+    elif task == 'nBack':
+        contrasts = [('congruency_parametric', 'congruency_parametric'), #use for PCA
+                    ('task', 'task')]
+    elif task == 'directedForgetting':
+        contrasts = [('con', 'con'),
+                     ('pos', 'pos'),
+                     ('neg', 'neg'),
+                     ('task', 'task')] 
     elif task == 'motorSelectiveStop':
         contrasts = [('crit_go', 'crit_go'),
                      ('crit_stop_success', 'crit_stop_success'),

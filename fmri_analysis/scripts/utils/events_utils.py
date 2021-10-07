@@ -22,7 +22,6 @@ def get_ev_vars(output_dict, events_df, condition_spec,
         duration: either an int or string. If int, sets a constant duration. If
             string, duration is set to that column
         subset: pandas query string to subset the data before use
-        onset_column: the column of timing to be used for onsets
 
     """
     # make sure NaNs or Nones aren't passed
@@ -97,7 +96,7 @@ def get_ev_vars(output_dict, events_df, condition_spec,
 
 
 # specific task functions
-def get_ANT_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_flanker_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -109,26 +108,11 @@ def get_ANT_EVs(events_df, regress_rt=True, return_metadict=False):
     response_time = events_df.loc[events_df.junk == False,
                                   'response_time'].mean()
     meta_dict['task_RT'] = response_time
-    events_df.trial_type = [c+'_'+f for c, f in
-                            zip(events_df.cue, events_df.flanker_type)]
 
     # generate parametric regressors
-    events_df['cue_parametric'] = -1
-    events_df.loc[events_df.cue == 'double', 'cue_parametric'] = 1
-
     events_df['congruency_parametric'] = -1
-    events_df.loc[events_df.flanker_type == 'incongruent',
+    events_df.loc[events_df.trial_type == 'incongruent',
                   'congruency_parametric'] = 1
-
-    events_df['cue_congruency_interaction'] = events_df.cue_parametric.values *\
-        events_df.congruency_parametric.values
-
-    get_ev_vars(output_dict, events_df,
-                condition_spec='cue_parametric',
-                duration=response_time,
-                amplitude='cue_parametric',
-                subset='junk==False',
-                demean_amp=True)
 
     get_ev_vars(output_dict, events_df,
                 condition_spec='congruency_parametric',
@@ -137,10 +121,54 @@ def get_ANT_EVs(events_df, regress_rt=True, return_metadict=False):
                 subset='junk==False',
                 demean_amp=True)
 
+    # Task>baseline regressor
     get_ev_vars(output_dict, events_df,
-                condition_spec='interaction',
+                condition_spec='task',
+                col='trial_type',
                 duration=response_time,
-                amplitude='cue_congruency_interaction',
+                subset='junk==False')
+
+    # nuisance regressors
+    get_ev_vars(output_dict, events_df,
+                condition_spec=[(True, 'junk')],
+                col='junk',
+                duration=response_time)
+
+    if regress_rt:
+        get_ev_vars(output_dict, events_df,
+                    condition_spec='response_time',
+                    duration=response_time,
+                    amplitude='response_time',
+                    subset='junk==False',
+                    demean_amp=True)
+    print(output_dict)
+    if return_metadict:
+        return(output_dict, meta_dict)
+    else:
+        return output_dict
+    
+def get_goNogo_EVs(events_df, regress_rt=True, return_metadict=False):
+    output_dict = {
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
+    meta_dict = {}
+
+    response_time = events_df.loc[events_df.junk == False,
+                                  'response_time'].mean()
+    meta_dict['task_RT'] = response_time
+
+    # generate parametric regressors
+    events_df['condition_parametric'] = -1
+    events_df.loc[events_df.trial_type == 'nogo',
+                  'condition_parametric'] = 1
+
+    get_ev_vars(output_dict, events_df,
+                condition_spec='condition_parametric',
+                duration=response_time,
+                amplitude='condition_parametric',
                 subset='junk==False',
                 demean_amp=True)
 
@@ -169,126 +197,55 @@ def get_ANT_EVs(events_df, regress_rt=True, return_metadict=False):
     else:
         return output_dict
 
-
-def get_CCTHot_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_nBack_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
-        'conditions': [],
-        'onsets': [],
-        'durations': [],
-        'amplitudes': []
-    }
+            'conditions': [],
+            'onsets': [],
+            'durations': [],
+            'amplitudes': []
+            }
     meta_dict = {}
 
-    first_rt = events_df.loc[(events_df.junk == False) & (events_df.num_click_in_round == 1), 'response_time'].mean()
-    subsequent_rt = events_df.loc[(events_df.junk == False) & (events_df.num_click_in_round > 1), 'response_time'].mean()
-    meta_dict['first_RT'] = first_rt
-    meta_dict['subsequent_RT'] = subsequent_rt
+    response_time = events_df.loc[events_df.junk == False,
+                                  'response_time'].mean()
+    meta_dict['task_RT'] = response_time
 
-    # Building up trial regressor
-    end_round_idx = events_df.index[events_df.trial_id == 'ITI']
-    # shift by 1 to next trial start, ignoring the last ITI
-    start_round_idx = [0] + [x+1 for x in end_round_idx[:-1]]
-    assert len(end_round_idx) == len(start_round_idx)
-    events_df['trial_start'] = False
-    events_df.loc[start_round_idx, 'trial_start'] = True
+    # generate parametric regressors
+    events_df['condition_parametric'] = -1
+    events_df.loc[events_df.trial_type == 'match',
+                  'condition_parametric'] = 1
 
-    trial_durs = []
-    for start_idx, end_idx in zip(start_round_idx, end_round_idx):
-        # Note, this automatically excludes the ITI row
-        trial_durs.append(
-            events_df.iloc[start_idx:end_idx]
-                          ['block_duration'].sum()
-        )
-    events_df['trial_duration'] = np.nan
-    events_df.loc[start_round_idx, 'trial_duration'] = trial_durs
+    get_ev_vars(output_dict, events_df,
+                condition_spec='condition_parametric',
+                duration=response_time,
+                amplitude='condition_parametric',
+                subset='junk==False',
+                demean_amp=True)
 
-    # trial regressor
+    # Task>baseline regressor
     get_ev_vars(output_dict, events_df,
                 condition_spec='task',
-                duration='trial_duration',
-                amplitude=1,
-                subset="junk==False and trial_start==True")
+                col='trial_type',
+                duration=response_time,
+                subset='junk==False')
 
-    # button press regressors; match with parametric regressors below
-    events_df['button_onset'] = events_df.onset+events_df.response_time
-    # get_ev_vars(output_dict, events_df,
-    #             condition_spec='gain_press',
-    #             onset_column='button_onset',
-    #             duration=1,
-    #             amplitude=1,
-    #             subset="junk==False and action=='draw_card' and feedback==1")
-
-    # get_ev_vars(output_dict, events_df,
-    #             condition_spec='loss_press',
-    #             onset_column='button_onset',
-    #             duration=1,
-    #             amplitude=1,
-    #             subset="junk==False and action=='draw_card' and feedback==0")
-
-    # get_ev_vars(output_dict, events_df,
-    #             condition_spec='end_press',
-    #             onset_column='button_onset',
-    #             duration=1,
-    #             amplitude=1,
-    #             subset="junk==False and action=='end_round'")
-
-    # PARAMETRIC REGRESSORS
-    # positive_draw regressor
+    # nuisance regressors
     get_ev_vars(output_dict, events_df,
-                condition_spec='positive_draw',
-                onset_column='button_onset',
-                duration=1,
-                amplitude='EV',
-                subset="junk==False and action=='draw_card' and feedback==1",
-                demean_amp=True)
+                condition_spec=[(True, 'junk')],
+                col='junk',
+                duration=response_time)
 
-    # negative_draw regressor
-    events_df['absolute_loss_amount'] = np.abs(events_df.loss_amount)
-    get_ev_vars(output_dict, events_df,
-                condition_spec='negative_draw',
-                onset_column='button_onset',
-                duration=1,
-                amplitude='absolute_loss_amount',
-                subset="junk==False and action=='draw_card' and feedback==0",
-                demean_amp=True)
-
-    # trial-length gain and loss parametric regressors
-    # gain
-    get_ev_vars(output_dict, events_df,
-                condition_spec='trial_gain',
-                duration="trial_duration",
-                amplitude='gain_amount',
-                subset="junk==False and trial_start==True",
-                demean_amp=True)
-
-    # loss
-    get_ev_vars(output_dict, events_df,
-                condition_spec='trial_loss',
-                duration="trial_duration",
-                amplitude='absolute_loss_amount',
-                subset="junk==False and trial_start==True",
-                demean_amp=True)
-
-    # nuisance regressor(s)
     if regress_rt:
         get_ev_vars(output_dict, events_df,
-                    condition_spec='first_RT',
-                    duration=first_rt,
+                    condition_spec='response_time',
+                    duration=response_time,
                     amplitude='response_time',
-                    subset='junk==False and num_click_in_round == 1',
+                    subset='junk==False',
                     demean_amp=True)
-        get_ev_vars(output_dict, events_df,
-                    condition_spec='subsequent_RT',
-                    duration=subsequent_rt,
-                    amplitude='response_time',
-                    subset='junk==False and num_click_in_round >1',
-                    demean_amp=True)
-
     if return_metadict:
         return(output_dict, meta_dict)
     else:
         return output_dict
-
 
 def get_discountFix_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
@@ -341,7 +298,7 @@ def get_discountFix_EVs(events_df, regress_rt=True, return_metadict=False):
         return output_dict
 
 
-def get_DPX_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_directedForgetting_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -354,7 +311,7 @@ def get_DPX_EVs(events_df, regress_rt=True, return_metadict=False):
     task_rt = events_df.loc[events_df.junk == False,
                                   'response_time'].mean()
 
-    for cond in ['AX', 'AY', 'BX', 'BY']:
+    for cond in ['pos', 'neg', 'con']:
         rt = events_df.loc[(events_df.junk == False) &
                             (events_df.condition == cond),
                             'response_time'].mean()
@@ -526,7 +483,7 @@ def get_stopSignal_EVs(events_df, regress_rt=True, return_metadict=False):
                         amplitude='response_time',
                         subset="junk == False and trial_type == '%s'" % cond,
                         demean_amp=True)
-
+            
     # nuisance regressors
     go_rt = events_df.loc[(events_df.junk == False) &
                           (events_df.trial_type == 'go'),
@@ -535,12 +492,11 @@ def get_stopSignal_EVs(events_df, regress_rt=True, return_metadict=False):
                 condition_spec=[(True, 'junk')],
                 col='junk',
                 duration=go_rt)
-
     if return_metadict:
         return(output_dict, meta_dict)
     else:
         return output_dict
-
+    
 
 def get_stroop_EVs(events_df, regress_rt=True, return_metadict=False):
     output_dict = {
@@ -817,19 +773,20 @@ def get_beta_series(events_df, regress_rt=True, return_metadict=False):
 # amplitude as parameteric regressor (function of RT)
 def parse_EVs(events_df, task, regress_rt=True, return_metadict=False):
     func_map = {
-        'ANT': get_ANT_EVs,
-        'CCTHot': get_CCTHot_EVs,
-        'discountFix': get_discountFix_EVs,
-        'DPX': get_DPX_EVs,
-        'manipulationTask': get_manipulation_EVs,
-        'motorSelectiveStop': get_motorSelectiveStop_EVs,
-        'surveyMedley': get_surveyMedley_EVs,
+        #'cuedTS': get_cuedTS_EVs,
+        #'directedForgetting': get_directedForgetting_EVs,
+        'flanker': get_flanker_EVs,
+        'goNogo': get_goNogo_EVs,
+        'nBack': get_nBack_EVs,
+        #'rest': get_rest_EVs,
+        #'shapeMatching': get_shapeMatching_EVs,
+        #'spatialTS': get_spatialTS_EVs,
         'stopSignal': get_stopSignal_EVs,
-        'stroop': get_stroop_EVs,
-        'twoByTwo': get_twoByTwo_EVs,
-        'WATT3': get_WATT3_EVs,
+        #'stopSignalWDirectedForgetting': get_stopSignalWDirectedForgetting_EVs,
+        #'stopSignalWFlanker': get_stopSignalWFlanker_EVs,
+        #'directedForgettingWFlanker': get_directedForgettingWFlanker_EVs
         # DEPRECATED 'beta' covers generic conversion of events_df into trial design file
-        'beta': get_beta_series,
+        #'beta': get_beta_series,
     }
     return func_map[task](events_df,
                           regress_rt=regress_rt,

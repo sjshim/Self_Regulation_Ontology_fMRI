@@ -76,7 +76,7 @@ def create_design(events, confounds, task, TR, subject_id,
         np.arange(n_scans)*TR+TR/2,
         paradigm,
         hrf_model='spm',
-        period_cut=80,
+        #period_cut=80,
         drift_model='cosine',
         add_regs=confounds.values,
         add_reg_names=list(confounds.columns))
@@ -147,6 +147,7 @@ def make_first_level_obj(subject_id, task,
     events = get_events(data_dir, subject_id, task)
     save_new_EVs(events, subjinfo, output_dir,
                  beta=beta, regress_rt=regress_rt)
+    print(subjinfo)
     return subjinfo
 
 
@@ -363,7 +364,7 @@ def get_func_file(fmriprep_dir, subject_id, task, use_aroma=False):
         mask_file = glob(path.join(fmriprep_dir,
                                    'sub-%s' % subject_id,
                                    'func',
-                                   '*%s*MNI*brain_mask.nii.gz' % task))
+                                   '*%s_*MNI*brain_mask.nii.gz' % task))
     else:
         func_file = glob(path.join(fmriprep_dir,
                                    'sub-%s' % subject_id,
@@ -373,7 +374,7 @@ def get_func_file(fmriprep_dir, subject_id, task, use_aroma=False):
         mask_file = glob(path.join(fmriprep_dir,
                                    'sub-%s' % subject_id,
                                    '*', 'func',
-                                   '*%s*MNI*brain_mask.nii.gz' % task))
+                                   '*%s_*MNI*brain_mask.nii.gz' % task))
     if func_file:
         print(func_file)
 
