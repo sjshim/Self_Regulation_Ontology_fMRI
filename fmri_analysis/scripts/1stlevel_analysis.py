@@ -5,14 +5,22 @@
 
 
 import argparse
+from inspect import currentframe, getframeinfo
 from glob import glob
+import numpy as np
 import os
 from os.path import join
+import pandas as pd
+from pathlib import Path
+import pickle
 import sys
+import nibabel as nib
+import joblib
+sys.modules['sklearn.externals.joblib'] = joblib
 from nistats.first_level_model import FirstLevelModel
 import warnings
-from utils.firstlevel_utils import get_first_level_objs,\
-    make_first_level_obj, save_first_level_obj
+from utils.plot_utils import plot_design
+from utils.firstlevel_utils import get_first_level_objs, make_first_level_obj, save_first_level_obj
 
 
 # In[2]:
@@ -99,14 +107,25 @@ if not args.subject_ids:
                        os.path.join(args.data_dir, '*')) if 'sub-' in i])
 else:
     subjects = args.subject_ids
+    
+#removing pilot subject
+subjects.remove('n01')
+#removing s03 for brainmask issue
+subjects.remove('s03')   
 
+ses = []
+for i in range(1, 10):
+    ses.append('ses-0'+str(i))
+for i in range(10, 13):
+    ses.append('ses-'+str(i))
 # other arguments
 regress_rt = args.rt
 beta_series = args.beta
 n_procs = args.n_procs
+
 # TR of functional images
-TR = .68
-a_comp_cor = args.a_comp_cor
+TR = 1.49
+a_comp_cor=args.a_comp_cor
 use_aroma = args.use_aroma
 
 # In[5]:
@@ -121,21 +140,18 @@ verboseprint('*'*79)
 
 to_run = []
 for subject_id in subjects:
-    for task in tasks:
-        verboseprint('Setting up %s, %s' % (subject_id, task))
-        files = get_first_level_objs(
-            subject_id, task, first_level_dir, regress_rt=regress_rt)
-        if len(files) == 0 or args.overwrite:
-            with warnings.catch_warnings():
-                warnings.filterwarnings("ignore", category=DeprecationWarning)
-                warnings.filterwarnings("ignore", category=UserWarning)
-                subjinfo = make_first_level_obj(subject_id, task, fmriprep_dir,
-                                                data_dir, first_level_dir, TR,
-                                                regress_rt=regress_rt,
-                                                a_comp_cor=a_comp_cor,
-                                                use_aroma=use_aroma)
-            if subjinfo is not None:
-                to_run.append(subjinfo)
+    for session in ses:
+        for task in tasks:
+            verboseprint('Setting up %s, %s' % (subject_id, task))
+            files = get_first_level_objs(subject_id, session, task, first_level_dir, beta=False, regress_rt=regress_rt)
+            if len(files) == 0 or args.overwrite:
+                with warnings.catch_warnings():
+                    warnings.filterwarnings("ignore",category=DeprecationWarning)
+                    warnings.filterwarnings("ignore",category=UserWarning)
+                    subjinfo = make_first_level_obj(subject_id, session, task, fmriprep_dir, 
+                                                    data_dir, first_level_dir, TR, regress_rt=regress_rt, a_comp_cor=a_comp_cor)
+                if subjinfo is not None:
+                    to_run.append(subjinfo)
 
 # In[7]:
 
@@ -149,7 +165,6 @@ for subjinfo in to_run:
                                standardize=False,
                                hrf_model='spm',
                                drift_model='cosine',
-                               period_cut=80,
                                n_jobs=1
                                )
 

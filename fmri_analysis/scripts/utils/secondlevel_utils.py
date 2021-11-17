@@ -21,19 +21,14 @@ def mean_masks(masks):
     return nb.Nifti1Image(data, aff, hdr)
 
 
-def create_group_mask(fmriprep_dir, threshold=.8, verbose=True):
+def create_group_mask(fmriprep_dir, sub, threshold=.8, verbose=True):
     if verbose:
         print('Creating Group mask...')
     # check if there's a session folder
-    if len(glob(path.join(fmriprep_dir, 'sub-*', 'func',
-                          '*MNI152NLin2009cAsym*brain_mask.nii.gz'))):
-        brainmasks = glob(path.join(fmriprep_dir,
-                                    'sub-*',
-                                    'func',
-                                    '*MNI152NLin2009cAsym*brain_mask.nii.gz'))
+    if len(glob(fmriprep_dir+'/sub-'+sub+'/func'+'/*MNI152NLin2009cAsym*brain_mask.nii.gz')):
+        brainmasks = glob(fmriprep_dir+'/sub-'+sub+'/func'+'/*MNI152NLin2009cAsym*brain_mask.nii.gz')
     else:
-        brainmasks = glob(path.join(fmriprep_dir, 'sub-*', '*', 'func',
-                                    '*MNI152NLin2009cAsym*brain_mask.nii.gz'))
+        brainmasks = glob(fmriprep_dir+'/sub-'+sub+'/*'+'/func'+'/*MNI152NLin2009cAsym*brain_mask.nii.gz')
     if verbose:
         print("%s maps found at %s" % (len(brainmasks), fmriprep_dir))
         print('threshold info:')
