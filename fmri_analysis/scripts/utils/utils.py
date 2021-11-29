@@ -10,12 +10,13 @@ import pandas as pd
 # ********************************************************
 # Basic Help Methods
 # ********************************************************
-def get_flags(regress_rt=False, beta=False):
+def get_flags(regress_rt=False, beta=False, cond_rt=False):
     rt_flag = "RT-True" if regress_rt else "RT-False"
     beta_flag = "beta-True" if beta else "beta-False"
-    return rt_flag, beta_flag
+    cond_rt_flag = "cond_RT-True" if cond_rt else "cond_RT-False"
+    return rt_flag, beta_flag, cond_rt_flag
 
-def get_contrasts(task, regress_rt=True):
+def get_contrasts(task, regress_rt=True, cond_rt=False):
     """ 
     Gets a list of contrasts given a task
     
@@ -123,6 +124,8 @@ def get_contrasts(task, regress_rt=True):
                      ('task', 'congruent_con+congruent_pos+congruent_neg+incongruent_con+incongruent_pos+incongruent_neg')]
     if regress_rt:
         contrasts.append(('RT', 'response_time'))
+    
+    if cond_rt:
         if task == 'cuedTS':
             contrasts.append(('cstay_RT', 'cstay_RT'))
             contrasts.append(('cswitch_tswitch_RT', 'cswitch_tswitch_RT'))

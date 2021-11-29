@@ -95,7 +95,7 @@ def get_ev_vars(output_dict, events_df, condition_spec,
         assert pd.isnull(attr[-1]).sum() == 0
 
 # specific task functions
-def get_cuedTS_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_cuedTS_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -110,7 +110,7 @@ def get_cuedTS_EVs(events_df, regress_rt=True, return_metadict=False):
                     duration=1,
                     subset="junk == False and trial_type == '%s'" % cond)
 
-        if regress_rt:
+        if cond_rt:
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
                         duration=1,
@@ -145,7 +145,7 @@ def get_cuedTS_EVs(events_df, regress_rt=True, return_metadict=False):
         return output_dict
 
 
-def get_directedForgetting_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_directedForgetting_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -160,7 +160,7 @@ def get_directedForgetting_EVs(events_df, regress_rt=True, return_metadict=False
                     duration=1,
                     subset="junk == False and trial_type == '%s'" % cond)
 
-        if regress_rt:
+        if cond_rt:
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
                         duration=1,
@@ -186,7 +186,7 @@ def get_directedForgetting_EVs(events_df, regress_rt=True, return_metadict=False
     else:
         return output_dict
     
-def get_flanker_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_flanker_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -227,6 +227,7 @@ def get_flanker_EVs(events_df, regress_rt=True, return_metadict=False):
                     amplitude='response_time',
                     subset='junk==False',
                     demean_amp=True)
+    if cond_rt:
         for cond in ['congruent', 'incongruent']:
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
@@ -239,7 +240,7 @@ def get_flanker_EVs(events_df, regress_rt=True, return_metadict=False):
     else:
         return output_dict
     
-def get_goNogo_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_goNogo_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -256,7 +257,7 @@ def get_goNogo_EVs(events_df, regress_rt=True, return_metadict=False):
                     duration=1,
                     subset="trial_type == '%s'" % cond)
 
-        if regress_rt and ('success' not in cond):
+        if cond_rt and ('success' not in cond):
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
                         duration=1,
@@ -281,13 +282,12 @@ def get_goNogo_EVs(events_df, regress_rt=True, return_metadict=False):
                     duration=1,
                     amplitude='response_time',
                     demean_amp=True)
-    print(output_dict)
     if return_metadict:
         return(output_dict, meta_dict)
     else:
         return output_dict
     
-def get_goNogo_nogo_failure_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_goNogo_nogo_failure_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -305,8 +305,7 @@ def get_goNogo_nogo_failure_EVs(events_df, regress_rt=True, return_metadict=Fals
                     condition_spec=cond,
                     duration=1,
                     subset="trial_type == '%s'" % cond)
-
-        if regress_rt and ('success' not in cond):
+        if cond_rt and ('success' not in cond):
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
                         duration=1,
@@ -331,13 +330,12 @@ def get_goNogo_nogo_failure_EVs(events_df, regress_rt=True, return_metadict=Fals
                     duration=1,
                     amplitude='response_time',
                     demean_amp=True)
-    print(output_dict)
     if return_metadict:
         return(output_dict, meta_dict)
     else:
         return output_dict
 
-def get_nBack_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_nBack_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -388,6 +386,7 @@ def get_nBack_EVs(events_df, regress_rt=True, return_metadict=False):
                     amplitude='response_time',
                     subset='junk==False',
                     demean_amp=True)
+    if cond_rt:
         for cond in ['match', 'mismatch']:
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
@@ -401,7 +400,7 @@ def get_nBack_EVs(events_df, regress_rt=True, return_metadict=False):
         return output_dict
     
 
-def get_shapeMatching_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_shapeMatching_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -416,7 +415,7 @@ def get_shapeMatching_EVs(events_df, regress_rt=True, return_metadict=False):
                     duration=1,
                     subset="junk == False and trial_type == '%s'" % cond)
 
-        if regress_rt:
+        if cond_rt:
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
                         duration=1,
@@ -436,7 +435,7 @@ def get_shapeMatching_EVs(events_df, regress_rt=True, return_metadict=False):
         return output_dict
 
 
-def get_spatialTS_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_spatialTS_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -451,7 +450,7 @@ def get_spatialTS_EVs(events_df, regress_rt=True, return_metadict=False):
                     duration=1,
                     subset="junk == False and trial_type == '%s'" % cond)
 
-        if regress_rt:
+        if cond_rt:
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
                         duration=1,
@@ -486,7 +485,7 @@ def get_spatialTS_EVs(events_df, regress_rt=True, return_metadict=False):
         return output_dict
 
 
-def get_stopSignal_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_stopSignal_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -501,7 +500,7 @@ def get_stopSignal_EVs(events_df, regress_rt=True, return_metadict=False):
                     duration=1,
                     subset="junk == False and trial_type == '%s'" % cond)
 
-        if regress_rt and ('success' not in cond):
+        if cond_rt and ('success' not in cond):
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
                         duration=1,
@@ -527,7 +526,7 @@ def get_stopSignal_EVs(events_df, regress_rt=True, return_metadict=False):
         return output_dict
     
 
-def get_stopSignalWDirectedForgetting_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_stopSignalWDirectedForgetting_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -544,7 +543,7 @@ def get_stopSignalWDirectedForgetting_EVs(events_df, regress_rt=True, return_met
                     condition_spec=cond,
                     duration=1,
                     subset="junk == False and trial_type == '%s'" % cond)
-        if regress_rt and ('success' not in cond):
+        if cond_rt and ('success' not in cond):
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
                         duration=1,
@@ -578,7 +577,7 @@ def get_stopSignalWDirectedForgetting_EVs(events_df, regress_rt=True, return_met
     else:
         return output_dict
 
-def get_stopSignalWFlanker_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_stopSignalWFlanker_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -598,7 +597,7 @@ def get_stopSignalWFlanker_EVs(events_df, regress_rt=True, return_metadict=False
                     condition_spec=cond,
                     duration=1,
                     subset="junk == False and trial_type == '%s'" % cond)
-        if regress_rt and ('success' not in cond):
+        if cond_rt and ('success' not in cond):
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
                         duration=1,
@@ -632,7 +631,7 @@ def get_stopSignalWFlanker_EVs(events_df, regress_rt=True, return_metadict=False
     else:
         return output_dict
 
-def get_directedForgettingWFlanker_EVs(events_df, regress_rt=True, return_metadict=False):
+def get_directedForgettingWFlanker_EVs(events_df, regress_rt=True, cond_rt=False, return_metadict=False):
     output_dict = {
             'conditions': [],
             'onsets': [],
@@ -651,7 +650,7 @@ def get_directedForgettingWFlanker_EVs(events_df, regress_rt=True, return_metadi
                     condition_spec=cond,
                     duration=1,
                     subset="junk == False and trial_type == '%s'" % cond)
-        if regress_rt:
+        if cond_rt:
             get_ev_vars(output_dict, events_df,
                         condition_spec=cond+'_RT',
                         duration=1,
@@ -691,7 +690,7 @@ def get_directedForgettingWFlanker_EVs(events_df, regress_rt=True, return_metadi
 # (average RT across subjects or block duration)
 # RT as a separate regressor for each onset, constant duration,
 # amplitude as parameteric regressor (function of RT)
-def parse_EVs(events_df, task, regress_rt=True, return_metadict=False):
+def parse_EVs(events_df, task, regress_rt=True, cond_rt=False, return_metadict=False):
     func_map = {
         'cuedTS': get_cuedTS_EVs,
         'directedForgetting': get_directedForgetting_EVs,
@@ -709,4 +708,5 @@ def parse_EVs(events_df, task, regress_rt=True, return_metadict=False):
     }
     return func_map[task](events_df,
                           regress_rt=regress_rt,
+                          cond_rt=cond_rt,
                           return_metadict=return_metadict)

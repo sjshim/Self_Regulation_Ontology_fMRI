@@ -15,9 +15,7 @@ from pathlib import Path
 import pickle
 import sys
 import nibabel as nib
-import joblib
-sys.modules['sklearn.externals.joblib'] = joblib
-from nistats.first_level_model import FirstLevelModel
+from nilearn.glm.first_level import FirstLevelModel
 import warnings
 from utils.plot_utils import plot_design
 from utils.firstlevel_utils import get_first_level_objs, make_first_level_obj, save_first_level_obj
@@ -55,7 +53,6 @@ else:
     args.rt = True
     args.a_comp_cor = True
     args.use_aroma = True
-
     args.n_procs = 1
     args.derivatives_dir = '/data/derivatives/'
     args.data_dir = '/data'
@@ -121,6 +118,7 @@ for i in range(10, 13):
 # other arguments
 regress_rt = args.rt
 beta_series = args.beta
+cond_rt = args.cond_rt
 n_procs = args.n_procs
 
 # TR of functional images

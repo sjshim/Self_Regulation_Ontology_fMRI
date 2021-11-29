@@ -1,6 +1,6 @@
 from collections import namedtuple
 from glob import glob
-from nistats.design_matrix import make_first_level_design_matrix
+from nilearn.glm.first_level import make_first_level_design_matrix
 import numpy as np
 import os
 import json
@@ -56,7 +56,7 @@ def save_new_EVs(events, subjinfo, output_dir, beta=True, regress_rt=False):
 
 
 def create_design(events, confounds, task, TR,
-                  beta=True, regress_rt=False):
+                  beta=True, regress_rt=False, cond_rt=False):
     """
     takes event file and confounds, and creates EV_dict, which is passed
     to make_first_level_design to create a the design matrix.
@@ -66,6 +66,7 @@ def create_design(events, confounds, task, TR,
     else:
         EV_dict, meta_dict = parse_EVs(events, task,
                                        regress_rt=regress_rt,
+                                       cond_rt=cond_rt,
                                        return_metadict=True)
 
     paradigm = get_paradigm(EV_dict)
@@ -75,7 +76,6 @@ def create_design(events, confounds, task, TR,
         np.arange(n_scans)*TR+TR/2,
         paradigm,
         hrf_model='spm',
-        #period_cut=80,
         drift_model='cosine',
         add_regs=confounds.values,
         add_reg_names=list(confounds.columns))
@@ -106,6 +106,7 @@ def make_first_level_obj(subject_id, session, task,
                          TR,
                          regress_rt=False,
                          beta=False,
+                         cond_rt=False,
                          a_comp_cor=True,
                          use_aroma=False):
     """
@@ -125,9 +126,9 @@ def make_first_level_obj(subject_id, session, task,
     confounds = get_confounds(fmriprep_dir, subject_id, session, task,
                               a_comp_cor=a_comp_cor,
                               use_aroma=use_aroma)
-    contrasts = get_contrasts(task, regress_rt)
+    contrasts = get_contrasts(task, regress_rt, cond_rt)
     design, meta_des_dict = create_design(events, confounds, task, TR,
-                                          beta=beta, regress_rt=regress_rt)
+                                          beta=beta, regress_rt=regress_rt, cond_rt=cond_rt)
     # add on FD info to meta_dict
     assert fmriprep_dir[-1] != '/'
     deriv_base = path.dirname(fmriprep_dir)
@@ -179,12 +180,12 @@ def save_first_level_obj(subjinfo, output_dir, save_maps=False):
 
 
 def get_first_level_objs(subject_id, session, task, first_level_dir,
-                         regress_rt=False, beta=False):
+                         regress_rt=False, beta=False, cond_rt=False):
     """ gets and returns filepath to first level objects if they exist"""
 
-    rt_flag, beta_flag = get_flags(regress_rt, beta)
+    rt_flag, beta_flag, cond_rt_flag = get_flags(regress_rt, beta, cond_rt)
     files = path.join(first_level_dir, subject_id, session, task,
-                      'firstlevel*%s_%s*pkl' % (rt_flag, beta_flag))
+                      'firstlevel*%s_%s_%s*pkl' % (rt_flag, beta_flag, cond_rt_flag))
     return glob(files)
 
 #note: session not added
