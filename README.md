@@ -2,17 +2,16 @@
 
 The following is a list of directories and their contents, in order of importance
 
-## `fmri_analysis`: Aim1 fMRI Analysis (TODO: include aim2, aim4)  
+## `fmri_analysis`: network discovery analysis
 
 `fmri_analysis` contains the main scripts of the repo for running standard contrast analyses.
 The main files are all in `scripts` and the `utils` dir within.  
 To run these scripts using Sherlock or other computing clusters, view the README located in `Self_Regulation_Ontology_fMRI/fmri_analysis/batch_files/aim1`.
 
 1. `1stlevel_analysis.py` runs 1stlevels with the help of` utils/firstlevel_utils.py`  
-2. `2ndlevel_analysis.py` runs 2ndlevels with the help of `utils/firstlevel_utils.py`, `utils.secondlevel_utils.py` and `utils/utils.py`  
-3. `Visualizations.py` can be used to run 1st and 2nd level visualizations based on flags passed to it.  
-
-4. Once these analyses are complete, navigate to `Self_Regulation_Onotology_fMRI/fmri_analysis/scripts/notebooks/` and run 2 notebooks (currently run locally with data mounted; see the first cells): 1) `0_2ndlevel_EFA.ipynb` performs exploratory factor analysis on the 2ndlevel contrasts and examines how parcels fall in factor space, and 2) `1_label_and_functional_distances.ipynb` compares the distances between 2ndlevel contrasts in functional and theory-driven spaces against null models.  
+2. `2ndlevel_analysis.py` runs 2ndlevels with the help of `utils/firstlevel_utils.py`, `utils.secondlevel_utils.py` and `utils/utils.py` 
+3. '3rdlevel_analysis.py' runs 3rdlevels which is a variation of 2ndlevel analysis (due to multiple sessions for same individual) 
+4. `Visualizations.py` can be used to run 1st and 2nd level visualizations based on flags passed to it.  
 
 ## `behavioral_data_prep`
 Contains code for generating events files from task data and transfering them to the BIDS directory containing the scan data.
