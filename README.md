@@ -19,9 +19,6 @@ Contains code for generating events files from task data and transfering them to
 ## `docker_files` and `singularity_images`
 The former contains requirement files which help create the docker image. The latter contains the singularity image(s) built out of the docker image, which can be used to run the environment on Sherlock, Stanford HPCC.
   
-## `fmri_experiments`
-Contains the code to run the experiments used in aim1 and aim2 of the project.
-  
 5. `fmri_data_prep`
 Contains scripts and atlases to parcellate the data, used with collaborator Mac Shine.
   
