@@ -11,6 +11,7 @@ import pickle
 import warnings
 from utils.events_utils import parse_EVs
 from utils.utils import get_contrasts, get_flags
+from nilearn.masking import intersect_masks
 
 # ********************************************************
 # helper functions
@@ -27,7 +28,7 @@ def temp_deriv(dataframe, columns=None):
         dataframe.insert(insert_loc+1, i+'_TD', col)
 
 
-def save_new_EVs(events, subjinfo, output_dir, beta=True, regress_rt=False):
+def save_new_EVs(events, subjinfo, output_dir, beta=False, regress_rt=False, cond_rt=False):
     # get filepath/name
     subj, session, task = subjinfo.ID.split('_')
     directory = path.join(output_dir, subj, session, task)
@@ -38,7 +39,7 @@ def save_new_EVs(events, subjinfo, output_dir, beta=True, regress_rt=False):
     if beta:
         EV_dict = get_beta_series(events, regress_rt=regress_rt)
     else:
-        EV_dict = parse_EVs(events, task, regress_rt=regress_rt)
+        EV_dict = parse_EVs(events, task, regress_rt=regress_rt, cond_rt=cond_rt)
 
     event_df = pd.DataFrame.from_dict(EV_dict)  # change to dataframe
 
@@ -145,10 +146,11 @@ def make_first_level_obj(subject_id, session, task,
                           meta_dict)
     subjinfo.model_settings['beta'] = beta
     subjinfo.model_settings['regress_rt'] = regress_rt
+    subjinfo.model_settings['cond_rt'] = cond_rt
 
     events = get_events(data_dir, subject_id, session, task)
     save_new_EVs(events, subjinfo, output_dir,
-                 beta=beta, regress_rt=regress_rt)
+                 beta=beta, regress_rt=regress_rt, cond_rt=cond_rt)
     print(subjinfo)
     return subjinfo
 
@@ -201,19 +203,19 @@ def load_first_level_objs(session, task, first_level_dir,
 
 
 def get_first_level_maps(subject_id, session, task, first_level_dir, contrast,
-                         regress_rt=False, beta=False):
-    rt_flag, beta_flag = get_flags(regress_rt, beta)
+                         regress_rt=False, beta=False, cond_rt=False):
+    rt_flag, beta_flag, cond_rt_flag = get_flags(regress_rt, beta, cond_rt)
     files = path.join(
         first_level_dir, subject_id, session, task,
-        'maps_%s_%s/contrast-%s.nii.gz' % (rt_flag, beta_flag, contrast))
+        'maps_%s_%s_%s/contrast-%s.nii.gz' % (rt_flag, beta_flag, cond_rt_flag, contrast))
     return sorted(glob(files))
 
 def get_first_level_metas(subject_id, session, task, first_level_dir,
-                         regress_rt=False, beta=False):
-    rt_flag, beta_flag = get_flags(regress_rt, beta)
+                         regress_rt=False, beta=False, cond_rt=False):
+    rt_flag, beta_flag, cond_rt_flag = get_flags(regress_rt, beta, cond_rt)
     files = path.join(
         first_level_dir, subject_id, session, task,
-        '2ndlevel_meta_%s_%s.json' % (rt_flag, beta_flag))
+        '2ndlevel_meta_%s_%s_%s.json' % (rt_flag, beta_flag, cond_rt_flag))
     return sorted(glob(files))
 
 # ********************************************************
@@ -234,7 +236,7 @@ class FirstLevel():
         self.contrasts = contrasts
         self.ID = ID
         # for model
-        self.model_settings = {'beta': False, 'regress_rt': False}
+        self.model_settings = {'beta': False, 'regress_rt': False, 'cond_rt': False}
         self.fit_model = None
         self.meta = meta
 
@@ -262,9 +264,10 @@ class FirstLevel():
             json.dump(self.meta, f)
 
     def get_flags(self):
-        rt_flag, beta_flag = get_flags(self.model_settings['regress_rt'],
-                                       self.model_settings['beta'])
-        return '%s_%s' % (rt_flag, beta_flag)
+        rt_flag, beta_flag, cond_rt_flag = get_flags(self.model_settings['regress_rt'],
+                                       self.model_settings['beta'],
+                                      self.model_settings['cond_rt'])
+        return '%s_%s_%s' % (rt_flag, beta_flag, cond_rt_flag)
 
     def _get_export_dir(self, directory):
         subj, ses, task = self.ID.split('_')
@@ -375,14 +378,17 @@ def get_func_file(fmriprep_dir, subject_id, session, task, use_aroma=False):
                                    func_regex))
         mask_file = glob(path.join(fmriprep_dir,
                                    'sub-%s' % subject_id,
-                                   session, 'func',
+                                   *, 'func',
                                    '*%s_*MNI*brain_mask.nii.gz' % task))
+        
+    #makes combined mask for each task across sessions
+    intersect_mask_file = intersect_masks(mask_file, threshold=1)
     if func_file:
         print(func_file)
 
     if not func_file or not mask_file:
         return None, None
-    return func_file[0], mask_file[0]
+    return func_file[0], intersect_mask_file
 
 
 def get_confounds(fmriprep_dir, subject_id, session, task, **process_kwargs):
@@ -418,7 +424,7 @@ def get_confounds(fmriprep_dir, subject_id, session, task, **process_kwargs):
     return confounds
 
 
-def get_events(data_dir, subject_id, session, task):
+def get_events(data_dir, subject_id, task):
     # Get the Events File if it exists
     # Read the TSV file and convert to pandas dataframe
 
@@ -426,7 +432,7 @@ def get_events(data_dir, subject_id, session, task):
     try:
         event_file = glob(path.join(data_dir,
                                     'sub-%s' % subject_id,
-                                    session,
+                                    *,
                                     'func',
                                     'sub-*%s*events.tsv' % task))[0]
         events_df = pd.read_csv(event_file, sep='\t')
